@@ -6,7 +6,7 @@ description: Understand the practical differences between JPG, PNG, and WEBP
 publishedAt: 2026-08-02
 readTime: 5 min read
 ---
-The right image format depends on the content, transparency requirements, and where the result will be used. Choosing well helps preserve quality without creating unnecessarily large files.test
+The right image format depends on the content, transparency requirements, and where the result will be used. Choosing well helps preserve quality without creating unnecessarily large files.test-shiyao
 
 ## JPG for photographs
 
