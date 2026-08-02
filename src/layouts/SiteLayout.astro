@@ -37,7 +37,9 @@ const schemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [defaultS
     <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-WPF5GVC931"></script>
     <script is:inline>
       window.dataLayer = window.dataLayer || [];
-      function gtag(...args){dataLayer.push(args);}
+      // Keep Google's official command-queue shape; gtag.js expects the arguments object.
+      // eslint-disable-next-line prefer-rest-params
+      function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-WPF5GVC931');
     </script>

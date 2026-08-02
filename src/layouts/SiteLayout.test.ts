@@ -9,4 +9,9 @@ describe('SiteLayout Google Analytics integration', () => {
     expect(layoutSource).toContain("gtag('config', 'G-WPF5GVC931')");
     expect(layoutSource.match(/gtag\('config', 'G-WPF5GVC931'\)/g)).toHaveLength(1);
   });
+
+  it('queues commands with the official Google tag arguments object', () => {
+    expect(layoutSource).toContain('function gtag(){dataLayer.push(arguments);}');
+    expect(layoutSource).not.toContain('function gtag(...args)');
+  });
 });
