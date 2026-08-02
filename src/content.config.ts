@@ -1,6 +1,7 @@
 import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'zod';
+import { publishedAtSchema } from './lib/content/published-date';
 
 const blog = defineCollection({
   loader: glob({ base: './src/content/blog', pattern: '**/*.{md,mdx}' }),
@@ -8,7 +9,7 @@ const blog = defineCollection({
     slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
     title: z.string().min(1),
     description: z.string().min(1),
-    publishedAt: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+    publishedAt: publishedAtSchema,
     readTime: z.string().min(1),
   }),
 });
