@@ -2,13 +2,28 @@ media:
   input: public/uploads
   output: /uploads
 
+settings:
+  content:
+    merge: true
+  commit:
+    identity: app
+    templates:
+      create: "content(create): {path}"
+      update: "content(update): {path}"
+      delete: "content(delete): {path}"
+      rename: "content(rename): {oldPath} -> {newPath}"
+
 content:
   - name: blog
-    label: Blog posts
+    label: 博客文章 / Blog posts
     type: collection
     path: src/content/blog
     format: yaml-frontmatter
     filename: "{fields.slug}.md"
+    operations:
+      create: true
+      rename: false
+      delete: false
     view:
       fields: [title, publishedAt, readTime]
       primary: title
@@ -19,44 +34,48 @@ content:
         order: desc
     fields:
       - name: slug
-        label: URL slug
+        label: URL 路径（发布后不要修改）
         type: string
         required: true
         pattern:
           regex: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
-          message: Use lowercase letters, numbers, and hyphens only.
+          message: 只能使用小写字母、数字和连字符，例如 image-format-guide。
       - name: title
-        label: Title
+        label: 标题 / Title
         type: string
         required: true
       - name: description
-        label: SEO description
+        label: SEO 描述（不超过 180 字符）
         type: text
         required: true
         options:
           maxlength: 180
       - name: publishedAt
-        label: Publish date
+        label: 发布日期 / Publish date
         type: date
         required: true
         options:
           format: yyyy-MM-dd
       - name: readTime
-        label: Reading time
+        label: 阅读时间 / Reading time
         type: string
         required: true
         default: 5 min read
       - name: body
-        label: Article body
+        label: 正文 / Article body
         type: rich-text
         required: true
 
   - name: landing-pages
-    label: Tool landing pages
+    label: 工具落地页 / Tool landing pages
     type: collection
     path: src/content/landing-pages
     format: json
     filename: "{fields.slug}.json"
+    operations:
+      create: true
+      rename: false
+      delete: false
     view:
       fields: [title, slug]
       primary: title
@@ -64,41 +83,41 @@ content:
       search: [title, slug, description]
     fields:
       - name: slug
-        label: URL slug
+        label: URL 路径（发布后不要修改）
         type: string
         required: true
         pattern:
           regex: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
-          message: Use lowercase letters, numbers, and hyphens only.
+          message: 只能使用小写字母、数字和连字符，例如 remove-logo-from-image。
       - name: title
-        label: SEO title
+        label: SEO 标题
         type: string
         required: true
       - name: description
-        label: SEO description
+        label: SEO 描述（不超过 180 字符）
         type: text
         required: true
         options:
           maxlength: 180
       - name: eyebrow
-        label: Small heading
+        label: 小标题 / Eyebrow
         type: string
         required: true
       - name: heading
-        label: Main heading
+        label: 主标题 / Main heading
         type: string
         required: true
       - name: intro
-        label: Introduction
+        label: 简介 / Introduction
         type: text
         required: true
       - name: benefits
-        label: Benefits
+        label: 优点列表 / Benefits
         type: string
         list:
           min: 1
       - name: faq
-        label: Frequently asked questions
+        label: 常见问题 / FAQ
         type: object
         list:
           min: 1
@@ -107,10 +126,10 @@ content:
             summary: "{question}"
         fields:
           - name: question
-            label: Question
+            label: 问题 / Question
             type: string
             required: true
           - name: answer
-            label: Answer
+            label: 回答 / Answer
             type: text
             required: true

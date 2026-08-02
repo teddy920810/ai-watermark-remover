@@ -3,6 +3,9 @@
   "type": "module",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=22.12.0 <25"
+  },
   "scripts": {
     "dev": "astro dev",
     "build": "astro check && astro build",
@@ -10,7 +13,8 @@
     "lint": "astro check && eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "verify": "npm test && npm run lint && npm run build"
   },
   "dependencies": {
     "@astrojs/react": "^6.0.2",

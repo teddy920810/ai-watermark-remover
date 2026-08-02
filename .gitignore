@@ -9,7 +9,7 @@ S3-info.txt
 coverage/
 playwright-report/
 test-results/
-output/playwright/*.png
+output/
 .playwright-cli/
 .tools/
 *.log
