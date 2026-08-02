@@ -1,0 +1,15 @@
+{
+  "slug": "remove-gemini-watermark",
+  "title": "Remove a Visible Gemini Watermark from an Image",
+  "description": "Clean up visible Gemini labels or marks from images you are authorized to edit. Does not remove invisible SynthID signals.",
+  "eyebrow": "Gemini image cleanup",
+  "heading": "Remove visible Gemini marks from your images",
+  "intro": "Use a focused image cleanup workflow for visible labels and overlays. Invisible provenance signals such as SynthID are outside this tool’s scope.",
+  "benefits": ["Clear visible overlays", "No claim to remove SynthID", "Simple image download"],
+  "faq": [
+    { "question": "Does this remove Google SynthID?", "answer": "No. This page concerns visible marks only and does not detect or remove invisible SynthID signals." },
+    { "question": "What image formats are supported?", "answer": "You can upload JPG, PNG, and WEBP images up to 10 MB." },
+    { "question": "Are my images kept private?", "answer": "Files are stored in private object storage and scheduled for automatic deletion after 24 hours." },
+    { "question": "Can I remove any watermark?", "answer": "Only edit images you own or have permission to modify. Some protected or complex marks may require manual editing." }
+  ]
+}

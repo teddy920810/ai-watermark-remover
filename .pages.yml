@@ -1,0 +1,116 @@
+media:
+  input: public/uploads
+  output: /uploads
+
+content:
+  - name: blog
+    label: Blog posts
+    type: collection
+    path: src/content/blog
+    format: yaml-frontmatter
+    filename: "{fields.slug}.md"
+    view:
+      fields: [title, publishedAt, readTime]
+      primary: title
+      sort: [publishedAt, title]
+      search: [title, description]
+      default:
+        sort: publishedAt
+        order: desc
+    fields:
+      - name: slug
+        label: URL slug
+        type: string
+        required: true
+        pattern:
+          regex: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          message: Use lowercase letters, numbers, and hyphens only.
+      - name: title
+        label: Title
+        type: string
+        required: true
+      - name: description
+        label: SEO description
+        type: text
+        required: true
+        options:
+          maxlength: 180
+      - name: publishedAt
+        label: Publish date
+        type: date
+        required: true
+        options:
+          format: yyyy-MM-dd
+      - name: readTime
+        label: Reading time
+        type: string
+        required: true
+        default: 5 min read
+      - name: body
+        label: Article body
+        type: rich-text
+        required: true
+
+  - name: landing-pages
+    label: Tool landing pages
+    type: collection
+    path: src/content/landing-pages
+    format: json
+    filename: "{fields.slug}.json"
+    view:
+      fields: [title, slug]
+      primary: title
+      sort: [title]
+      search: [title, slug, description]
+    fields:
+      - name: slug
+        label: URL slug
+        type: string
+        required: true
+        pattern:
+          regex: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          message: Use lowercase letters, numbers, and hyphens only.
+      - name: title
+        label: SEO title
+        type: string
+        required: true
+      - name: description
+        label: SEO description
+        type: text
+        required: true
+        options:
+          maxlength: 180
+      - name: eyebrow
+        label: Small heading
+        type: string
+        required: true
+      - name: heading
+        label: Main heading
+        type: string
+        required: true
+      - name: intro
+        label: Introduction
+        type: text
+        required: true
+      - name: benefits
+        label: Benefits
+        type: string
+        list:
+          min: 1
+      - name: faq
+        label: Frequently asked questions
+        type: object
+        list:
+          min: 1
+          collapsible:
+            collapsed: true
+            summary: "{question}"
+        fields:
+          - name: question
+            label: Question
+            type: string
+            required: true
+          - name: answer
+            label: Answer
+            type: text
+            required: true

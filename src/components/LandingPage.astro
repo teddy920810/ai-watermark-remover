@@ -1,0 +1,42 @@
+---
+import ImageUploader from './uploader/ImageUploader';
+import SiteLayout from '../layouts/SiteLayout.astro';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props { page: CollectionEntry<'landingPages'>['data'] }
+const { page } = Astro.props;
+const faqSchema = {
+  '@type': 'FAQPage',
+  mainEntity: page.faq.map((item) => ({
+    '@type': 'Question',
+    name: item.question,
+    acceptedAnswer: { '@type': 'Answer', text: item.answer },
+  })),
+};
+---
+
+<SiteLayout title={page.title} description={page.description} schema={faqSchema}>
+  <section class="hero compact-hero">
+    <div class="hero-copy">
+      <span class="eyebrow">{page.eyebrow}</span>
+      <h1>{page.heading}</h1>
+      <p>{page.intro}</p>
+      <ul class="check-list">{page.benefits.map((benefit) => <li>{benefit}</li>)}</ul>
+    </div>
+    <div id="tool" class="hero-tool"><ImageUploader client:load /></div>
+  </section>
+
+  <section class="section process-section" id="how-it-works">
+    <div class="section-heading"><span class="eyebrow">Three simple steps</span><h2>From upload to clean result</h2></div>
+    <div class="steps">
+      <article><span>01</span><h3>Choose your image</h3><p>Select one JPG, PNG, or WEBP file up to 10 MB.</p></article>
+      <article><span>02</span><h3>Process securely</h3><p>Your image is uploaded directly to private object storage.</p></article>
+      <article><span>03</span><h3>Review and download</h3><p>Compare the result and download it through a temporary link.</p></article>
+    </div>
+  </section>
+
+  <section class="section faq-section">
+    <div class="section-heading"><span class="eyebrow">Common questions</span><h2>Good to know before uploading</h2></div>
+    <div class="faq-list">{page.faq.map((item) => <details><summary>{item.question}<span>+</span></summary><p>{item.answer}</p></details>)}</div>
+  </section>
+</SiteLayout>

@@ -1,0 +1,14 @@
+{
+  "slug": "ai-watermark-remover",
+  "title": "AI Watermark Remover for Images Online",
+  "description": "Use an AI-ready workflow to remove visible image watermarks online while keeping files private.",
+  "eyebrow": "AI-ready image cleanup",
+  "heading": "A faster way to clean watermarks from images",
+  "intro": "Built for a focused task: upload, process, review, and download. Provider-independent architecture keeps quality improvements easy to ship.",
+  "benefits": ["Focused one-image workflow", "Provider-independent processing", "No signup for the MVP"],
+  "faq": [
+    { "question": "What image formats are supported?", "answer": "You can upload JPG, PNG, and WEBP images up to 10 MB." },
+    { "question": "Are my images kept private?", "answer": "Files are stored in private object storage and scheduled for automatic deletion after 24 hours." },
+    { "question": "Can I remove any watermark?", "answer": "Only edit images you own or have permission to modify. Some protected or complex marks may require manual editing." }
+  ]
+}

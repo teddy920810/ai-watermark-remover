@@ -1,0 +1,18 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+
+export const prerender = true;
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((post) => ({ params: { slug: post.data.slug }, props: { post } }));
+}
+interface Props { post: CollectionEntry<'blog'> }
+const { post } = Astro.props;
+const { Content } = await render(post);
+const schema = { '@type': 'Article', headline: post.data.title, description: post.data.description, datePublished: post.data.publishedAt, author: { '@type': 'Organization', name: 'ClearMark AI' } };
+---
+<SiteLayout title={`${post.data.title} | ClearMark AI`} description={post.data.description} type="article" schema={schema}>
+  <header class="article-header"><div class="article-meta">{post.data.publishedAt} · {post.data.readTime}</div><h1>{post.data.title}</h1><p>{post.data.description}</p></header>
+  <article class="article-body"><Content /></article>
+</SiteLayout>

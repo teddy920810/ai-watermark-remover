@@ -1,0 +1,12 @@
+---
+import LandingPage from '../components/LandingPage.astro';
+import { getCollection } from 'astro:content';
+
+export const prerender = true;
+export async function getStaticPaths() {
+  const pages = await getCollection('landingPages');
+  return pages.map(({ data: page }) => ({ params: { slug: page.slug }, props: { page } }));
+}
+const { page } = Astro.props;
+---
+<LandingPage page={page} />

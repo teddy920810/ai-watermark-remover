@@ -1,0 +1,8 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+export const prerender = true;
+---
+<SiteLayout title="Privacy Policy | ClearMark AI" description="How ClearMark AI handles uploaded images and temporary processing data.">
+  <header class="legal-page"><span class="eyebrow">Privacy</span><h1>A short, understandable privacy policy</h1></header>
+  <article class="legal-body"><p>ClearMark AI processes the image you choose to upload so it can return a result. Images are stored in private object storage rather than exposed through permanent public URLs.</p><h2>Retention</h2><p>Uploads, results, and processing records are designed to expire after 24 hours. Temporary signed access links expire sooner.</p><h2>Accounts and analytics</h2><p>The MVP does not require an account and does not intentionally store personal profile data. Basic hosting logs may be processed for security and reliability.</p><h2>Your choices</h2><p>Do not upload confidential images or images you are not authorized to edit. You may close the page before uploading to keep the file on your device.</p></article>
+</SiteLayout>

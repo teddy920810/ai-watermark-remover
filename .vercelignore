@@ -1,0 +1,15 @@
+S3-info.txt
+.env
+.env.*
+.tools/
+node_modules/
+dist/
+.astro/
+.vercel/
+.playwright-cli/
+output/
+coverage/
+playwright-report/
+test-results/
+*.log
+

@@ -1,0 +1,14 @@
+{
+  "slug": "remove-logo-from-image",
+  "title": "Remove a Logo from an Image Online",
+  "description": "Remove an unwanted logo from an image you own or are authorized to edit. Supports JPG, PNG, and WEBP.",
+  "eyebrow": "Logo cleanup tool",
+  "heading": "Remove distracting logos from your images",
+  "intro": "Clean product shots, presentation assets, and personal images with a streamlined browser-based workflow.",
+  "benefits": ["Useful for product imagery", "Preserves the original upload", "Download when ready"],
+  "faq": [
+    { "question": "What image formats are supported?", "answer": "You can upload JPG, PNG, and WEBP images up to 10 MB." },
+    { "question": "Are my images kept private?", "answer": "Files are stored in private object storage and scheduled for automatic deletion after 24 hours." },
+    { "question": "Can I remove any watermark?", "answer": "Only edit images you own or have permission to modify. Some protected or complex marks may require manual editing." }
+  ]
+}

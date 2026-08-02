@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.astro/
+.vercel/
+.env
+.env.*
+!.env.example
+S3-info.txt
+coverage/
+playwright-report/
+test-results/
+output/playwright/*.png
+.playwright-cli/
+.tools/
+*.log
