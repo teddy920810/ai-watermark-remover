@@ -1,5 +1,6 @@
 {
   "framework": "astro",
+  "buildCommand": "npm run verify:deploy",
   "headers": [
     {
       "source": "/(.*)",

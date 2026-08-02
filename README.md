@@ -69,12 +69,15 @@ R2 Bucket 为 `watermark`，必须保持私有。`uploads/`、`results/`、`jobs
 npm run verify
 ```
 
-它会依次执行测试、代码检查和生产构建。不要提交 `.env.local`、R2 密钥、`S3-info.txt`、构建输出或本地测试截图。
+它会依次执行覆盖率测试、代码检查、生产构建和 Chromium E2E。首次在本机运行 E2E 前执行 `npx playwright install chromium`。生产环境真实链路使用 `npm run test:smoke:production`，该命令会向 R2 写入无敏感的 1×1 测试图片并由生命周期自动清理，不能在不知情的情况下反复运行。
+
+测试分层、CI、失败处理和共创者操作说明见 [测试与质量指南](docs/TESTING_GUIDE.md)。不要提交 `.env.local`、R2 密钥、`S3-info.txt`、构建输出或本地测试截图。
 
 ## 文档索引
 
 - [Pages CMS 中文操作教程](docs/PAGES_CMS_GUIDE.md)
 - [开发者指南](docs/DEVELOPER_GUIDE.md)
 - [运维手册](docs/OPERATIONS_RUNBOOK.md)
+- [测试与质量指南](docs/TESTING_GUIDE.md)
 - [贡献指南](CONTRIBUTING.md)
 - [产品 PRD 与技术方案](docs/product/AI_Watermark_Remover_MVP_PRD_Technical_Solution.md)

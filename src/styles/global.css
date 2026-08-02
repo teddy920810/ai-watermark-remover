@@ -2,7 +2,7 @@
 
 :root {
   --ink: #172321;
-  --muted: #61706c;
+  --muted: #56645f;
   --paper: #f7f5ef;
   --card: #fffdf8;
   --line: #dce1da;
@@ -54,7 +54,7 @@ img { display: block; max-width: 100%; }
 .upload-icon { width: 48px; height: 48px; margin-bottom: 13px; display: grid; place-items: center; border-radius: 50%; color: #fff; background: var(--green); font-size: 1.45rem; }
 .drop-zone strong { font-size: 1rem; }
 .drop-zone > span:not(.upload-icon) { color: var(--green); font-size: .85rem; }
-.drop-zone small { margin-top: 13px; color: #78827f; font-size: .72rem; }
+.drop-zone small { margin-top: 13px; color: #5f6a66; font-size: .72rem; }
 .privacy-note { margin: 15px 0 0; color: #7a8581; font-size: .72rem; text-align: center; }
 .privacy-note span { color: var(--green); }
 .error-message { margin: 10px 0; padding: 10px 12px; border-radius: 9px; color: var(--red); background: #fff0ed; font-size: .82rem; }

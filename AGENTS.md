@@ -7,7 +7,8 @@
 - Keep watermark processing behind the `WatermarkProvider` interface.
 - Do not commit `S3-info.txt`, `.env`, or `.env.*` files.
 - Write or update tests before implementing behavior changes.
-- Before handing off changes, run `npm test`, `npm run lint`, and `npm run build`.
+- Before handing off changes, run `npm run verify`; it includes coverage, lint, build, and browser E2E.
+- Run `npm run test:smoke:production` after production environment, domain, R2, CORS, or deployment changes. It writes temporary objects to the real bucket, so do not run it speculatively or in a loop.
 
 ## Third-party integration contract rules
 

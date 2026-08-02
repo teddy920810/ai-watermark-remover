@@ -21,6 +21,17 @@ Pages CMS 会直接向 `main` 写入内容提交。因此长时间开发期间�
 npm run verify
 ```
 
+`verify` 包含覆盖率、Lint、生产构建和浏览器 E2E。首次运行浏览器测试前执行 `npx playwright install chromium`。只改文案也必须至少运行 `npm run verify`，因为内容 schema、SEO 路由和 Pages CMS 数据可能导致构建失败。
+
+测试职责：
+
+- 纯函数和服务规则：Vitest 单元测试。
+- API、环境变量和安全错误：Vitest 集成测试。
+- 上传 UI、GA `page_view`、SEO 和无障碍：Playwright E2E。
+- 正式域名与真实 R2：`npm run test:smoke:production`，仅在运维检查或部署后运行。
+
+完整说明见 `docs/TESTING_GUIDE.md`。
+
 提交应聚焦单一目标，说明用户可见影响。不要绕过类型检查、测试或安全约束。改动内容模型时必须同步更新 `src/content.config.ts`、`.pages.yml` 和 Pages CMS 教程。
 
 ## 第三方集成代码规则

@@ -9,8 +9,8 @@ const schema = z.object({
   MOCK_PROCESSING_DELAY_MS: z.coerce.number().int().min(0).max(5000).default(0),
 });
 
-export function getServerEnv() {
-  const env = schema.parse(process.env);
+export function getServerEnv(source: NodeJS.ProcessEnv = process.env) {
+  const env = schema.parse(source);
   const endpoint = env.R2_ENDPOINT ?? `https://${env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`;
   if (!env.R2_ENDPOINT && !env.R2_ACCOUNT_ID) throw new Error('R2_ENDPOINT or R2_ACCOUNT_ID is required');
   return { ...env, R2_ENDPOINT: endpoint };

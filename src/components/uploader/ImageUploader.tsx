@@ -43,7 +43,7 @@ export default function ImageUploader() {
     if (nextFile) selectFile(nextFile);
   }
 
-  function onDrop(event: DragEvent<HTMLDivElement>) {
+  function onDrop(event: DragEvent<HTMLLabelElement>) {
     event.preventDefault();
     setDragging(false);
     const nextFile = event.dataTransfer.files?.[0];
@@ -104,23 +104,19 @@ export default function ImageUploader() {
       </div>
 
       {state.phase === 'idle' || state.phase === 'error' ? (
-        <div
+        <label
           className={`drop-zone ${dragging ? 'is-dragging' : ''}`}
           onDragEnter={(event) => { event.preventDefault(); setDragging(true); }}
           onDragOver={(event) => event.preventDefault()}
           onDragLeave={() => setDragging(false)}
           onDrop={onDrop}
-          onClick={() => inputRef.current?.click()}
-          onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') inputRef.current?.click(); }}
-          role="button"
-          tabIndex={0}
         >
           <span className="upload-icon" aria-hidden="true">↑</span>
           <strong>Drop your image here</strong>
           <span>or click to browse</span>
           <small>JPG, PNG or WEBP · up to {MAX_UPLOAD_BYTES / 1024 / 1024} MB</small>
-          <input ref={inputRef} className="sr-only" type="file" accept="image/jpeg,image/png,image/webp" onChange={onInput} />
-        </div>
+          <input ref={inputRef} className="sr-only" type="file" accept="image/jpeg,image/png,image/webp" aria-label="Choose image to upload" onChange={onInput} />
+        </label>
       ) : null}
 
       {state.message ? <p className="error-message" role="alert">{state.message}</p> : null}

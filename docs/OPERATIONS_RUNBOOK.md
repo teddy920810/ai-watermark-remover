@@ -28,6 +28,14 @@ Git 页面应保持仓库连接到 `main`；域名页面应确保根域名为 Pr
 4. 检查上传流程、`/robots.txt`、`/sitemap.xml`。
 5. 在 GA Realtime 确认访问事件；新站点数据可能延迟。
 
+部署后运行：
+
+```sh
+npm run test:smoke:production
+```
+
+该命令通过正式域名完成预签名、R2 PUT、创建任务、查询结果和下载验证。它不会输出签名 URL 或对象 Key，但会写入一个 1×1 PNG、结果对象和任务记录；这些对象依赖 R2 的 24 小时生命周期自动清理。Smoke 失败时不要连续重试，先检查 Vercel Environment Variables 的 Production 作用域、R2 CORS、凭据和 Function Logs。
+
 ## 常见故障
 
 ### Pages CMS 日期导致构建失败
