@@ -15,11 +15,11 @@ export class JobService {
     private readonly createId: () => string = () => crypto.randomUUID(),
   ) {}
 
-  async create(inputKey: string): Promise<Job> {
+  async create(inputKey: string, ownerId: string): Promise<Job> {
     if (!isUploadKey(inputKey)) throw new Error('Invalid upload key');
     if (!(await this.dependencies.objects.exists(inputKey))) throw new Error('Upload not found');
 
-    let job = createJob(this.createId(), inputKey);
+    let job = createJob(this.createId(), inputKey, ownerId);
     await this.dependencies.jobStore.save(job);
 
     try {

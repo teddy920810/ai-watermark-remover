@@ -10,7 +10,9 @@
 
 ## Vercel 必要配置
 
-Production 环境至少配置 `SITE_URL=https://watermarkgemini.com` 和所有 `R2_*` 变量。Preview/Development 如需上传功能，也应单独配置对应变量。密钥变更后需要重新部署才能生效。
+Production 环境至少配置 `SITE_URL=https://watermarkgemini.com`、所有 `R2_*` 变量、`GOOGLE_CLIENT_ID`、`GOOGLE_CLIENT_SECRET`、`BETTER_AUTH_SECRET` 和 `BETTER_AUTH_URL=https://watermarkgemini.com`。Preview/Development 如需上传或登录功能，也应单独配置对应变量。密钥变更后需要重新部署才能生效。
+
+Google Cloud OAuth Web Client 必须包含正式回调 `https://watermarkgemini.com/api/auth/callback/google`。如保留 `www` 入口，可同时登记 `https://www.watermarkgemini.com/api/auth/callback/google`，但站点仍应 308 统一到根域名。OAuth 修改部署后必须使用真实测试用户完成一次登录、确认回调成功、会话建立、退出登录和处理任务；仅检查按钮或接口 200 不代表集成完成。
 
 Git 页面应保持仓库连接到 `main`；域名页面应确保根域名为 Production，`www` 以 308 重定向到根域名。正常情况下 Vercel 自动管理 HTTPS 证书。
 

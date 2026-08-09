@@ -1,18 +1,22 @@
 import type { APIRoute } from 'astro';
+import { getSession } from '../../../lib/auth';
 import { publicApiError } from '../../../lib/api/error';
 import { json } from '../../../lib/api/response';
 import { getServices } from '../../../lib/services';
 
 export const prerender = false;
 
-export const GET: APIRoute = async ({ params }) => {
+export const GET: APIRoute = async ({ params, request }) => {
+  const session = await getSession(request);
+  if (!session?.user.id) return json({ error: 'Authentication required.' }, { status: 401 });
+
   const id = params.id;
   if (!id || !/^[0-9a-f-]{36}$/i.test(id)) return json({ error: 'Invalid job ID' }, { status: 400 });
 
   try {
     const services = getServices();
     const job = await services.jobs.get(id);
-    if (!job) return json({ error: 'Job not found' }, { status: 404 });
+    if (!job || job.ownerId !== session.user.id) return json({ error: 'Job not found' }, { status: 404 });
 
     if (job.status === 'completed' && job.resultKey) {
       const [resultUrl, downloadUrl] = await Promise.all([

@@ -15,6 +15,11 @@ async function chooseTestImage(page: import('@playwright/test').Page) {
 }
 
 test('uploads, processes, and exposes a download through the UI', async ({ page }) => {
+  await page.route('**/api/auth/get-session', (route) => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify({ user: { id: 'google-user-1', name: 'Test User', email: 'test@example.com' }, session: { id: 'session-1' } }),
+  }));
   await page.route('**/api/upload-url', (route) => route.fulfill({
     status: 200,
     contentType: 'application/json',
@@ -45,6 +50,11 @@ test('uploads, processes, and exposes a download through the UI', async ({ page 
 });
 
 test('shows a safe message when the upload service is unavailable', async ({ page }) => {
+  await page.route('**/api/auth/get-session', (route) => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify({ user: { id: 'google-user-1', name: 'Test User', email: 'test@example.com' }, session: { id: 'session-1' } }),
+  }));
   await page.route('**/api/upload-url', (route) => route.fulfill({
     status: 503,
     contentType: 'application/json',
@@ -58,4 +68,26 @@ test('shows a safe message when the upload service is unavailable', async ({ pag
   const alert = page.getByRole('alert');
   await expect(alert).toHaveText('Upload service is temporarily unavailable.');
   await expect(alert).not.toContainText('R2_SECRET_ACCESS_KEY');
+});
+
+test('keeps selection anonymous and asks for Google sign-in only when processing', async ({ page }) => {
+  let uploadRequested = false;
+  await page.route('**/api/auth/get-session', (route) => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: 'null',
+  }));
+  await page.route('**/api/upload-url', (route) => {
+    uploadRequested = true;
+    return route.abort();
+  });
+
+  await page.goto('/');
+  await expect(page.getByRole('button', { name: 'Sign in with Google' })).toBeVisible();
+  await chooseTestImage(page);
+  await page.getByRole('button', { name: 'Remove watermark' }).click();
+
+  await expect(page.getByRole('dialog', { name: 'Sign in to start processing' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Continue with Google' })).toBeVisible();
+  expect(uploadRequested).toBe(false);
 });

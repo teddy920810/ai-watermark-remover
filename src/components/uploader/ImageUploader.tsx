@@ -1,4 +1,5 @@
-import { useEffect, useReducer, useRef, useState, type ChangeEvent, type DragEvent } from 'react';
+import { useCallback, useEffect, useReducer, useRef, useState, type ChangeEvent, type DragEvent } from 'react';
+import { authClient } from '../auth/auth-client';
 import { putFileWithRetry } from '../../lib/upload/direct-upload';
 import { MAX_UPLOAD_BYTES, validateUploadMetadata } from '../../lib/upload/validation';
 import { initialUploadState, uploadReducer } from './upload-machine';
@@ -17,9 +18,12 @@ function wait(ms: number) {
 }
 
 export default function ImageUploader() {
+  const { data: session, isPending: sessionPending, refetch: refetchSession } = authClient.useSession();
   const [state, dispatch] = useReducer(uploadReducer, initialUploadState);
   const [file, setFile] = useState<File | null>(null);
   const [dragging, setDragging] = useState(false);
+  const [showLogin, setShowLogin] = useState(false);
+  const [loginPending, setLoginPending] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -50,7 +54,7 @@ export default function ImageUploader() {
     if (nextFile) selectFile(nextFile);
   }
 
-  async function start() {
+  const uploadAndProcess = useCallback(async () => {
     if (!file) return;
     try {
       dispatch({ type: 'upload' });
@@ -83,6 +87,62 @@ export default function ImageUploader() {
     } catch (error) {
       dispatch({ type: 'error', message: error instanceof Error ? error.message : 'Something went wrong.' });
     }
+  }, [file]);
+
+  useEffect(() => {
+    async function handleAuthComplete(event: MessageEvent) {
+      if (event.origin !== window.location.origin || event.data?.type !== 'clearmark-auth-complete') return;
+      const refreshed = await authClient.getSession();
+      if (!refreshed.data?.user) {
+        dispatch({ type: 'error', message: 'Google sign-in could not be confirmed. Please try again.' });
+        return;
+      }
+      await refetchSession();
+      setShowLogin(false);
+      setLoginPending(false);
+      await uploadAndProcess();
+    }
+
+    window.addEventListener('message', handleAuthComplete);
+    return () => window.removeEventListener('message', handleAuthComplete);
+  }, [refetchSession, uploadAndProcess]);
+
+  function start() {
+    if (!file || sessionPending) return;
+    if (!session?.user) {
+      setShowLogin(true);
+      return;
+    }
+    void uploadAndProcess();
+  }
+
+  async function continueWithGoogle() {
+    const popup = window.open(
+      'about:blank',
+      'clearmark-google-auth',
+      'popup=yes,width=520,height=680,left=240,top=80',
+    );
+    if (!popup) {
+      dispatch({ type: 'error', message: 'Please allow popups for this site, then try Google sign-in again.' });
+      setShowLogin(false);
+      return;
+    }
+
+    setLoginPending(true);
+    const result = await authClient.signIn.social({
+      provider: 'google',
+      callbackURL: `${window.location.origin}/auth/popup`,
+      disableRedirect: true,
+    });
+
+    if (result.error || !result.data?.url) {
+      popup.close();
+      setLoginPending(false);
+      dispatch({ type: 'error', message: 'Unable to start Google sign-in. Please try again.' });
+      return;
+    }
+
+    popup.location.href = result.data.url;
   }
 
   function reset() {
@@ -146,6 +206,22 @@ export default function ImageUploader() {
             <a className="button button-primary" href={state.downloadUrl}>Download result</a>
             <button className="button button-ghost" type="button" onClick={reset}>Process another</button>
           </div>
+        </div>
+      ) : null}
+
+      {showLogin ? (
+        <div className="auth-modal-backdrop">
+          <section className="auth-modal" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title">
+            <button className="auth-modal-close" type="button" onClick={() => setShowLogin(false)} aria-label="Close sign-in dialog">×</button>
+            <span className="brand-mark" aria-hidden="true">C</span>
+            <h3 id="auth-modal-title">Sign in to start processing</h3>
+            <p>Your selected image will stay on this page. Processing starts automatically after Google sign-in.</p>
+            <button className="button button-primary auth-google-button" type="button" onClick={continueWithGoogle} disabled={loginPending}>
+              <span className="google-mark">G</span>
+              {loginPending ? 'Connecting to Google…' : 'Continue with Google'}
+            </button>
+            <button className="button button-ghost" type="button" onClick={() => setShowLogin(false)}>Not now</button>
+          </section>
         </div>
       ) : null}
 

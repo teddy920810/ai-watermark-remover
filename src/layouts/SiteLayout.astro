@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import AuthControls from '../components/auth/AuthControls';
 import { site } from '../data/site';
 
 interface Props {
@@ -68,7 +69,7 @@ const schemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [defaultS
         <a href="/blog">Guides</a>
         <a href="/#how-it-works">How it works</a>
       </nav>
-      <a class="header-cta" href="/#tool">Try it free <span>→</span></a>
+      <AuthControls client:load />
     </header>
     <main><slot /></main>
     <footer class="site-footer">

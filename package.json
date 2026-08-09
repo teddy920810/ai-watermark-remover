@@ -16,6 +16,7 @@
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
     "test:smoke:production": "node scripts/production-smoke.mjs",
+    "auth:import": "node scripts/import-google-credentials.mjs",
     "verify:deploy": "npm run test:coverage && npm run lint && npm run build",
     "verify": "npm run test:coverage && npm run lint && npm run build && npm run test:e2e"
   },
@@ -27,6 +28,7 @@
     "@aws-sdk/s3-request-presigner": "^3.864.0",
     "@tailwindcss/vite": "^4.3.3",
     "astro": "^7.1.6",
+    "better-auth": "^1.6.26",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "tailwindcss": "^4.3.3",
@@ -48,6 +50,7 @@
     "yaml": "^2.9.0"
   },
   "overrides": {
-    "path-to-regexp": "6.3.0"
+    "path-to-regexp": "6.3.0",
+    "nanoid": "3.3.18"
   }
 }
