@@ -51,7 +51,7 @@ Pages CMS 的详细字段说明见 `docs/PAGES_CMS_GUIDE.md`。
 
 ## 5. 上线前验收
 
-执行 `npm run verify`，确认 GitHub CI 通过，再检查桌面端和移动端、登录回调、上传流程、法律内容、404、Canonical、robots.txt、sitemap.xml 和 GA 收数。最后把根域名 308 重定向到选定的唯一规范域名。
+先执行 `npm run site:validate`，它会检查域名一致性、缺失图片、GitHub blob 图片地址、无效站内链接、重复 URL 和保留路由冲突。再执行 `npm run verify`，确认 GitHub CI 通过；浏览器验收会覆盖 sitemap 中的全部公开页面和 404。随后检查桌面端和移动端、登录回调、上传流程、法律内容、Canonical、robots.txt、sitemap.xml 和 GA 收数，最后把根域名 308 重定向到选定的唯一规范域名。
 
 ## WatermarkGemini 是否会被保留
 

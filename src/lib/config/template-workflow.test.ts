@@ -16,4 +16,10 @@ describe('reusable fork workflow', () => {
     expect(guide).toContain('--apply');
     expect(guide).toContain('Pages CMS');
   });
+
+  it('runs reusable-site validation in the deployment quality gate', () => {
+    const packageJson = JSON.parse(readProjectFile('package.json')) as { scripts: Record<string, string> };
+    expect(packageJson.scripts['site:validate']).toBe('node scripts/validate-site.mjs');
+    expect(packageJson.scripts['verify:deploy']).toContain('npm run site:validate');
+  });
 });

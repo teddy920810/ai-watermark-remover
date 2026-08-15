@@ -32,11 +32,22 @@ test('mobile visitors can open navigation and a dropdown', async ({ page }) => {
   await expect(page.getByRole('link', { name: 'Remove text from image' })).toBeVisible();
 });
 
-test('home page has no serious accessibility violations', async ({ page }) => {
-  await page.goto('/', { waitUntil: 'networkidle' });
-  await expect(page.locator('main')).toBeVisible();
-  const results = await new AxeBuilder({ page }).analyze();
-  expect(results.violations.filter((violation) => ['serious', 'critical'].includes(violation.impact ?? ''))).toEqual([]);
+test('all public content routes and 404 have one H1 and no serious accessibility violations', async ({ page, request }) => {
+  const sitemap = await (await request.get('/sitemap.xml')).text();
+  const routes = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => new URL(match[1]).pathname);
+  routes.push('/missing-page-for-404-check');
+
+  for (const route of routes) {
+    const response = await page.goto(route, { waitUntil: 'networkidle' });
+    expect(response?.status(), `${route} should return its expected status`).toBe(route.includes('missing-page') ? 404 : 200);
+    await expect(page.locator('main')).toBeVisible();
+    await expect(page.locator('main h1'), `${route} should have exactly one content H1`).toHaveCount(1);
+    const results = await new AxeBuilder({ page }).analyze();
+    expect(
+      results.violations.filter((violation) => ['serious', 'critical'].includes(violation.impact ?? '')),
+      `${route} should have no serious accessibility violations`,
+    ).toEqual([]);
+  }
 });
 
 test('Google tag emits a page_view collection request', async ({ page }) => {
