@@ -47,13 +47,8 @@ describe('Pages CMS maintenance safeguards', () => {
     }
   });
 
-  it('exposes sitemap.xml as a Pages CMS code file', () => {
-    expect(config.content.find((entry) => entry.name === 'sitemap')).toMatchObject({
-      label: '站点地图 / Sitemap.xml',
-      type: 'file',
-      path: 'public/sitemap.xml',
-      format: 'code',
-    });
+  it('keeps sitemap generation automatic instead of exposing raw XML', () => {
+    expect(config.content.find((entry) => entry.name === 'sitemap')).toBeUndefined();
   });
 
   it('explains rendered HTML semantics in operator-facing labels', () => {
@@ -159,3 +154,4 @@ describe('Pages CMS maintenance safeguards', () => {
     expect(legalPages?.operations).toEqual({ create: false, rename: false, delete: false });
   });
 });
+

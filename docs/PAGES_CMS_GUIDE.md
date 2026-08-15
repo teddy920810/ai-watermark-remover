@@ -8,7 +8,7 @@ Pages CMS 是本项目的内容后台。它直接读写 GitHub 中的内容文�
 2. 使用已获得仓库权限的 GitHub 账号登录并授权 Pages CMS。
 3. 选择仓库 `teddy920810/ai-watermark-remover`。
 4. 确认分支是 `main`。
-5. 左侧会显示站点设置、首页、博客列表设置、博客文章、落地页公共模块、工具落地页、法律页面、404 页面、站点地图和静态图片。
+5. 左侧会显示站点设置、首页、博客列表设置、博客文章、落地页公共模块、工具落地页、法律页面、404 页面和静态图片。
 
 若看不到仓库，请让管理员在 GitHub 为该账号添加仓库权限，或检查 Pages CMS GitHub App 是否已获准访问该仓库。
 
@@ -104,9 +104,9 @@ Header 的每个导航项可以选择两种效果：
 
 法律内容发布前必须经过负责人审核，尤其是数据保留时间、账号说明、Analytics 和服务能力描述。
 
-## 8. 修改 sitemap.xml
+## 8. 检查 sitemap.xml
 
-进入 **站点地图 / Sitemap.xml** 可直接编辑 XML。只添加正式、可公开访问的绝对 URL，并保持 XML 标签完整。删除博客或落地页后，也应删除对应 `<url>...</url>` 项；保存后访问 `https://watermarkgemini.com/sitemap.xml` 检查结果。
+`sitemap.xml` 会在每次构建时根据首页、法律页、已发布博客和工具落地页自动生成，不需要运营人员手工编辑。新增或删除内容后，等待部署完成并访问 `https://www.watermarkgemini.com/sitemap.xml` 检查即可；草稿文章不会进入站点地图。
 
 ## 9. 管理静态图片
 
@@ -153,3 +153,4 @@ Pages CMS 保存后，GitHub Actions 会执行自动质量检查，Vercel 构建
 - Vercel 状态为 Ready，正式域名页面已核对。
 
 Pages CMS 官方说明见 [pagescms.org/docs](https://pagescms.org/docs/)。
+

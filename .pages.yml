@@ -151,12 +151,6 @@ content:
                 required: true
                 description: 链接目标；站内链接使用以 / 开头的路径。
 
-  - name: sitemap
-    label: 站点地图 / Sitemap.xml
-    type: file
-    path: public/sitemap.xml
-    format: code
-
   - name: blog-index
     label: 博客列表设置 / Blog index
     type: file
@@ -727,3 +721,4 @@ content:
             type: text
             required: true
             description: FAQ 展开后的普通回答段落。
+

@@ -14,6 +14,7 @@ describe('site settings CMS content', () => {
   it('contains editable header navigation and footer links', () => {
     const parsed = siteSettingsSchema.parse(settings);
     expect(parsed.logo).toBe('/uploads/watermarkgemini-logo.svg');
+    expect(parsed.defaultShareImage).toBe('/uploads/og-card.svg');
     expect(parsed.header.navigation.length).toBeGreaterThan(0);
     expect(parsed.footer.links.length).toBeGreaterThan(0);
     expect(parsed.announcement.enabled).toBe(false);
@@ -30,3 +31,4 @@ describe('site settings CMS content', () => {
     expect(parsed.header.navigation[0].children).toHaveLength(2);
   });
 });
+

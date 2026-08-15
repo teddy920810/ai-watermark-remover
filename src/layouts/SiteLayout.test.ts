@@ -38,4 +38,20 @@ describe('SiteLayout Google Analytics integration', () => {
     expect(uploaderSource).toContain('<img className="brand-logo auth-logo"');
     expect(popupSource).toContain('<img class="brand-logo"');
   });
+
+  it('provides an accessible mobile navigation toggle and dropdown state', () => {
+    expect(layoutSource).toContain('data-mobile-menu-toggle');
+    expect(layoutSource).toContain('aria-controls="site-navigation"');
+    expect(layoutSource).toContain('aria-expanded="false"');
+    expect(layoutSource).toContain('data-nav-dropdown-trigger');
+    expect(layoutSource).toContain("event.key === 'Escape'");
+    expect(globalCss).toContain('.site-header.is-menu-open nav');
+    expect(globalCss).toContain('.nav-dropdown.is-open .nav-dropdown-panel');
+  });
+
+  it('lets the browser infer the CMS favicon media type', () => {
+    expect(layoutSource).toContain('<link rel="icon" href={site.favicon} />');
+    expect(layoutSource).not.toContain('type="image/svg+xml"');
+  });
 });
+
