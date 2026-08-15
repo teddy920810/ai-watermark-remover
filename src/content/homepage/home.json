@@ -1,30 +1,34 @@
 {
-  "title": "AI Watermark Remover — Remove Watermarks Online",
-  "description": "Remove visible watermarks, logos, and text from images online. Fast, private, and easy to use.",
+  "title": "Free AI Watermark Remover – Remove Watermarks from Images",
+  "description": "Remove watermarks, logos, and text from images with a free AI watermark remover. Upload JPG, PNG, or WEBP files online and download clean images for free.",
   "shareImage": "/uploads/og-card.svg",
   "hero": {
     "eyebrow": "Fast · private · effortless",
-    "heading": "Clean images.",
-    "highlightedHeading": "Keep the focus.",
-    "intro": "Remove visible watermarks, logos, and text from images with a focused workflow that respects your privacy.",
-    "trustItems": ["✓ No signup", "✓ Up to 10 MB", "✓ Deleted after 24h"]
+    "heading": "Free AI Watermark Remover",
+    "highlightedHeading": " for Images",
+    "intro": "Remove a watermark from any image online for free. Our AI watermark remover cleans up visible watermarks, logos, text, and stamps while preserving the surrounding image details.",
+    "trustItems": [
+      "✓ No signup",
+      "✓ Up to 10 MB",
+      "✓ Deleted after 24h"
+    ]
   },
   "useCases": [
     {
       "icon": "◎",
-      "title": "Remove logos",
+      "title": "Remove logo from image",
       "description": "Clean product and brand images",
       "href": "/remove-logo-from-image"
     },
     {
       "icon": "T",
-      "title": "Remove text",
+      "title": "Remove text from image",
       "description": "Erase unwanted text overlays",
       "href": "/remove-text-from-image"
     },
     {
       "icon": "✦",
-      "title": "Gemini marks",
+      "title": "Remove Gemini watermark",
       "description": "Clean visible AI labels",
       "href": "/remove-gemini-watermark"
     }
