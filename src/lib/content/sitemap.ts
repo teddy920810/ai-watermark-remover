@@ -32,13 +32,13 @@ export function buildSitemapEntries({
 }): SitemapEntry[] {
   const entries: SitemapEntry[] = [
     withRule('/', settings.lastmod, settings.groups.homepage),
-    withRule('/blog/', settings.lastmod, settings.groups.blogIndex),
-    withRule('/privacy/', settings.lastmod, settings.groups.legalPages),
-    withRule('/terms/', settings.lastmod, settings.groups.legalPages),
+    withRule('/blog', settings.lastmod, settings.groups.blogIndex),
+    withRule('/privacy', settings.lastmod, settings.groups.legalPages),
+    withRule('/terms', settings.lastmod, settings.groups.legalPages),
     ...posts
       .filter((post) => !post.draft)
-      .map((post) => withRule(`/blog/${post.slug}/`, post.publishedAt, settings.groups.blogPosts)),
-    ...landingPages.map((page) => withRule(`/${page.slug}/`, settings.lastmod, settings.groups.landingPages)),
+      .map((post) => withRule(`/blog/${post.slug}`, post.publishedAt, settings.groups.blogPosts)),
+    ...landingPages.map((page) => withRule(`/${page.slug}`, settings.lastmod, settings.groups.landingPages)),
   ];
 
   const overrides = new Map(settings.overrides.map((override) => [override.path, override]));

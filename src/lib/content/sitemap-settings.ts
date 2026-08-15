@@ -27,7 +27,7 @@ export const sitemapSettingsSchema = z.object({
     legalPages: sitemapRuleSchema,
   }),
   overrides: z.array(z.object({
-    path: z.string().regex(/^\/(?:[a-z0-9]+(?:-[a-z0-9]+)*\/)*$/),
+    path: z.string().regex(/^\/(?:[a-z0-9]+(?:-[a-z0-9]+)*(?:\/[a-z0-9]+(?:-[a-z0-9]+)*)*)?$/),
     lastmod: publishedAtSchema.optional(),
     changefreq: sitemapChangeFrequencySchema.optional(),
     priority: z.number().min(0).max(1).optional(),

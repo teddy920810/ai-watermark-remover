@@ -1,6 +1,6 @@
 {
   "framework": "astro",
-  "trailingSlash": true,
+  "trailingSlash": false,
   "buildCommand": "npm run verify:deploy",
   "redirects": [
     {
@@ -10,7 +10,7 @@
     },
     {
       "source": "/:path*/index.html",
-      "destination": "/:path*/",
+      "destination": "/:path*",
       "permanent": true
     }
   ],

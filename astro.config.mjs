@@ -9,7 +9,7 @@ const siteSettings = JSON.parse(readFileSync(new URL('./src/content/settings/sit
 
 export default defineConfig({
   site: siteSettings.canonicalOrigin,
-  trailingSlash: 'always',
+  trailingSlash: 'never',
   output: 'server',
   adapter: vercel(),
   integrations: [react()],

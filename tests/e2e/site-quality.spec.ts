@@ -2,7 +2,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
 test('critical public routes and SEO files are available', async ({ page, request }) => {
-  for (const path of ['/', '/blog/', '/privacy/', '/robots.txt', '/sitemap.xml']) {
+  for (const path of ['/', '/blog', '/privacy', '/robots.txt', '/sitemap.xml']) {
     const response = await request.get(path);
     expect(response.ok(), `${path} should be available`).toBeTruthy();
   }
@@ -13,7 +13,7 @@ test('critical public routes and SEO files are available', async ({ page, reques
   const sitemapResponse = await request.get('/sitemap.xml');
   const sitemap = await sitemapResponse.text();
   expect(sitemap).toContain('<urlset');
-  expect(sitemap).toContain('<loc>https://www.watermarkgemini.com/blog/</loc>');
+  expect(sitemap).toContain('<loc>https://www.watermarkgemini.com/blog</loc>');
   expect(sitemap).toContain('<lastmod>2026-08-15</lastmod>');
   expect(sitemap).toContain('<changefreq>weekly</changefreq>');
   expect(sitemap).toContain('<priority>1.0</priority>');
@@ -37,7 +37,7 @@ test('mobile visitors can open navigation and a dropdown', async ({ page }) => {
 test('all public content routes and 404 have one H1 and no serious accessibility violations', async ({ page, request }) => {
   const sitemap = await (await request.get('/sitemap.xml')).text();
   const routes = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => new URL(match[1]).pathname);
-  routes.push('/missing-page-for-404-check/');
+  routes.push('/missing-page-for-404-check');
 
   for (const route of routes) {
     const response = await page.goto(route, { waitUntil: 'networkidle' });
