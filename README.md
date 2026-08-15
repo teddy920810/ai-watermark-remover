@@ -65,7 +65,7 @@ Google OAuth 回调地址为 `/api/auth/callback/google`。本地 3000 端口与
 - `.pages.yml`：Pages CMS 字段和权限配置
 - `src/pages/api/`：Vercel 服务端 API
 - `src/lib/providers/`：可替换的图片处理 Provider
-- `public/`：站点根路径静态资源，例如 `/sitemap.xml`
+- `public/`：站点根路径静态资源；`/sitemap.xml` 可由 Pages CMS 管理
 - `docs/`：产品、开发和运维文档
 
 ## 质量检查

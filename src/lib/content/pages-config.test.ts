@@ -31,12 +31,21 @@ describe('Pages CMS maintenance safeguards', () => {
     expect(config.settings.commit.identity).toBe('app');
   });
 
-  it('prevents non-technical editors from renaming or deleting entries', () => {
+  it('allows deleting blog and landing entries while keeping URL renames disabled', () => {
     const collections = config.content.filter((entry) => ['blog', 'landing-pages'].includes(entry.name));
     expect(collections).toHaveLength(2);
     for (const collection of collections) {
-      expect(collection.operations).toEqual({ create: true, rename: false, delete: false });
+      expect(collection.operations).toEqual({ create: true, rename: false, delete: true });
     }
+  });
+
+  it('exposes sitemap.xml as a Pages CMS code file', () => {
+    expect(config.content.find((entry) => entry.name === 'sitemap')).toMatchObject({
+      label: '站点地图 / Sitemap.xml',
+      type: 'file',
+      path: 'public/sitemap.xml',
+      format: 'code',
+    });
   });
 
   it('exposes a named image library backed by public uploads', () => {

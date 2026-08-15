@@ -6,7 +6,7 @@
 - 备用 Vercel 域名：`https://ai-watermark-remover-peach.vercel.app`
 - GitHub：`teddy920810/ai-watermark-remover`
 - Cloudflare R2 Bucket：`watermark`
-- Google Analytics：`G-WPF5GVC931`
+- Google Analytics：`G-52ZWCGEZ7R`
 
 ## Vercel 必要配置
 

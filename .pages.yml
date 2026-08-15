@@ -120,6 +120,12 @@ content:
                 type: string
                 required: true
 
+  - name: sitemap
+    label: 站点地图 / Sitemap.xml
+    type: file
+    path: public/sitemap.xml
+    format: code
+
   - name: blog-index
     label: 博客列表设置 / Blog index
     type: file
@@ -485,7 +491,7 @@ content:
     operations:
       create: true
       rename: false
-      delete: false
+      delete: true
     view:
       fields: [title, slug, category, publishedAt, draft]
       primary: title
@@ -564,7 +570,7 @@ content:
     operations:
       create: true
       rename: false
-      delete: false
+      delete: true
     view:
       fields: [title, slug]
       primary: title
