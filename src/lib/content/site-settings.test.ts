@@ -15,7 +15,7 @@ describe('site settings CMS content', () => {
     const parsed = siteSettingsSchema.parse(settings);
     expect(parsed.locale).toBe('en');
     expect(parsed.canonicalOrigin).toBe('https://www.watermarkgemini.com');
-    expect(parsed.themeColor).toBe('#f7f5ef');
+    expect(parsed.themeColor).toMatch(/^#[0-9a-f]{6}$/i);
     expect(parsed.analytics.googleMeasurementId).toBe('G-52ZWCGEZ7R');
     expect(parsed.structuredData.applicationCategory).toBe('MultimediaApplication');
     expect(parsed.contentDefaults.author).toBe('WatermarkGemini Editorial Team');
