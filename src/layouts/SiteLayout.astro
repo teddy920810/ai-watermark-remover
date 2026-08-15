@@ -24,33 +24,38 @@ const {
 } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const socialImage = new URL(image, Astro.site);
+const analyticsId = site.analytics.googleMeasurementId;
 const defaultSchema = {
   '@type': 'WebApplication',
   name: site.name,
-  applicationCategory: 'MultimediaApplication',
-  operatingSystem: 'Any',
+  applicationCategory: site.structuredData.applicationCategory,
+  operatingSystem: site.structuredData.operatingSystem,
   url: canonical.toString(),
   description,
-  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  offers: {
+    '@type': 'Offer',
+    price: site.structuredData.price,
+    priceCurrency: site.structuredData.priceCurrency,
+  },
 };
 const schemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [defaultSchema];
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={site.locale}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
-    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-52ZWCGEZ7R"></script>
-    <script is:inline>
+    {analyticsId && <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${analyticsId}`}></script>}
+    {analyticsId && <script is:inline define:vars={{ analyticsId }}>
       window.dataLayer = window.dataLayer || [];
       // Keep Google's official command-queue shape; gtag.js expects the arguments object.
       // eslint-disable-next-line prefer-rest-params
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', 'G-52ZWCGEZ7R');
-    </script>
+      gtag('config', analyticsId);
+    </script>}
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
@@ -64,7 +69,7 @@ const schemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [defaultS
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={socialImage} />
-    <meta name="theme-color" content="#f7f5ef" />
+    <meta name="theme-color" content={site.themeColor} />
     <link rel="icon" href={site.favicon} />
     {schemas.map((item) => <script is:inline type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', ...item })} />)}
   </head>

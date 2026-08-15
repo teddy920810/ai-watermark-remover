@@ -7,11 +7,20 @@ const uploaderSource = readFileSync(new URL('../components/uploader/ImageUploade
 const popupSource = readFileSync(new URL('../pages/auth/popup.astro', import.meta.url), 'utf8');
 
 describe('SiteLayout Google Analytics integration', () => {
-  it('loads and configures the requested GA4 measurement ID once', () => {
-    expect(layoutSource).toContain('https://www.googletagmanager.com/gtag/js?id=G-52ZWCGEZ7R');
-    expect(layoutSource).toContain("gtag('config', 'G-52ZWCGEZ7R')");
-    expect(layoutSource.match(/gtag\('config', 'G-52ZWCGEZ7R'\)/g)).toHaveLength(1);
-    expect(layoutSource).not.toContain('G-WPF5GVC931');
+  it('loads GA4 from site settings and supports disabling it', () => {
+    expect(layoutSource).toContain('site.analytics.googleMeasurementId');
+    expect(layoutSource).toContain('analyticsId &&');
+    expect(layoutSource).toContain('googletagmanager.com/gtag/js?id=${analyticsId}');
+    expect(layoutSource).toContain("gtag('config', analyticsId)");
+    expect(layoutSource).not.toContain('G-52ZWCGEZ7R');
+  });
+
+  it('uses CMS-managed locale, theme color, and structured-data defaults', () => {
+    expect(layoutSource).toContain('<html lang={site.locale}>');
+    expect(layoutSource).toContain('<meta name="theme-color" content={site.themeColor} />');
+    expect(layoutSource).toContain('applicationCategory: site.structuredData.applicationCategory');
+    expect(layoutSource).toContain('operatingSystem: site.structuredData.operatingSystem');
+    expect(layoutSource).toContain('priceCurrency: site.structuredData.priceCurrency');
   });
 
   it('queues commands with the official Google tag arguments object', () => {

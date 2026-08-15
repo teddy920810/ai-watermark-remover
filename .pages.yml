@@ -29,6 +29,16 @@ content:
         label: 站点名称
         type: string
         required: true
+      - name: locale
+        label: 页面语言代码｜HTML LANG
+        type: string
+        required: true
+        description: 例如英文填写 en，简体中文填写 zh-CN。
+      - name: themeColor
+        label: 浏览器主题颜色｜META
+        type: string
+        required: true
+        description: 六位十六进制颜色，例如 #f7f5ef。
       - name: logo
         label: 品牌 Logo｜IMG
         type: image
@@ -60,6 +70,49 @@ content:
         required: true
         options:
           media: images
+      - name: analytics
+        label: 数据分析 / Analytics
+        type: object
+        fields:
+          - name: googleMeasurementId
+            label: Google Analytics GA4 ID
+            type: string
+            description: 填写 G- 开头的 Measurement ID；留空会完全停用 GA 脚本。
+      - name: structuredData
+        label: 应用结构化数据 / Schema.org
+        type: object
+        fields:
+          - name: applicationCategory
+            label: 应用分类
+            type: string
+            required: true
+          - name: operatingSystem
+            label: 支持的操作系统
+            type: string
+            required: true
+          - name: price
+            label: 默认价格
+            type: string
+            required: true
+          - name: priceCurrency
+            label: 货币代码
+            type: string
+            required: true
+            description: 三位大写代码，例如 USD、CNY。
+      - name: contentDefaults
+        label: 博客默认信息
+        type: object
+        fields:
+          - name: author
+            label: 默认作者
+            type: string
+            required: true
+            description: 文章没有单独填写作者时使用。
+          - name: category
+            label: 默认分类
+            type: string
+            required: true
+            description: 文章没有单独填写分类时使用。
       - name: announcement
         label: 公告 / Announcement
         type: object
@@ -623,13 +676,11 @@ content:
       - name: author
         label: 作者｜SPAN
         type: string
-        default: ClearMark AI
-        description: 文章元信息中的作者名称，不属于标题层级。
+        description: 文章元信息中的作者名称；留空使用“站点设置”里的默认作者。
       - name: category
         label: 分类｜SPAN
         type: string
-        default: Guides
-        description: 文章列表和详情页中的短分类标签。
+        description: 文章列表和详情页中的短分类标签；留空使用“站点设置”里的默认分类。
       - name: featured
         label: 置顶文章 / Featured
         type: boolean
