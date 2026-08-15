@@ -29,10 +29,13 @@ content:
         label: 站点名称
         type: string
         required: true
-      - name: brandMark
-        label: 品牌标记
-        type: string
+      - name: logo
+        label: 品牌 Logo｜IMG
+        type: image
         required: true
+        description: 显示在 Header、Footer 和登录提示中的品牌图片，建议使用正方形 SVG 或 PNG。
+        options:
+          media: images
       - name: defaultTitle
         label: 默认 SEO 标题｜TITLE
         type: string

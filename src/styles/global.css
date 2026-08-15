@@ -26,7 +26,7 @@ img { display: block; max-width: 100%; }
 .site-announcement { min-height: 38px; padding: 8px 24px; display: flex; align-items: center; justify-content: center; gap: 14px; background: var(--green); color: #fff; text-align: center; font-size: .84rem; }
 .site-announcement a { color: #fff; font-weight: 800; text-decoration: underline; text-underline-offset: 3px; }
 .brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 800; letter-spacing: -.03em; }
-.brand-mark { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 10px 10px 10px 3px; color: #fff; background: var(--green); font-family: Georgia, serif; font-style: italic; }
+.brand-logo { width: 34px; height: 34px; flex: none; display: block; object-fit: contain; }
 .site-header nav { display: flex; align-items: center; gap: 30px; color: #46534f; font-size: .92rem; }
 .site-header nav > a, .nav-dropdown-trigger { font-weight: 750; }
 .site-header nav a:hover, .footer-links a:hover { color: var(--green); }
@@ -99,7 +99,7 @@ img { display: block; max-width: 100%; }
 .result-actions { display: flex; gap: 10px; }
 .auth-modal-backdrop { position: fixed; z-index: 100; inset: 0; padding: 20px; display: grid; place-items: center; background: rgba(12, 27, 22, .62); backdrop-filter: blur(7px); }
 .auth-modal { position: relative; width: min(100%, 420px); padding: 34px; display: grid; justify-items: center; gap: 14px; border-radius: 22px; background: var(--card); box-shadow: 0 28px 90px rgba(0, 0, 0, .3); text-align: center; }
-.auth-modal .brand-mark { width: 48px; height: 48px; font-size: 1.35rem; }
+.auth-modal .brand-logo { width: 48px; height: 48px; }
 .auth-modal h3 { margin: 5px 0 0; font-family: Georgia, serif; font-size: 1.75rem; line-height: 1.15; }
 .auth-modal p { margin: 0 0 6px; color: var(--muted); font-size: .86rem; }
 .auth-modal .button { width: 100%; }

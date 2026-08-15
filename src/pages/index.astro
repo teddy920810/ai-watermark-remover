@@ -7,7 +7,10 @@ import { sortBlogEntries } from '../lib/content/entries';
 export const prerender = true;
 const [homepage] = await getCollection('homepage');
 if (!homepage) throw new Error('Homepage CMS content is missing.');
+const [siteEntry] = await getCollection('siteSettings');
+if (!siteEntry) throw new Error('Site settings CMS content is missing.');
 const home = homepage.data;
+const site = siteEntry.data;
 const blogPosts = sortBlogEntries(await getCollection('blog')).slice(0, 2);
 ---
 
@@ -19,7 +22,7 @@ const blogPosts = sortBlogEntries(await getCollection('blog')).slice(0, 2);
       <p>{home.hero.intro}</p>
       <div class="trust-row">{home.hero.trustItems.map((item) => <span>{item}</span>)}</div>
     </div>
-    <div id="tool" class="hero-tool"><ImageUploader client:load /></div>
+    <div id="tool" class="hero-tool"><ImageUploader logo={site.logo} siteName={site.name} client:load /></div>
   </section>
 
   <section class="use-cases" aria-label="Popular tools">

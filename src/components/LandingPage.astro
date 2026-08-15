@@ -7,7 +7,10 @@ interface Props { page: CollectionEntry<'landingPages'>['data'] }
 const { page } = Astro.props;
 const [commonEntry] = await getCollection('landingCommonSettings');
 if (!commonEntry) throw new Error('Landing-page shared CMS settings are missing.');
+const [siteEntry] = await getCollection('siteSettings');
+if (!siteEntry) throw new Error('Site settings CMS content is missing.');
 const common = commonEntry.data;
+const site = siteEntry.data;
 const faqSchema = {
   '@type': 'FAQPage',
   mainEntity: page.faq.map((item) => ({
@@ -26,7 +29,7 @@ const faqSchema = {
       <p>{page.intro}</p>
       <ul class="check-list">{page.benefits.map((benefit) => <li>{benefit}</li>)}</ul>
     </div>
-    <div id="tool" class="hero-tool"><ImageUploader client:load /></div>
+    <div id="tool" class="hero-tool"><ImageUploader logo={site.logo} siteName={site.name} client:load /></div>
   </section>
 
   <section class="section process-section" id="how-it-works">

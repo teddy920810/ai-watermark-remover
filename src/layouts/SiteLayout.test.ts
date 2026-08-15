@@ -3,6 +3,8 @@ import { describe, expect, it } from 'vitest';
 
 const layoutSource = readFileSync(new URL('./SiteLayout.astro', import.meta.url), 'utf8');
 const globalCss = readFileSync(new URL('../styles/global.css', import.meta.url), 'utf8');
+const uploaderSource = readFileSync(new URL('../components/uploader/ImageUploader.tsx', import.meta.url), 'utf8');
+const popupSource = readFileSync(new URL('../pages/auth/popup.astro', import.meta.url), 'utf8');
 
 describe('SiteLayout Google Analytics integration', () => {
   it('loads and configures the requested GA4 measurement ID once', () => {
@@ -27,5 +29,13 @@ describe('SiteLayout Google Analytics integration', () => {
     expect(globalCss).toContain('pointer-events: none');
     expect(globalCss).toContain('.site-header nav > a, .nav-dropdown-trigger { font-weight: 750; }');
     expect(globalCss).not.toMatch(/\.nav-dropdown-trigger\s*\{[^}]*font:\s*inherit/);
+  });
+
+  it('renders every brand mark as the CMS-managed logo image', () => {
+    const brandSources = [layoutSource, uploaderSource, popupSource].join('\n');
+    expect(brandSources).not.toContain('brand-mark');
+    expect(layoutSource.match(/<img class="brand-logo"/g)).toHaveLength(2);
+    expect(uploaderSource).toContain('<img className="brand-logo auth-logo"');
+    expect(popupSource).toContain('<img class="brand-logo"');
   });
 });
