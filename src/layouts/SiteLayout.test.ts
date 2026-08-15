@@ -5,6 +5,7 @@ const layoutSource = readFileSync(new URL('./SiteLayout.astro', import.meta.url)
 const globalCss = readFileSync(new URL('../styles/global.css', import.meta.url), 'utf8');
 const uploaderSource = readFileSync(new URL('../components/uploader/ImageUploader.tsx', import.meta.url), 'utf8');
 const popupSource = readFileSync(new URL('../pages/auth/popup.astro', import.meta.url), 'utf8');
+const notFoundSource = readFileSync(new URL('../pages/404.astro', import.meta.url), 'utf8');
 
 describe('SiteLayout Google Analytics integration', () => {
   it('loads GA4 from site settings and supports disabling it', () => {
@@ -61,6 +62,12 @@ describe('SiteLayout Google Analytics integration', () => {
   it('lets the browser infer the CMS favicon media type', () => {
     expect(layoutSource).toContain('<link rel="icon" href={site.favicon} />');
     expect(layoutSource).not.toContain('type="image/svg+xml"');
+  });
+
+  it('keeps utility and error pages out of search results', () => {
+    expect(layoutSource).toContain('<meta name="robots" content="noindex, follow" />');
+    expect(notFoundSource).toContain('noindex={true}');
+    expect(popupSource).toContain('<meta name="robots" content="noindex, nofollow" />');
   });
 });
 

@@ -14,6 +14,7 @@ describe('site settings CMS content', () => {
   it('contains editable header navigation and footer links', () => {
     const parsed = siteSettingsSchema.parse(settings);
     expect(parsed.locale).toBe('en');
+    expect(parsed.canonicalOrigin).toBe('https://www.watermarkgemini.com');
     expect(parsed.themeColor).toBe('#f7f5ef');
     expect(parsed.analytics.googleMeasurementId).toBe('G-52ZWCGEZ7R');
     expect(parsed.structuredData.applicationCategory).toBe('MultimediaApplication');
@@ -23,6 +24,12 @@ describe('site settings CMS content', () => {
     expect(parsed.header.navigation.length).toBeGreaterThan(0);
     expect(parsed.footer.links.length).toBeGreaterThan(0);
     expect(parsed.announcement.enabled).toBe(false);
+  });
+
+  it('requires a canonical HTTPS origin without a path', () => {
+    const invalid = structuredClone(settings);
+    invalid.canonicalOrigin = 'https://www.watermarkgemini.com/blog';
+    expect(siteSettingsSchema.safeParse(invalid).success).toBe(false);
   });
 
   it('allows analytics to be disabled but rejects malformed measurement IDs', () => {

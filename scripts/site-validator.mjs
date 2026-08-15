@@ -30,6 +30,9 @@ export function collectSiteValidationIssues(input) {
   if (!siteUrl || !authUrl || siteUrl !== authUrl) {
     issues.push('SITE_URL and BETTER_AUTH_URL must use the same non-empty canonical origin.');
   }
+  if (!input.canonicalOrigin || input.canonicalOrigin !== siteUrl) {
+    issues.push('CMS canonical origin must match SITE_URL exactly.');
+  }
 
   const duplicateLandingSlugs = input.landingSlugs.filter((slug, index, values) => values.indexOf(slug) !== index);
   duplicateLandingSlugs.forEach((slug) => issues.push(`Landing slug ${slug} is duplicated.`));

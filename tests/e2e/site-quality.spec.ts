@@ -6,15 +6,17 @@ test('critical public routes and SEO files are available', async ({ page, reques
     const response = await request.get(path);
     expect(response.ok(), `${path} should be available`).toBeTruthy();
   }
-
   await page.goto('/');
   await expect(page).toHaveTitle(/Watermark Remover/i);
-  await expect(page.locator('link[rel=canonical]')).toHaveAttribute('href', 'http://127.0.0.1:4322/');
+  await expect(page.locator('link[rel=canonical]')).toHaveAttribute('href', 'https://www.watermarkgemini.com/');
 
   const sitemapResponse = await request.get('/sitemap.xml');
   const sitemap = await sitemapResponse.text();
   expect(sitemap).toContain('<urlset');
-  expect(sitemap).toContain('<loc>http://127.0.0.1:4322/blog/</loc>');
+  expect(sitemap).toContain('<loc>https://www.watermarkgemini.com/blog/</loc>');
+  expect(sitemap).toContain('<lastmod>2026-08-15</lastmod>');
+  expect(sitemap).toContain('<changefreq>weekly</changefreq>');
+  expect(sitemap).toContain('<priority>1.0</priority>');
   expect(sitemap).not.toContain('sitemap-index.xml');
 });
 
@@ -35,13 +37,16 @@ test('mobile visitors can open navigation and a dropdown', async ({ page }) => {
 test('all public content routes and 404 have one H1 and no serious accessibility violations', async ({ page, request }) => {
   const sitemap = await (await request.get('/sitemap.xml')).text();
   const routes = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => new URL(match[1]).pathname);
-  routes.push('/missing-page-for-404-check');
+  routes.push('/missing-page-for-404-check/');
 
   for (const route of routes) {
     const response = await page.goto(route, { waitUntil: 'networkidle' });
     expect(response?.status(), `${route} should return its expected status`).toBe(route.includes('missing-page') ? 404 : 200);
     await expect(page.locator('main')).toBeVisible();
     await expect(page.locator('main h1'), `${route} should have exactly one content H1`).toHaveCount(1);
+    if (route.includes('missing-page')) {
+      await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex, follow');
+    }
     const results = await new AxeBuilder({ page }).analyze();
     expect(
       results.violations.filter((violation) => ['serious', 'critical'].includes(violation.impact ?? '')),

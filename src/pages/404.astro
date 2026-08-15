@@ -6,4 +6,4 @@ const [settingsEntry] = await getCollection('notFoundSettings');
 if (!settingsEntry) throw new Error('404 CMS settings are missing.');
 const settings = settingsEntry.data;
 ---
-<SiteLayout title={settings.title} description={settings.description}><header class="legal-page"><span class="eyebrow">{settings.eyebrow}</span><h1>{settings.heading}</h1><p>{settings.intro}</p><p><a class="button button-primary" href={settings.buttonHref}>{settings.buttonLabel}</a></p></header></SiteLayout>
+<SiteLayout title={settings.title} description={settings.description} noindex={true}><header class="legal-page"><span class="eyebrow">{settings.eyebrow}</span><h1>{settings.heading}</h1><p>{settings.intro}</p><p><a class="button button-primary" href={settings.buttonHref}>{settings.buttonLabel}</a></p></header></SiteLayout>

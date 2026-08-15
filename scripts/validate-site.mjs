@@ -32,8 +32,13 @@ const blogSlugs = blogDocuments.map(({ value, path: file }) => {
 const uploadPaths = await walkFiles('public/uploads');
 const availableAssets = uploadPaths.map((file) => `/${file.replace(/^public\//, '')}`);
 const envExample = await readFile(path.join(root, '.env.example'), 'utf8');
+const siteDocument = contentDocuments.find(({ path: file }) => file === 'src/content/settings/site.json');
+if (!siteDocument || typeof siteDocument.value !== 'object' || !siteDocument.value) {
+  throw new Error('src/content/settings/site.json is missing.');
+}
+const canonicalOrigin = siteDocument.value.canonicalOrigin;
 
-const issues = collectSiteValidationIssues({ envExample, contentDocuments, landingSlugs, blogSlugs, availableAssets });
+const issues = collectSiteValidationIssues({ envExample, canonicalOrigin, contentDocuments, landingSlugs, blogSlugs, availableAssets });
 if (issues.length > 0) {
   process.stderr.write(`Site validation failed:\n- ${issues.join('\n- ')}\n`);
   process.exitCode = 1;

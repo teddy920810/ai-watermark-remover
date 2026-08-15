@@ -47,6 +47,7 @@ export function buildSiteInitializationPlan(config, files) {
 
   Object.assign(site, {
     name: config.siteName,
+    canonicalOrigin: config.siteUrl,
     locale: config.locale,
     themeColor: config.themeColor,
     logo: config.logo,
