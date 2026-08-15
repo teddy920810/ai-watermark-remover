@@ -314,7 +314,7 @@ content:
             label: 页面路径
             type: string
             required: true
-            description: 必须以 / 开头和结尾，例如 /remove-gemini-watermark/。
+            description: 必须以 / 开头且不使用末尾斜杠，例如 /remove-gemini-watermark。
           - name: lastmod
             label: 单独最后更新时间（可选）
             type: date

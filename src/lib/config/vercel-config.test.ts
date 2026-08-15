@@ -6,8 +6,8 @@ const config = JSON.parse(
 ) as { trailingSlash?: boolean; redirects?: Array<{ source: string; destination: string; permanent: boolean }> };
 
 describe('Vercel canonical URL redirects', () => {
-  it('redirects public routes to the trailing-slash form used by canonical and sitemap URLs', () => {
-    expect(config.trailingSlash).toBe(true);
+  it('keeps clean public and API routes in the no-trailing-slash form', () => {
+    expect(config.trailingSlash).toBe(false);
   });
   it('permanently redirects /index.html to the homepage', () => {
     expect(config.redirects).toContainEqual({
@@ -20,7 +20,7 @@ describe('Vercel canonical URL redirects', () => {
   it('removes nested /index.html filenames from public URLs', () => {
     expect(config.redirects).toContainEqual({
       source: '/:path*/index.html',
-      destination: '/:path*/',
+      destination: '/:path*',
       permanent: true,
     });
   });
