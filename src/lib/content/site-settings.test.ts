@@ -18,12 +18,14 @@ describe('site settings CMS content', () => {
     expect(parsed.themeColor).toBe('#f7f5ef');
     expect(parsed.analytics.googleMeasurementId).toBe('G-52ZWCGEZ7R');
     expect(parsed.structuredData.applicationCategory).toBe('MultimediaApplication');
-    expect(parsed.contentDefaults.author).toBe('ClearMark AI');
+    expect(parsed.contentDefaults.author).toBe('WatermarkGemini Editorial Team');
     expect(parsed.logo).toBe('/uploads/watermarkgemini-logo.svg');
     expect(parsed.defaultShareImage).toBe('/uploads/og-card.svg');
     expect(parsed.header.navigation.length).toBeGreaterThan(0);
     expect(parsed.footer.links.length).toBeGreaterThan(0);
     expect(parsed.announcement.enabled).toBe(false);
+    expect(parsed.uploader.hero.heading).toBe('Remove a watermark from your image');
+    expect(parsed.uploader.dropzone.maxSizeLabel).toContain('{maxSize}');
   });
 
   it('requires a canonical HTTPS origin without a path', () => {

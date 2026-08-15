@@ -22,7 +22,7 @@ const blogPosts = sortBlogEntries(await getCollection('blog')).slice(0, 2);
       <p>{home.hero.intro}</p>
       <div class="trust-row">{home.hero.trustItems.map((item) => <span>{item}</span>)}</div>
     </div>
-    <div id="tool" class="hero-tool"><ImageUploader logo={site.logo} siteName={site.name} client:load /></div>
+    <div id="tool" class="hero-tool"><ImageUploader logo={site.logo} siteName={site.name} copy={site.uploader} client:load /></div>
   </section>
 
   <section class="use-cases" aria-label="Popular tools">

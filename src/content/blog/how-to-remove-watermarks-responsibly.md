@@ -4,8 +4,9 @@ title: How to Remove Watermarks Responsibly
 description: A practical checklist for deciding when watermark removal is
   appropriate and how to protect ownership rights.
 publishedAt: 2026-08-02
+updatedAt: 2026-08-16
 readTime: 4 min read
-author: ClearMark AI
+author: WatermarkGemini Editorial Team
 category: Guides
 featured: false
 draft: false
@@ -23,4 +24,4 @@ Retain the untouched original, work on a copy, and review the cleaned area at fu
 
 ## Choose privacy-conscious tools
 
-Check retention policies before uploading client or personal images. ClearMark AI uses private storage and schedules uploaded files and results for deletion after 24 hours.
+Check retention policies before uploading client or personal images. WatermarkGemini uses private storage and schedules uploaded files and results for deletion after 24 hours.

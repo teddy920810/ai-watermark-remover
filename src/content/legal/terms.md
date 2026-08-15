@@ -1,12 +1,12 @@
 ---
 slug: terms
-title: Terms of Use | ClearMark AI
-description: Terms for using the ClearMark AI image cleanup service.
+title: Terms of Use | WatermarkGemini
+description: Terms for using the WatermarkGemini image cleanup service.
 eyebrow: Terms
 heading: Use the tool for work you have the right to edit
 ---
 
-By using ClearMark AI, you confirm that you own the uploaded image or have permission to modify it. You must not use the service to misrepresent authorship, evade licensing, or infringe intellectual property rights.
+By using WatermarkGemini, you confirm that you own the uploaded image or have permission to modify it. You must not use the service to misrepresent authorship, evade licensing, or infringe intellectual property rights.
 
 ## Service status
 

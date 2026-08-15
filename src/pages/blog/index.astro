@@ -4,6 +4,7 @@ import { getCollection } from 'astro:content';
 import { sortBlogEntries } from '../../lib/content/entries';
 import { resolveBlogMetadata } from '../../lib/content/blog-metadata';
 import { resolveImageAlt } from '../../lib/content/image-metadata';
+import { buildCollectionPageSchema } from '../../lib/content/seo-schema';
 
 export const prerender = true;
 const blogPosts = sortBlogEntries(await getCollection('blog'));
@@ -14,8 +15,14 @@ const [siteEntry] = await getCollection('siteSettings');
 if (!siteEntry) throw new Error('Site settings CMS content is missing.');
 const [imageSettingsEntry] = await getCollection('imageSettings');
 if (!imageSettingsEntry) throw new Error('Image metadata CMS content is missing.');
+const schema = buildCollectionPageSchema({
+  canonicalOrigin: siteEntry.data.canonicalOrigin,
+  path: '/blog',
+  name: settings.heading,
+  description: settings.description,
+});
 ---
-<SiteLayout title={settings.title} description={settings.description} image={settings.shareImage}>
+<SiteLayout title={settings.title} description={settings.description} image={settings.shareImage} schema={schema}>
   <header class="blog-hero"><span class="eyebrow">{settings.eyebrow}</span><h1>{settings.heading}</h1><p>{settings.intro}</p></header>
   <section class="blog-list">
     {blogPosts.slice(0, settings.postsPerPage).map(({ data: post }) => <article class:list={{ 'has-cover': post.coverImage }}>

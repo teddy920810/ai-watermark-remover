@@ -139,6 +139,69 @@ content:
             label: 链接地址｜HREF（可选）
             type: string
             description: 链接目标；站内链接建议使用 /blog 这样的路径。
+      - name: uploader
+        label: 上传组件 / Image uploader
+        type: object
+        description: 首页和所有工具落地页共用的上传工具文案；修改后会同时生效。
+        fields:
+          - name: hero
+            label: 顶部文案
+            type: object
+            fields:
+              - { name: eyebrow, label: 小标题｜SPAN, type: string, required: true }
+              - { name: heading, label: 上传组件标题｜H2, type: string, required: true }
+              - { name: demoBadge, label: 演示标记｜SPAN, type: string, required: true }
+              - { name: demoBadgeTitle, label: 演示标记提示｜TITLE, type: string, required: true }
+          - name: dropzone
+            label: 拖拽上传区域
+            type: object
+            fields:
+              - { name: dropLabel, label: 主提示｜STRONG, type: string, required: true }
+              - { name: browseLabel, label: 浏览提示｜SPAN, type: string, required: true }
+              - { name: formatLabel, label: 支持格式｜SMALL, type: string, required: true }
+              - name: maxSizeLabel
+                label: 文件大小提示｜SMALL
+                type: string
+                required: true
+                description: 使用 {maxSize} 代表系统允许的最大 MB 数，例如 up to {maxSize} MB。
+              - { name: fileInputLabel, label: 文件选择无障碍名称｜ARIA, type: string, required: true }
+          - name: preview
+            label: 已选图片与处理过程
+            type: object
+            fields:
+              - name: altTemplate
+                label: 预览图替代文字｜IMG ALT
+                type: string
+                required: true
+                description: 使用 {fileName} 代表已选择的文件名。
+              - { name: processingLabel, label: 处理中说明｜SPAN, type: string, required: true }
+              - { name: readyLabel, label: 就绪说明｜SPAN, type: string, required: true }
+              - { name: removeButton, label: 开始处理按钮｜BUTTON, type: string, required: true }
+              - { name: uploadingButton, label: 上传中按钮｜BUTTON, type: string, required: true }
+              - { name: processingButton, label: 处理中按钮｜BUTTON, type: string, required: true }
+              - { name: chooseAnotherButton, label: 更换图片按钮｜BUTTON, type: string, required: true }
+          - name: result
+            label: 结果区域
+            type: object
+            fields:
+              - { name: originalLabel, label: 原图标签｜FIGCAPTION, type: string, required: true }
+              - { name: resultLabel, label: 结果标签｜FIGCAPTION, type: string, required: true }
+              - { name: originalAlt, label: 原图替代文字｜IMG ALT, type: string, required: true }
+              - { name: resultAlt, label: 结果图替代文字｜IMG ALT, type: string, required: true }
+              - { name: demoNote, label: 演示说明｜P, type: text, required: true }
+              - { name: downloadButton, label: 下载按钮｜A, type: string, required: true }
+              - { name: processAnotherButton, label: 再次处理按钮｜BUTTON, type: string, required: true }
+          - name: auth
+            label: Google 登录提示
+            type: object
+            fields:
+              - { name: closeLabel, label: 关闭按钮无障碍名称｜ARIA, type: string, required: true }
+              - { name: title, label: 登录标题｜H3, type: string, required: true }
+              - { name: description, label: 登录说明｜P, type: text, required: true }
+              - { name: connectingButton, label: 连接中按钮｜BUTTON, type: string, required: true }
+              - { name: continueButton, label: Google 登录按钮｜BUTTON, type: string, required: true }
+              - { name: dismissButton, label: 暂不登录按钮｜BUTTON, type: string, required: true }
+          - { name: privacyNote, label: 隐私说明｜P, type: text, required: true }
       - name: header
         label: 页头 / Header
         type: object
@@ -823,6 +886,12 @@ content:
         label: 发布日期 / Publish date
         type: date
         required: true
+        options:
+          format: yyyy-MM-dd
+      - name: updatedAt
+        label: 最后更新日期 / Date modified（可选）
+        type: date
+        description: 文章有实质更新时填写；用于 Article Schema 的 dateModified 和 sitemap 的后续维护。
         options:
           format: yyyy-MM-dd
       - name: readTime
