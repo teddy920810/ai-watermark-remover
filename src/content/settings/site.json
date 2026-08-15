@@ -14,7 +14,7 @@
   "header": {
     "navigation": [
       {
-        "label": "AI Watermark remover",
+        "label": "AI Watermark Remover",
         "children": [
           {
             "label": "Remove text from image",
