@@ -65,4 +65,29 @@ describe('Pages CMS maintenance safeguards', () => {
       ]),
     );
   });
+
+  it('exposes shared header and footer settings as a single editable file', () => {
+    const siteSettings = config.content.find((entry) => entry.name === 'site-settings');
+    expect(siteSettings).toMatchObject({
+      label: '站点设置 / Site settings',
+      type: 'file',
+      path: 'src/content/settings/site.json',
+    });
+    expect(siteSettings?.fields).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ name: 'favicon', type: 'image', options: { media: 'images' } }),
+        expect.objectContaining({ name: 'header', type: 'object' }),
+        expect.objectContaining({ name: 'footer', type: 'object' }),
+      ]),
+    );
+  });
+
+  it('connects the blog rich-text editor to the static image library', () => {
+    const blog = config.content.find((entry) => entry.name === 'blog');
+    expect(blog?.fields).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ name: 'body', type: 'rich-text', options: { media: 'images' } }),
+      ]),
+    );
+  });
 });

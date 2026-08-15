@@ -19,6 +19,89 @@ settings:
       rename: "content(rename): {oldPath} -> {newPath}"
 
 content:
+  - name: site-settings
+    label: 站点设置 / Site settings
+    type: file
+    path: src/content/settings/site.json
+    format: json
+    fields:
+      - name: name
+        label: 站点名称
+        type: string
+        required: true
+      - name: brandMark
+        label: 品牌标记
+        type: string
+        required: true
+      - name: defaultTitle
+        label: 默认 SEO 标题
+        type: string
+        required: true
+      - name: defaultDescription
+        label: 默认 SEO 描述
+        type: text
+        required: true
+        options:
+          maxlength: 180
+      - name: favicon
+        label: 浏览器图标 / Favicon
+        type: image
+        required: true
+        options:
+          media: images
+      - name: defaultShareImage
+        label: 默认分享图片
+        type: image
+        required: true
+        options:
+          media: images
+      - name: header
+        label: 页头 / Header
+        type: object
+        fields:
+          - name: navigation
+            label: 导航链接
+            type: object
+            list:
+              min: 1
+              collapsible:
+                collapsed: true
+                summary: "{label}"
+            fields:
+              - name: label
+                label: 链接文字
+                type: string
+                required: true
+              - name: href
+                label: 链接地址
+                type: string
+                required: true
+      - name: footer
+        label: 页脚 / Footer
+        type: object
+        fields:
+          - name: tagline
+            label: 品牌说明
+            type: text
+            required: true
+          - name: links
+            label: 页脚链接
+            type: object
+            list:
+              min: 1
+              collapsible:
+                collapsed: true
+                summary: "{label}"
+            fields:
+              - name: label
+                label: 链接文字
+                type: string
+                required: true
+              - name: href
+                label: 链接地址
+                type: string
+                required: true
+
   - name: homepage
     label: 首页 / Homepage
     type: file
@@ -249,6 +332,8 @@ content:
         label: 正文 / Article body
         type: rich-text
         required: true
+        options:
+          media: images
 
   - name: landing-pages
     label: 工具落地页 / Tool landing pages
