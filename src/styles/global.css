@@ -29,7 +29,13 @@ img { display: block; max-width: 100%; }
 .site-header nav a:hover, .footer-links a:hover { color: var(--green); }
 .header-cta, .button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; border-radius: 12px; padding: 0 18px; font-weight: 750; border: 1px solid transparent; cursor: pointer; transition: transform .2s, background .2s, border-color .2s; }
 .header-cta { background: var(--ink); color: #fff; font-size: .9rem; }
+.header-cta:disabled { opacity: .6; cursor: wait; }
 .header-cta:hover, .button:hover:not(:disabled) { transform: translateY(-1px); }
+.header-account { min-height: 44px; padding: 5px 12px 5px 6px; display: inline-flex; align-items: center; gap: 9px; border: 1px solid var(--line); border-radius: 999px; color: var(--ink); background: var(--card); cursor: pointer; }
+.header-account img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
+.header-account span { max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .8rem; font-weight: 750; }
+.header-account small { color: var(--muted); font-size: .65rem; }
+.header-account:disabled { opacity: .6; cursor: wait; }
 
 .hero { max-width: 1240px; margin: 34px auto 0; padding: 58px 60px; border-radius: 30px; display: grid; grid-template-columns: .9fr 1.1fr; align-items: center; gap: 58px; background: radial-gradient(circle at 5% 10%, rgba(255,255,255,.9), transparent 35%), linear-gradient(130deg, #edf3e8, #e1ecdf 55%, #d8e7de); overflow: hidden; position: relative; }
 .hero::after { content: ""; position: absolute; width: 320px; height: 320px; left: -180px; bottom: -220px; border: 48px solid rgba(29,107,86,.08); border-radius: 50%; }
@@ -78,6 +84,15 @@ img { display: block; max-width: 100%; }
 .comparison-grid img { width: 100%; height: 190px; object-fit: contain; }
 .demo-note { color: var(--muted); font-size: .75rem; }
 .result-actions { display: flex; gap: 10px; }
+.auth-modal-backdrop { position: fixed; z-index: 100; inset: 0; padding: 20px; display: grid; place-items: center; background: rgba(12, 27, 22, .62); backdrop-filter: blur(7px); }
+.auth-modal { position: relative; width: min(100%, 420px); padding: 34px; display: grid; justify-items: center; gap: 14px; border-radius: 22px; background: var(--card); box-shadow: 0 28px 90px rgba(0, 0, 0, .3); text-align: center; }
+.auth-modal .brand-mark { width: 48px; height: 48px; font-size: 1.35rem; }
+.auth-modal h3 { margin: 5px 0 0; font-family: Georgia, serif; font-size: 1.75rem; line-height: 1.15; }
+.auth-modal p { margin: 0 0 6px; color: var(--muted); font-size: .86rem; }
+.auth-modal .button { width: 100%; }
+.auth-modal-close { position: absolute; top: 10px; right: 12px; width: 36px; height: 36px; border: 0; color: var(--muted); background: transparent; cursor: pointer; font-size: 1.5rem; }
+.auth-google-button { gap: 10px; }
+.google-mark { width: 23px; height: 23px; display: grid; place-items: center; border-radius: 50%; color: #4285f4; background: white; font-family: Arial, sans-serif; font-weight: 800; }
 
 .use-cases { max-width: 1120px; margin: -1px auto 0; padding: 30px 0; display: grid; grid-template-columns: repeat(3, 1fr); border-bottom: 1px solid var(--line); }
 .use-cases a { padding: 8px 30px; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 14px; border-right: 1px solid var(--line); }
@@ -156,6 +171,8 @@ img { display: block; max-width: 100%; }
 @media (max-width: 620px) {
   .site-header { height: 70px; padding: 0 18px; }
   .header-cta { min-height: 38px; padding: 0 13px; font-size: .78rem; }
+  .header-account span, .header-account small { display: none; }
+  .header-account { padding: 3px; }
   .hero { padding: 38px 18px; border-radius: 22px; }
   .hero h1 { font-size: 3.2rem; }
   .tool-card { padding: 18px; }

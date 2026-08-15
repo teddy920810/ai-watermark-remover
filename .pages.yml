@@ -1,6 +1,11 @@
 media:
-  input: public/uploads
-  output: /uploads
+  - name: images
+    label: 静态图片 / Static images
+    input: public/uploads
+    output: /uploads
+    categories: [image]
+    extensions: [jpg, jpeg, png, webp, gif, svg]
+    rename: safe
 
 settings:
   content:
@@ -14,6 +19,185 @@ settings:
       rename: "content(rename): {oldPath} -> {newPath}"
 
 content:
+  - name: homepage
+    label: 首页 / Homepage
+    type: file
+    path: src/content/homepage/home.json
+    format: json
+    fields:
+      - name: title
+        label: SEO 标题
+        type: string
+        required: true
+      - name: description
+        label: SEO 描述
+        type: text
+        required: true
+        options:
+          maxlength: 180
+      - name: shareImage
+        label: 分享图片 / Social image
+        type: image
+        required: true
+        options:
+          media: images
+      - name: hero
+        label: 首屏 / Hero
+        type: object
+        fields:
+          - name: eyebrow
+            label: 小标题
+            type: string
+            required: true
+          - name: heading
+            label: 主标题
+            type: string
+            required: true
+          - name: highlightedHeading
+            label: 强调标题
+            type: string
+            required: true
+          - name: intro
+            label: 简介
+            type: text
+            required: true
+          - name: trustItems
+            label: 信任标签
+            type: string
+            list:
+              min: 1
+      - name: useCases
+        label: 常用工具入口
+        type: object
+        list:
+          min: 1
+          collapsible:
+            collapsed: true
+            summary: "{title}"
+        fields:
+          - name: icon
+            label: 图标字符
+            type: string
+            required: true
+          - name: title
+            label: 标题
+            type: string
+            required: true
+          - name: description
+            label: 说明
+            type: string
+            required: true
+          - name: href
+            label: 链接
+            type: string
+            required: true
+      - name: process
+        label: 使用步骤
+        type: object
+        fields:
+          - name: eyebrow
+            label: 小标题
+            type: string
+            required: true
+          - name: heading
+            label: 标题
+            type: string
+            required: true
+          - name: intro
+            label: 简介
+            type: text
+            required: true
+          - name: steps
+            label: 步骤
+            type: object
+            list:
+              min: 1
+              collapsible:
+                collapsed: true
+                summary: "{number} {title}"
+            fields:
+              - name: number
+                label: 序号
+                type: string
+                required: true
+              - name: title
+                label: 标题
+                type: string
+                required: true
+              - name: description
+                label: 说明
+                type: text
+                required: true
+      - name: privacy
+        label: 隐私说明
+        type: object
+        fields:
+          - name: eyebrow
+            label: 小标题
+            type: string
+            required: true
+          - name: heading
+            label: 标题
+            type: string
+            required: true
+          - name: description
+            label: 说明
+            type: text
+            required: true
+          - name: linkLabel
+            label: 链接文字
+            type: string
+            required: true
+          - name: linkHref
+            label: 链接地址
+            type: string
+            required: true
+          - name: features
+            label: 隐私特点
+            type: object
+            list:
+              min: 1
+              collapsible:
+                collapsed: true
+                summary: "{title}"
+            fields:
+              - name: icon
+                label: 图标字符
+                type: string
+                required: true
+              - name: title
+                label: 标题
+                type: string
+                required: true
+              - name: description
+                label: 说明
+                type: string
+                required: true
+      - name: guides
+        label: 指南区域
+        type: object
+        fields:
+          - name: eyebrow
+            label: 小标题
+            type: string
+            required: true
+          - name: heading
+            label: 标题
+            type: string
+            required: true
+          - name: linkLabel
+            label: 全部指南链接文字
+            type: string
+            required: true
+          - name: linkHref
+            label: 全部指南链接地址
+            type: string
+            required: true
+          - name: articleLinkLabel
+            label: 文章链接文字
+            type: string
+            required: true
+
   - name: blog
     label: 博客文章 / Blog posts
     type: collection

@@ -2,6 +2,7 @@ export type JobStatus = 'processing' | 'completed' | 'failed';
 
 export interface Job {
   id: string;
+  ownerId: string;
   status: JobStatus;
   inputKey: string;
   resultKey: string | null;
@@ -10,8 +11,8 @@ export interface Job {
   updatedAt: string;
 }
 
-export function createJob(id: string, inputKey: string, now = new Date().toISOString()): Job {
-  return { id, status: 'processing', inputKey, resultKey: null, error: null, createdAt: now, updatedAt: now };
+export function createJob(id: string, inputKey: string, ownerId: string, now = new Date().toISOString()): Job {
+  return { id, ownerId, status: 'processing', inputKey, resultKey: null, error: null, createdAt: now, updatedAt: now };
 }
 
 export function finishJob(job: Job, resultKey: string, now = new Date().toISOString()): Job {

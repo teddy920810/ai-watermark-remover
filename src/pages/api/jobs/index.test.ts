@@ -1,7 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { getServices } = vi.hoisted(() => ({ getServices: vi.fn() }));
+const { getServices, getSession } = vi.hoisted(() => ({ getServices: vi.fn(), getSession: vi.fn() }));
 vi.mock('../../../lib/services', () => ({ getServices }));
+vi.mock('../../../lib/auth', () => ({ getSession }));
 
 import { POST } from './index';
 
@@ -14,13 +15,27 @@ function context(body: unknown) {
 }
 
 describe('POST /api/jobs', () => {
-  beforeEach(() => getServices.mockReset());
+  beforeEach(() => {
+    getServices.mockReset();
+    getSession.mockReset();
+    getSession.mockResolvedValue({ user: { id: 'google-user-1' } });
+  });
+
+  it('returns 401 before parsing or creating a job when signed out', async () => {
+    getSession.mockResolvedValue(null);
+    const response = await POST(context({ inputKey }));
+    expect(response.status).toBe(401);
+    await expect(response.json()).resolves.toEqual({ error: 'Sign in with Google to process this upload.' });
+    expect(getServices).not.toHaveBeenCalled();
+  });
 
   it('creates a job', async () => {
-    getServices.mockReturnValue({ jobs: { create: vi.fn().mockResolvedValue({ id: 'job-id', status: 'completed' }) } });
+    const create = vi.fn().mockResolvedValue({ id: 'job-id', status: 'completed' });
+    getServices.mockReturnValue({ jobs: { create } });
     const response = await POST(context({ inputKey }));
     expect(response.status).toBe(201);
     await expect(response.json()).resolves.toEqual({ id: 'job-id', status: 'completed' });
+    expect(create).toHaveBeenCalledWith(inputKey, 'google-user-1');
   });
 
   it('returns 400 for an invalid request', async () => {

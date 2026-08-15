@@ -6,7 +6,7 @@ describe('R2JobStore', () => {
   it('stores jobs under an isolated jobs prefix', async () => {
     const objects = { putJson: vi.fn(), getJson: vi.fn() };
     const store = new R2JobStore(objects);
-    const job = createJob('job-1', 'uploads/input.png');
+    const job = createJob('job-1', 'uploads/input.png', 'google-user-1');
     await store.save(job);
     expect(objects.putJson).toHaveBeenCalledWith('jobs/job-1.json', job);
   });

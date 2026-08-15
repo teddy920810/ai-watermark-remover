@@ -1,0 +1,32 @@
+---
+export const prerender = true;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Google sign-in complete</title>
+  </head>
+  <body>
+    <main class="popup-status">
+      <span class="brand-mark">C</span>
+      <p>Sign-in complete. Returning to your upload…</p>
+    </main>
+    <script is:inline>
+      if (window.opener) {
+        window.opener.postMessage({ type: 'clearmark-auth-complete' }, window.location.origin);
+        window.close();
+      } else {
+        window.location.replace('/#tool');
+      }
+    </script>
+  </body>
+</html>
+
+<style>
+  body { margin: 0; color: #172321; background: #f7f5ef; font-family: Inter, ui-sans-serif, system-ui, sans-serif; }
+  .popup-status { min-height: 100vh; display: grid; place-content: center; justify-items: center; gap: 18px; padding: 24px; text-align: center; }
+  .brand-mark { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 14px 14px 14px 4px; color: white; background: #1d6b56; font-family: Georgia, serif; font-size: 1.4rem; font-style: italic; }
+</style>

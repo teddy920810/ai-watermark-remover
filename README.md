@@ -2,7 +2,7 @@
 
 ClearMark AI 是部署在 [watermarkgemini.com](https://watermarkgemini.com) 的图片水印处理 MVP。项目采用 Astro、React、Vercel 与私有 Cloudflare R2，并通过 Pages CMS 让非技术成员直接维护博客和 SEO 落地页。
 
-> 当前状态：上传、临时存储和任务流程已经可用，但处理器仍是 Mock Provider。它会复制原图作为结果，不代表已经真正移除水印。接入正式图像处理服务前，不应对外宣称具备真实去水印效果。
+> 当前状态：匿名用户可以选择和预览图片，创建处理任务时需要通过 Google 登录。上传、临时存储和任务流程已经可用，但处理器仍是 Mock Provider。它会复制原图作为结果，不代表已经真正移除水印。接入正式图像处理服务前，不应对外宣称具备真实去水印效果。
 
 ## 常用入口
 
@@ -40,7 +40,8 @@ npm run dev
 ```text
 浏览器
   ├─ Astro 静态内容页面
-  └─ React 上传组件
+  ├─ React Google 登录与上传组件
+  └─ Better Auth 加密会话
        ├─ Vercel API：生成 R2 预签名上传地址
        ├─ 浏览器直传私有 R2
        └─ Vercel API：创建/查询处理任务
@@ -51,10 +52,14 @@ Pages CMS → GitHub main → Vercel 自动构建 → watermarkgemini.com
 
 R2 Bucket 为 `watermark`，必须保持私有。`uploads/`、`results/`、`jobs/` 应配置 1 天自动过期。上传密钥只允许在服务端环境变量中使用。
 
+Google OAuth 回调地址为 `/api/auth/callback/google`。本地 3000 端口与正式域名应分别在 Google Cloud 配置完整回调 URI。当前认证采用无数据库加密会话，任务记录会保存会话用户 ID；账户历史列表、额度和订阅仍属于后续 V2 工作。
+
 ## 目录说明
 
 - `src/content/blog/`：博客 Markdown 内容
 - `src/content/landing-pages/`：工具落地页 JSON 内容
+- `src/content/homepage/home.json`：Pages CMS 管理的首页内容
+- `public/uploads/`：Pages CMS 管理的静态图片资源
 - `.pages.yml`：Pages CMS 字段和权限配置
 - `src/pages/api/`：Vercel 服务端 API
 - `src/lib/providers/`：可替换的图片处理 Provider
