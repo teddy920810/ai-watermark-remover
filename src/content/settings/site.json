@@ -15,7 +15,13 @@
     "navigation": [
       {
         "label": "Watermark remover",
-        "href": "/remove-text-from-image/"
+        "href": "/remove-text-from-image/",
+        "children": [
+          {
+            "label": "Watermark remover-test",
+            "href": "/remove-text-from-image/"
+          }
+        ]
       },
       {
         "label": "Guides",
