@@ -9,6 +9,7 @@ interface Props {
   image?: string;
   type?: 'website' | 'article';
   schema?: Record<string, unknown> | Array<Record<string, unknown>>;
+  noindex?: boolean;
 }
 
 const [siteEntry] = await getCollection('siteSettings');
@@ -21,6 +22,7 @@ const {
   image = site.defaultShareImage,
   type = 'website',
   schema,
+  noindex = false,
 } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const socialImage = new URL(image, Astro.site);
@@ -58,6 +60,7 @@ const schemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [defaultS
     </script>}
     <title>{title}</title>
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
     <link rel="canonical" href={canonical} />
     <meta property="og:type" content={type} />
     <meta property="og:site_name" content={site.name} />

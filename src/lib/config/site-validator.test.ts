@@ -3,6 +3,7 @@ import { collectSiteValidationIssues } from '../../../scripts/site-validator.mjs
 
 const validInput = {
   envExample: 'SITE_URL=https://www.example.com\nBETTER_AUTH_URL=https://www.example.com\n',
+  canonicalOrigin: 'https://www.example.com',
   contentDocuments: [
     {
       path: 'src/content/settings/site.json',
@@ -27,6 +28,7 @@ describe('site content validation', () => {
     const issues = collectSiteValidationIssues({
       ...validInput,
       envExample: 'SITE_URL=https://www.example.com\nBETTER_AUTH_URL=https://example.com\n',
+      canonicalOrigin: 'https://www.other-example.com',
       landingSlugs: ['blog'],
       contentDocuments: [{
         path: 'src/content/blog/broken.md',
@@ -36,6 +38,7 @@ describe('site content validation', () => {
 
     expect(issues).toEqual(expect.arrayContaining([
       expect.stringContaining('SITE_URL and BETTER_AUTH_URL'),
+      expect.stringContaining('canonical origin'),
       expect.stringContaining('/uploads/missing.webp'),
       expect.stringContaining('GitHub blob URL'),
       expect.stringContaining('reserved route /blog'),

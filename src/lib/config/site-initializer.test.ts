@@ -45,6 +45,7 @@ describe('forked-site initializer', () => {
     expect(JSON.parse(plan['package.json']).name).toBe('example-image-tool');
     expect(plan['.env.example']).toContain('SITE_URL=https://www.example.com');
     expect(plan['.env.example']).toContain('BETTER_AUTH_URL=https://www.example.com');
+    expect(site.canonicalOrigin).toBe('https://www.example.com');
     expect(site).toMatchObject({
       name: 'Example Image Tool',
       logo: '/uploads/example-logo.svg',

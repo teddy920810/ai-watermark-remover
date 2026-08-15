@@ -1,5 +1,10 @@
 import { z } from 'zod';
 
+const canonicalOriginSchema = z.url().refine((value) => {
+  const url = new URL(value);
+  return url.protocol === 'https:' && url.pathname === '/' && !url.search && !url.hash;
+}, 'Canonical origin must be an HTTPS origin without a path, query, or hash.');
+
 const navigationLinkSchema = z.object({
   label: z.string().min(1),
   href: z.string().min(1),
@@ -17,6 +22,7 @@ const headerNavigationItemSchema = z.object({
 
 export const siteSettingsSchema = z.object({
   name: z.string().min(1),
+  canonicalOrigin: canonicalOriginSchema,
   locale: z.string().min(2),
   themeColor: z.string().regex(/^#[0-9a-f]{6}$/i),
   logo: z.string().min(1),

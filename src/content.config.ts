@@ -6,6 +6,7 @@ import { homepageSchema } from './lib/content/homepage';
 import { siteSettingsSchema } from './lib/content/site-settings';
 import { imageSettingsSchema } from './lib/content/image-metadata';
 import { trustedHtmlSchema } from './lib/content/trusted-html';
+import { sitemapSettingsSchema } from './lib/content/sitemap-settings';
 import {
   blogIndexSettingsSchema,
   landingCommonSettingsSchema,
@@ -36,6 +37,11 @@ const landingCommonSettings = defineCollection({
 const notFoundSettings = defineCollection({
   loader: glob({ base: './src/content/settings', pattern: 'not-found.json' }),
   schema: notFoundSettingsSchema,
+});
+
+const sitemapSettings = defineCollection({
+  loader: glob({ base: './src/content/settings', pattern: 'sitemap.json' }),
+  schema: sitemapSettingsSchema,
 });
 
 const legalPages = defineCollection({
@@ -98,6 +104,7 @@ export const collections = {
   blogIndexSettings,
   landingCommonSettings,
   notFoundSettings,
+  sitemapSettings,
   legalPages,
   homepage,
   blog,

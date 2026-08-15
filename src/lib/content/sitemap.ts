@@ -1,3 +1,5 @@
+import type { SitemapChangeFrequency, SitemapSettings } from './sitemap-settings';
+
 interface BlogSitemapSource {
   slug: string;
   publishedAt: string;
@@ -11,29 +13,36 @@ interface LandingSitemapSource {
 export interface SitemapEntry {
   path: string;
   lastmod?: string;
+  changefreq?: SitemapChangeFrequency;
+  priority?: number;
 }
 
-const fixedEntries: SitemapEntry[] = [
-  { path: '/' },
-  { path: '/blog/' },
-  { path: '/privacy/' },
-  { path: '/terms/' },
-];
+function withRule(path: string, lastmod: string, rule: SitemapSettings['groups']['homepage']): SitemapEntry {
+  return { path, lastmod, changefreq: rule.changefreq, priority: rule.priority };
+}
 
 export function buildSitemapEntries({
   posts,
   landingPages,
+  settings,
 }: {
   posts: BlogSitemapSource[];
   landingPages: LandingSitemapSource[];
+  settings: SitemapSettings;
 }): SitemapEntry[] {
-  return [
-    ...fixedEntries,
+  const entries: SitemapEntry[] = [
+    withRule('/', settings.lastmod, settings.groups.homepage),
+    withRule('/blog/', settings.lastmod, settings.groups.blogIndex),
+    withRule('/privacy/', settings.lastmod, settings.groups.legalPages),
+    withRule('/terms/', settings.lastmod, settings.groups.legalPages),
     ...posts
       .filter((post) => !post.draft)
-      .map((post) => ({ path: `/blog/${post.slug}/`, lastmod: post.publishedAt })),
-    ...landingPages.map((page) => ({ path: `/${page.slug}/` })),
+      .map((post) => withRule(`/blog/${post.slug}/`, post.publishedAt, settings.groups.blogPosts)),
+    ...landingPages.map((page) => withRule(`/${page.slug}/`, settings.lastmod, settings.groups.landingPages)),
   ];
+
+  const overrides = new Map(settings.overrides.map((override) => [override.path, override]));
+  return entries.map((entry) => ({ ...entry, ...overrides.get(entry.path), path: entry.path }));
 }
 
 function escapeXml(value: string) {
@@ -46,11 +55,18 @@ function escapeXml(value: string) {
 }
 
 export function renderSitemapXml(site: URL, entries: SitemapEntry[]) {
-  const uniqueEntries = Array.from(new Map(entries.map((entry) => [new URL(entry.path, site).toString(), entry])).entries());
+  const entryMap = new Map<string, SitemapEntry>();
+  entries.forEach((entry) => {
+    const url = new URL(entry.path, site).toString();
+    if (!entryMap.has(url)) entryMap.set(url, entry);
+  });
+  const uniqueEntries = Array.from(entryMap.entries());
   const urls = uniqueEntries.map(([url, entry]) => [
     '  <url>',
     `    <loc>${escapeXml(url)}</loc>`,
     ...(entry.lastmod ? [`    <lastmod>${escapeXml(entry.lastmod)}</lastmod>`] : []),
+    ...(entry.changefreq ? [`    <changefreq>${entry.changefreq}</changefreq>`] : []),
+    ...(entry.priority !== undefined ? [`    <priority>${entry.priority.toFixed(1)}</priority>`] : []),
     '  </url>',
   ].join('\n'));
 
