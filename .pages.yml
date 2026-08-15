@@ -204,6 +204,47 @@ content:
                 required: true
                 description: 链接目标；站内链接使用以 / 开头的路径。
 
+  - name: image-metadata
+    label: 图片信息 / Image metadata
+    type: file
+    path: src/content/settings/images.json
+    format: json
+    fields:
+      - name: images
+        label: 可复用图片说明
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{src}"
+        description: 为会在多个页面复用的图片集中维护 Alt、标题和尺寸；具体文章仍可填写自己的 Alt 覆盖这里的值。
+        fields:
+          - name: src
+            label: 图片｜IMG SRC
+            type: image
+            required: true
+            options:
+              media: images
+          - name: alt
+            label: 默认替代文字｜IMG ALT
+            type: string
+            required: true
+            description: 描述图片传达的信息，不要写“图片”或堆砌关键词。
+          - name: title
+            label: 内部识别名称（可选）
+            type: string
+            description: 供运营人员识别资源，不一定显示在页面上。
+          - name: width
+            label: 原始宽度 px（可选）
+            type: number
+            options:
+              min: 1
+          - name: height
+            label: 原始高度 px（可选）
+            type: number
+            options:
+              min: 1
+
   - name: blog-index
     label: 博客列表设置 / Blog index
     type: file
@@ -689,13 +730,34 @@ content:
         label: 草稿（不发布）/ Draft
         type: boolean
         default: false
-      - name: body
-        label: 文章正文｜H2 / H3 / P
-        type: rich-text
+      - name: contentMode
+        label: 正文格式 / Content mode
+        type: select
         required: true
-        description: 普通段落使用 P；主要章节使用 H2；章节下的子标题使用 H3。不要在正文中再添加 H1。
+        default: markdown
+        description: 普通编辑选择 Markdown；只有需要精确 HTML 结构时才选择 HTML。
+        options:
+          values:
+            - name: markdown
+              label: Markdown（推荐）
+            - name: html
+              label: HTML（高级）
+      - name: body
+        label: Markdown 正文｜H2 / H3 / P
+        type: rich-text
+        description: 正文格式选择 Markdown 时填写。普通段落使用 P；主要章节使用 H2；不要再添加 H1。
         options:
           media: images
+          format: markdown
+          switcher: true
+      - name: bodyHtml
+        label: HTML 正文｜可信 HTML
+        type: rich-text
+        description: 正文格式选择 HTML 时填写；可在 Source 模式编辑 HTML。不要加入 script、iframe 或事件属性。
+        options:
+          media: images
+          format: html
+          switcher: true
 
   - name: landing-pages
     label: 工具落地页 / Tool landing pages

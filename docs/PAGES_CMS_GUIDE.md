@@ -70,6 +70,12 @@ Header 的每个导航项可以选择两种效果：
 - **草稿**：开启后不会出现在列表，也不会生成公开文章页面。
 - **正文图片**：点击编辑器图片按钮并从静态图片库选择；源码模式应使用 `![说明](/uploads/文件名.jpg)`，不要粘贴 GitHub `blob` 地址。
 
+### Markdown 和 HTML 两种正文
+
+“正文格式”默认选择 **Markdown（推荐）**，在“Markdown 正文”中使用可视化编辑器或 Source 模式。只有确实需要自定义表格、属性或精确 HTML 结构时，才选择 **HTML（高级）** 并填写“HTML 正文”；HTML 编辑器也提供 Editor / Source 切换。
+
+两种正文只填写当前选中的一种。HTML 内容来自受信任的运营账号，会直接进入页面，因此不要加入 `<script>`、`<iframe>`、`onclick` 等事件属性或 `javascript:` 链接。切换格式前先复制备份；系统不会自动把既有 Markdown 与 HTML 相互转换。
+
 ## 5. 新建博客文章
 
 1. 在博客列表点击 **New**。
@@ -91,7 +97,7 @@ Header 的每个导航项可以选择两种效果：
 - 优点列表
 - 常见问题及答案
 
-新建页面时，URL 路径会决定正式地址，例如 `remove-stamp-from-image` 对应 `https://watermarkgemini.com/remove-stamp-from-image/`。发布后不要更改 URL 路径。新建的落地页会自动使用现有页面模板；若需要不同布局，请联系开发者修改代码。
+新建页面时，URL 路径会决定正式地址，例如 `remove-stamp-from-image` 对应 `https://www.watermarkgemini.com/remove-stamp-from-image/`。发布后不要更改 URL 路径。新建的落地页会自动使用现有页面模板；若需要不同布局，请联系开发者修改代码。
 
 工具落地页现在可以删除。删除前请确认没有导航、博客或外部广告仍指向该 URL；删除后应安排重定向，避免访客直接进入 404 页面。
 
@@ -111,6 +117,8 @@ Header 的每个导航项可以选择两种效果：
 ## 9. 管理静态图片
 
 进入 **静态图片 / Static images** 可以上传、选择和维护网站图片；首页的分享图片字段也会打开同一个图片库。文件会保存到 `public/uploads/`，页面中使用 `/uploads/...` 地址。
+
+进入 **图片信息 / Image metadata** 可以为复用图片登记默认 Alt、内部标题和原始宽高。文章自己的“封面图替代文字”优先级更高；没有填写时会使用图片信息中的默认 Alt，再没有才回退到文章标题。仅上传文件不会自动产生准确的 Alt，仍需运营人员填写。
 
 上传前：
 
@@ -152,5 +160,5 @@ Pages CMS 保存后，GitHub Actions 会执行自动质量检查，Vercel 构建
 - 链接可以打开，移动端段落不过长。
 - Vercel 状态为 Ready，正式域名页面已核对。
 
-Pages CMS 官方说明见 [pagescms.org/docs](https://pagescms.org/docs/)。
+Pages CMS 官方说明见 [配置文档](https://pagescms.org/docs/) 和 [Rich-text 字段说明](https://pagescms.org/docs/configuration/fields/rich-text/)。
 

@@ -8,7 +8,12 @@ interface CmsField {
   label?: string;
   type: string;
   description?: string;
-  options?: { media?: string };
+  options?: {
+    media?: string;
+    format?: string;
+    switcher?: boolean;
+    values?: Array<string | { name: string; label: string }>;
+  };
   fields?: CmsField[];
 }
 const config = YAML.parse(configSource) as {
@@ -121,9 +126,38 @@ describe('Pages CMS maintenance safeguards', () => {
     const blog = config.content.find((entry) => entry.name === 'blog');
     expect(blog?.fields).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ name: 'body', type: 'rich-text', options: { media: 'images' } }),
+        expect.objectContaining({
+          name: 'contentMode',
+          type: 'select',
+          options: { values: expect.arrayContaining([
+            expect.objectContaining({ name: 'markdown' }),
+            expect.objectContaining({ name: 'html' }),
+          ]) },
+        }),
+        expect.objectContaining({
+          name: 'body',
+          type: 'rich-text',
+          options: { media: 'images', format: 'markdown', switcher: true },
+        }),
+        expect.objectContaining({
+          name: 'bodyHtml',
+          type: 'rich-text',
+          options: { media: 'images', format: 'html', switcher: true },
+        }),
       ]),
     );
+  });
+
+  it('exposes reusable image metadata as a CMS-managed file', () => {
+    const imageMetadata = config.content.find((entry) => entry.name === 'image-metadata');
+    expect(imageMetadata).toMatchObject({
+      label: '图片信息 / Image metadata',
+      type: 'file',
+      path: 'src/content/settings/images.json',
+    });
+    expect(imageMetadata?.fields).toEqual(expect.arrayContaining([
+      expect.objectContaining({ name: 'images', type: 'object' }),
+    ]));
   });
 
   it('shows the blog URL path in the collection list', () => {
