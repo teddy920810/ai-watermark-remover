@@ -5,10 +5,17 @@ import { sortBlogEntries } from '../../lib/content/entries';
 
 export const prerender = true;
 const blogPosts = sortBlogEntries(await getCollection('blog'));
+const [settingsEntry] = await getCollection('blogIndexSettings');
+if (!settingsEntry) throw new Error('Blog index CMS settings are missing.');
+const settings = settingsEntry.data;
 ---
-<SiteLayout title="Image Cleanup Guides | ClearMark AI" description="Practical guides to image formats, responsible watermark removal, and better image cleanup workflows.">
-  <header class="blog-hero"><span class="eyebrow">ClearMark guides</span><h1>Better images start with better choices</h1><p>Concise, practical advice for cleaning and exporting images responsibly.</p></header>
+<SiteLayout title={settings.title} description={settings.description} image={settings.shareImage}>
+  <header class="blog-hero"><span class="eyebrow">{settings.eyebrow}</span><h1>{settings.heading}</h1><p>{settings.intro}</p></header>
   <section class="blog-list">
-    {blogPosts.map(({ data: post }) => <article><h2><a href={`/blog/${post.slug}`}>{post.title}</a></h2><p>{post.description}</p><small>{post.readTime}</small></article>)}
+    {blogPosts.slice(0, settings.postsPerPage).map(({ data: post }) => <article class:list={{ 'has-cover': post.coverImage }}>
+      {post.coverImage && <img class="blog-card-image" src={post.coverImage} alt={post.coverAlt ?? post.title} loading="lazy" />}
+      <div><span class="article-category">{post.category}</span><h2><a href={`/blog/${post.slug}`}>{post.title}</a></h2><p>{post.description}</p></div>
+      <small>{post.readTime}</small>
+    </article>)}
   </section>
 </SiteLayout>

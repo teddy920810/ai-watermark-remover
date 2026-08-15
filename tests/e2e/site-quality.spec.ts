@@ -27,5 +27,5 @@ test('Google tag emits a page_view collection request', async ({ page }) => {
 
   await page.goto('/');
   const request = await pageView;
-  expect(request.url()).toContain('tid=G-WPF5GVC931');
+  expect(request.url()).toContain('tid=G-52ZWCGEZ7R');
 });

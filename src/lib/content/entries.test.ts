@@ -21,4 +21,14 @@ describe('sortBlogEntries', () => {
 
     expect(posts.map((post) => post.id)).toEqual(['older', 'newer']);
   });
+
+  it('hides drafts and places featured posts first', () => {
+    const posts = [
+      { id: 'newer', data: { publishedAt: '2026-08-02', featured: false, draft: false } },
+      { id: 'featured', data: { publishedAt: '2026-07-01', featured: true, draft: false } },
+      { id: 'draft', data: { publishedAt: '2026-08-03', featured: true, draft: true } },
+    ];
+
+    expect(sortBlogEntries(posts).map((post) => post.id)).toEqual(['featured', 'newer']);
+  });
 });

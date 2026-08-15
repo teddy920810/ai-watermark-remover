@@ -12,6 +12,12 @@ export const siteSettingsSchema = z.object({
   defaultDescription: z.string().min(1).max(180),
   favicon: z.string().min(1),
   defaultShareImage: z.string().min(1),
+  announcement: z.object({
+    enabled: z.boolean(),
+    text: z.string().min(1),
+    linkLabel: z.string(),
+    linkHref: z.string(),
+  }),
   header: z.object({
     navigation: z.array(navigationLinkSchema).min(1),
   }),

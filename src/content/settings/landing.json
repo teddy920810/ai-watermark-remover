@@ -1,0 +1,27 @@
+{
+  "process": {
+    "eyebrow": "Three simple steps",
+    "heading": "From upload to clean result",
+    "steps": [
+      {
+        "number": "01",
+        "title": "Choose your image",
+        "description": "Select one JPG, PNG, or WEBP file up to 10 MB."
+      },
+      {
+        "number": "02",
+        "title": "Process securely",
+        "description": "Your image is uploaded directly to private object storage."
+      },
+      {
+        "number": "03",
+        "title": "Review and download",
+        "description": "Compare the result and download it through a temporary link."
+      }
+    ]
+  },
+  "faq": {
+    "eyebrow": "Common questions",
+    "heading": "Good to know before uploading"
+  }
+}

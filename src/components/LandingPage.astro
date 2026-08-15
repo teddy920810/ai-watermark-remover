@@ -1,10 +1,13 @@
 ---
 import ImageUploader from './uploader/ImageUploader';
 import SiteLayout from '../layouts/SiteLayout.astro';
-import type { CollectionEntry } from 'astro:content';
+import { getCollection, type CollectionEntry } from 'astro:content';
 
 interface Props { page: CollectionEntry<'landingPages'>['data'] }
 const { page } = Astro.props;
+const [commonEntry] = await getCollection('landingCommonSettings');
+if (!commonEntry) throw new Error('Landing-page shared CMS settings are missing.');
+const common = commonEntry.data;
 const faqSchema = {
   '@type': 'FAQPage',
   mainEntity: page.faq.map((item) => ({
@@ -27,16 +30,14 @@ const faqSchema = {
   </section>
 
   <section class="section process-section" id="how-it-works">
-    <div class="section-heading"><span class="eyebrow">Three simple steps</span><h2>From upload to clean result</h2></div>
+    <div class="section-heading"><span class="eyebrow">{common.process.eyebrow}</span><h2>{common.process.heading}</h2></div>
     <div class="steps">
-      <article><span>01</span><h3>Choose your image</h3><p>Select one JPG, PNG, or WEBP file up to 10 MB.</p></article>
-      <article><span>02</span><h3>Process securely</h3><p>Your image is uploaded directly to private object storage.</p></article>
-      <article><span>03</span><h3>Review and download</h3><p>Compare the result and download it through a temporary link.</p></article>
+      {common.process.steps.map((step) => <article><span>{step.number}</span><h3>{step.title}</h3><p>{step.description}</p></article>)}
     </div>
   </section>
 
   <section class="section faq-section">
-    <div class="section-heading"><span class="eyebrow">Common questions</span><h2>Good to know before uploading</h2></div>
+    <div class="section-heading"><span class="eyebrow">{common.faq.eyebrow}</span><h2>{common.faq.heading}</h2></div>
     <div class="faq-list">{page.faq.map((item) => <details><summary>{item.question}<span>+</span></summary><p>{item.answer}</p></details>)}</div>
   </section>
 </SiteLayout>

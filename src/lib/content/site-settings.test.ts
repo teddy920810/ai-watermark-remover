@@ -15,5 +15,6 @@ describe('site settings CMS content', () => {
     const parsed = siteSettingsSchema.parse(settings);
     expect(parsed.header.navigation.length).toBeGreaterThan(0);
     expect(parsed.footer.links.length).toBeGreaterThan(0);
+    expect(parsed.announcement.enabled).toBe(false);
   });
 });
