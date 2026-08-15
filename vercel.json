@@ -1,6 +1,13 @@
 {
   "framework": "astro",
   "buildCommand": "npm run verify:deploy",
+  "redirects": [
+    {
+      "source": "/index.html",
+      "destination": "/",
+      "permanent": true
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",

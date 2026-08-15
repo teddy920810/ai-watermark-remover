@@ -292,7 +292,7 @@ content:
       rename: false
       delete: false
     view:
-      fields: [title, publishedAt, readTime]
+      fields: [title, slug, publishedAt, readTime]
       primary: title
       sort: [publishedAt, title]
       search: [title, description]
