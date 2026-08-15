@@ -13,4 +13,5 @@ output/
 .playwright-cli/
 .tools/
 .secrets/
+.site-init-backup/
 *.log

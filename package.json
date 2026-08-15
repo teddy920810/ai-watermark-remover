@@ -17,6 +17,7 @@
     "test:e2e": "playwright test",
     "test:smoke:production": "node scripts/production-smoke.mjs",
     "auth:import": "node scripts/import-google-credentials.mjs",
+    "site:init": "node scripts/initialize-site.mjs",
     "verify:deploy": "npm run test:coverage && npm run lint && npm run build",
     "verify": "npm run test:coverage && npm run lint && npm run build && npm run test:e2e"
   },
