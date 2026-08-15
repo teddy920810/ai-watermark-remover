@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30" fill="none" role="img" aria-labelledby="title desc">
+  <title id="title">WatermarkGemini</title>
+  <desc id="desc">Blue-violet W with a white eraser stroke and two small sparkles.</desc>
+  <defs>
+    <linearGradient id="bg" x1="3" y1="2" x2="27" y2="29" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#101A3F"/>
+      <stop offset="1" stop-color="#302064"/>
+    </linearGradient>
+    <linearGradient id="w" x1="5" y1="8" x2="25" y2="22" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#35C8FF"/>
+      <stop offset="0.52" stop-color="#6681FF"/>
+      <stop offset="1" stop-color="#B45CFF"/>
+    </linearGradient>
+    <linearGradient id="shine" x1="7" y1="20" x2="23" y2="9" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#EAF8FF"/>
+      <stop offset="0.55" stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#F1E9FF"/>
+    </linearGradient>
+    <mask id="erased" maskUnits="userSpaceOnUse" x="0" y="0" width="30" height="30">
+      <rect width="30" height="30" fill="white"/>
+      <path d="M7.3 20.2 22.8 9.5" stroke="black" stroke-width="4.1" stroke-linecap="round"/>
+    </mask>
+  </defs>
+
+  <rect x="0.75" y="0.75" width="28.5" height="28.5" rx="7.25" fill="url(#bg)"/>
+  <rect x="1.25" y="1.25" width="27.5" height="27.5" rx="6.75" stroke="white" stroke-opacity="0.11"/>
+
+  <path
+    d="M5.7 8.3 9.5 21.5 15 12.8l5.5 8.7 3.8-13.2"
+    stroke="url(#w)"
+    stroke-width="4"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    mask="url(#erased)"
+  />
+
+  <path d="M8.1 19.65 22 10.05" stroke="url(#shine)" stroke-width="2.15" stroke-linecap="round"/>
+  <path d="m23.45 4.1.58 1.52 1.52.58-1.52.58-.58 1.52-.58-1.52-1.52-.58 1.52-.58.58-1.52Z" fill="white"/>
+  <circle cx="5.25" cy="24.2" r="0.8" fill="#77D9FF"/>
+</svg>
