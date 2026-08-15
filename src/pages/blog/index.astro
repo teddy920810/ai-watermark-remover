@@ -2,19 +2,22 @@
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import { getCollection } from 'astro:content';
 import { sortBlogEntries } from '../../lib/content/entries';
+import { resolveBlogMetadata } from '../../lib/content/blog-metadata';
 
 export const prerender = true;
 const blogPosts = sortBlogEntries(await getCollection('blog'));
 const [settingsEntry] = await getCollection('blogIndexSettings');
 if (!settingsEntry) throw new Error('Blog index CMS settings are missing.');
 const settings = settingsEntry.data;
+const [siteEntry] = await getCollection('siteSettings');
+if (!siteEntry) throw new Error('Site settings CMS content is missing.');
 ---
 <SiteLayout title={settings.title} description={settings.description} image={settings.shareImage}>
   <header class="blog-hero"><span class="eyebrow">{settings.eyebrow}</span><h1>{settings.heading}</h1><p>{settings.intro}</p></header>
   <section class="blog-list">
     {blogPosts.slice(0, settings.postsPerPage).map(({ data: post }) => <article class:list={{ 'has-cover': post.coverImage }}>
       {post.coverImage && <img class="blog-card-image" src={post.coverImage} alt={post.coverAlt ?? post.title} loading="lazy" />}
-      <div><span class="article-category">{post.category}</span><h2><a href={`/blog/${post.slug}`}>{post.title}</a></h2><p>{post.description}</p></div>
+      <div><span class="article-category">{resolveBlogMetadata(post, siteEntry.data.contentDefaults, siteEntry.data.name).category}</span><h2><a href={`/blog/${post.slug}`}>{post.title}</a></h2><p>{post.description}</p></div>
       <small>{post.readTime}</small>
     </article>)}
   </section>

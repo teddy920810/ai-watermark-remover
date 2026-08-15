@@ -13,11 +13,26 @@ describe('site settings CMS content', () => {
 
   it('contains editable header navigation and footer links', () => {
     const parsed = siteSettingsSchema.parse(settings);
+    expect(parsed.locale).toBe('en');
+    expect(parsed.themeColor).toBe('#f7f5ef');
+    expect(parsed.analytics.googleMeasurementId).toBe('G-52ZWCGEZ7R');
+    expect(parsed.structuredData.applicationCategory).toBe('MultimediaApplication');
+    expect(parsed.contentDefaults.author).toBe('ClearMark AI');
     expect(parsed.logo).toBe('/uploads/watermarkgemini-logo.svg');
     expect(parsed.defaultShareImage).toBe('/uploads/og-card.svg');
     expect(parsed.header.navigation.length).toBeGreaterThan(0);
     expect(parsed.footer.links.length).toBeGreaterThan(0);
     expect(parsed.announcement.enabled).toBe(false);
+  });
+
+  it('allows analytics to be disabled but rejects malformed measurement IDs', () => {
+    const disabled = structuredClone(settings);
+    disabled.analytics.googleMeasurementId = '';
+    expect(siteSettingsSchema.safeParse(disabled).success).toBe(true);
+
+    const malformed = structuredClone(settings);
+    malformed.analytics.googleMeasurementId = 'UA-123';
+    expect(siteSettingsSchema.safeParse(malformed).success).toBe(false);
   });
 
   it('supports one-level dropdown links in the header navigation', () => {
