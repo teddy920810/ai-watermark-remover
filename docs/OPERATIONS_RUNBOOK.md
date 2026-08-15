@@ -2,7 +2,7 @@
 
 ## 生产资源
 
-- 正式域名：`https://watermarkgemini.com`
+- 正式域名：`https://www.watermarkgemini.com`
 - 备用 Vercel 域名：`https://ai-watermark-remover-peach.vercel.app`
 - GitHub：`teddy920810/ai-watermark-remover`
 - Cloudflare R2 Bucket：`watermark`
@@ -10,9 +10,9 @@
 
 ## Vercel 必要配置
 
-Production 环境至少配置 `SITE_URL=https://watermarkgemini.com`、所有 `R2_*` 变量、`GOOGLE_CLIENT_ID`、`GOOGLE_CLIENT_SECRET`、`BETTER_AUTH_SECRET` 和 `BETTER_AUTH_URL=https://watermarkgemini.com`。Preview/Development 如需上传或登录功能，也应单独配置对应变量。密钥变更后需要重新部署才能生效。
+Production 环境至少配置 `SITE_URL=https://www.watermarkgemini.com`、所有 `R2_*` 变量、`GOOGLE_CLIENT_ID`、`GOOGLE_CLIENT_SECRET`、`BETTER_AUTH_SECRET` 和 `BETTER_AUTH_URL=https://www.watermarkgemini.com`。Preview/Development 如需上传或登录功能，也应单独配置对应变量。密钥变更后需要重新部署才能生效。
 
-Google Cloud OAuth Web Client 必须包含正式回调 `https://watermarkgemini.com/api/auth/callback/google`。如保留 `www` 入口，可同时登记 `https://www.watermarkgemini.com/api/auth/callback/google`，但站点仍应 308 统一到根域名。OAuth 修改部署后必须使用真实测试用户完成一次登录、确认回调成功、会话建立、退出登录和处理任务；仅检查按钮或接口 200 不代表集成完成。
+Google Cloud OAuth Web Client 必须包含正式回调 `https://www.watermarkgemini.com/api/auth/callback/google`。根域名 `https://watermarkgemini.com` 应使用 308 重定向到 `www`。OAuth 修改部署后必须使用真实测试用户完成一次登录、确认回调成功、会话建立、退出登录和处理任务；仅检查按钮或接口 200 不代表集成完成。
 
 Git 页面应保持仓库连接到 `main`；域名页面应确保根域名为 Production，`www` 以 308 重定向到根域名。正常情况下 Vercel 自动管理 HTTPS 证书。
 
@@ -61,3 +61,4 @@ Build Logs 出现 `publishedAt: Expected type string, received object` 时，先
 - 每月：检查依赖安全更新、Vercel/R2 用量、失败部署和 GA 是否持续收数。
 - 每季度：测试恢复/回滚流程、检查 R2 生命周期和 CORS、审查仓库与平台成员权限。
 - 人员离开时：立即撤销 GitHub/Vercel/Cloudflare 权限并轮换共享凭据。
+

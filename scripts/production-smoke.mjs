@@ -1,6 +1,6 @@
 /* global Buffer, URL, console, fetch, process, setTimeout */
 
-const baseUrl = (process.env.SMOKE_BASE_URL ?? 'https://watermarkgemini.com').replace(/\/$/, '');
+const baseUrl = (process.env.SMOKE_BASE_URL ?? 'https://www.watermarkgemini.com').replace(/\/$/, '');
 const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=', 'base64');
 
 async function json(url, init) {
@@ -42,3 +42,4 @@ for (const url of [job.resultUrl, job.downloadUrl]) {
 }
 
 console.log(`Production smoke passed for ${baseUrl}; signed URLs and object keys were redacted.`);
+
