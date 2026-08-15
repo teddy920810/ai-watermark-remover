@@ -25,5 +25,6 @@ describe('SiteLayout Google Analytics integration', () => {
     expect(globalCss).toContain('.nav-dropdown:hover .nav-dropdown-panel');
     expect(globalCss).toContain('.nav-dropdown:has(:focus-visible) .nav-dropdown-panel');
     expect(globalCss).toContain('pointer-events: none');
+    expect(globalCss).toContain('.site-header nav > a, .nav-dropdown-trigger { font-weight: 750; }');
   });
 });
