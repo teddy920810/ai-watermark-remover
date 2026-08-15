@@ -19,15 +19,15 @@
         "children": [
           {
             "label": "Remove text from image",
-            "href": "/remove-text-from-image/"
+            "href": "/remove-text-from-image"
           },
           {
             "label": "Remove logo from image",
-            "href": "/remove-logo-from-image/"
+            "href": "/remove-logo-from-image"
           },
           {
             "label": "Remove Gemini Watermark",
-            "href": "/remove-gemini-watermark/"
+            "href": "/remove-gemini-watermark"
           }
         ]
       },
