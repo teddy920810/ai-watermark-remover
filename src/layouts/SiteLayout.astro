@@ -76,7 +76,7 @@ const schemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [defaultS
       </aside>
     )}
     <header class="site-header">
-      <a class="brand" href="/" aria-label={`${site.name} home`}><span class="brand-mark">{site.brandMark}</span><span>{site.name}</span></a>
+      <a class="brand" href="/" aria-label={`${site.name} home`}><img class="brand-logo" src={site.logo} alt="" /><span>{site.name}</span></a>
       <nav aria-label="Main navigation">
         {site.header.navigation.map((item) => (item.children?.length ?? 0) > 0 ? (
           <div class="nav-dropdown">
@@ -91,7 +91,7 @@ const schemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [defaultS
     </header>
     <main><slot /></main>
     <footer class="site-footer">
-      <div><a class="brand" href="/"><span class="brand-mark">{site.brandMark}</span><span>{site.name}</span></a><p>{site.footer.tagline}</p></div>
+      <div><a class="brand" href="/"><img class="brand-logo" src={site.logo} alt="" /><span>{site.name}</span></a><p>{site.footer.tagline}</p></div>
       <div class="footer-links">{site.footer.links.map((item) => <a href={item.href}>{item.label}</a>)}</div>
       <p>© {new Date().getFullYear()} {site.name}</p>
     </footer>

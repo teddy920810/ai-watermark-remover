@@ -17,7 +17,7 @@ const headerNavigationItemSchema = z.object({
 
 export const siteSettingsSchema = z.object({
   name: z.string().min(1),
-  brandMark: z.string().min(1),
+  logo: z.string().min(1),
   defaultTitle: z.string().min(1),
   defaultDescription: z.string().min(1).max(180),
   favicon: z.string().min(1),

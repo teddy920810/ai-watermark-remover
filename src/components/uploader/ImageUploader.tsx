@@ -6,6 +6,11 @@ import { initialUploadState, uploadReducer } from './upload-machine';
 
 type JsonRecord = Record<string, unknown>;
 
+interface Props {
+  logo: string;
+  siteName: string;
+}
+
 async function api<T extends JsonRecord>(url: string, init?: RequestInit): Promise<T> {
   const response = await fetch(url, init);
   const body = (await response.json()) as T & { error?: string };
@@ -17,7 +22,7 @@ function wait(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-export default function ImageUploader() {
+export default function ImageUploader({ logo, siteName }: Props) {
   const { data: session, isPending: sessionPending, refetch: refetchSession } = authClient.useSession();
   const [state, dispatch] = useReducer(uploadReducer, initialUploadState);
   const [file, setFile] = useState<File | null>(null);
@@ -213,7 +218,7 @@ export default function ImageUploader() {
         <div className="auth-modal-backdrop">
           <section className="auth-modal" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title">
             <button className="auth-modal-close" type="button" onClick={() => setShowLogin(false)} aria-label="Close sign-in dialog">×</button>
-            <span className="brand-mark" aria-hidden="true">C</span>
+            <img className="brand-logo auth-logo" src={logo} alt={`${siteName} logo`} />
             <h3 id="auth-modal-title">Sign in to start processing</h3>
             <p>Your selected image will stay on this page. Processing starts automatically after Google sign-in.</p>
             <button className="button button-primary auth-google-button" type="button" onClick={continueWithGoogle} disabled={loginPending}>

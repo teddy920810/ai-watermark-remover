@@ -29,7 +29,9 @@ Page CMS 字段名称会用“业务名称｜HTML 标签”说明文字最终显
 
 ## 2. 修改 Header 和 Footer
 
-进入 **站点设置 / Site settings** 可维护：站点名称、品牌标记、默认 SEO 信息、浏览器图标、默认分享图片、全站公告、Header 导航链接、Footer 品牌说明和链接。
+进入 **站点设置 / Site settings** 可维护：站点名称、品牌 Logo 图片、默认 SEO 信息、浏览器图标、默认分享图片、全站公告、Header 导航链接、Footer 品牌说明和链接。
+
+品牌 Logo 会同时用于 Header、Footer、上传登录弹窗和 Google 登录完成页。建议上传正方形 SVG 或透明 PNG；更换后请检查 34px 和 48px 两种显示尺寸是否仍然清晰。
 
 Header 与 Footer 会应用到首页、博客、工具落地页和法律页面。链接建议使用站内路径，例如 `/blog`；保存后需要检查桌面端和移动端导航。登录按钮属于功能组件，不在 CMS 中修改。
 

@@ -109,6 +109,7 @@ describe('Pages CMS maintenance safeguards', () => {
     });
     expect(siteSettings?.fields).toEqual(
       expect.arrayContaining([
+        expect.objectContaining({ name: 'logo', type: 'image', options: { media: 'images' } }),
         expect.objectContaining({ name: 'favicon', type: 'image', options: { media: 'images' } }),
         expect.objectContaining({ name: 'header', type: 'object' }),
         expect.objectContaining({ name: 'footer', type: 'object' }),

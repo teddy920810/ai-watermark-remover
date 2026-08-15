@@ -1,5 +1,9 @@
 ---
+import { getCollection } from 'astro:content';
 export const prerender = true;
+const [siteEntry] = await getCollection('siteSettings');
+if (!siteEntry) throw new Error('Site settings CMS content is missing.');
+const site = siteEntry.data;
 ---
 
 <!doctype html>
@@ -11,7 +15,7 @@ export const prerender = true;
   </head>
   <body>
     <main class="popup-status">
-      <span class="brand-mark">C</span>
+      <img class="brand-logo" src={site.logo} alt={`${site.name} logo`} />
       <p>Sign-in complete. Returning to your upload…</p>
     </main>
     <script is:inline>
@@ -28,5 +32,5 @@ export const prerender = true;
 <style>
   body { margin: 0; color: #172321; background: #f7f5ef; font-family: Inter, ui-sans-serif, system-ui, sans-serif; }
   .popup-status { min-height: 100vh; display: grid; place-content: center; justify-items: center; gap: 18px; padding: 24px; text-align: center; }
-  .brand-mark { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 14px 14px 14px 4px; color: white; background: #1d6b56; font-family: Georgia, serif; font-size: 1.4rem; font-style: italic; }
+  .brand-logo { width: 48px; height: 48px; display: block; object-fit: contain; }
 </style>
