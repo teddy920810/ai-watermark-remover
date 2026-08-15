@@ -55,6 +55,24 @@ content:
         required: true
         options:
           media: images
+      - name: announcement
+        label: 公告 / Announcement
+        type: object
+        fields:
+          - name: enabled
+            label: 显示公告
+            type: boolean
+            default: false
+          - name: text
+            label: 公告内容
+            type: text
+            required: true
+          - name: linkLabel
+            label: 链接文字（可选）
+            type: string
+          - name: linkHref
+            label: 链接地址（可选）
+            type: string
       - name: header
         label: 页头 / Header
         type: object
@@ -101,6 +119,183 @@ content:
                 label: 链接地址
                 type: string
                 required: true
+
+  - name: blog-index
+    label: 博客列表设置 / Blog index
+    type: file
+    path: src/content/settings/blog.json
+    format: json
+    fields:
+      - name: title
+        label: SEO 标题
+        type: string
+        required: true
+      - name: description
+        label: SEO 描述
+        type: text
+        required: true
+        options:
+          maxlength: 180
+      - name: shareImage
+        label: 分享图片
+        type: image
+        required: true
+        options:
+          media: images
+      - name: eyebrow
+        label: 小标题
+        type: string
+        required: true
+      - name: heading
+        label: 主标题
+        type: string
+        required: true
+      - name: intro
+        label: 简介
+        type: text
+        required: true
+      - name: postsPerPage
+        label: 最多显示文章数
+        type: number
+        required: true
+        default: 20
+        options:
+          min: 1
+          max: 100
+
+  - name: landing-common
+    label: 落地页公共模块 / Landing shared sections
+    type: file
+    path: src/content/settings/landing.json
+    format: json
+    fields:
+      - name: process
+        label: 使用步骤
+        type: object
+        fields:
+          - name: eyebrow
+            label: 小标题
+            type: string
+            required: true
+          - name: heading
+            label: 主标题
+            type: string
+            required: true
+          - name: steps
+            label: 步骤
+            type: object
+            list:
+              min: 1
+              collapsible:
+                collapsed: true
+                summary: "{number} {title}"
+            fields:
+              - name: number
+                label: 序号
+                type: string
+                required: true
+              - name: title
+                label: 标题
+                type: string
+                required: true
+              - name: description
+                label: 说明
+                type: text
+                required: true
+      - name: faq
+        label: FAQ 标题
+        type: object
+        fields:
+          - name: eyebrow
+            label: 小标题
+            type: string
+            required: true
+          - name: heading
+            label: 主标题
+            type: string
+            required: true
+
+  - name: not-found
+    label: 404 页面 / Not found
+    type: file
+    path: src/content/settings/not-found.json
+    format: json
+    fields:
+      - name: title
+        label: SEO 标题
+        type: string
+        required: true
+      - name: description
+        label: SEO 描述
+        type: text
+        required: true
+        options:
+          maxlength: 180
+      - name: eyebrow
+        label: 小标题
+        type: string
+        required: true
+      - name: heading
+        label: 主标题
+        type: string
+        required: true
+      - name: intro
+        label: 说明
+        type: text
+        required: true
+      - name: buttonLabel
+        label: 按钮文字
+        type: string
+        required: true
+      - name: buttonHref
+        label: 按钮链接
+        type: string
+        required: true
+
+  - name: legal-pages
+    label: 法律页面 / Legal pages
+    type: collection
+    path: src/content/legal
+    format: yaml-frontmatter
+    filename: "{fields.slug}.md"
+    operations:
+      create: false
+      rename: false
+      delete: false
+    view:
+      fields: [title, slug]
+      primary: title
+      sort: [title]
+    fields:
+      - name: slug
+        label: URL 路径
+        type: string
+        required: true
+        readonly: true
+      - name: title
+        label: SEO 标题
+        type: string
+        required: true
+      - name: description
+        label: SEO 描述
+        type: text
+        required: true
+        options:
+          maxlength: 180
+      - name: eyebrow
+        label: 小标题
+        type: string
+        required: true
+      - name: heading
+        label: 主标题
+        type: string
+        required: true
+      - name: body
+        label: 正文
+        type: rich-text
+        required: true
+        options:
+          media: images
 
   - name: homepage
     label: 首页 / Homepage
@@ -292,7 +487,7 @@ content:
       rename: false
       delete: false
     view:
-      fields: [title, slug, publishedAt, readTime]
+      fields: [title, slug, category, publishedAt, draft]
       primary: title
       sort: [publishedAt, title]
       search: [title, description]
@@ -328,6 +523,31 @@ content:
         type: string
         required: true
         default: 5 min read
+      - name: coverImage
+        label: 封面图 / Cover image
+        type: image
+        options:
+          media: images
+      - name: coverAlt
+        label: 封面图替代文字 / Image alt
+        type: string
+        description: 上传封面图时请填写，用于无障碍和图片 SEO。
+      - name: author
+        label: 作者 / Author
+        type: string
+        default: ClearMark AI
+      - name: category
+        label: 分类 / Category
+        type: string
+        default: Guides
+      - name: featured
+        label: 置顶文章 / Featured
+        type: boolean
+        default: false
+      - name: draft
+        label: 草稿（不发布）/ Draft
+        type: boolean
+        default: false
       - name: body
         label: 正文 / Article body
         type: rich-text

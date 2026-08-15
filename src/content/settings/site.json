@@ -5,6 +5,12 @@
   "defaultDescription": "Remove visible watermarks, logos, and text from images online. Fast, private, and easy to use.",
   "favicon": "/uploads/favicon.svg",
   "defaultShareImage": "/uploads/og-card.svg",
+  "announcement": {
+    "enabled": false,
+    "text": "New features and service updates will appear here.",
+    "linkLabel": "Learn more",
+    "linkHref": "/blog"
+  },
   "header": {
     "navigation": [
       {

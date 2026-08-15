@@ -69,6 +69,12 @@ const schemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [defaultS
     {schemas.map((item) => <script is:inline type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', ...item })} />)}
   </head>
   <body>
+    {site.announcement.enabled && (
+      <aside class="site-announcement" aria-label="Site announcement">
+        <span>{site.announcement.text}</span>
+        {site.announcement.linkLabel && site.announcement.linkHref && <a href={site.announcement.linkHref}>{site.announcement.linkLabel} →</a>}
+      </aside>
+    )}
     <header class="site-header">
       <a class="brand" href="/" aria-label={`${site.name} home`}><span class="brand-mark">{site.brandMark}</span><span>{site.name}</span></a>
       <nav aria-label="Main navigation">

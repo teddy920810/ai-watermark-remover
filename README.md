@@ -59,7 +59,8 @@ Google OAuth 回调地址为 `/api/auth/callback/google`。本地 3000 端口与
 - `src/content/blog/`：博客 Markdown 内容
 - `src/content/landing-pages/`：工具落地页 JSON 内容
 - `src/content/homepage/home.json`：Pages CMS 管理的首页内容
-- `src/content/settings/site.json`：Pages CMS 管理的 Header、Footer 和全站设置
+- `src/content/legal/`：Pages CMS 管理的隐私政策和使用条款
+- `src/content/settings/`：Pages CMS 管理的 Header、Footer、公告、博客列表、落地页公共模块和 404
 - `public/uploads/`：Pages CMS 管理的静态图片资源
 - `.pages.yml`：Pages CMS 字段和权限配置
 - `src/pages/api/`：Vercel 服务端 API

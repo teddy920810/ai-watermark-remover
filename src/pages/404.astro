@@ -1,5 +1,9 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
+import { getCollection } from 'astro:content';
 export const prerender = true;
+const [settingsEntry] = await getCollection('notFoundSettings');
+if (!settingsEntry) throw new Error('404 CMS settings are missing.');
+const settings = settingsEntry.data;
 ---
-<SiteLayout title="Page not found | ClearMark AI" description="The page you requested could not be found."><header class="legal-page"><span class="eyebrow">404</span><h1>This page has faded away</h1><p><a class="button button-primary" href="/">Return home</a></p></header></SiteLayout>
+<SiteLayout title={settings.title} description={settings.description}><header class="legal-page"><span class="eyebrow">{settings.eyebrow}</span><h1>{settings.heading}</h1><p>{settings.intro}</p><p><a class="button button-primary" href={settings.buttonHref}>{settings.buttonLabel}</a></p></header></SiteLayout>

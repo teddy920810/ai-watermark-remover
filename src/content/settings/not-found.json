@@ -1,0 +1,9 @@
+{
+  "title": "Page not found | ClearMark AI",
+  "description": "The page you requested could not be found.",
+  "eyebrow": "404",
+  "heading": "This page has faded away",
+  "intro": "The link may be outdated, or the page may have moved.",
+  "buttonLabel": "Return home",
+  "buttonHref": "/"
+}
