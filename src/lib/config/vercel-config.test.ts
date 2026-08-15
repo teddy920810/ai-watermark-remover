@@ -13,4 +13,12 @@ describe('Vercel canonical URL redirects', () => {
       permanent: true,
     });
   });
+
+  it('removes nested /index.html filenames from public URLs', () => {
+    expect(config.redirects).toContainEqual({
+      source: '/:path*/index.html',
+      destination: '/:path*',
+      permanent: true,
+    });
+  });
 });
