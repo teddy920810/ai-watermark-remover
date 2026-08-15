@@ -15,4 +15,10 @@ describe('SiteLayout Google Analytics integration', () => {
     expect(layoutSource).toContain('function gtag(){dataLayer.push(arguments);}');
     expect(layoutSource).not.toContain('function gtag(...args)');
   });
+
+  it('renders CMS navigation children as a one-level dropdown', () => {
+    expect(layoutSource).toContain('(item.children?.length ?? 0) > 0');
+    expect(layoutSource).toContain('class="nav-dropdown"');
+    expect(layoutSource).toContain('(item.children ?? []).map');
+  });
 });

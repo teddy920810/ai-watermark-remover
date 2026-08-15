@@ -34,13 +34,15 @@ content:
         type: string
         required: true
       - name: defaultTitle
-        label: 默认 SEO 标题
+        label: 默认 SEO 标题｜TITLE
         type: string
         required: true
+        description: 浏览器标签和搜索结果标题的默认值，不是页面中的 H1。
       - name: defaultDescription
-        label: 默认 SEO 描述
+        label: 默认 SEO 描述｜META
         type: text
         required: true
+        description: 搜索引擎使用的页面摘要，页面正文中通常不直接显示。
         options:
           maxlength: 180
       - name: favicon
@@ -64,15 +66,18 @@ content:
             type: boolean
             default: false
           - name: text
-            label: 公告内容
+            label: 公告内容｜SPAN
             type: text
             required: true
+            description: 顶部公告栏中的短文字，不属于 H1–H3 标题层级。
           - name: linkLabel
-            label: 链接文字（可选）
+            label: 链接文字｜A（可选）
             type: string
+            description: 用户看到并可点击的链接文字。
           - name: linkHref
-            label: 链接地址（可选）
+            label: 链接地址｜HREF（可选）
             type: string
+            description: 链接目标；站内链接建议使用 /blog 这样的路径。
       - name: header
         label: 页头 / Header
         type: object
@@ -87,21 +92,42 @@ content:
                 summary: "{label}"
             fields:
               - name: label
-                label: 链接文字
+                label: 导航文字｜A
                 type: string
                 required: true
+                description: Header 中用户可点击的导航文字。
               - name: href
-                label: 链接地址
+                label: 普通链接地址｜HREF（下拉菜单可留空）
                 type: string
-                required: true
+                description: 没有下拉项时必须填写；站内链接使用以 / 开头的路径。
+              - name: children
+                label: 一级下拉链接
+                type: object
+                description: 添加一项后，该导航会显示为下拉菜单；只支持一级，不再嵌套分类。
+                list:
+                  collapsible:
+                    collapsed: true
+                    summary: "{label}"
+                fields:
+                  - name: label
+                    label: 下拉链接文字｜A
+                    type: string
+                    required: true
+                    description: 下拉菜单中用户可点击的文字。
+                  - name: href
+                    label: 下拉链接地址｜HREF
+                    type: string
+                    required: true
+                    description: 链接目标；站内链接使用以 / 开头的路径。
       - name: footer
         label: 页脚 / Footer
         type: object
         fields:
           - name: tagline
-            label: 品牌说明
+            label: 品牌说明｜P
             type: text
             required: true
+            description: Footer 品牌名称下方的普通说明段落。
           - name: links
             label: 页脚链接
             type: object
@@ -112,13 +138,15 @@ content:
                 summary: "{label}"
             fields:
               - name: label
-                label: 链接文字
+                label: 链接文字｜A
                 type: string
                 required: true
+                description: Footer 中用户可点击的链接文字。
               - name: href
-                label: 链接地址
+                label: 链接地址｜HREF
                 type: string
                 required: true
+                description: 链接目标；站内链接使用以 / 开头的路径。
 
   - name: sitemap
     label: 站点地图 / Sitemap.xml
@@ -133,13 +161,15 @@ content:
     format: json
     fields:
       - name: title
-        label: SEO 标题
+        label: SEO 标题｜TITLE
         type: string
         required: true
+        description: 浏览器和搜索结果标题，不是页面可见的 H1。
       - name: description
-        label: SEO 描述
+        label: SEO 描述｜META
         type: text
         required: true
+        description: 搜索结果摘要，页面正文中不直接显示。
         options:
           maxlength: 180
       - name: shareImage
@@ -149,17 +179,20 @@ content:
         options:
           media: images
       - name: eyebrow
-        label: 小标题
+        label: 博客小标题｜SPAN
         type: string
         required: true
+        description: 显示在页面主标题上方的装饰性短文字，不属于标题层级。
       - name: heading
-        label: 主标题
+        label: 博客页面主标题｜H1
         type: string
         required: true
+        description: 博客列表页唯一的 H1，建议清楚说明本页主题。
       - name: intro
-        label: 简介
+        label: 博客页面简介｜P
         type: text
         required: true
+        description: H1 下方的一段简短说明文字。
       - name: postsPerPage
         label: 最多显示文章数
         type: number
@@ -180,13 +213,15 @@ content:
         type: object
         fields:
           - name: eyebrow
-            label: 小标题
+            label: 模块小标题｜SPAN
             type: string
             required: true
+            description: 显示在模块标题上方的装饰性短文字。
           - name: heading
-            label: 主标题
+            label: 模块标题｜H2
             type: string
             required: true
+            description: 所有工具落地页“使用步骤”区域的 H2。
           - name: steps
             label: 步骤
             type: object
@@ -197,29 +232,34 @@ content:
                 summary: "{number} {title}"
             fields:
               - name: number
-                label: 序号
+                label: 步骤序号｜SPAN
                 type: string
                 required: true
+                description: 装饰性步骤编号，例如 01。
               - name: title
-                label: 标题
+                label: 步骤标题｜H3
                 type: string
                 required: true
+                description: 单个步骤卡片的 H3 标题。
               - name: description
-                label: 说明
+                label: 步骤说明｜P
                 type: text
                 required: true
+                description: 步骤标题下方的普通说明段落。
       - name: faq
         label: FAQ 标题
         type: object
         fields:
           - name: eyebrow
-            label: 小标题
+            label: 模块小标题｜SPAN
             type: string
             required: true
+            description: 显示在 FAQ 标题上方的装饰性短文字。
           - name: heading
-            label: 主标题
+            label: FAQ 模块标题｜H2
             type: string
             required: true
+            description: 所有工具落地页 FAQ 区域的 H2。
 
   - name: not-found
     label: 404 页面 / Not found
@@ -228,35 +268,42 @@ content:
     format: json
     fields:
       - name: title
-        label: SEO 标题
+        label: SEO 标题｜TITLE
         type: string
         required: true
+        description: 404 页浏览器标签标题，不是页面可见的 H1。
       - name: description
-        label: SEO 描述
+        label: SEO 描述｜META
         type: text
         required: true
+        description: 404 页的搜索摘要，页面正文中不直接显示。
         options:
           maxlength: 180
       - name: eyebrow
-        label: 小标题
+        label: 页面小标题｜SPAN
         type: string
         required: true
+        description: H1 上方的装饰性短文字，例如 404。
       - name: heading
-        label: 主标题
+        label: 页面主标题｜H1
         type: string
         required: true
+        description: 404 页面唯一的 H1。
       - name: intro
-        label: 说明
+        label: 页面说明｜P
         type: text
         required: true
+        description: H1 下方的普通说明段落。
       - name: buttonLabel
-        label: 按钮文字
+        label: 按钮文字｜A
         type: string
         required: true
+        description: 返回链接中用户看到的文字。
       - name: buttonHref
-        label: 按钮链接
+        label: 按钮链接｜HREF
         type: string
         required: true
+        description: 返回链接目标，例如 /。
 
   - name: legal-pages
     label: 法律页面 / Legal pages
@@ -279,27 +326,32 @@ content:
         required: true
         readonly: true
       - name: title
-        label: SEO 标题
+        label: SEO 标题｜TITLE
         type: string
         required: true
+        description: 浏览器和搜索结果标题，不是页面可见的 H1。
       - name: description
-        label: SEO 描述
+        label: SEO 描述｜META
         type: text
         required: true
+        description: 搜索结果摘要，页面正文中不直接显示。
         options:
           maxlength: 180
       - name: eyebrow
-        label: 小标题
+        label: 页面小标题｜SPAN
         type: string
         required: true
+        description: H1 上方的装饰性短文字，不属于标题层级。
       - name: heading
-        label: 主标题
+        label: 页面主标题｜H1
         type: string
         required: true
+        description: 法律页面唯一的 H1。
       - name: body
-        label: 正文
+        label: 正文｜H2 / H3 / P
         type: rich-text
         required: true
+        description: 普通段落使用 P；主要章节使用 H2；章节下的子标题使用 H3。
         options:
           media: images
 
@@ -310,13 +362,15 @@ content:
     format: json
     fields:
       - name: title
-        label: SEO 标题
+        label: SEO 标题｜TITLE
         type: string
         required: true
+        description: 首页浏览器和搜索结果标题，不是页面可见的 H1。
       - name: description
-        label: SEO 描述
+        label: SEO 描述｜META
         type: text
         required: true
+        description: 首页搜索结果摘要，页面正文中不直接显示。
         options:
           maxlength: 180
       - name: shareImage
@@ -330,26 +384,31 @@ content:
         type: object
         fields:
           - name: eyebrow
-            label: 小标题
+            label: Hero 小标题｜SPAN
             type: string
             required: true
+            description: 显示在主标题上方的装饰性短文字，不属于 H1–H3 标题层级。
           - name: heading
-            label: 主标题
+            label: Hero 页面主标题｜H1
             type: string
             required: true
+            description: 首页唯一的 H1；应直接说明页面最重要的用途。
           - name: highlightedHeading
-            label: 强调标题
+            label: Hero 强调文字｜H1 内 EM
             type: string
             required: true
+            description: 与上一字段共同组成同一个 H1，只是视觉上使用斜体强调，不是第二个标题。
           - name: intro
-            label: 简介
+            label: Hero 简介｜P
             type: text
             required: true
+            description: H1 下方的一段简短说明文字。
           - name: trustItems
-            label: 信任标签
+            label: 信任短语｜SPAN
             type: string
             list:
               min: 1
+            description: Hero 下方的短标签，不属于标题层级。
       - name: useCases
         label: 常用工具入口
         type: object
@@ -360,37 +419,44 @@ content:
             summary: "{title}"
         fields:
           - name: icon
-            label: 图标字符
+            label: 图标字符｜SPAN
             type: string
             required: true
+            description: 入口卡片的装饰性图标字符。
           - name: title
-            label: 标题
+            label: 入口标题｜STRONG
             type: string
             required: true
+            description: 工具入口卡片中的加粗文字，不是 H2/H3。
           - name: description
-            label: 说明
+            label: 入口说明｜SMALL
             type: string
             required: true
+            description: 入口标题下方的简短辅助文字。
           - name: href
-            label: 链接
+            label: 入口链接｜HREF
             type: string
             required: true
+            description: 点击整个工具入口后打开的页面地址。
       - name: process
         label: 使用步骤
         type: object
         fields:
           - name: eyebrow
-            label: 小标题
+            label: 模块小标题｜SPAN
             type: string
             required: true
+            description: 使用步骤标题上方的装饰性短文字。
           - name: heading
-            label: 标题
+            label: 模块标题｜H2
             type: string
             required: true
+            description: 首页“使用步骤”区域的 H2。
           - name: intro
-            label: 简介
+            label: 模块简介｜P
             type: text
             required: true
+            description: H2 下方的普通说明段落。
           - name: steps
             label: 步骤
             type: object
@@ -401,41 +467,49 @@ content:
                 summary: "{number} {title}"
             fields:
               - name: number
-                label: 序号
+                label: 步骤序号｜SPAN
                 type: string
                 required: true
+                description: 装饰性步骤编号，例如 01。
               - name: title
-                label: 标题
+                label: 步骤标题｜H3
                 type: string
                 required: true
+                description: 单个步骤卡片的 H3 标题。
               - name: description
-                label: 说明
+                label: 步骤说明｜P
                 type: text
                 required: true
+                description: 步骤标题下方的普通说明段落。
       - name: privacy
         label: 隐私说明
         type: object
         fields:
           - name: eyebrow
-            label: 小标题
+            label: 模块小标题｜SPAN
             type: string
             required: true
+            description: 隐私模块标题上方的装饰性短文字。
           - name: heading
-            label: 标题
+            label: 模块标题｜H2
             type: string
             required: true
+            description: 首页隐私说明区域的 H2。
           - name: description
-            label: 说明
+            label: 模块说明｜P
             type: text
             required: true
+            description: H2 下方的普通说明段落。
           - name: linkLabel
-            label: 链接文字
+            label: 链接文字｜A
             type: string
             required: true
+            description: 用户看到并可点击的隐私政策链接文字。
           - name: linkHref
-            label: 链接地址
+            label: 链接地址｜HREF
             type: string
             required: true
+            description: 隐私政策链接目标。
           - name: features
             label: 隐私特点
             type: object
@@ -446,41 +520,49 @@ content:
                 summary: "{title}"
             fields:
               - name: icon
-                label: 图标字符
+                label: 图标字符｜SPAN
                 type: string
                 required: true
+                description: 特点条目中的装饰性图标。
               - name: title
-                label: 标题
+                label: 特点标题｜STRONG
                 type: string
                 required: true
+                description: 特点条目中的加粗文字，不是 H2/H3。
               - name: description
-                label: 说明
+                label: 特点说明｜SMALL
                 type: string
                 required: true
+                description: 特点标题下方的简短辅助文字。
       - name: guides
         label: 指南区域
         type: object
         fields:
           - name: eyebrow
-            label: 小标题
+            label: 模块小标题｜SPAN
             type: string
             required: true
+            description: 指南模块标题上方的装饰性短文字。
           - name: heading
-            label: 标题
+            label: 模块标题｜H2
             type: string
             required: true
+            description: 首页指南区域的 H2。
           - name: linkLabel
-            label: 全部指南链接文字
+            label: 全部指南链接文字｜A
             type: string
             required: true
+            description: 指向博客列表页的可点击文字。
           - name: linkHref
-            label: 全部指南链接地址
+            label: 全部指南链接地址｜HREF
             type: string
             required: true
+            description: 博客列表页地址，通常为 /blog。
           - name: articleLinkLabel
-            label: 文章链接文字
+            label: 文章链接文字｜A
             type: string
             required: true
+            description: 每张指南卡片底部的可点击文字。
 
   - name: blog
     label: 博客文章 / Blog posts
@@ -509,13 +591,15 @@ content:
           regex: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
           message: 只能使用小写字母、数字和连字符，例如 image-format-guide。
       - name: title
-        label: 标题 / Title
+        label: 文章标题｜H1（详情页）/ H2（列表页）
         type: string
         required: true
+        description: 文章详情页唯一的 H1；在博客列表页显示为 H2。
       - name: description
-        label: SEO 描述（不超过 180 字符）
+        label: 文章摘要｜META + P（不超过 180 字符）
         type: text
         required: true
+        description: 同时用于搜索摘要，以及文章标题下方和列表卡片中的普通段落。
         options:
           maxlength: 180
       - name: publishedAt
@@ -525,27 +609,30 @@ content:
         options:
           format: yyyy-MM-dd
       - name: readTime
-        label: 阅读时间 / Reading time
+        label: 阅读时间｜SPAN
         type: string
         required: true
         default: 5 min read
+        description: 文章元信息中的短文字，不属于标题层级。
       - name: coverImage
         label: 封面图 / Cover image
         type: image
         options:
           media: images
       - name: coverAlt
-        label: 封面图替代文字 / Image alt
+        label: 封面图替代文字｜IMG ALT
         type: string
         description: 上传封面图时请填写，用于无障碍和图片 SEO。
       - name: author
-        label: 作者 / Author
+        label: 作者｜SPAN
         type: string
         default: ClearMark AI
+        description: 文章元信息中的作者名称，不属于标题层级。
       - name: category
-        label: 分类 / Category
+        label: 分类｜SPAN
         type: string
         default: Guides
+        description: 文章列表和详情页中的短分类标签。
       - name: featured
         label: 置顶文章 / Featured
         type: boolean
@@ -555,9 +642,10 @@ content:
         type: boolean
         default: false
       - name: body
-        label: 正文 / Article body
+        label: 文章正文｜H2 / H3 / P
         type: rich-text
         required: true
+        description: 普通段落使用 P；主要章节使用 H2；章节下的子标题使用 H3。不要在正文中再添加 H1。
         options:
           media: images
 
@@ -585,32 +673,38 @@ content:
           regex: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
           message: 只能使用小写字母、数字和连字符，例如 remove-logo-from-image。
       - name: title
-        label: SEO 标题
+        label: SEO 标题｜TITLE
         type: string
         required: true
+        description: 浏览器和搜索结果标题，不是页面可见的 H1。
       - name: description
-        label: SEO 描述（不超过 180 字符）
+        label: SEO 描述｜META（不超过 180 字符）
         type: text
         required: true
+        description: 搜索结果摘要，页面正文中不直接显示。
         options:
           maxlength: 180
       - name: eyebrow
-        label: 小标题 / Eyebrow
+        label: 页面小标题｜SPAN
         type: string
         required: true
+        description: H1 上方的装饰性短文字，不属于标题层级。
       - name: heading
-        label: 主标题 / Main heading
+        label: 页面主标题｜H1
         type: string
         required: true
+        description: 工具落地页唯一的 H1。
       - name: intro
-        label: 简介 / Introduction
+        label: 页面简介｜P
         type: text
         required: true
+        description: H1 下方的一段简短说明文字。
       - name: benefits
-        label: 优点列表 / Benefits
+        label: 优点列表｜LI
         type: string
         list:
           min: 1
+        description: 每一项会显示为列表条目，不属于标题层级。
       - name: faq
         label: 常见问题 / FAQ
         type: object
@@ -621,10 +715,12 @@ content:
             summary: "{question}"
         fields:
           - name: question
-            label: 问题 / Question
+            label: FAQ 问题｜SUMMARY
             type: string
             required: true
+            description: 可展开 FAQ 条目的问题文字；当前不是 H2/H3。
           - name: answer
-            label: 回答 / Answer
+            label: FAQ 回答｜P
             type: text
             required: true
+            description: FAQ 展开后的普通回答段落。

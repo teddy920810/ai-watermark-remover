@@ -17,4 +17,15 @@ describe('site settings CMS content', () => {
     expect(parsed.footer.links.length).toBeGreaterThan(0);
     expect(parsed.announcement.enabled).toBe(false);
   });
+
+  it('supports one-level dropdown links in the header navigation', () => {
+    const dropdownSettings = structuredClone(settings);
+    dropdownSettings.header.navigation[0].children = [
+      { label: 'Remove logos', href: '/remove-logo-from-image' },
+      { label: 'Remove text', href: '/remove-text-from-image' },
+    ];
+
+    const parsed = siteSettingsSchema.parse(dropdownSettings);
+    expect(parsed.header.navigation[0].children).toHaveLength(2);
+  });
 });

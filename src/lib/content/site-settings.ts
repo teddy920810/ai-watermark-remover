@@ -5,6 +5,16 @@ const navigationLinkSchema = z.object({
   href: z.string().min(1),
 });
 
+const headerNavigationItemSchema = z.object({
+  label: z.string().min(1),
+  href: z.string().default(''),
+  children: z.array(navigationLinkSchema).default([]),
+}).superRefine((item, context) => {
+  if (item.children.length === 0 && item.href.length === 0) {
+    context.addIssue({ code: 'custom', path: ['href'], message: 'A normal navigation link requires a URL.' });
+  }
+});
+
 export const siteSettingsSchema = z.object({
   name: z.string().min(1),
   brandMark: z.string().min(1),
@@ -19,7 +29,7 @@ export const siteSettingsSchema = z.object({
     linkHref: z.string(),
   }),
   header: z.object({
-    navigation: z.array(navigationLinkSchema).min(1),
+    navigation: z.array(headerNavigationItemSchema).min(1),
   }),
   footer: z.object({
     tagline: z.string().min(1),
