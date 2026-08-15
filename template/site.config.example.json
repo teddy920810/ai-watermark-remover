@@ -1,0 +1,15 @@
+{
+  "packageName": "example-image-tool",
+  "siteName": "Example Image Tool",
+  "siteUrl": "https://www.example.com",
+  "locale": "en",
+  "themeColor": "#f7f5ef",
+  "logo": "/uploads/example-logo.svg",
+  "favicon": "/uploads/example-logo.svg",
+  "defaultShareImage": "/uploads/example-share.webp",
+  "defaultTitle": "Example Image Tool",
+  "defaultDescription": "A concise description of the new website for search engines and social previews.",
+  "googleMeasurementId": "",
+  "defaultAuthor": "Example Editorial Team",
+  "defaultCategory": "Guides"
+}

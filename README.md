@@ -2,6 +2,8 @@
 
 ClearMark AI 是部署在 [www.watermarkgemini.com](https://www.watermarkgemini.com) 的图片水印处理 MVP。项目采用 Astro、React、Vercel 与私有 Cloudflare R2，并通过 Pages CMS 让非技术成员直接维护博客和 SEO 落地页。
 
+本仓库也可作为同类站点框架完整 fork：WatermarkGemini 内容继续保留在当前仓库，新站在自己的仓库中初始化品牌并通过 Pages CMS 重建内容。操作见 [新站模板指南](docs/TEMPLATE_GUIDE.md)。
+
 > 当前状态：匿名用户可以选择和预览图片，创建处理任务时需要通过 Google 登录。上传、临时存储和任务流程已经可用，但处理器仍是 Mock Provider。它会复制原图作为结果，不代表已经真正移除水印。接入正式图像处理服务前，不应对外宣称具备真实去水印效果。
 
 ## 常用入口
