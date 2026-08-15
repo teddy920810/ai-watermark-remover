@@ -59,6 +59,7 @@ const blogEntrySchema = z.object({
     title: z.string().min(1),
     description: z.string().min(1),
     publishedAt: publishedAtSchema,
+    updatedAt: publishedAtSchema.optional(),
     readTime: z.string().min(1),
     coverImage: z.string().min(1).optional(),
     coverAlt: z.string().min(1).optional(),

@@ -18,8 +18,50 @@
     "priceCurrency": "USD"
   },
   "contentDefaults": {
-    "author": "ClearMark AI",
+    "author": "WatermarkGemini Editorial Team",
     "category": "Guides"
+  },
+  "uploader": {
+    "hero": {
+      "eyebrow": "Private by design",
+      "heading": "Remove a watermark from your image",
+      "demoBadge": "Demo processing",
+      "demoBadgeTitle": "The MVP returns an unchanged copy"
+    },
+    "dropzone": {
+      "dropLabel": "Drop your image here",
+      "browseLabel": "or click to browse",
+      "formatLabel": "JPG, PNG or WebP",
+      "maxSizeLabel": "up to {maxSize} MB",
+      "fileInputLabel": "Choose image to upload"
+    },
+    "preview": {
+      "altTemplate": "Preview of {fileName}",
+      "processingLabel": "Securely processing your image…",
+      "readyLabel": "Ready to process",
+      "removeButton": "Remove watermark",
+      "uploadingButton": "Uploading…",
+      "processingButton": "Processing…",
+      "chooseAnotherButton": "Choose another"
+    },
+    "result": {
+      "originalLabel": "Original",
+      "resultLabel": "Result",
+      "originalAlt": "Original upload",
+      "resultAlt": "Processed result",
+      "demoNote": "Demo mode returns a secure copy while the real AI provider is being integrated.",
+      "downloadButton": "Download result",
+      "processAnotherButton": "Process another"
+    },
+    "auth": {
+      "closeLabel": "Close sign-in dialog",
+      "title": "Sign in to start processing",
+      "description": "Your selected image will stay on this page. Processing starts automatically after Google sign-in.",
+      "connectingButton": "Connecting to Google…",
+      "continueButton": "Continue with Google",
+      "dismissButton": "Not now"
+    },
+    "privacyNote": "Images are stored privately and scheduled for deletion after 24 hours."
   },
   "announcement": {
     "enabled": false,

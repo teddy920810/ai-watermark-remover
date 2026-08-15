@@ -64,6 +64,14 @@ describe('SiteLayout Google Analytics integration', () => {
     expect(layoutSource).not.toContain('type="image/svg+xml"');
   });
 
+  it('uses CMS-managed copy throughout the shared upload component', () => {
+    expect(uploaderSource).toContain('copy.hero.heading');
+    expect(uploaderSource).toContain('copy.dropzone.dropLabel');
+    expect(uploaderSource).toContain('copy.result.downloadButton');
+    expect(uploaderSource).toContain('copy.auth.continueButton');
+    expect(uploaderSource).not.toContain('Drop your image here');
+  });
+
   it('keeps utility and error pages out of search results', () => {
     expect(layoutSource).toContain('<meta name="robots" content="noindex, follow" />');
     expect(notFoundSource).toContain('noindex={true}');

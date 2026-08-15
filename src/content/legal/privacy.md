@@ -1,12 +1,12 @@
 ---
 slug: privacy
-title: Privacy Policy | ClearMark AI
-description: How ClearMark AI handles uploaded images and temporary processing data.
+title: Privacy Policy | WatermarkGemini
+description: How WatermarkGemini handles uploaded images and temporary processing data.
 eyebrow: Privacy
 heading: A short, understandable privacy policy
 ---
 
-ClearMark AI processes the image you choose to upload so it can return a result. Images are stored in private object storage rather than exposed through permanent public URLs.
+WatermarkGemini processes the image you choose to upload so it can return a result. Images are stored in private object storage rather than exposed through permanent public URLs.
 
 ## Retention
 

@@ -45,7 +45,7 @@ test('uploads, processes, and exposes a download through the UI', async ({ page 
   await chooseTestImage(page);
   await page.getByRole('button', { name: 'Remove watermark' }).click();
 
-  await expect(page.getByText('Demo mode returns a secure copy while the real AI provider is being integrated.')).toBeVisible();
+  await expect(page.locator('#tool .demo-note')).toBeVisible();
   await expect(page.getByRole('link', { name: 'Download result' })).toHaveAttribute('href', 'https://results.test/download.png');
 });
 

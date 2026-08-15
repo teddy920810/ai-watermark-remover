@@ -4,6 +4,7 @@ import { getCollection, render, type CollectionEntry } from 'astro:content';
 import { sortBlogEntries } from '../../lib/content/entries';
 import { resolveBlogMetadata } from '../../lib/content/blog-metadata';
 import { resolveImageAlt } from '../../lib/content/image-metadata';
+import { buildArticleSchema } from '../../lib/content/seo-schema';
 
 export const prerender = true;
 export async function getStaticPaths() {
@@ -21,7 +22,18 @@ if (!imageSettingsEntry) throw new Error('Image metadata CMS content is missing.
 const coverAlt = post.data.coverImage
   ? resolveImageAlt(post.data.coverImage, post.data.coverAlt, imageSettingsEntry.data.images, post.data.title)
   : undefined;
-const schema = { '@type': 'Article', headline: post.data.title, description: post.data.description, datePublished: post.data.publishedAt, image: post.data.coverImage, author: { '@type': 'Organization', name: metadata.author } };
+const schema = buildArticleSchema({
+  canonicalOrigin: siteEntry.data.canonicalOrigin,
+  path: `/blog/${post.data.slug}`,
+  title: post.data.title,
+  description: post.data.description,
+  publishedAt: post.data.publishedAt,
+  updatedAt: post.data.updatedAt,
+  author: metadata.author,
+  publisherName: siteEntry.data.name,
+  logo: siteEntry.data.logo,
+  image: post.data.coverImage,
+});
 ---
 <SiteLayout title={metadata.title} description={post.data.description} image={post.data.coverImage} type="article" schema={schema}>
   <header class="article-header"><div class="article-meta">{metadata.category} · {post.data.publishedAt} · {post.data.readTime} · {metadata.author}</div><h1>{post.data.title}</h1><p>{post.data.description}</p></header>

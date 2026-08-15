@@ -3,12 +3,14 @@ import { authClient } from '../auth/auth-client';
 import { putFileWithRetry } from '../../lib/upload/direct-upload';
 import { MAX_UPLOAD_BYTES, validateUploadMetadata } from '../../lib/upload/validation';
 import { initialUploadState, uploadReducer } from './upload-machine';
+import type { UploaderCopy } from '../../lib/content/site-settings';
 
 type JsonRecord = Record<string, unknown>;
 
 interface Props {
   logo: string;
   siteName: string;
+  copy: UploaderCopy;
 }
 
 async function api<T extends JsonRecord>(url: string, init?: RequestInit): Promise<T> {
@@ -22,7 +24,11 @@ function wait(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-export default function ImageUploader({ logo, siteName }: Props) {
+function formatCopy(template: string, replacements: Record<string, string>) {
+  return Object.entries(replacements).reduce((result, [key, value]) => result.replaceAll(`{${key}}`, value), template);
+}
+
+export default function ImageUploader({ logo, siteName, copy }: Props) {
   const { data: session, isPending: sessionPending, refetch: refetchSession } = authClient.useSession();
   const [state, dispatch] = useReducer(uploadReducer, initialUploadState);
   const [file, setFile] = useState<File | null>(null);
@@ -162,10 +168,10 @@ export default function ImageUploader({ logo, siteName }: Props) {
     <section className="tool-card" aria-labelledby="upload-title">
       <div className="tool-heading">
         <div>
-          <span className="eyebrow">Private by design</span>
-          <h2 id="upload-title">Remove a watermark from your image</h2>
+          <span className="eyebrow">{copy.hero.eyebrow}</span>
+          <h2 id="upload-title">{copy.hero.heading}</h2>
         </div>
-        <span className="demo-badge" title="The MVP returns an unchanged copy">Demo processing</span>
+        <span className="demo-badge" title={copy.hero.demoBadgeTitle}>{copy.hero.demoBadge}</span>
       </div>
 
       {state.phase === 'idle' || state.phase === 'error' ? (
@@ -177,10 +183,10 @@ export default function ImageUploader({ logo, siteName }: Props) {
           onDrop={onDrop}
         >
           <span className="upload-icon" aria-hidden="true">↑</span>
-          <strong>Drop your image here</strong>
-          <span>or click to browse</span>
-          <small>JPG, PNG or WEBP · up to {MAX_UPLOAD_BYTES / 1024 / 1024} MB</small>
-          <input ref={inputRef} className="sr-only" type="file" accept="image/jpeg,image/png,image/webp" aria-label="Choose image to upload" onChange={onInput} />
+          <strong>{copy.dropzone.dropLabel}</strong>
+          <span>{copy.dropzone.browseLabel}</span>
+          <small>{copy.dropzone.formatLabel} · {formatCopy(copy.dropzone.maxSizeLabel, { maxSize: String(MAX_UPLOAD_BYTES / 1024 / 1024) })}</small>
+          <input ref={inputRef} className="sr-only" type="file" accept="image/jpeg,image/png,image/webp" aria-label={copy.dropzone.fileInputLabel} onChange={onInput} />
         </label>
       ) : null}
 
@@ -188,13 +194,13 @@ export default function ImageUploader({ logo, siteName }: Props) {
 
       {state.previewUrl && state.phase !== 'completed' ? (
         <div className="preview-panel">
-          <img src={state.previewUrl} alt={`Preview of ${state.fileName ?? 'selected image'}`} />
+          <img src={state.previewUrl} alt={formatCopy(copy.preview.altTemplate, { fileName: state.fileName ?? '' })} />
           <div className="preview-meta">
-            <div><strong>{state.fileName}</strong><span>{busy ? 'Securely processing your image…' : 'Ready to process'}</span></div>
+            <div><strong>{state.fileName}</strong><span>{busy ? copy.preview.processingLabel : copy.preview.readyLabel}</span></div>
             <button className="button button-primary" type="button" onClick={start} disabled={busy}>
-              {state.phase === 'uploading' ? 'Uploading…' : state.phase === 'processing' ? 'Processing…' : 'Remove watermark'}
+              {state.phase === 'uploading' ? copy.preview.uploadingButton : state.phase === 'processing' ? copy.preview.processingButton : copy.preview.removeButton}
             </button>
-            {!busy ? <button className="button button-ghost" type="button" onClick={reset}>Choose another</button> : null}
+            {!busy ? <button className="button button-ghost" type="button" onClick={reset}>{copy.preview.chooseAnotherButton}</button> : null}
           </div>
           {busy ? <div className="progress-track" aria-label="Processing"><span /></div> : null}
         </div>
@@ -203,13 +209,13 @@ export default function ImageUploader({ logo, siteName }: Props) {
       {state.phase === 'completed' && state.previewUrl && state.resultUrl && state.downloadUrl ? (
         <div className="result-panel">
           <div className="comparison-grid">
-            <figure><figcaption>Original</figcaption><img src={state.previewUrl} alt="Original upload" /></figure>
-            <figure><figcaption>Result</figcaption><img src={state.resultUrl} alt="Processed result" /></figure>
+            <figure><figcaption>{copy.result.originalLabel}</figcaption><img src={state.previewUrl} alt={copy.result.originalAlt} /></figure>
+            <figure><figcaption>{copy.result.resultLabel}</figcaption><img src={state.resultUrl} alt={copy.result.resultAlt} /></figure>
           </div>
-          <p className="demo-note">Demo mode returns a secure copy while the real AI provider is being integrated.</p>
+          <p className="demo-note">{copy.result.demoNote}</p>
           <div className="result-actions">
-            <a className="button button-primary" href={state.downloadUrl}>Download result</a>
-            <button className="button button-ghost" type="button" onClick={reset}>Process another</button>
+            <a className="button button-primary" href={state.downloadUrl}>{copy.result.downloadButton}</a>
+            <button className="button button-ghost" type="button" onClick={reset}>{copy.result.processAnotherButton}</button>
           </div>
         </div>
       ) : null}
@@ -217,20 +223,20 @@ export default function ImageUploader({ logo, siteName }: Props) {
       {showLogin ? (
         <div className="auth-modal-backdrop">
           <section className="auth-modal" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title">
-            <button className="auth-modal-close" type="button" onClick={() => setShowLogin(false)} aria-label="Close sign-in dialog">×</button>
+            <button className="auth-modal-close" type="button" onClick={() => setShowLogin(false)} aria-label={copy.auth.closeLabel}>×</button>
             <img className="brand-logo auth-logo" src={logo} alt={`${siteName} logo`} />
-            <h3 id="auth-modal-title">Sign in to start processing</h3>
-            <p>Your selected image will stay on this page. Processing starts automatically after Google sign-in.</p>
+            <h3 id="auth-modal-title">{copy.auth.title}</h3>
+            <p>{copy.auth.description}</p>
             <button className="button button-primary auth-google-button" type="button" onClick={continueWithGoogle} disabled={loginPending}>
               <span className="google-mark">G</span>
-              {loginPending ? 'Connecting to Google…' : 'Continue with Google'}
+              {loginPending ? copy.auth.connectingButton : copy.auth.continueButton}
             </button>
-            <button className="button button-ghost" type="button" onClick={() => setShowLogin(false)}>Not now</button>
+            <button className="button button-ghost" type="button" onClick={() => setShowLogin(false)}>{copy.auth.dismissButton}</button>
           </section>
         </div>
       ) : null}
 
-      <p className="privacy-note"><span aria-hidden="true">◇</span> Images are stored privately and scheduled for deletion after 24 hours.</p>
+      <p className="privacy-note"><span aria-hidden="true">◇</span> {copy.privacyNote}</p>
     </section>
   );
 }
