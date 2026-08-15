@@ -4,6 +4,8 @@ import { z } from 'zod';
 import { publishedAtSchema } from './lib/content/published-date';
 import { homepageSchema } from './lib/content/homepage';
 import { siteSettingsSchema } from './lib/content/site-settings';
+import { imageSettingsSchema } from './lib/content/image-metadata';
+import { trustedHtmlSchema } from './lib/content/trusted-html';
 import {
   blogIndexSettingsSchema,
   landingCommonSettingsSchema,
@@ -14,6 +16,11 @@ import {
 const siteSettings = defineCollection({
   loader: glob({ base: './src/content/settings', pattern: 'site.json' }),
   schema: siteSettingsSchema,
+});
+
+const imageSettings = defineCollection({
+  loader: glob({ base: './src/content/settings', pattern: 'images.json' }),
+  schema: imageSettingsSchema,
 });
 
 const blogIndexSettings = defineCollection({
@@ -41,9 +48,7 @@ const homepage = defineCollection({
   schema: homepageSchema,
 });
 
-const blog = defineCollection({
-  loader: glob({ base: './src/content/blog', pattern: '**/*.{md,mdx}' }),
-  schema: z.object({
+const blogEntrySchema = z.object({
     slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
     title: z.string().min(1),
     description: z.string().min(1),
@@ -53,9 +58,19 @@ const blog = defineCollection({
     coverAlt: z.string().min(1).optional(),
     author: z.string().min(1).optional(),
     category: z.string().min(1).optional(),
+    contentMode: z.enum(['markdown', 'html']).default('markdown'),
+    bodyHtml: trustedHtmlSchema.optional(),
     featured: z.boolean().default(false),
     draft: z.boolean().default(false),
-  }),
+  }).superRefine((post, context) => {
+    if (post.contentMode === 'html' && !post.bodyHtml) {
+      context.addIssue({ code: 'custom', path: ['bodyHtml'], message: 'HTML content is required in HTML mode.' });
+    }
+  });
+
+const blog = defineCollection({
+  loader: glob({ base: './src/content/blog', pattern: '**/*.{md,mdx}' }),
+  schema: blogEntrySchema,
 });
 
 const faqItem = z.object({
@@ -79,6 +94,7 @@ const landingPages = defineCollection({
 
 export const collections = {
   siteSettings,
+  imageSettings,
   blogIndexSettings,
   landingCommonSettings,
   notFoundSettings,
