@@ -14,12 +14,19 @@
   "header": {
     "navigation": [
       {
-        "label": "Watermark remover",
-        "href": "/remove-text-from-image/",
+        "label": "AI Watermark remover",
         "children": [
           {
-            "label": "Watermark remover-test",
+            "label": "Remove text from image",
             "href": "/remove-text-from-image/"
+          },
+          {
+            "label": "Remove logo from image",
+            "href": "/remove-logo-from-image/"
+          },
+          {
+            "label": "Remove Gemini Watermark",
+            "href": "/remove-gemini-watermark/"
           }
         ]
       },
