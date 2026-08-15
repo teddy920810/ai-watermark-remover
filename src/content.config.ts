@@ -2,6 +2,12 @@ import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'zod';
 import { publishedAtSchema } from './lib/content/published-date';
+import { homepageSchema } from './lib/content/homepage';
+
+const homepage = defineCollection({
+  loader: glob({ base: './src/content/homepage', pattern: '**/*.json' }),
+  schema: homepageSchema,
+});
 
 const blog = defineCollection({
   loader: glob({ base: './src/content/blog', pattern: '**/*.{md,mdx}' }),
@@ -33,4 +39,4 @@ const landingPages = defineCollection({
   }),
 });
 
-export const collections = { blog, landingPages };
+export const collections = { homepage, blog, landingPages };
