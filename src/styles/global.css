@@ -29,6 +29,16 @@ img { display: block; max-width: 100%; }
 .brand-mark { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 10px 10px 10px 3px; color: #fff; background: var(--green); font-family: Georgia, serif; font-style: italic; }
 .site-header nav { display: flex; align-items: center; gap: 30px; color: #46534f; font-size: .92rem; }
 .site-header nav a:hover, .footer-links a:hover { color: var(--green); }
+.nav-dropdown { position: relative; }
+.nav-dropdown summary { display: flex; align-items: center; gap: 7px; list-style: none; cursor: pointer; font-weight: 650; }
+.nav-dropdown summary::-webkit-details-marker { display: none; }
+.nav-dropdown summary span { font-size: .8rem; transition: transform .2s ease; }
+.nav-dropdown[open] summary { color: var(--green); }
+.nav-dropdown[open] summary span { transform: rotate(180deg); }
+.nav-dropdown-panel { min-width: 230px; padding: 10px; position: absolute; z-index: 20; top: calc(100% + 14px); left: 50%; display: grid; gap: 2px; border: 1px solid var(--line); border-radius: 14px; background: var(--card); box-shadow: 0 18px 45px rgba(24, 42, 36, .16); transform: translateX(-50%); }
+.nav-dropdown-panel::before { content: ""; height: 14px; position: absolute; right: 0; bottom: 100%; left: 0; }
+.nav-dropdown-panel a { padding: 10px 12px; border-radius: 9px; white-space: nowrap; }
+.nav-dropdown-panel a:hover, .nav-dropdown-panel a:focus-visible { color: var(--green); background: #eef4ef; }
 .header-cta, .button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; border-radius: 12px; padding: 0 18px; font-weight: 750; border: 1px solid transparent; cursor: pointer; transition: transform .2s, background .2s, border-color .2s; }
 .header-cta { background: var(--ink); color: #fff; font-size: .9rem; }
 .header-cta:disabled { opacity: .6; cursor: wait; }

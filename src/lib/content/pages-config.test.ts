@@ -3,6 +3,14 @@ import { describe, expect, it } from 'vitest';
 import YAML from 'yaml';
 
 const configSource = readFileSync(new URL('../../../.pages.yml', import.meta.url), 'utf8');
+interface CmsField {
+  name: string;
+  label?: string;
+  type: string;
+  description?: string;
+  options?: { media?: string };
+  fields?: CmsField[];
+}
 const config = YAML.parse(configSource) as {
   media: Array<{
     name: string;
@@ -20,7 +28,7 @@ const config = YAML.parse(configSource) as {
     type: 'collection' | 'file';
     path: string;
     operations?: { create: boolean; rename: boolean; delete: boolean };
-    fields: Array<{ name: string; type: string; options?: { media?: string } }>;
+    fields: CmsField[];
     view?: { fields?: string[] };
   }>;
 };
@@ -46,6 +54,22 @@ describe('Pages CMS maintenance safeguards', () => {
       path: 'public/sitemap.xml',
       format: 'code',
     });
+  });
+
+  it('explains rendered HTML semantics in operator-facing labels', () => {
+    const homepage = config.content.find((entry) => entry.name === 'homepage');
+    const hero = homepage?.fields.find((field) => field.name === 'hero');
+    expect(hero?.fields).toEqual(expect.arrayContaining([
+      expect.objectContaining({ name: 'eyebrow', label: expect.stringContaining('SPAN'), description: expect.any(String) }),
+      expect.objectContaining({ name: 'heading', label: expect.stringContaining('H1'), description: expect.any(String) }),
+      expect.objectContaining({ name: 'intro', label: expect.stringContaining('P'), description: expect.any(String) }),
+    ]));
+
+    const landingCommon = config.content.find((entry) => entry.name === 'landing-common');
+    const process = landingCommon?.fields.find((field) => field.name === 'process');
+    expect(process?.fields).toEqual(expect.arrayContaining([
+      expect.objectContaining({ name: 'heading', label: expect.stringContaining('H2'), description: expect.any(String) }),
+    ]));
   });
 
   it('exposes a named image library backed by public uploads', () => {
@@ -90,6 +114,11 @@ describe('Pages CMS maintenance safeguards', () => {
         expect.objectContaining({ name: 'footer', type: 'object' }),
       ]),
     );
+    const header = siteSettings?.fields.find((field) => field.name === 'header');
+    const navigation = header?.fields?.find((field) => field.name === 'navigation');
+    expect(navigation?.fields).toEqual(expect.arrayContaining([
+      expect.objectContaining({ name: 'children', type: 'object' }),
+    ]));
   });
 
   it('connects the blog rich-text editor to the static image library', () => {
