@@ -40,10 +40,10 @@ content:
         required: true
         description: 例如英文填写 en，简体中文填写 zh-CN。
       - name: themeColor
-        label: 浏览器主题颜色｜META
+        label: 品牌强调色 / Theme color
         type: string
         required: true
-        description: 六位十六进制颜色，例如 #f7f5ef。
+        description: 控制按钮、链接、上传图标和导航交互的品牌强调色，同时用于浏览器主题色；系统会自动加深颜色以保证文字可读性。填写六位十六进制颜色，例如 #a06dff。
       - name: logo
         label: 品牌 Logo｜IMG
         type: image

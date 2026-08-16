@@ -19,6 +19,8 @@ describe('SiteLayout Google Analytics integration', () => {
   it('uses CMS-managed locale, theme color, and structured-data defaults', () => {
     expect(layoutSource).toContain('<html lang={site.locale}>');
     expect(layoutSource).toContain('<meta name="theme-color" content={site.themeColor} />');
+    expect(layoutSource).toContain('style={`--theme-color: ${site.themeColor};`}');
+    expect(globalCss).toContain('--green: color-mix(in srgb, var(--theme-color, #1d6b56) 68%, black);');
     expect(layoutSource).toContain('applicationCategory: site.structuredData.applicationCategory');
     expect(layoutSource).toContain('operatingSystem: site.structuredData.operatingSystem');
     expect(layoutSource).toContain('priceCurrency: site.structuredData.priceCurrency');
