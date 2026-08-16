@@ -16,6 +16,8 @@ describe('homepage CMS content', () => {
     expect(parsed.hero.trustItems.length).toBeGreaterThan(0);
     expect(parsed.useCases.length).toBeGreaterThan(0);
     expect(parsed.process.steps.length).toBeGreaterThan(0);
+    expect(parsed.features.items.length).toBeGreaterThan(0);
+    expect(parsed.faq.items.length).toBeGreaterThan(0);
     expect(parsed.privacy.features.length).toBeGreaterThan(0);
   });
 });
