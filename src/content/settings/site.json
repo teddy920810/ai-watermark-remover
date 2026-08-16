@@ -23,17 +23,17 @@
   },
   "uploader": {
     "hero": {
-      "eyebrow": "Private by design",
-      "heading": "Remove a watermark from your image",
-      "demoBadge": "Demo processing",
+      "eyebrow": "Free Image Watermark Remover",
+      "heading": "Remove a Watermark from Your Image Online for Free",
+      "demoBadge": "100% Free",
       "demoBadgeTitle": "The MVP returns an unchanged copy"
     },
     "dropzone": {
-      "dropLabel": "Drop your image here",
+      "dropLabel": "Drop Your Image Here",
       "browseLabel": "or click to browse",
-      "formatLabel": "JPG, PNG or WebP",
+      "formatLabel": "JPG, PNG, or WEBP",
       "maxSizeLabel": "up to {maxSize} MB",
-      "fileInputLabel": "Choose image to upload"
+      "fileInputLabel": "Choose an image to remove the watermark"
     },
     "preview": {
       "altTemplate": "Preview of {fileName}",
@@ -61,7 +61,7 @@
       "continueButton": "Continue with Google",
       "dismissButton": "Not now"
     },
-    "privacyNote": "Images are stored privately and scheduled for deletion after 24 hours."
+    "privacyNote": "Private upload · Automatically deleted after 24 hours"
   },
   "announcement": {
     "enabled": false,
@@ -75,11 +75,11 @@
         "label": "AI Watermark Remover",
         "children": [
           {
-            "label": "Remove text from image",
+            "label": "Remove Text from Image",
             "href": "/remove-text-from-image"
           },
           {
-            "label": "Remove logo from image",
+            "label": "Remove Logo from Image",
             "href": "/remove-logo-from-image"
           },
           {
