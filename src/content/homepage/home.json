@@ -95,7 +95,7 @@
         "eyebrow": "FEATURE 1",
         "heading": "Simple Online Watermark Remover Workflow",
         "description": "Upload one supported image, sign in with Google to start processing, review the original and returned result side by side, and download the file when it is ready.\n• Browser-based workflow—no desktop editor required\n• Side-by-side original and returned-result view\n• One image per processing flow",
-        "image": "/uploads/simple-before-after-watermark-removal.webp",
+        "image": "/uploads/simple-before-after-watermark-removal-1.webp",
         "imageAlt": "Before and after watermark removal",
         "imagePosition": "right"
       },
