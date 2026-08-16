@@ -118,21 +118,45 @@
     ]
   },
   "faq": {
-    "eyebrow": "Questions answered",
-    "heading": "Frequently asked questions",
-    "intro": "Quick answers about eligible image cleanup, uploads, and privacy.",
+    "eyebrow": "FAQ",
+    "heading": "Image Watermark Remover FAQs",
+    "intro": "Answers about supported files, online use, pricing, sign-in, processing limits, and responsible use.",
     "items": [
       {
-        "question": "What images can I clean with WatermarkGemini?",
-        "answer": "Use the service only for images you own or have permission to edit."
+        "question": "Is WatermarkGemini a free watermark remover?",
+        "answer": "Yes. WatermarkGemini is completely free to use. There are no credits or paid packages. Google sign-in is required before processing."
       },
       {
-        "question": "Which file formats are supported?",
-        "answer": "You can upload JPG, PNG, and WEBP files up to the displayed size limit."
+        "question": "What file types does the image watermark remover support?",
+        "answer": "The homepage upload tool accepts one JPG/JPEG, PNG, or WEBP image up to 10 MB. Video, PDF, URL upload, batch processing, and other file types are not supported."
       },
       {
-        "question": "How long are uploaded images kept?",
-        "answer": "Uploads and processed results are scheduled for deletion after 24 hours."
+        "question": "Can I use this online watermark remover without installing software?",
+        "answer": "Yes. The upload, processing, comparison, and download workflow runs in your browser. You still need to sign in with Google before processing."
+      },
+      {
+        "question": "How do I remove watermark from image files on the homepage?",
+        "answer": "Upload a supported image, sign in with Google, start processing, compare the original and returned result, and download the file when it is ready. The current interface does not include a manual selection brush."
+      },
+      {
+        "question": "Can I remove watermark from photo files?",
+        "answer": "The homepage accepts supported photo files in JPG/JPEG, PNG, and WEBP format, up to 10 MB per file. Only one photo can be processed at a time."
+      },
+      {
+        "question": "Does the photo watermark remover support batch processing?",
+        "answer": "No. The current homepage supports one image per processing flow."
+      },
+      {
+        "question": "Does WatermarkGemini support video watermark removal?",
+        "answer": "No. The homepage tool is for supported image files only. It does not accept video or PDF files."
+      },
+      {
+        "question": "Can I use a watermark remover without losing quality?",
+        "answer": "No watermark remover can guarantee identical quality in every case. Review the original and returned result side by side before downloading."
+      },
+      {
+        "question": "When is it appropriate to remove a watermark?",
+        "answer": "Only process content you own or have permission to edit. Do not use the tool to misrepresent ownership or bypass another creator’s rights."
       }
     ]
   }
