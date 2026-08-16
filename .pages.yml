@@ -8,7 +8,17 @@ media:
     rename: safe
 
 settings:
-  actions:
+  content:
+    merge: true
+  commit:
+    identity: app
+    templates:
+      create: "content(create): {path}"
+      update: "content(update): {path}"
+      delete: "content(delete): {path}"
+      rename: "content(rename): {oldPath} -> {newPath}"
+
+actions:
   - name: publish-cms-drafts
     label: 发布到正式站 / Publish
     workflow: cms-publish.yml
@@ -18,16 +28,6 @@ settings:
       title: 发布这批内容到正式站？
       message: 系统会先同步最新 main；无冲突后将 cms-drafts 合并到 main，并触发一次正式部署。
       button: 发布到正式站
-
-content:
-    merge: true
-  commit:
-    identity: app
-    templates:
-      create: "content(create): {path}"
-      update: "content(update): {path}"
-      delete: "content(delete): {path}"
-      rename: "content(rename): {oldPath} -> {newPath}"
 
 content:
   - name: site-settings
