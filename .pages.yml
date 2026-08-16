@@ -693,6 +693,14 @@ content:
                 label: 功能说明｜P
                 type: text
                 required: true
+                description: 普通段落内容；如旧文案使用 • 或 · 分隔，系统会自动作为列表展示。
+              - name: listItems
+                label: 功能要点｜UL（可选）
+                type: string
+                list:
+                  collapsible:
+                    collapsed: true
+                description: 每一项显示为无序列表条目；留空时会自动识别“功能说明”中的 • 或 ·。
               - name: image
                 label: 功能图片｜IMG
                 type: image
@@ -1028,6 +1036,14 @@ content:
                 label: 功能说明｜P
                 type: text
                 required: true
+                description: 普通段落内容；如旧文案使用 • 或 · 分隔，系统会自动作为列表展示。
+              - name: listItems
+                label: 功能要点｜UL（可选）
+                type: string
+                list:
+                  collapsible:
+                    collapsed: true
+                description: 每一项显示为无序列表条目；留空时会自动识别“功能说明”中的 • 或 ·。
               - name: image
                 label: 功能图片｜IMG
                 type: image
