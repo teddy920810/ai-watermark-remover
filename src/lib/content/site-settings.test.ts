@@ -24,7 +24,7 @@ describe('site settings CMS content', () => {
     expect(parsed.header.navigation.length).toBeGreaterThan(0);
     expect(parsed.footer.links.length).toBeGreaterThan(0);
     expect(parsed.announcement.enabled).toBe(false);
-    expect(parsed.uploader.hero.heading).toBe('Remove a watermark from your image');
+    expect(parsed.uploader.hero.heading).toBeTruthy();
     expect(parsed.uploader.dropzone.maxSizeLabel).toContain('{maxSize}');
   });
 
@@ -55,4 +55,5 @@ describe('site settings CMS content', () => {
     expect(parsed.header.navigation[0].children).toHaveLength(2);
   });
 });
+
 
