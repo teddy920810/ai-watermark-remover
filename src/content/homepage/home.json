@@ -95,24 +95,24 @@
         "eyebrow": "FEATURE 1",
         "heading": "Simple Online Watermark Remover Workflow",
         "description": "Upload one supported image, sign in with Google to start processing, review the original and returned result side by side, and download the file when it is ready.\n• Browser-based workflow—no desktop editor required\n• Side-by-side original and returned-result view\n• One image per processing flow",
-        "image": "/uploads/og-card.svg",
-        "imageAlt": "WatermarkGemini image cleanup preview",
+        "image": "/uploads/simple-before-after-watermark-removal.webp",
+        "imageAlt": "Before and after watermark removal",
         "imagePosition": "right"
       },
       {
         "eyebrow": "FEATURE 2",
         "heading": "Image Watermark Remover File Support",
         "description": "The upload tool currently accepts one JPG/JPEG, PNG, or WEBP image up to 10 MB. Video, PDF, batch upload, URL upload, and other image formats are not supported by the homepage tool.\n• JPG/JPEG, PNG, and WEBP input\n• One image up to 10 MB\n• Clear validation for unsupported file types or sizes",
-        "image": "/uploads/watermarkgemini-logo.svg",
-        "imageAlt": "WatermarkGemini logo",
+        "image": "/uploads/supported-image-formats.webp",
+        "imageAlt": "JPG, PNG and WEBP image support",
         "imagePosition": "left"
       },
       {
         "eyebrow": "FEATURE 3",
         "heading": "A Free Watermark Remover with No Credits or Paid Plans",
         "description": "WatermarkGemini is completely free to use. The current workflow does not require credits or a paid package, although Google sign-in is required before processing.\n• No credits or paid packages\n• Google sign-in required before processing\n• No desktop app required",
-        "image": "/uploads/watermarkgemini-logo-1.svg",
-        "imageAlt": "1",
+        "image": "/uploads/free-no-credits-no-paid-plans.webp",
+        "imageAlt": "Free watermark remover with no paid plans",
         "imagePosition": "right"
       }
     ]
