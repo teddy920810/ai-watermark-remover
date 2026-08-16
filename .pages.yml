@@ -1,6 +1,11 @@
-media:
-  input: public/uploads
-  output: /uploads
+﻿media:
+  - name: images
+    label: 静态图片 / Static images
+    input: public/uploads
+    output: /uploads
+    categories: [image]
+    extensions: [jpg, jpeg, png, webp, gif, svg]
+    rename: safe
 
 settings:
   content:
@@ -14,18 +19,463 @@ settings:
       rename: "content(rename): {oldPath} -> {newPath}"
 
 content:
+  - name: site-settings
+    label: 站点设置 / Site settings
+    type: file
+    path: src/content/settings/site.json
+    format: json
+    fields:
+      - name: name
+        label: 站点名称
+        type: string
+        required: true
+        description: Brand name shown in the header, footer, and shared metadata.
+      - name: logo
+        label: 品牌 Logo｜IMG
+        type: image
+        required: true
+        description: Brand image shown in the header, footer, and auth UI.
+        options:
+          media: images
+      - name: defaultTitle
+        label: 默认 SEO 标题｜TITLE
+        type: string
+        required: true
+        description: Default browser and search result title.
+      - name: defaultDescription
+        label: 默认 SEO 描述｜META
+        type: text
+        required: true
+        description: Default search snippet, not rendered in the page body.
+        options:
+          maxlength: 180
+      - name: favicon
+        label: 浏览器图标 / Favicon
+        type: image
+        required: true
+        options:
+          media: images
+      - name: defaultShareImage
+        label: 默认分享图片
+        type: image
+        required: true
+        options:
+          media: images
+      - name: announcement
+        label: 公告 / Announcement
+        type: object
+        fields:
+          - name: enabled
+            label: 显示公告
+            type: boolean
+            default: false
+            description: Toggle the top announcement bar.
+          - name: text
+            label: 公告内容｜SPAN
+            type: text
+            required: true
+            description: Decorative short text in the top announcement bar.
+          - name: linkLabel
+            label: 链接文字｜A（可选）
+            type: string
+            description: Optional clickable link label.
+          - name: linkHref
+            label: 链接地址｜HREF（可选）
+            type: string
+            description: Optional link target.
+      - name: header
+        label: 页头 / Header
+        type: object
+        fields:
+          - name: navigation
+            label: 导航链接
+            type: object
+            list:
+              min: 1
+              collapsible:
+                collapsed: true
+                summary: "{label}"
+            fields:
+              - name: label
+                label: 导航文字｜A
+                type: string
+                required: true
+                description: Clickable text in the header navigation.
+              - name: href
+                label: 普通链接地址｜HREF
+                type: string
+                description: Required when there are no children.
+              - name: children
+                label: 一级下拉链接
+                type: object
+                list:
+                  collapsible:
+                    collapsed: true
+                    summary: "{label}"
+                fields:
+                  - name: label
+                    label: 下拉链接文字｜A
+                    type: string
+                    required: true
+                    description: Clickable text in the dropdown menu.
+                  - name: href
+                    label: 下拉链接地址｜HREF
+                    type: string
+                    required: true
+                    description: Link target.
+      - name: footer
+        label: 页脚 / Footer
+        type: object
+        fields:
+          - name: tagline
+            label: 品牌说明｜P
+            type: text
+            required: true
+            description: Short tagline under the footer brand.
+          - name: links
+            label: 页脚链接
+            type: object
+            list:
+              min: 1
+              collapsible:
+                collapsed: true
+                summary: "{label}"
+            fields:
+              - name: label
+                label: 链接文字｜A
+                type: string
+                required: true
+                description: Clickable text in the footer.
+              - name: href
+                label: 链接地址｜HREF
+                type: string
+                required: true
+                description: Link target.
+
+  - name: homepage
+    label: 首页 / Homepage
+    type: file
+    path: src/content/homepage/home.json
+    format: json
+    fields:
+      - name: title
+        label: SEO 标题｜TITLE
+        type: string
+        required: true
+        description: SEO title for the homepage.
+      - name: description
+        label: SEO 描述｜META
+        type: text
+        required: true
+        description: Search snippet, not rendered in the page body.
+        options:
+          maxlength: 180
+      - name: shareImage
+        label: 分享图片 / Social image
+        type: image
+        required: true
+        options:
+          media: images
+      - name: hero
+        label: 首屏 / Hero
+        type: object
+        fields:
+          - name: eyebrow
+            label: Hero 小标题｜SPAN
+            type: string
+            required: true
+            description: Decorative short text above the H1.
+          - name: heading
+            label: Hero 页面主标题｜H1
+            type: string
+            required: true
+            description: The page H1.
+          - name: highlightedHeading
+            label: Hero 强调文字｜H1 内 EM
+            type: string
+            required: true
+            description: EM emphasis inside the H1.
+          - name: intro
+            label: Hero 简介｜P
+            type: text
+            required: true
+            description: Short paragraph below the H1.
+          - name: trustItems
+            label: 信任短语｜SPAN
+            type: string
+            list:
+              min: 1
+            description: Short trust tags below the hero.
+      - name: useCases
+        label: 常用工具入口
+        type: object
+        list:
+          min: 1
+          collapsible:
+            collapsed: true
+            summary: '{title}'
+        fields:
+          - name: icon
+            label: 图标字符｜SPAN
+            type: string
+            required: true
+            description: Decorative icon character.
+          - name: title
+            label: 入口标题｜STRONG
+            type: string
+            required: true
+            description: Bold title in the use case card.
+          - name: description
+            label: 入口说明｜SMALL
+            type: string
+            required: true
+            description: Short description under the title.
+          - name: href
+            label: 入口链接｜HREF
+            type: string
+            required: true
+            description: Link target.
+      - name: process
+        label: 使用步骤
+        type: object
+        fields:
+          - name: eyebrow
+            label: 模块小标题｜SPAN
+            type: string
+            required: true
+            description: Decorative short text above the section heading.
+          - name: heading
+            label: 模块标题｜H2
+            type: string
+            required: true
+            description: H2 for the process section.
+          - name: intro
+            label: 模块简介｜P
+            type: text
+            required: true
+            description: Short paragraph below the H2.
+          - name: steps
+            label: 步骤
+            type: object
+            list:
+              min: 1
+              collapsible:
+                collapsed: true
+                summary: '{number} {title}'
+            fields:
+              - name: number
+                label: 步骤序号｜SPAN
+                type: string
+                required: true
+                description: Decorative step number.
+              - name: title
+                label: 步骤标题｜H3
+                type: string
+                required: true
+                description: H3 for the individual step card.
+              - name: description
+                label: 步骤说明｜P
+                type: text
+                required: true
+                description: Short description under the step title.
+      - name: features
+        label: 功能亮点 / Features
+        type: object
+        fields:
+          - name: eyebrow
+            label: 模块小标题｜SPAN
+            type: string
+            required: true
+            description: Decorative short text above the section heading.
+          - name: heading
+            label: 模块标题｜H2
+            type: string
+            required: true
+            description: H2 for the features section.
+          - name: intro
+            label: 模块简介｜P
+            type: text
+            required: true
+            description: Short paragraph below the H2.
+          - name: items
+            label: 功能项
+            type: object
+            list:
+              min: 1
+            fields:
+              - name: badge
+                label: 徽章文字｜SPAN
+                type: string
+                required: true
+                description: Short badge label on the feature card.
+              - name: title
+                label: 功能标题｜H3
+                type: string
+                required: true
+                description: H3 for the individual feature card.
+              - name: description
+                label: 功能说明｜P
+                type: text
+                required: true
+                description: Main description under the H3.
+              - name: image
+                label: 配图｜IMG
+                type: image
+                required: true
+                options:
+                  media: images
+              - name: imageAlt
+                label: 配图替代文字｜IMG ALT
+                type: string
+                required: true
+                description: Alt text for the feature image.
+              - name: bullets
+                label: 要点列表｜LI
+                type: string
+                list:
+                  min: 1
+                  max: 4
+                description: Short bullets under the description.
+              - name: reverse
+                label: 翻转图文顺序
+                type: boolean
+                default: false
+                description: Swap the image and copy sides.
+
+      - name: privacy
+        label: 隐私说明
+        type: object
+        fields:
+          - name: eyebrow
+            label: 模块小标题｜SPAN
+            type: string
+            required: true
+            description: Decorative short text above the privacy section heading.
+          - name: heading
+            label: 模块标题｜H2
+            type: string
+            required: true
+            description: H2 for the privacy section.
+          - name: description
+            label: 模块说明｜P
+            type: text
+            required: true
+            description: Short paragraph below the H2.
+          - name: linkLabel
+            label: 链接文字｜A
+            type: string
+            required: true
+            description: Clickable privacy policy link label.
+          - name: linkHref
+            label: 链接地址｜HREF
+            type: string
+            required: true
+            description: Privacy policy link target.
+          - name: features
+            label: 隐私特点
+            type: object
+            list:
+              min: 1
+              collapsible:
+                collapsed: true
+                summary: '{title}'
+            fields:
+              - name: icon
+                label: 图标字符｜SPAN
+                type: string
+                required: true
+                description: Decorative icon for the feature row.
+              - name: title
+                label: 特点标题｜STRONG
+                type: string
+                required: true
+                description: Bold title in the feature row.
+              - name: description
+                label: 特点说明｜SMALL
+                type: string
+                required: true
+                description: Short description under the title.
+      - name: faq
+        label: 常见问题 / FAQ
+        type: object
+        fields:
+          - name: eyebrow
+            label: 模块小标题｜SPAN
+            type: string
+            required: true
+            description: Decorative short text above the FAQ heading.
+          - name: heading
+            label: 模块标题｜H2
+            type: string
+            required: true
+            description: H2 for the FAQ section.
+          - name: intro
+            label: 模块简介｜P
+            type: text
+            required: true
+            description: Short paragraph below the H2.
+          - name: items
+            label: FAQ 条目
+            type: object
+            list:
+              min: 1
+              collapsible:
+                collapsed: true
+                summary: '{question}'
+            fields:
+              - name: question
+                label: FAQ 问题｜SUMMARY
+                type: string
+                required: true
+                description: Question text for the FAQ row.
+              - name: answer
+                label: FAQ 回答｜P
+                type: text
+                required: true
+                description: Short answer paragraph for the FAQ row.
+      - name: guides
+        label: 指南区域
+        type: object
+        fields:
+          - name: eyebrow
+            label: 模块小标题｜SPAN
+            type: string
+            required: true
+            description: Decorative short text above the guides heading.
+          - name: heading
+            label: 模块标题｜H2
+            type: string
+            required: true
+            description: H2 for the guides section.
+          - name: linkLabel
+            label: 全部指南链接文字｜A
+            type: string
+            required: true
+            description: Clickable link label to the blog index.
+          - name: linkHref
+            label: 全部指南链接地址｜HREF
+            type: string
+            required: true
+            description: Blog index link target.
+          - name: articleLinkLabel
+            label: 文章链接文字｜A
+            type: string
+            required: true
+            description: Clickable link label per guide card.
+
+
   - name: blog
     label: 博客文章 / Blog posts
     type: collection
     path: src/content/blog
     format: yaml-frontmatter
-    filename: "{fields.slug}.md"
+    filename: '{fields.slug}.md'
     operations:
       create: true
       rename: false
-      delete: false
+      delete: true
     view:
-      fields: [title, publishedAt, readTime]
+      fields: [title, slug, category, publishedAt, draft]
       primary: title
       sort: [publishedAt, title]
       search: [title, description]
@@ -38,16 +488,18 @@ content:
         type: string
         required: true
         pattern:
-          regex: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
-          message: 只能使用小写字母、数字和连字符，例如 image-format-guide。
+          regex: '^[a-z0-9]+(?:-[a-z0-9]+)*$'
+          message: Lowercase letters, digits, and hyphens only.
       - name: title
-        label: 标题 / Title
+        label: 文章标题｜H1（详情页）/ H2（列表页）
         type: string
         required: true
+        description: The article H1 on the detail page; H2 on the list page.
       - name: description
-        label: SEO 描述（不超过 180 字符）
+        label: 文章摘要｜META + P（不超过 180 字符）
         type: text
         required: true
+        description: Search snippet and short paragraph under the title.
         options:
           maxlength: 180
       - name: publishedAt
@@ -57,25 +509,56 @@ content:
         options:
           format: yyyy-MM-dd
       - name: readTime
-        label: 阅读时间 / Reading time
+        label: 阅读时间｜SPAN
         type: string
         required: true
         default: 5 min read
+        description: Short reading time label.
+      - name: coverImage
+        label: 封面图 / Cover image
+        type: image
+        options:
+          media: images
+      - name: coverAlt
+        label: 封面图替代文字｜IMG ALT
+        type: string
+        description: Alt text for the cover image.
+      - name: author
+        label: 作者｜SPAN
+        type: string
+        default: ClearMark AI
+        description: Author name shown next to the article.
+      - name: category
+        label: 分类｜SPAN
+        type: string
+        default: Guides
+        description: Short category label.
+      - name: featured
+        label: 置顶文章 / Featured
+        type: boolean
+        default: false
+      - name: draft
+        label: 草稿（不发布）/ Draft
+        type: boolean
+        default: false
       - name: body
-        label: 正文 / Article body
+        label: 文章正文｜H2 / H3 / P
         type: rich-text
         required: true
+        description: Use P for paragraphs, H2 for sections, H3 for subsections.
+        options:
+          media: images
 
   - name: landing-pages
     label: 工具落地页 / Tool landing pages
     type: collection
     path: src/content/landing-pages
     format: json
-    filename: "{fields.slug}.json"
+    filename: '{fields.slug}.json'
     operations:
       create: true
       rename: false
-      delete: false
+      delete: true
     view:
       fields: [title, slug]
       primary: title
@@ -87,35 +570,41 @@ content:
         type: string
         required: true
         pattern:
-          regex: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
-          message: 只能使用小写字母、数字和连字符，例如 remove-logo-from-image。
+          regex: '^[a-z0-9]+(?:-[a-z0-9]+)*$'
+          message: Lowercase letters, digits, and hyphens only.
       - name: title
-        label: SEO 标题
+        label: SEO 标题｜TITLE
         type: string
         required: true
+        description: SEO title for the page.
       - name: description
-        label: SEO 描述（不超过 180 字符）
+        label: SEO 描述｜META（不超过 180 字符）
         type: text
         required: true
+        description: Search snippet, not rendered in the page body.
         options:
           maxlength: 180
       - name: eyebrow
-        label: 小标题 / Eyebrow
+        label: 页面小标题｜SPAN
         type: string
         required: true
+        description: Decorative short text above the H1.
       - name: heading
-        label: 主标题 / Main heading
+        label: 页面主标题｜H1
         type: string
         required: true
+        description: The page H1.
       - name: intro
-        label: 简介 / Introduction
+        label: 页面简介｜P
         type: text
         required: true
+        description: Short paragraph under the H1.
       - name: benefits
-        label: 优点列表 / Benefits
+        label: 优点列表｜LI
         type: string
         list:
           min: 1
+        description: Each item renders as a list row.
       - name: faq
         label: 常见问题 / FAQ
         type: object
@@ -123,13 +612,224 @@ content:
           min: 1
           collapsible:
             collapsed: true
-            summary: "{question}"
+            summary: '{question}'
         fields:
           - name: question
-            label: 问题 / Question
+            label: FAQ 问题｜SUMMARY
             type: string
             required: true
+            description: Question text for the FAQ row.
           - name: answer
-            label: 回答 / Answer
+            label: FAQ 回答｜P
             type: text
             required: true
+            description: Short answer paragraph for the FAQ row.
+
+
+  - name: blog-index
+    label: 博客列表 / Blog index
+    type: file
+    path: src/content/settings/blog.json
+    format: json
+    fields:
+      - name: title
+        label: SEO 标题｜TITLE
+        type: string
+        required: true
+        description: SEO title for the blog index.
+      - name: description
+        label: SEO 描述｜META
+        type: text
+        required: true
+        description: Search snippet for the blog index.
+        options:
+          maxlength: 180
+      - name: shareImage
+        label: 分享图片
+        type: image
+        required: true
+        options:
+          media: images
+      - name: eyebrow
+        label: 模块小标题｜SPAN
+        type: string
+        required: true
+        description: Decorative short text above the heading.
+      - name: heading
+        label: 模块标题｜H2
+        type: string
+        required: true
+        description: H2 for the blog index section.
+      - name: intro
+        label: 模块简介｜P
+        type: text
+        required: true
+        description: Short paragraph below the H2.
+      - name: postsPerPage
+        label: 每页文章数 / Posts per page
+        type: number
+        required: true
+        default: 20
+        options:
+          min: 1
+          max: 100
+
+  - name: landing-common
+    label: 落地页公共模块 / Landing shared sections
+    type: file
+    path: src/content/settings/landing.json
+    format: json
+    fields:
+      - name: process
+        label: 使用步骤
+        type: object
+        fields:
+          - name: eyebrow
+            label: 模块小标题｜SPAN
+            type: string
+            required: true
+            description: Decorative short text above the heading.
+          - name: heading
+            label: 模块标题｜H2
+            type: string
+            required: true
+            description: H2 for the process section.
+          - name: steps
+            label: 步骤
+            type: object
+            list:
+              min: 1
+              collapsible:
+                collapsed: true
+                summary: '{number} {title}'
+            fields:
+              - name: number
+                label: 步骤序号｜SPAN
+                type: string
+                required: true
+                description: Decorative step number.
+              - name: title
+                label: 步骤标题｜H3
+                type: string
+                required: true
+                description: H3 for the individual step card.
+              - name: description
+                label: 步骤说明｜P
+                type: text
+                required: true
+                description: Short description under the step title.
+      - name: faq
+        label: FAQ 标题
+        type: object
+        fields:
+          - name: eyebrow
+            label: 模块小标题｜SPAN
+            type: string
+            required: true
+            description: Decorative short text above the FAQ heading.
+          - name: heading
+            label: FAQ 模块标题｜H2
+            type: string
+            required: true
+            description: H2 for the FAQ section.
+
+  - name: not-found
+    label: 404 页面 / Not found
+    type: file
+    path: src/content/settings/not-found.json
+    format: json
+    fields:
+      - name: title
+        label: SEO 标题｜TITLE
+        type: string
+        required: true
+        description: Browser tab title.
+      - name: description
+        label: SEO 描述｜META
+        type: text
+        required: true
+        description: Search snippet.
+        options:
+          maxlength: 180
+      - name: eyebrow
+        label: 页面小标题｜SPAN
+        type: string
+        required: true
+        description: Decorative short text above the H1.
+      - name: heading
+        label: 页面主标题｜H1
+        type: string
+        required: true
+        description: The 404 page H1.
+      - name: intro
+        label: 页面说明｜P
+        type: text
+        required: true
+        description: Short paragraph under the H1.
+      - name: buttonLabel
+        label: 按钮文字｜A
+        type: string
+        required: true
+        description: Clickable button label.
+      - name: buttonHref
+        label: 按钮链接｜HREF
+        type: string
+        required: true
+        description: Button link target.
+
+  - name: legal-pages
+    label: 法律页面 / Legal pages
+    type: collection
+    path: src/content/legal
+    format: yaml-frontmatter
+    filename: '{fields.slug}.md'
+    operations:
+      create: false
+      rename: false
+      delete: false
+    view:
+      fields: [title, slug]
+      primary: title
+      sort: [title]
+    fields:
+      - name: slug
+        label: URL 路径
+        type: string
+        required: true
+        readonly: true
+      - name: title
+        label: SEO 标题｜TITLE
+        type: string
+        required: true
+        description: SEO title for the legal page.
+      - name: description
+        label: SEO 描述｜META
+        type: text
+        required: true
+        description: Search snippet.
+        options:
+          maxlength: 180
+      - name: eyebrow
+        label: 页面小标题｜SPAN
+        type: string
+        required: true
+        description: Decorative short text above the H1.
+      - name: heading
+        label: 页面主标题｜H1
+        type: string
+        required: true
+        description: The legal page H1.
+      - name: body
+        label: 正文｜H2 / H3 / P
+        type: rich-text
+        required: true
+        description: Use P for paragraphs, H2 for sections, H3 for subsections.
+        options:
+          media: images
+
+  - name: sitemap
+    label: 站点地图 / Sitemap.xml
+    type: file
+    path: public/sitemap.xml
+    format: code
+

@@ -3,9 +3,34 @@ import { describe, expect, it } from 'vitest';
 import YAML from 'yaml';
 
 const configSource = readFileSync(new URL('../../../.pages.yml', import.meta.url), 'utf8');
+interface CmsField {
+  name: string;
+  label?: string;
+  type: string;
+  description?: string;
+  options?: { media?: string };
+  fields?: CmsField[];
+}
 const config = YAML.parse(configSource) as {
+  media: Array<{
+    name: string;
+    label: string;
+    input: string;
+    output: string;
+    categories: string[];
+    extensions: string[];
+    rename: string;
+  }>;
   settings: { content: { merge: boolean }; commit: { identity: string } };
-  content: Array<{ name: string; operations: { create: boolean; rename: boolean; delete: boolean } }>;
+  content: Array<{
+    name: string;
+    label: string;
+    type: 'collection' | 'file';
+    path: string;
+    operations?: { create: boolean; rename: boolean; delete: boolean };
+    fields: CmsField[];
+    view?: { fields?: string[] };
+  }>;
 };
 
 describe('Pages CMS maintenance safeguards', () => {
@@ -14,10 +39,158 @@ describe('Pages CMS maintenance safeguards', () => {
     expect(config.settings.commit.identity).toBe('app');
   });
 
-  it('prevents non-technical editors from renaming or deleting entries', () => {
-    expect(config.content).toHaveLength(2);
-    for (const collection of config.content) {
-      expect(collection.operations).toEqual({ create: true, rename: false, delete: false });
+  it('allows deleting blog and landing entries while keeping URL renames disabled', () => {
+    const collections = config.content.filter((entry) => ['blog', 'landing-pages'].includes(entry.name));
+    expect(collections).toHaveLength(2);
+    for (const collection of collections) {
+      expect(collection.operations).toEqual({ create: true, rename: false, delete: true });
     }
   });
+
+  it('exposes sitemap.xml as a Pages CMS code file', () => {
+    expect(config.content.find((entry) => entry.name === 'sitemap')).toMatchObject({
+      label: '站点地图 / Sitemap.xml',
+      type: 'file',
+      path: 'public/sitemap.xml',
+      format: 'code',
+    });
+  });
+
+  it('explains rendered HTML semantics in operator-facing labels', () => {
+    const homepage = config.content.find((entry) => entry.name === 'homepage');
+    const hero = homepage?.fields.find((field) => field.name === 'hero');
+    expect(hero?.fields).toEqual(expect.arrayContaining([
+      expect.objectContaining({ name: 'eyebrow', label: expect.stringContaining('SPAN'), description: expect.any(String) }),
+      expect.objectContaining({ name: 'heading', label: expect.stringContaining('H1'), description: expect.any(String) }),
+      expect.objectContaining({ name: 'intro', label: expect.stringContaining('P'), description: expect.any(String) }),
+    ]));
+
+    const landingCommon = config.content.find((entry) => entry.name === 'landing-common');
+    const process = landingCommon?.fields.find((field) => field.name === 'process');
+    expect(process?.fields).toEqual(expect.arrayContaining([
+      expect.objectContaining({ name: 'heading', label: expect.stringContaining('H2'), description: expect.any(String) }),
+    ]));
+  });
+
+  it('exposes a named image library backed by public uploads', () => {
+    expect(config.media).toEqual([
+      expect.objectContaining({
+        name: 'images',
+        label: '静态图片 / Static images',
+        input: 'public/uploads',
+        output: '/uploads',
+        categories: ['image'],
+        extensions: ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg'],
+        rename: 'safe',
+      }),
+    ]);
+  });
+
+  it('exposes the homepage as a single editable file with an image field', () => {
+    const homepage = config.content.find((entry) => entry.name === 'homepage');
+    expect(homepage).toMatchObject({
+      label: '首页 / Homepage',
+      type: 'file',
+      path: 'src/content/homepage/home.json',
+    });
+    expect(homepage?.fields).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ name: 'shareImage', type: 'image', options: { media: 'images' } }),
+      ]),
+    );
+  });
+
+  it('exposes shared header and footer settings as a single editable file', () => {
+    const siteSettings = config.content.find((entry) => entry.name === 'site-settings');
+    expect(siteSettings).toMatchObject({
+      label: '站点设置 / Site settings',
+      type: 'file',
+      path: 'src/content/settings/site.json',
+    });
+    expect(siteSettings?.fields).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ name: 'logo', type: 'image', options: { media: 'images' } }),
+        expect.objectContaining({ name: 'favicon', type: 'image', options: { media: 'images' } }),
+        expect.objectContaining({ name: 'header', type: 'object' }),
+        expect.objectContaining({ name: 'footer', type: 'object' }),
+      ]),
+    );
+    const header = siteSettings?.fields.find((field) => field.name === 'header');
+    const navigation = header?.fields?.find((field) => field.name === 'navigation');
+    expect(navigation?.fields).toEqual(expect.arrayContaining([
+      expect.objectContaining({ name: 'children', type: 'object' }),
+    ]));
+  });
+
+  it('connects the blog rich-text editor to the static image library', () => {
+    const blog = config.content.find((entry) => entry.name === 'blog');
+    expect(blog?.fields).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ name: 'body', type: 'rich-text', options: { media: 'images' } }),
+      ]),
+    );
+  });
+
+  it('shows the blog URL path in the collection list', () => {
+    const blog = config.content.find((entry) => entry.name === 'blog');
+    expect(blog?.view?.fields).toEqual(['title', 'slug', 'category', 'publishedAt', 'draft']);
+  });
+
+  it('exposes blog cover, author, category, featured, and draft fields', () => {
+    const blog = config.content.find((entry) => entry.name === 'blog');
+    expect(blog?.fields).toEqual(expect.arrayContaining([
+      expect.objectContaining({ name: 'coverImage', type: 'image', options: { media: 'images' } }),
+      expect.objectContaining({ name: 'coverAlt', type: 'string' }),
+      expect.objectContaining({ name: 'author', type: 'string' }),
+      expect.objectContaining({ name: 'category', type: 'string' }),
+      expect.objectContaining({ name: 'featured', type: 'boolean' }),
+      expect.objectContaining({ name: 'draft', type: 'boolean' }),
+    ]));
+  });
+
+  it('exposes legal pages and shared marketing page settings', () => {
+    expect(config.content.map((entry) => entry.name)).toEqual(expect.arrayContaining([
+      'legal-pages',
+      'blog-index',
+      'landing-common',
+      'not-found',
+    ]));
+    const legalPages = config.content.find((entry) => entry.name === 'legal-pages');
+    expect(legalPages?.operations).toEqual({ create: false, rename: false, delete: false });
+  });
+
+  it('exposes homepage features and FAQ sections alongside the existing process section', () => {
+    const homepage = config.content.find((entry) => entry.name === 'homepage');
+    expect(homepage?.fields?.map((field) => field.name)).toEqual(
+      expect.arrayContaining(['process', 'features', 'privacy', 'faq', 'guides']),
+    );
+    const features = homepage?.fields?.find((field) => field.name === 'features');
+    expect(features?.type).toBe('object');
+    expect(features?.fields).toEqual(expect.arrayContaining([
+      expect.objectContaining({ name: 'heading', label: expect.stringContaining('H2') }),
+      expect.objectContaining({ name: 'intro', label: expect.stringContaining('P') }),
+    ]));
+    const featureItems = features?.fields?.find((field) => field.name === 'items');
+    expect(featureItems?.fields).toEqual(expect.arrayContaining([
+      expect.objectContaining({ name: 'badge', type: 'string' }),
+      expect.objectContaining({ name: 'title', label: expect.stringContaining('H3') }),
+      expect.objectContaining({ name: 'image', type: 'image', options: { media: 'images' } }),
+      expect.objectContaining({ name: 'imageAlt', type: 'string' }),
+      expect.objectContaining({ name: 'bullets', type: 'string' }),
+      expect.objectContaining({ name: 'reverse', type: 'boolean' }),
+    ]));
+
+    const faq = homepage?.fields?.find((field) => field.name === 'faq');
+    expect(faq?.type).toBe('object');
+    expect(faq?.fields).toEqual(expect.arrayContaining([
+      expect.objectContaining({ name: 'heading', label: expect.stringContaining('H2') }),
+      expect.objectContaining({ name: 'intro', label: expect.stringContaining('P') }),
+    ]));
+    const faqItems = faq?.fields?.find((field) => field.name === 'items');
+    expect(faqItems?.fields).toEqual(expect.arrayContaining([
+      expect.objectContaining({ name: 'question', type: 'string' }),
+      expect.objectContaining({ name: 'answer', type: 'text' }),
+    ]));
+  });
 });
+

@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 460" role="img" aria-label="Supported image formats illustration">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#edf3e8"/>
+      <stop offset="1" stop-color="#d8e7de"/>
+    </linearGradient>
+  </defs>
+  <rect width="720" height="460" rx="24" fill="url(#bg)"/>
+  <g font-family="Arial" font-weight="800" fill="#172321">
+    <g transform="translate(80 90)">
+      <rect width="140" height="160" rx="16" fill="#fff" stroke="#1d6b56" stroke-width="3"/>
+      <text x="70" y="98" text-anchor="middle" font-size="48">JPG</text>
+    </g>
+    <g transform="translate(290 90)">
+      <rect width="140" height="160" rx="16" fill="#fff" stroke="#1d6b56" stroke-width="3"/>
+      <text x="70" y="98" text-anchor="middle" font-size="48">PNG</text>
+    </g>
+    <g transform="translate(500 90)">
+      <rect width="140" height="160" rx="16" fill="#fff" stroke="#1d6b56" stroke-width="3"/>
+      <text x="70" y="98" text-anchor="middle" font-size="44">WEBP</text>
+    </g>
+  </g>
+  <g transform="translate(120 300)" font-family="Arial" fill="#1d6b56">
+    <path d="M0 30 L120 30" stroke="#1d6b56" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M120 30 L100 18 M120 30 L100 42" stroke="#1d6b56" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <text x="0" y="0" font-size="20" font-weight="800">Upload</text>
+    <text x="150" y="0" font-size="20" font-weight="800">Up to 10 MB</text>
+  </g>
+  <g transform="translate(360 300)" font-family="Arial" fill="#1d6b56">
+    <path d="M0 30 L120 30" stroke="#1d6b56" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M120 30 L100 18 M120 30 L100 42" stroke="#1d6b56" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <text x="0" y="0" font-size="20" font-weight="800">Process</text>
+    <text x="150" y="0" font-size="20" font-weight="800">Original resolution</text>
+  </g>
+  <g transform="translate(140 400)" font-family="Arial" fill="#172321" font-weight="800">
+    <circle cx="0" cy="0" r="6" fill="#1d6b56"/>
+    <text x="14" y="6" font-size="18">Keeps source dimensions and aspect ratio</text>
+  </g>
+</svg>

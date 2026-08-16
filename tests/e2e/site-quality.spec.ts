@@ -2,7 +2,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
 test('critical public routes and SEO files are available', async ({ page, request }) => {
-  for (const path of ['/', '/blog/', '/watermark-remover/', '/privacy/', '/robots.txt', '/sitemap.xml']) {
+  for (const path of ['/', '/blog/', '/privacy/', '/robots.txt', '/sitemap.xml']) {
     const response = await request.get(path);
     expect(response.ok(), `${path} should be available`).toBeTruthy();
   }
@@ -27,5 +27,5 @@ test('Google tag emits a page_view collection request', async ({ page }) => {
 
   await page.goto('/');
   const request = await pageView;
-  expect(request.url()).toContain('tid=G-WPF5GVC931');
+  expect(request.url()).toContain('tid=G-52ZWCGEZ7R');
 });

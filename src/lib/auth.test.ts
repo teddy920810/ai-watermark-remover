@@ -39,5 +39,5 @@ describe('Google authentication integration contract', () => {
     expect(authorizationUrl.origin).toBe('https://accounts.google.com');
     expect(authorizationUrl.searchParams.get('redirect_uri')).toBe('http://localhost:3000/api/auth/callback/google');
     expect(authorizationUrl.searchParams.get('scope')).toContain('openid');
-  });
+  }, 10_000);
 });

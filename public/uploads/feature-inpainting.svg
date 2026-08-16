@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 460" role="img" aria-label="Texture inpainting illustration">
+  <defs>
+    <linearGradient id="brick" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#c97a55"/>
+      <stop offset="1" stop-color="#9b4f30"/>
+    </linearGradient>
+  </defs>
+  <rect width="720" height="460" rx="24" fill="#3b4a52"/>
+  <g fill="url(#brick)" stroke="#5a3024" stroke-width="2">
+    <rect x="0" y="0" width="120" height="60"/>
+    <rect x="120" y="0" width="120" height="60"/>
+    <rect x="240" y="0" width="120" height="60"/>
+    <rect x="360" y="0" width="120" height="60"/>
+    <rect x="480" y="0" width="120" height="60"/>
+    <rect x="600" y="0" width="120" height="60"/>
+    <rect x="0" y="60" width="80" height="60"/>
+    <rect x="80" y="60" width="160" height="60"/>
+    <rect x="240" y="60" width="80" height="60"/>
+    <rect x="320" y="60" width="160" height="60"/>
+    <rect x="480" y="60" width="80" height="60"/>
+    <rect x="560" y="60" width="160" height="60"/>
+  </g>
+  <g fill="#9d5333" stroke="#5a3024" stroke-width="2" opacity="0.85">
+    <rect x="160" y="160" width="80" height="60"/>
+    <rect x="240" y="160" width="120" height="60"/>
+    <rect x="360" y="160" width="120" height="60"/>
+    <rect x="480" y="160" width="80" height="60"/>
+    <rect x="200" y="220" width="120" height="60"/>
+    <rect x="320" y="220" width="80" height="60"/>
+    <rect x="400" y="220" width="120" height="60"/>
+  </g>
+  <g fill="url(#brick)" stroke="#5a3024" stroke-width="2">
+    <rect x="0" y="320" width="160" height="60"/>
+    <rect x="160" y="320" width="80" height="60"/>
+    <rect x="240" y="320" width="160" height="60"/>
+    <rect x="400" y="320" width="80" height="60"/>
+    <rect x="480" y="320" width="160" height="60"/>
+    <rect x="640" y="320" width="80" height="60"/>
+  </g>
+  <rect x="220" y="160" width="280" height="180" fill="#1d6b56" opacity="0.18"/>
+  <path d="M220 160 L500 160 L500 340 L220 340 Z" fill="none" stroke="#1d6b56" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="360" y="258" text-anchor="middle" fill="#fff" font-family="Arial" font-size="22" font-weight="800">Rebuilt texture</text>
+</svg>

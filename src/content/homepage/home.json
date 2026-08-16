@@ -1,0 +1,174 @@
+{
+  "title": "AI Watermark Remover — Remove Watermarks Online",
+  "description": "Remove visible watermarks, logos, and text from images online. Fast, private, and easy to use.",
+  "shareImage": "/uploads/og-card.svg",
+  "hero": {
+    "eyebrow": "Fast · private · effortless",
+    "heading": "Clean images.",
+    "highlightedHeading": "Keep the focus.",
+    "intro": "Remove visible watermarks, logos, and text from images with a focused workflow that respects your privacy.",
+    "trustItems": ["✓ No signup", "✓ Up to 10 MB", "✓ Deleted after 24h"]
+  },
+  "useCases": [
+    {
+      "icon": "◎",
+      "title": "Remove logos",
+      "description": "Clean product and brand images",
+      "href": "/remove-logo-from-image"
+    },
+    {
+      "icon": "T",
+      "title": "Remove text",
+      "description": "Erase unwanted text overlays",
+      "href": "/remove-text-from-image"
+    },
+    {
+      "icon": "✦",
+      "title": "Gemini marks",
+      "description": "Clean visible AI labels",
+      "href": "/remove-gemini-watermark"
+    }
+  ],
+  "process": {
+    "eyebrow": "How it works",
+    "heading": "A clean image in three steps",
+    "intro": "No layers, brushes, or complicated settings.",
+    "steps": [
+      {
+        "number": "01",
+        "title": "Upload",
+        "description": "Choose a JPG, PNG, or WEBP image. It goes directly to private storage."
+      },
+      {
+        "number": "02",
+        "title": "Process",
+        "description": "Our provider-ready pipeline prepares a result without exposing storage credentials."
+      },
+      {
+        "number": "03",
+        "title": "Download",
+        "description": "Review the before and after, then use a short-lived link to save your image."
+      }
+    ]
+  },
+  "features": {
+    "eyebrow": "Why choose WatermarkGemini",
+    "heading": "Built for clean results, not for guesswork",
+    "intro": "Each feature is designed to remove the manual effort behind watermark cleanup.",
+    "items": [
+      {
+        "badge": "FEATURE 1",
+        "title": "AI Auto-Detection: Instantly Locate & Erase Watermarks",
+        "description": "Stop wasting time selecting areas manually. Unwatermark AI automatically detects logos, stamps, and full-screen watermarks, removing them in seconds without any user operation. Our advanced algorithm ensures the original image quality remains 100% intact—no blur, no pixelation.",
+        "image": "/uploads/feature-auto-detection.svg",
+        "imageAlt": "Before and after preview showing auto watermark detection on a sample image.",
+        "bullets": [
+          "Detects logos, stamps, and full-screen marks automatically",
+          "Preserves original image quality with no visible blur or pixelation",
+          "Removes marks in seconds with zero manual selection"
+        ],
+        "reverse": false
+      },
+      {
+        "badge": "FEATURE 2",
+        "title": "Smart Inpainting: Restore Textures and Backgrounds",
+        "description": "Our inpainting engine rebuilds the area behind the watermark so the result looks natural. Edges, gradients, and repeating textures are reconstructed to match the surrounding pixels.",
+        "image": "/uploads/feature-inpainting.svg",
+        "imageAlt": "Side-by-side illustration of textures and backgrounds being restored after watermark removal.",
+        "bullets": [
+          "Reconstructs edges, gradients, and repeating patterns",
+          "Matches surrounding lighting and color tone",
+          "Leaves no obvious patch or clone artifact behind"
+        ],
+        "reverse": true
+      },
+      {
+        "badge": "FEATURE 3",
+        "title": "Multi-Format Support: JPG, PNG, WEBP, and More",
+        "description": "Upload common image formats up to 10 MB. Results keep their original dimensions and aspect ratio, so you can drop them straight into your design or product workflow.",
+        "image": "/uploads/feature-formats.svg",
+        "imageAlt": "Format icons for JPG, PNG, and WEBP shown next to a downloaded result preview.",
+        "bullets": [
+          "Supports JPG, PNG, and WEBP up to 10 MB",
+          "Keeps original resolution and aspect ratio",
+          "Outputs are ready for design tools and catalogs"
+        ],
+        "reverse": false
+      }
+    ]
+  },
+  "privacy": {
+    "eyebrow": "Made for peace of mind",
+    "heading": "Your images are yours",
+    "description": "Uploads live in private storage, access links expire, and objects are designed for automatic deletion after 24 hours.",
+    "linkLabel": "Read our privacy approach →",
+    "linkHref": "/privacy",
+    "features": [
+      {
+        "icon": "◇",
+        "title": "Private bucket",
+        "description": "No permanent public image URL"
+      },
+      {
+        "icon": "◷",
+        "title": "24-hour retention",
+        "description": "Short-lived uploads and results"
+      },
+      {
+        "icon": "⌁",
+        "title": "Secure links",
+        "description": "Time-limited access by default"
+      }
+    ]
+  },
+  "faq": {
+    "eyebrow": "FAQ",
+    "heading": "Frequently Asked Questions",
+    "intro": "Here are some of the most common questions about Unwatermark.",
+    "items": [
+      {
+        "question": "What is Unwatermark and how can it help me?",
+        "answer": "Unwatermark is a focused image cleanup tool that removes visible watermarks, logos, and text overlays from images you have the right to edit."
+      },
+      {
+        "question": "What file types does Unwatermark support for watermark removal?",
+        "answer": "You can upload JPG, PNG, and WEBP images up to 10 MB. Results keep the same format and resolution as the source."
+      },
+      {
+        "question": "Can I remove watermarks from AI-generated images or videos?",
+        "answer": "Yes, you can process screenshots and single frames from AI-generated images. For full videos, please export the frames you need first."
+      },
+      {
+        "question": "Does Unwatermark support batch watermark removal?",
+        "answer": "The MVP processes one image at a time so each result can be reviewed before download. Multi-image workflows are on the roadmap."
+      },
+      {
+        "question": "Does Unwatermark support usage on Android or iOS devices?",
+        "answer": "The site works in any modern mobile browser, so you can upload and download from Android or iOS without installing an app."
+      },
+      {
+        "question": "Is Unwatermark completely free?",
+        "answer": "There is a free tier for occasional use. Paid credit packs unlock higher resolution and larger queues when you need them."
+      },
+      {
+        "question": "Why does the system tell me I have exceeded my free limit?",
+        "answer": "The free tier limits the number of images you can process per day. Limits reset on a rolling 24-hour window or when you upgrade."
+      },
+      {
+        "question": "Will purchased credits expire?",
+        "answer": "Credits remain valid for 12 months from the purchase date. We will remind you before any credits expire."
+      },
+      {
+        "question": "How do I need to choose the right package?",
+        "answer": "Pick a package based on how many images you process each month and the resolution you need. You can upgrade or top up at any time."
+      }
+    ]
+  },
+  "guides": {
+    "eyebrow": "Helpful guides",
+    "heading": "Make better image choices",
+    "linkLabel": "View all guides →",
+    "linkHref": "/blog",
+    "articleLinkLabel": "Read guide →"
+  }
+}
