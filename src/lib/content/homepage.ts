@@ -19,6 +19,20 @@ const featureSchema = z.object({
   description: z.string().min(1),
 });
 
+const homepageFeatureSchema = z.object({
+  eyebrow: z.string().min(1),
+  heading: z.string().min(1),
+  description: z.string().min(1),
+  image: z.string().min(1),
+  imageAlt: z.string().min(1),
+  imagePosition: z.enum(['left', 'right']),
+});
+
+const faqItemSchema = z.object({
+  question: z.string().min(1),
+  answer: z.string().min(1),
+});
+
 export const homepageSchema = z.object({
   title: z.string().min(1),
   description: z.string().min(1).max(180),
@@ -37,6 +51,12 @@ export const homepageSchema = z.object({
     intro: z.string().min(1),
     steps: z.array(stepSchema).min(1),
   }),
+  features: z.object({
+    eyebrow: z.string().min(1),
+    heading: z.string().min(1),
+    intro: z.string().min(1),
+    items: z.array(homepageFeatureSchema).min(1),
+  }),
   privacy: z.object({
     eyebrow: z.string().min(1),
     heading: z.string().min(1),
@@ -51,6 +71,12 @@ export const homepageSchema = z.object({
     linkLabel: z.string().min(1),
     linkHref: z.string().min(1),
     articleLinkLabel: z.string().min(1),
+  }),
+  faq: z.object({
+    eyebrow: z.string().min(1),
+    heading: z.string().min(1),
+    intro: z.string().min(1),
+    items: z.array(faqItemSchema).min(1),
   }),
 });
 
