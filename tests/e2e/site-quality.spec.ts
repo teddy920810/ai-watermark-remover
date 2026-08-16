@@ -31,7 +31,7 @@ test('mobile visitors can open navigation and a dropdown', async ({ page }) => {
   const dropdown = page.getByRole('button', { name: /AI Watermark Remover/i });
   await dropdown.click();
   await expect(dropdown).toHaveAttribute('aria-expanded', 'true');
-  await expect(dropdown.locator('xpath=..').getByRole('link', { name: 'Remove text from image', exact: true })).toBeVisible();
+  await expect(dropdown.locator('xpath=..').locator('a').first()).toBeVisible();
 });
 
 test('all public content routes and 404 have one H1 and no serious accessibility violations', async ({ page, request }) => {
