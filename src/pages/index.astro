@@ -3,6 +3,7 @@ import ImageUploader from '../components/uploader/ImageUploader';
 import SiteLayout from '../layouts/SiteLayout.astro';
 import { getCollection } from 'astro:content';
 import { sortBlogEntries } from '../lib/content/entries';
+import { splitFeatureCopy } from '../lib/content/feature-copy';
 
 export const prerender = true;
 const [homepage] = await getCollection('homepage');
@@ -12,6 +13,10 @@ if (!siteEntry) throw new Error('Site settings CMS content is missing.');
 const home = homepage.data;
 const site = siteEntry.data;
 const blogPosts = sortBlogEntries(await getCollection('blog')).slice(0, 2);
+const featureItems = home.features.items.map((item) => ({
+  ...item,
+  copy: splitFeatureCopy(item.description, item.listItems),
+}));
 ---
 
 <SiteLayout title={home.title} description={home.description} image={home.shareImage}>
@@ -40,8 +45,8 @@ const blogPosts = sortBlogEntries(await getCollection('blog')).slice(0, 2);
   <section class="section features-section" aria-labelledby="features-heading">
     <div class="section-heading"><span class="eyebrow">{home.features.eyebrow}</span><h2 id="features-heading">{home.features.heading}</h2><p>{home.features.intro}</p></div>
     <div class="feature-list">
-      {home.features.items.map((item) => <article class:list={{ 'feature-item': true, 'is-image-left': item.imagePosition === 'left' }}>
-        <div class="feature-copy"><span class="eyebrow">{item.eyebrow}</span><h3>{item.heading}</h3><p>{item.description}</p></div>
+      {featureItems.map((item) => <article class:list={{ 'feature-item': true, 'is-image-left': item.imagePosition === 'left' }}>
+        <div class="feature-copy"><span class="eyebrow">{item.eyebrow}</span><h3>{item.heading}</h3><p>{item.copy.description}</p>{item.copy.listItems.length > 0 && <ul class="feature-list-items">{item.copy.listItems.map((listItem) => <li>{listItem}</li>)}</ul>}</div>
         <div class="feature-media"><img src={item.image} alt={item.imageAlt} loading="lazy" /></div>
       </article>)}
     </div>
