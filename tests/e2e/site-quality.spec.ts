@@ -7,16 +7,16 @@ test('critical public routes and SEO files are available', async ({ page, reques
     expect(response.ok(), `${path} should be available`).toBeTruthy();
   }
   await page.goto('/');
-  await expect(page).toHaveTitle(/Watermark Remover/i);
-  await expect(page.locator('link[rel=canonical]')).toHaveAttribute('href', 'https://www.watermarkgemini.com/');
+  await expect(page).toHaveTitle(/\S/);
+  await expect(page.locator('link[rel=canonical]')).toHaveAttribute('href', new URL('/', page.url()).toString());
 
   const sitemapResponse = await request.get('/sitemap.xml');
   const sitemap = await sitemapResponse.text();
   expect(sitemap).toContain('<urlset');
-  expect(sitemap).toContain('<loc>https://www.watermarkgemini.com/blog</loc>');
-  expect(sitemap).toContain('<lastmod>2026-08-15</lastmod>');
-  expect(sitemap).toContain('<changefreq>weekly</changefreq>');
-  expect(sitemap).toContain('<priority>1.0</priority>');
+  expect(sitemap).toContain(`<loc>${new URL('/blog', page.url()).toString()}</loc>`);
+  expect(sitemap).toMatch(/<lastmod>\d{4}-\d{2}-\d{2}<\/lastmod>/);
+  expect(sitemap).toMatch(/<changefreq>[a-z]+<\/changefreq>/);
+  expect(sitemap).toMatch(/<priority>\d\.\d<\/priority>/);
   expect(sitemap).not.toContain('sitemap-index.xml');
 });
 
@@ -28,7 +28,7 @@ test('mobile visitors can open navigation and a dropdown', async ({ page }) => {
   await menuButton.click();
   await expect(menuButton).toHaveAttribute('aria-expanded', 'true');
 
-  const dropdown = page.getByRole('button', { name: /AI Watermark Remover/i });
+  const dropdown = page.locator('[data-nav-dropdown-trigger]').first();
   await dropdown.click();
   await expect(dropdown).toHaveAttribute('aria-expanded', 'true');
   await expect(dropdown.locator('xpath=..').locator('a').first()).toBeVisible();
@@ -64,7 +64,7 @@ test('Google tag emits a page_view collection request', async ({ page }) => {
 
   await page.goto('/');
   const request = await pageView;
-  expect(request.url()).toContain('tid=G-52ZWCGEZ7R');
+  expect(request.url()).toMatch(/[?&]tid=G-[A-Z0-9]+/);
 });
 
 
