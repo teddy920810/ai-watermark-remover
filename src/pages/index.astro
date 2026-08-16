@@ -36,6 +36,17 @@ const blogPosts = sortBlogEntries(await getCollection('blog')).slice(0, 2);
     </div>
   </section>
 
+
+  <section class="section features-section" aria-labelledby="features-heading">
+    <div class="section-heading"><span class="eyebrow">{home.features.eyebrow}</span><h2 id="features-heading">{home.features.heading}</h2><p>{home.features.intro}</p></div>
+    <div class="feature-list">
+      {home.features.items.map((item) => <article class:list={{ 'feature-item': true, 'is-image-left': item.imagePosition === 'left' }}>
+        <div class="feature-copy"><span class="eyebrow">{item.eyebrow}</span><h3>{item.heading}</h3><p>{item.description}</p></div>
+        <div class="feature-media"><img src={item.image} alt={item.imageAlt} loading="lazy" /></div>
+      </article>)}
+    </div>
+  </section>
+
   <section class="section standards-section">
     <div><span class="eyebrow">{home.privacy.eyebrow}</span><h2>{home.privacy.heading}</h2><p>{home.privacy.description}</p><a class="text-link" href={home.privacy.linkHref}>{home.privacy.linkLabel}</a></div>
     <div class="standards-card">{home.privacy.features.map((feature) => <div><span>{feature.icon}</span><strong>{feature.title}</strong><small>{feature.description}</small></div>)}</div>
@@ -44,5 +55,10 @@ const blogPosts = sortBlogEntries(await getCollection('blog')).slice(0, 2);
   <section class="section guides-section">
     <div class="section-heading row-heading"><div><span class="eyebrow">{home.guides.eyebrow}</span><h2>{home.guides.heading}</h2></div><a class="text-link" href={home.guides.linkHref}>{home.guides.linkLabel}</a></div>
     <div class="guide-grid">{blogPosts.map(({ data: post }) => <article><span>{post.readTime}</span><h3><a href={`/blog/${post.slug}`}>{post.title}</a></h3><p>{post.description}</p><a class="text-link" href={`/blog/${post.slug}`}>{home.guides.articleLinkLabel}</a></article>)}</div>
+  </section>
+
+  <section class="section faq-section home-faq-section" aria-labelledby="faq-heading">
+    <div class="section-heading"><span class="eyebrow">{home.faq.eyebrow}</span><h2 id="faq-heading">{home.faq.heading}</h2><p>{home.faq.intro}</p></div>
+    <div class="faq-list">{home.faq.items.map((item) => <details><summary>{item.question}<span aria-hidden="true">+</span></summary><p>{item.answer}</p></details>)}</div>
   </section>
 </SiteLayout>
