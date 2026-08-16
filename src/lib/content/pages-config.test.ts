@@ -96,6 +96,8 @@ describe('Pages CMS maintenance safeguards', () => {
     expect(homepage?.fields).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ name: 'shareImage', type: 'image', options: { media: 'images' } }),
+        expect.objectContaining({ name: 'features', type: 'object' }),
+        expect.objectContaining({ name: 'faq', type: 'object' }),
       ]),
     );
   });
