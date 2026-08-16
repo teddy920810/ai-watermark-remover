@@ -983,6 +983,59 @@ content:
         list:
           min: 1
         description: 每一项会显示为列表条目，不属于标题层级。
+      - name: features
+        label: 功能亮点 / Features（可选）
+        type: object
+        description: 显示在“使用步骤”和 FAQ 之间；至少添加一项图文功能屏后才会在页面展示。
+        fields:
+          - name: eyebrow
+            label: 模块小标题｜SPAN
+            type: string
+          - name: heading
+            label: 模块标题｜H2
+            type: string
+          - name: intro
+            label: 模块简介｜P
+            type: text
+          - name: items
+            label: 图文功能屏
+            type: object
+            list:
+              collapsible:
+                collapsed: true
+                summary: "{heading}"
+            fields:
+              - name: eyebrow
+                label: 小标题｜SPAN
+                type: string
+                required: true
+              - name: heading
+                label: 功能标题｜H3
+                type: string
+                required: true
+              - name: description
+                label: 功能说明｜P
+                type: text
+                required: true
+              - name: image
+                label: 功能图片｜IMG
+                type: image
+                required: true
+                options:
+                  media: images
+              - name: imageAlt
+                label: 图片替代文字｜IMG ALT
+                type: string
+                required: true
+              - name: imagePosition
+                label: 图片位置
+                type: select
+                required: true
+                default: right
+                options:
+                  values:
+                    - { name: right, label: 右侧 }
+                    - { name: left, label: 左侧 }
       - name: faq
         label: 常见问题 / FAQ
         type: object
