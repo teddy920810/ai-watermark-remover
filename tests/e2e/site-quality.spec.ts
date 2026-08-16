@@ -8,12 +8,16 @@ test('critical public routes and SEO files are available', async ({ page, reques
   }
   await page.goto('/');
   await expect(page).toHaveTitle(/\S/);
-  await expect(page.locator('link[rel=canonical]')).toHaveAttribute('href', new URL('/', page.url()).toString());
+  const canonicalHref = await page.locator('link[rel=canonical]').getAttribute('href');
+  expect(canonicalHref).toBeTruthy();
+  const canonical = new URL(canonicalHref!);
+  expect(canonical.protocol).toBe('https:');
+  expect(canonical.pathname).toBe('/');
 
   const sitemapResponse = await request.get('/sitemap.xml');
   const sitemap = await sitemapResponse.text();
   expect(sitemap).toContain('<urlset');
-  expect(sitemap).toContain(`<loc>${new URL('/blog', page.url()).toString()}</loc>`);
+  expect(sitemap).toContain(`<loc>${new URL('/blog', canonical).toString()}</loc>`);
   expect(sitemap).toMatch(/<lastmod>\d{4}-\d{2}-\d{2}<\/lastmod>/);
   expect(sitemap).toMatch(/<changefreq>[a-z]+<\/changefreq>/);
   expect(sitemap).toMatch(/<priority>\d\.\d<\/priority>/);
@@ -66,5 +70,6 @@ test('Google tag emits a page_view collection request', async ({ page }) => {
   const request = await pageView;
   expect(request.url()).toMatch(/[?&]tid=G-[A-Z0-9]+/);
 });
+
 
 
