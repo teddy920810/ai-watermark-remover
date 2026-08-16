@@ -88,24 +88,32 @@
   },
   "features": {
     "eyebrow": "Why choose WatermarkGemini",
-    "heading": "Clean image details with confidence",
-    "intro": "Practical safeguards and clear results for images you own or are authorized to edit.",
+    "heading": "A Free Online Watermark Remover for Supported Image Files",
+    "intro": "Use WatermarkGemini in your browser to upload one supported image, start the current processing flow, compare the original and returned result, and download the file when it is ready.",
     "items": [
       {
-        "eyebrow": "Private processing",
-        "heading": "Your uploads are handled privately",
-        "description": "Images are stored privately for processing and scheduled for deletion after 24 hours.",
+        "eyebrow": "FEATURE 1",
+        "heading": "Simple Online Watermark Remover Workflow",
+        "description": "Upload one supported image, sign in with Google to start processing, review the original and returned result side by side, and download the file when it is ready.\n• Browser-based workflow—no desktop editor required\n• Side-by-side original and returned-result view\n• One image per processing flow",
         "image": "/uploads/og-card.svg",
         "imageAlt": "WatermarkGemini image cleanup preview",
         "imagePosition": "right"
       },
       {
-        "eyebrow": "Simple workflow",
-        "heading": "Upload, process, and download",
-        "description": "A focused workflow helps you clean eligible images without complicated editing tools.",
+        "eyebrow": "FEATURE 2",
+        "heading": "Image Watermark Remover File Support",
+        "description": "The upload tool currently accepts one JPG/JPEG, PNG, or WEBP image up to 10 MB. Video, PDF, batch upload, URL upload, and other image formats are not supported by the homepage tool.\n• JPG/JPEG, PNG, and WEBP input\n• One image up to 10 MB\n• Clear validation for unsupported file types or sizes",
         "image": "/uploads/watermarkgemini-logo.svg",
         "imageAlt": "WatermarkGemini logo",
         "imagePosition": "left"
+      },
+      {
+        "eyebrow": "FEATURE 3",
+        "heading": "A Free Watermark Remover with No Credits or Paid Plans",
+        "description": "WatermarkGemini is completely free to use. The current workflow does not require credits or a paid package, although Google sign-in is required before processing.\n• No credits or paid packages\n• Google sign-in required before processing\n• No desktop app required",
+        "image": "/uploads/watermarkgemini-logo-1.svg",
+        "imageAlt": "1",
+        "imagePosition": "right"
       }
     ]
   },
