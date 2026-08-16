@@ -64,24 +64,24 @@
     "features": [
       {
         "icon": "◇",
-        "title": "Private bucket",
-        "description": "No permanent public image URL"
+        "title": "Private Storage",
+        "description": "Your images never receive a permanent public URL."
       },
       {
         "icon": "◷",
-        "title": "24-hour retention",
-        "description": "Short-lived uploads and results"
+        "title": "24-Hour Deletion",
+        "description": "Uploaded images and results are automatically scheduled for deletion."
       },
       {
         "icon": "⌁",
-        "title": "Secure links",
-        "description": "Time-limited access by default"
+        "title": "Secure Download Links",
+        "description": "Temporary links help keep access to your processed images private."
       }
     ]
   },
   "guides": {
     "eyebrow": "Helpful guides",
-    "heading": "Make better image choices",
+    "heading": "Learn More About Image Watermark Removal",
     "linkLabel": "View all guides →",
     "linkHref": "/blog",
     "articleLinkLabel": "Read guide →"
