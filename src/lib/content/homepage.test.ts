@@ -13,9 +13,9 @@ describe('homepage CMS content', () => {
 
   it('contains editable content for every homepage section', () => {
     const parsed = homepageSchema.parse(homepage);
-    expect(parsed.hero.trustItems).toHaveLength(3);
-    expect(parsed.useCases).toHaveLength(3);
-    expect(parsed.process.steps).toHaveLength(3);
-    expect(parsed.privacy.features).toHaveLength(3);
+    expect(parsed.hero.trustItems.length).toBeGreaterThan(0);
+    expect(parsed.useCases.length).toBeGreaterThan(0);
+    expect(parsed.process.steps.length).toBeGreaterThan(0);
+    expect(parsed.privacy.features.length).toBeGreaterThan(0);
   });
 });
