@@ -76,7 +76,7 @@ const schemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [defaultS
     <link rel="icon" href={site.favicon} />
     {schemas.map((item) => <script is:inline type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', ...item })} />)}
   </head>
-  <body>
+  <body style={`--theme-color: ${site.themeColor};`}>
     {site.announcement.enabled && (
       <aside class="site-announcement" aria-label="Site announcement">
         <span>{site.announcement.text}</span>
