@@ -1,0 +1,31 @@
+{
+  "lastmod": "2026-08-15",
+  "groups": {
+    "homepage": {
+      "changefreq": "weekly",
+      "priority": 1.0
+    },
+    "landingPages": {
+      "changefreq": "weekly",
+      "priority": 0.8
+    },
+    "blogIndex": {
+      "changefreq": "weekly",
+      "priority": 0.7
+    },
+    "blogPosts": {
+      "changefreq": "monthly",
+      "priority": 0.6
+    },
+    "legalPages": {
+      "changefreq": "yearly",
+      "priority": 0.3
+    }
+  },
+  "overrides": [
+    {
+      "path": "/remove-gemini-watermark",
+      "priority": 0.9
+    }
+  ]
+}

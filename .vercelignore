@@ -1,6 +1,7 @@
 S3-info.txt
 .env
 .env.*
+!.env.example
 .tools/
 node_modules/
 dist/

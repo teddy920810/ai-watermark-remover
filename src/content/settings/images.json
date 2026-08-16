@@ -1,0 +1,16 @@
+{
+  "images": [
+    {
+      "src": "/uploads/watermarkgemini-logo.svg",
+      "alt": "WatermarkGemini logo",
+      "title": "WatermarkGemini logo"
+    },
+    {
+      "src": "/uploads/og-card.svg",
+      "alt": "WatermarkGemini social sharing card",
+      "title": "Default social sharing image",
+      "width": 1200,
+      "height": 630
+    }
+  ]
+}

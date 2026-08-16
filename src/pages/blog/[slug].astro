@@ -2,6 +2,9 @@
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import { getCollection, render, type CollectionEntry } from 'astro:content';
 import { sortBlogEntries } from '../../lib/content/entries';
+import { resolveBlogMetadata } from '../../lib/content/blog-metadata';
+import { resolveImageAlt } from '../../lib/content/image-metadata';
+import { buildArticleSchema } from '../../lib/content/seo-schema';
 
 export const prerender = true;
 export async function getStaticPaths() {
@@ -11,10 +14,31 @@ export async function getStaticPaths() {
 interface Props { post: CollectionEntry<'blog'> }
 const { post } = Astro.props;
 const { Content } = await render(post);
-const schema = { '@type': 'Article', headline: post.data.title, description: post.data.description, datePublished: post.data.publishedAt, image: post.data.coverImage, author: { '@type': 'Organization', name: post.data.author } };
+const [siteEntry] = await getCollection('siteSettings');
+if (!siteEntry) throw new Error('Site settings CMS content is missing.');
+const metadata = resolveBlogMetadata(post.data, siteEntry.data.contentDefaults, siteEntry.data.name);
+const [imageSettingsEntry] = await getCollection('imageSettings');
+if (!imageSettingsEntry) throw new Error('Image metadata CMS content is missing.');
+const coverAlt = post.data.coverImage
+  ? resolveImageAlt(post.data.coverImage, post.data.coverAlt, imageSettingsEntry.data.images, post.data.title)
+  : undefined;
+const schema = buildArticleSchema({
+  canonicalOrigin: siteEntry.data.canonicalOrigin,
+  path: `/blog/${post.data.slug}`,
+  title: post.data.title,
+  description: post.data.description,
+  publishedAt: post.data.publishedAt,
+  updatedAt: post.data.updatedAt,
+  author: metadata.author,
+  publisherName: siteEntry.data.name,
+  logo: siteEntry.data.logo,
+  image: post.data.coverImage,
+});
 ---
-<SiteLayout title={`${post.data.title} | ClearMark AI`} description={post.data.description} image={post.data.coverImage} type="article" schema={schema}>
-  <header class="article-header"><div class="article-meta">{post.data.category} · {post.data.publishedAt} · {post.data.readTime} · {post.data.author}</div><h1>{post.data.title}</h1><p>{post.data.description}</p></header>
-  {post.data.coverImage && <img class="article-cover" src={post.data.coverImage} alt={post.data.coverAlt ?? post.data.title} />}
-  <article class="article-body"><Content /></article>
+<SiteLayout title={metadata.title} description={post.data.description} image={post.data.coverImage} type="article" schema={schema}>
+  <header class="article-header"><div class="article-meta">{metadata.category} · {post.data.publishedAt} · {post.data.readTime} · {metadata.author}</div><h1>{post.data.title}</h1><p>{post.data.description}</p></header>
+  {post.data.coverImage && <img class="article-cover" src={post.data.coverImage} alt={coverAlt} />}
+  <article class="article-body">
+    {post.data.contentMode === 'html' ? <div set:html={post.data.bodyHtml} /> : <Content />}
+  </article>
 </SiteLayout>

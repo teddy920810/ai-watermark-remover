@@ -21,9 +21,9 @@ Google 登录还需要：
 - `GOOGLE_CLIENT_ID`
 - `GOOGLE_CLIENT_SECRET`
 - `BETTER_AUTH_SECRET`（至少 32 字节随机值）
-- `BETTER_AUTH_URL`（本地测试为 `http://localhost:3000`）
+- `BETTER_AUTH_URL`（本地测试为 `http://localhost:4321`）
 
-可运行 `npm run auth:import -- "Google OAuth JSON 路径"` 安全导入本地凭据。原始 JSON 会保存在被 Git 忽略的 `.secrets/`，不得提交或复制到浏览器代码。Google Cloud 本地回调为 `http://localhost:3000/api/auth/callback/google`。
+可运行 `npm run auth:import -- "Google OAuth JSON 路径"` 安全导入本地凭据。原始 JSON 会保存在被 Git 忽略的 `.secrets/`，不得提交或复制到浏览器代码。Google Cloud 本地回调为 `http://localhost:4321/api/auth/callback/google`。
 
 ## 应用结构
 
@@ -58,3 +58,4 @@ npm run verify
 ```
 
 Pages CMS 可能随时提交到 `main`。推送前执行 `git fetch origin main` 并检查分歧；如远端领先，先安全 rebase/merge，禁止 force push。合并到 `main` 后 Vercel 自动发布。
+

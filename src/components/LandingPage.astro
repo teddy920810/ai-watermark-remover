@@ -29,7 +29,7 @@ const faqSchema = {
       <p>{page.intro}</p>
       <ul class="check-list">{page.benefits.map((benefit) => <li>{benefit}</li>)}</ul>
     </div>
-    <div id="tool" class="hero-tool"><ImageUploader logo={site.logo} siteName={site.name} client:load /></div>
+    <div id="tool" class="hero-tool"><ImageUploader logo={site.logo} siteName={site.name} copy={site.uploader} client:load /></div>
   </section>
 
   <section class="section process-section" id="how-it-works">

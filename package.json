@@ -17,12 +17,13 @@
     "test:e2e": "playwright test",
     "test:smoke:production": "node scripts/production-smoke.mjs",
     "auth:import": "node scripts/import-google-credentials.mjs",
-    "verify:deploy": "npm run test:coverage && npm run lint && npm run build",
+    "site:init": "node scripts/initialize-site.mjs",
+    "site:validate": "node scripts/validate-site.mjs",
+    "verify:deploy": "npm run site:validate && npm run test:coverage && npm run lint && npm run build",
     "verify": "npm run test:coverage && npm run lint && npm run build && npm run test:e2e"
   },
   "dependencies": {
     "@astrojs/react": "^6.0.2",
-    "@astrojs/sitemap": "^3.7.3",
     "@astrojs/vercel": "^11.0.4",
     "@aws-sdk/client-s3": "^3.864.0",
     "@aws-sdk/s3-request-presigner": "^3.864.0",
@@ -54,3 +55,4 @@
     "nanoid": "3.3.18"
   }
 }
+

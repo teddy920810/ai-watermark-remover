@@ -1,14 +1,18 @@
 import react from '@astrojs/react';
-import sitemap from '@astrojs/sitemap';
 import vercel from '@astrojs/vercel';
 import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'astro/config';
-import process from 'node:process';
+import { readFileSync } from 'node:fs';
+import { URL } from 'node:url';
+
+const siteSettings = JSON.parse(readFileSync(new URL('./src/content/settings/site.json', import.meta.url), 'utf8'));
 
 export default defineConfig({
-  site: process.env.SITE_URL ?? (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://example.com'),
+  site: siteSettings.canonicalOrigin,
+  trailingSlash: 'never',
   output: 'server',
   adapter: vercel(),
-  integrations: [react(), sitemap()],
+  integrations: [react()],
   vite: { plugins: [tailwindcss()] },
 });
+

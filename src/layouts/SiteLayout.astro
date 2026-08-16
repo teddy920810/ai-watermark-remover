@@ -9,6 +9,7 @@ interface Props {
   image?: string;
   type?: 'website' | 'article';
   schema?: Record<string, unknown> | Array<Record<string, unknown>>;
+  noindex?: boolean;
 }
 
 const [siteEntry] = await getCollection('siteSettings');
@@ -21,38 +22,45 @@ const {
   image = site.defaultShareImage,
   type = 'website',
   schema,
+  noindex = false,
 } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const socialImage = new URL(image, Astro.site);
+const analyticsId = site.analytics.googleMeasurementId;
 const defaultSchema = {
   '@type': 'WebApplication',
   name: site.name,
-  applicationCategory: 'MultimediaApplication',
-  operatingSystem: 'Any',
+  applicationCategory: site.structuredData.applicationCategory,
+  operatingSystem: site.structuredData.operatingSystem,
   url: canonical.toString(),
   description,
-  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  offers: {
+    '@type': 'Offer',
+    price: site.structuredData.price,
+    priceCurrency: site.structuredData.priceCurrency,
+  },
 };
 const schemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [defaultSchema];
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={site.locale}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
-    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-52ZWCGEZ7R"></script>
-    <script is:inline>
+    {analyticsId && <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${analyticsId}`}></script>}
+    {analyticsId && <script is:inline define:vars={{ analyticsId }}>
       window.dataLayer = window.dataLayer || [];
       // Keep Google's official command-queue shape; gtag.js expects the arguments object.
       // eslint-disable-next-line prefer-rest-params
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', 'G-52ZWCGEZ7R');
-    </script>
+      gtag('config', analyticsId);
+    </script>}
     <title>{title}</title>
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
     <link rel="canonical" href={canonical} />
     <meta property="og:type" content={type} />
     <meta property="og:site_name" content={site.name} />
@@ -64,11 +72,11 @@ const schemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [defaultS
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={socialImage} />
-    <meta name="theme-color" content="#f7f5ef" />
-    <link rel="icon" href={site.favicon} type="image/svg+xml" />
+    <meta name="theme-color" content={site.themeColor} />
+    <link rel="icon" href={site.favicon} />
     {schemas.map((item) => <script is:inline type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', ...item })} />)}
   </head>
-  <body>
+  <body style={`--theme-color: ${site.themeColor}; --theme-color-fallback: ${site.themeColorFallback};`}>
     {site.announcement.enabled && (
       <aside class="site-announcement" aria-label="Site announcement">
         <span>{site.announcement.text}</span>
@@ -77,11 +85,14 @@ const schemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [defaultS
     )}
     <header class="site-header">
       <a class="brand" href="/" aria-label={`${site.name} home`}><img class="brand-logo" src={site.logo} alt="" /><span>{site.name}</span></a>
-      <nav aria-label="Main navigation">
-        {site.header.navigation.map((item) => (item.children?.length ?? 0) > 0 ? (
+      <button class="mobile-menu-toggle" type="button" aria-label="Open navigation" aria-controls="site-navigation" aria-expanded="false" data-mobile-menu-toggle>
+        <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
+      </button>
+      <nav id="site-navigation" aria-label="Main navigation">
+        {site.header.navigation.map((item, index) => (item.children?.length ?? 0) > 0 ? (
           <div class="nav-dropdown">
-            <button class="nav-dropdown-trigger" type="button" aria-haspopup="true">{item.label}<span aria-hidden="true">⌄</span></button>
-            <div class="nav-dropdown-panel">
+            <button class="nav-dropdown-trigger" type="button" aria-haspopup="true" aria-expanded="false" aria-controls={`nav-dropdown-${index}`} data-nav-dropdown-trigger>{item.label}<span aria-hidden="true">⌄</span></button>
+            <div class="nav-dropdown-panel" id={`nav-dropdown-${index}`}>
               {(item.children ?? []).map((child) => <a href={child.href}>{child.label}</a>)}
             </div>
           </div>
@@ -95,5 +106,48 @@ const schemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [defaultS
       <div class="footer-links">{site.footer.links.map((item) => <a href={item.href}>{item.label}</a>)}</div>
       <p>© {new Date().getFullYear()} {site.name}</p>
     </footer>
+    <script>
+      const header = document.querySelector<HTMLElement>('.site-header');
+      const menuToggle = document.querySelector<HTMLButtonElement>('[data-mobile-menu-toggle]');
+      const dropdownTriggers = document.querySelectorAll<HTMLButtonElement>('[data-nav-dropdown-trigger]');
+
+      const closeDropdowns = () => dropdownTriggers.forEach((trigger) => {
+        trigger.setAttribute('aria-expanded', 'false');
+        trigger.closest('.nav-dropdown')?.classList.remove('is-open');
+      });
+      const closeMenu = () => {
+        header?.classList.remove('is-menu-open');
+        menuToggle?.setAttribute('aria-expanded', 'false');
+        menuToggle?.setAttribute('aria-label', 'Open navigation');
+        closeDropdowns();
+      };
+
+      menuToggle?.addEventListener('click', () => {
+        const open = !header?.classList.contains('is-menu-open');
+        header?.classList.toggle('is-menu-open', open);
+        menuToggle.setAttribute('aria-expanded', String(open));
+        menuToggle.setAttribute('aria-label', open ? 'Close navigation' : 'Open navigation');
+        if (!open) closeDropdowns();
+      });
+
+      dropdownTriggers.forEach((trigger) => trigger.addEventListener('click', () => {
+        const dropdown = trigger.closest('.nav-dropdown');
+        const open = trigger.getAttribute('aria-expanded') !== 'true';
+        closeDropdowns();
+        trigger.setAttribute('aria-expanded', String(open));
+        dropdown?.classList.toggle('is-open', open);
+      }));
+
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+          closeMenu();
+          menuToggle?.focus();
+        }
+      });
+      document.addEventListener('click', (event) => {
+        if (header && event.target instanceof Node && !header.contains(event.target)) closeMenu();
+      });
+    </script>
   </body>
 </html>
+

@@ -1,11 +1,68 @@
 {
   "name": "WatermarkGemini",
-  "brandMark": "WatermarkGemini",
+  "canonicalOrigin": "https://www.watermarkgemini.com",
+  "locale": "en",
+  "themeColor": "#a06dff",
   "logo": "/uploads/watermarkgemini-logo.svg",
   "defaultTitle": "AI Watermark Remover — Remove Watermarks Online",
   "defaultDescription": "Remove visible watermarks, logos, and text from images online. Fast, private, and easy to use.",
   "favicon": "/uploads/watermarkgemini-logo.svg",
-  "defaultShareImage": "/uploads/watermarkgemini-logo.svg",
+  "defaultShareImage": "/uploads/og-card.svg",
+  "analytics": {
+    "googleMeasurementId": "G-52ZWCGEZ7R"
+  },
+  "structuredData": {
+    "applicationCategory": "MultimediaApplication",
+    "operatingSystem": "Any",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "contentDefaults": {
+    "author": "WatermarkGemini Editorial Team",
+    "category": "Guides"
+  },
+  "uploader": {
+    "hero": {
+      "eyebrow": "Free Image Watermark Remover",
+      "heading": "Remove a Watermark from Your Image Online for Free",
+      "demoBadge": "100% Free",
+      "demoBadgeTitle": "The MVP returns an unchanged copy"
+    },
+    "dropzone": {
+      "dropLabel": "Drop Your Image Here",
+      "browseLabel": "or click to browse",
+      "formatLabel": "JPG, PNG, or WEBP",
+      "maxSizeLabel": "up to {maxSize} MB",
+      "fileInputLabel": "Choose an image to remove the watermark"
+    },
+    "preview": {
+      "altTemplate": "Preview of {fileName}",
+      "processingLabel": "Securely processing your image…",
+      "readyLabel": "Ready to process",
+      "removeButton": "Remove watermark",
+      "uploadingButton": "Uploading…",
+      "processingButton": "Processing…",
+      "chooseAnotherButton": "Choose another"
+    },
+    "result": {
+      "originalLabel": "Original",
+      "resultLabel": "Result",
+      "originalAlt": "Original upload",
+      "resultAlt": "Processed result",
+      "demoNote": "Demo mode returns a secure copy while the real AI provider is being integrated.",
+      "downloadButton": "Download result",
+      "processAnotherButton": "Process another"
+    },
+    "auth": {
+      "closeLabel": "Close sign-in dialog",
+      "title": "Sign in to start processing",
+      "description": "Your selected image will stay on this page. Processing starts automatically after Google sign-in.",
+      "connectingButton": "Connecting to Google…",
+      "continueButton": "Continue with Google",
+      "dismissButton": "Not now"
+    },
+    "privacyNote": "Private upload · Automatically deleted after 24 hours"
+  },
   "announcement": {
     "enabled": false,
     "text": "New features and service updates will appear here.",
@@ -18,16 +75,16 @@
         "label": "AI Watermark Remover",
         "children": [
           {
-            "label": "Remove text from image",
-            "href": "/remove-text-from-image/"
+            "label": "Remove Text from Image",
+            "href": "/remove-text-from-image"
           },
           {
-            "label": "Remove logo from image",
-            "href": "/remove-logo-from-image/"
+            "label": "Remove Logo from Image",
+            "href": "/remove-logo-from-image"
           },
           {
             "label": "Remove Gemini Watermark",
-            "href": "/remove-gemini-watermark/"
+            "href": "/remove-gemini-watermark"
           }
         ]
       },
@@ -57,5 +114,6 @@
         "href": "/blog"
       }
     ]
-  }
+  },
+  "themeColorFallback": "#6610f2"
 }

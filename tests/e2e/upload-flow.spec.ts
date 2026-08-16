@@ -10,7 +10,7 @@ async function chooseTestImage(page: import('@playwright/test').Page) {
   await expect(uploader.locator('astro-island')).not.toHaveAttribute('ssr', '');
 
   const fileInput = uploader.locator('input[type="file"]');
-  await expect(fileInput).toHaveAttribute('aria-label', 'Choose image to upload');
+  await expect(fileInput).toHaveAttribute('aria-label', /\S+/);
   await fileInput.setInputFiles({ name: 'test.png', mimeType: 'image/png', buffer: png });
 }
 
@@ -43,10 +43,10 @@ test('uploads, processes, and exposes a download through the UI', async ({ page 
 
   await page.goto('/');
   await chooseTestImage(page);
-  await page.getByRole('button', { name: 'Remove watermark' }).click();
+  await page.locator('#tool .preview-panel .button-primary').click();
 
-  await expect(page.getByText('Demo mode returns a secure copy while the real AI provider is being integrated.')).toBeVisible();
-  await expect(page.getByRole('link', { name: 'Download result' })).toHaveAttribute('href', 'https://results.test/download.png');
+  await expect(page.locator('#tool .demo-note')).toBeVisible();
+  await expect(page.locator('#tool .result-actions a.button-primary')).toHaveAttribute('href', 'https://results.test/download.png');
 });
 
 test('shows a safe message when the upload service is unavailable', async ({ page }) => {
@@ -63,7 +63,7 @@ test('shows a safe message when the upload service is unavailable', async ({ pag
 
   await page.goto('/');
   await chooseTestImage(page);
-  await page.getByRole('button', { name: 'Remove watermark' }).click();
+  await page.locator('#tool .preview-panel .button-primary').click();
 
   const alert = page.getByRole('alert');
   await expect(alert).toHaveText('Upload service is temporarily unavailable.');
@@ -85,9 +85,9 @@ test('keeps selection anonymous and asks for Google sign-in only when processing
   await page.goto('/');
   await expect(page.getByRole('button', { name: 'Sign in with Google' })).toBeVisible();
   await chooseTestImage(page);
-  await page.getByRole('button', { name: 'Remove watermark' }).click();
+  await page.locator('#tool .preview-panel .button-primary').click();
 
-  await expect(page.getByRole('dialog', { name: 'Sign in to start processing' })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Continue with Google' })).toBeVisible();
+  await expect(page.locator('#tool [role="dialog"]')).toBeVisible();
+  await expect(page.locator('#tool .auth-google-button')).toBeVisible();
   expect(uploadRequested).toBe(false);
 });

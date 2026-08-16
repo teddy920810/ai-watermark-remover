@@ -18,11 +18,11 @@ describe('marketing page CMS settings', () => {
 
   it('validates reusable landing-page sections', () => {
     const parsed = landingCommonSettingsSchema.parse(readJson('../../content/settings/landing.json'));
-    expect(parsed.process.steps).toHaveLength(3);
+    expect(parsed.process.steps.length).toBeGreaterThan(0);
   });
 
   it('validates the 404 page settings', () => {
     const parsed = notFoundSettingsSchema.parse(readJson('../../content/settings/not-found.json'));
-    expect(parsed.eyebrow).toBe('404');
+    expect(parsed.heading).toMatch(/\S/);
   });
 });

@@ -39,7 +39,7 @@ for (const line of existingEnv.split(/\r?\n/)) {
 
 currentValues.set('GOOGLE_CLIENT_ID', webCredential.client_id);
 currentValues.set('GOOGLE_CLIENT_SECRET', webCredential.client_secret);
-currentValues.set('BETTER_AUTH_URL', 'http://localhost:3000');
+currentValues.set('BETTER_AUTH_URL', 'http://localhost:4321');
 if (!currentValues.get('BETTER_AUTH_SECRET')) {
   currentValues.set('BETTER_AUTH_SECRET', randomBytes(32).toString('base64url'));
 }
@@ -54,4 +54,5 @@ const managedLines = managedKeys.map((key) => `${key}=${currentValues.get(key)}`
 await writeFile(envPath, [...unmanagedLines, ...managedLines, ''].join('\n'), { encoding: 'utf8', mode: 0o600 });
 
 process.stdout.write('Google OAuth credentials imported securely.\n');
-process.stdout.write('Local callback: http://localhost:3000/api/auth/callback/google\n');
+process.stdout.write('Local callback: http://localhost:4321/api/auth/callback/google\n');
+

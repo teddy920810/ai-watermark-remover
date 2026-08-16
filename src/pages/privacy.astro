@@ -1,12 +1,16 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
 import { getCollection, render } from 'astro:content';
+import { buildWebPageSchema } from '../lib/content/seo-schema';
 export const prerender = true;
 const page = (await getCollection('legalPages')).find((entry) => entry.data.slug === 'privacy');
 if (!page) throw new Error('Privacy CMS content is missing.');
 const { Content } = await render(page);
+const [siteEntry] = await getCollection('siteSettings');
+if (!siteEntry) throw new Error('Site settings CMS content is missing.');
+const schema = buildWebPageSchema({ canonicalOrigin: siteEntry.data.canonicalOrigin, path: '/privacy', name: page.data.heading, description: page.data.description });
 ---
-<SiteLayout title={page.data.title} description={page.data.description}>
+<SiteLayout title={page.data.title} description={page.data.description} schema={schema}>
   <header class="legal-page"><span class="eyebrow">{page.data.eyebrow}</span><h1>{page.data.heading}</h1></header>
   <article class="legal-body"><Content /></article>
 </SiteLayout>

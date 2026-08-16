@@ -1,9 +1,10 @@
 ---
 slug: jpg-png-webp-image-format-guide
-title: "JPG vs PNG vs WEBP: Which Format Should You Use?"
+title: "JPG vs PNG vs WebP: Best Image Format for Your Website"
 description: Understand the practical differences between JPG, PNG, and WEBP
   before cleaning or exporting an image.
 publishedAt: 2026-08-02
+updatedAt: 2026-08-16
 readTime: 5 min read
 ---
 The right image format depends on the content, transparency requirements, and where the result will be used. Choosing well helps preserve quality without creating unnecessarily large files.

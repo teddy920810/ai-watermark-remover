@@ -11,12 +11,35 @@ describe('site settings CMS content', () => {
     expect(siteSettingsSchema.safeParse(settings).success).toBe(true);
   });
 
-  it('contains editable header navigation and footer links', () => {
+  it('contains the CMS-managed site sections required to render the shared layout', () => {
     const parsed = siteSettingsSchema.parse(settings);
-    expect(parsed.logo).toBe('/uploads/watermarkgemini-logo.svg');
+    expect(parsed.locale).toMatch(/\S/);
+    expect(new URL(parsed.canonicalOrigin).protocol).toBe('https:');
+    expect(parsed.themeColor).toMatch(/^#[0-9a-f]{6}$/i);
+    expect(parsed.themeColorFallback).toMatch(/^#[0-9a-f]{6}$/i);
+    expect(parsed.name).toMatch(/\S/);
+    expect(parsed.logo).toMatch(/\S/);
+    expect(parsed.defaultShareImage).toMatch(/\S/);
     expect(parsed.header.navigation.length).toBeGreaterThan(0);
     expect(parsed.footer.links.length).toBeGreaterThan(0);
-    expect(parsed.announcement.enabled).toBe(false);
+    expect(parsed.uploader.hero.heading).toBeTruthy();
+    expect(parsed.uploader.dropzone.fileInputLabel).toBeTruthy();
+  });
+
+  it('requires a canonical HTTPS origin without a path', () => {
+    const invalid = structuredClone(settings);
+    invalid.canonicalOrigin = 'https://www.watermarkgemini.com/blog';
+    expect(siteSettingsSchema.safeParse(invalid).success).toBe(false);
+  });
+
+  it('allows analytics to be disabled but rejects malformed measurement IDs', () => {
+    const disabled = structuredClone(settings);
+    disabled.analytics.googleMeasurementId = '';
+    expect(siteSettingsSchema.safeParse(disabled).success).toBe(true);
+
+    const malformed = structuredClone(settings);
+    malformed.analytics.googleMeasurementId = 'UA-123';
+    expect(siteSettingsSchema.safeParse(malformed).success).toBe(false);
   });
 
   it('supports one-level dropdown links in the header navigation', () => {
@@ -30,3 +53,4 @@ describe('site settings CMS content', () => {
     expect(parsed.header.navigation[0].children).toHaveLength(2);
   });
 });
+
