@@ -39,6 +39,18 @@ const faqSchema = {
     </div>
   </section>
 
+  {page.features?.items.length ? (
+    <section class="section features-section landing-features-section" aria-labelledby="features-heading">
+      <div class="section-heading"><span class="eyebrow">{page.features.eyebrow}</span><h2 id="features-heading">{page.features.heading}</h2><p>{page.features.intro}</p></div>
+      <div class="feature-list">
+        {page.features.items.map((item) => <article class:list={{ 'feature-item': true, 'is-image-left': item.imagePosition === 'left' }}>
+          <div class="feature-copy"><span class="eyebrow">{item.eyebrow}</span><h3>{item.heading}</h3><p>{item.description}</p></div>
+          <div class="feature-media"><img src={item.image} alt={item.imageAlt} loading="lazy" /></div>
+        </article>)}
+      </div>
+    </section>
+  ) : null}
+
   <section class="section faq-section">
     <div class="section-heading"><span class="eyebrow">{common.faq.eyebrow}</span><h2>{common.faq.heading}</h2></div>
     <div class="faq-list">{page.faq.map((item) => <details><summary>{item.question}<span>+</span></summary><p>{item.answer}</p></details>)}</div>
