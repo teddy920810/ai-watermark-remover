@@ -23,6 +23,7 @@ const homepageFeatureSchema = z.object({
   eyebrow: z.string().min(1),
   heading: z.string().min(1),
   description: z.string().min(1),
+  listItems: z.array(z.string().min(1)).default([]),
   image: z.string().min(1),
   imageAlt: z.string().min(1),
   imagePosition: z.enum(['left', 'right']),
