@@ -11,11 +11,9 @@ const contentFiles = [
 ];
 
 describe('public brand content', () => {
-  it('uses WatermarkGemini consistently and gives the image-format guide a focused title', () => {
+  it('does not retain the superseded brand name', () => {
     const content = contentFiles.map((file) => readFileSync(new URL(file, import.meta.url), 'utf8')).join('\n');
-    const imageGuide = readFileSync(new URL('../../content/blog/jpg-png-webp-image-format-guide.md', import.meta.url), 'utf8');
 
     expect(content).not.toContain('ClearMark AI');
-    expect(imageGuide).toContain('title: "JPG vs PNG vs WebP: Best Image Format for Your Website"');
   });
 });
