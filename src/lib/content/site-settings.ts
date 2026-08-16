@@ -46,6 +46,7 @@ export const siteSettingsSchema = z.object({
   canonicalOrigin: canonicalOriginSchema,
   locale: z.string().min(2),
   themeColor: z.string().regex(/^#[0-9a-f]{6}$/i),
+  themeColorFallback: z.string().regex(/^#[0-9a-f]{6}$/i),
   logo: z.string().min(1),
   defaultTitle: z.string().min(1),
   defaultDescription: z.string().min(1).max(180),
