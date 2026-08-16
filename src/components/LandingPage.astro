@@ -2,6 +2,7 @@
 import ImageUploader from './uploader/ImageUploader';
 import SiteLayout from '../layouts/SiteLayout.astro';
 import { getCollection, type CollectionEntry } from 'astro:content';
+import { splitFeatureCopy } from '../lib/content/feature-copy';
 
 interface Props { page: CollectionEntry<'landingPages'>['data'] }
 const { page } = Astro.props;
@@ -11,6 +12,11 @@ const [siteEntry] = await getCollection('siteSettings');
 if (!siteEntry) throw new Error('Site settings CMS content is missing.');
 const common = commonEntry.data;
 const site = siteEntry.data;
+const features = page.features;
+const featureItems = features?.items.map((item) => ({
+  ...item,
+  copy: splitFeatureCopy(item.description, item.listItems),
+})) ?? [];
 const faqSchema = {
   '@type': 'FAQPage',
   mainEntity: page.faq.map((item) => ({
@@ -39,12 +45,12 @@ const faqSchema = {
     </div>
   </section>
 
-  {page.features?.items.length ? (
+  {features && featureItems.length ? (
     <section class="section features-section landing-features-section" aria-labelledby="features-heading">
-      <div class="section-heading"><span class="eyebrow">{page.features.eyebrow}</span><h2 id="features-heading">{page.features.heading}</h2><p>{page.features.intro}</p></div>
+      <div class="section-heading"><span class="eyebrow">{features.eyebrow}</span><h2 id="features-heading">{features.heading}</h2><p>{features.intro}</p></div>
       <div class="feature-list">
-        {page.features.items.map((item) => <article class:list={{ 'feature-item': true, 'is-image-left': item.imagePosition === 'left' }}>
-          <div class="feature-copy"><span class="eyebrow">{item.eyebrow}</span><h3>{item.heading}</h3><p>{item.description}</p></div>
+        {featureItems.map((item) => <article class:list={{ 'feature-item': true, 'is-image-left': item.imagePosition === 'left' }}>
+          <div class="feature-copy"><span class="eyebrow">{item.eyebrow}</span><h3>{item.heading}</h3><p>{item.copy.description}</p>{item.copy.listItems.length > 0 && <ul class="feature-list-items">{item.copy.listItems.map((listItem) => <li>{listItem}</li>)}</ul>}</div>
           <div class="feature-media"><img src={item.image} alt={item.imageAlt} loading="lazy" /></div>
         </article>)}
       </div>
