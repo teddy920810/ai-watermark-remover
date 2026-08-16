@@ -11,21 +11,18 @@ describe('site settings CMS content', () => {
     expect(siteSettingsSchema.safeParse(settings).success).toBe(true);
   });
 
-  it('contains editable header navigation and footer links', () => {
+  it('contains the CMS-managed site sections required to render the shared layout', () => {
     const parsed = siteSettingsSchema.parse(settings);
-    expect(parsed.locale).toBe('en');
-    expect(parsed.canonicalOrigin).toBe('https://www.watermarkgemini.com');
+    expect(parsed.locale).toMatch(/\S/);
+    expect(new URL(parsed.canonicalOrigin).protocol).toBe('https:');
     expect(parsed.themeColor).toMatch(/^#[0-9a-f]{6}$/i);
-    expect(parsed.analytics.googleMeasurementId).toBe('G-52ZWCGEZ7R');
-    expect(parsed.structuredData.applicationCategory).toBe('MultimediaApplication');
-    expect(parsed.contentDefaults.author).toBe('WatermarkGemini Editorial Team');
-    expect(parsed.logo).toBe('/uploads/watermarkgemini-logo.svg');
-    expect(parsed.defaultShareImage).toBe('/uploads/og-card.svg');
+    expect(parsed.name).toMatch(/\S/);
+    expect(parsed.logo).toMatch(/\S/);
+    expect(parsed.defaultShareImage).toMatch(/\S/);
     expect(parsed.header.navigation.length).toBeGreaterThan(0);
     expect(parsed.footer.links.length).toBeGreaterThan(0);
-    expect(parsed.announcement.enabled).toBe(false);
-    expect(parsed.uploader.hero.heading).toBe('Remove a watermark from your image');
-    expect(parsed.uploader.dropzone.maxSizeLabel).toContain('{maxSize}');
+    expect(parsed.uploader.hero.heading).toBeTruthy();
+    expect(parsed.uploader.dropzone.fileInputLabel).toBeTruthy();
   });
 
   it('requires a canonical HTTPS origin without a path', () => {

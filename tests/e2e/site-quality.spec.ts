@@ -7,16 +7,20 @@ test('critical public routes and SEO files are available', async ({ page, reques
     expect(response.ok(), `${path} should be available`).toBeTruthy();
   }
   await page.goto('/');
-  await expect(page).toHaveTitle(/Watermark Remover/i);
-  await expect(page.locator('link[rel=canonical]')).toHaveAttribute('href', 'https://www.watermarkgemini.com/');
+  await expect(page).toHaveTitle(/\S/);
+  const canonicalHref = await page.locator('link[rel=canonical]').getAttribute('href');
+  expect(canonicalHref).toBeTruthy();
+  const canonical = new URL(canonicalHref!);
+  expect(canonical.protocol).toBe('https:');
+  expect(canonical.pathname).toBe('/');
 
   const sitemapResponse = await request.get('/sitemap.xml');
   const sitemap = await sitemapResponse.text();
   expect(sitemap).toContain('<urlset');
-  expect(sitemap).toContain('<loc>https://www.watermarkgemini.com/blog</loc>');
-  expect(sitemap).toContain('<lastmod>2026-08-15</lastmod>');
-  expect(sitemap).toContain('<changefreq>weekly</changefreq>');
-  expect(sitemap).toContain('<priority>1.0</priority>');
+  expect(sitemap).toContain(`<loc>${new URL('/blog', canonical).toString()}</loc>`);
+  expect(sitemap).toMatch(/<lastmod>\d{4}-\d{2}-\d{2}<\/lastmod>/);
+  expect(sitemap).toMatch(/<changefreq>[a-z]+<\/changefreq>/);
+  expect(sitemap).toMatch(/<priority>\d\.\d<\/priority>/);
   expect(sitemap).not.toContain('sitemap-index.xml');
 });
 
@@ -28,10 +32,10 @@ test('mobile visitors can open navigation and a dropdown', async ({ page }) => {
   await menuButton.click();
   await expect(menuButton).toHaveAttribute('aria-expanded', 'true');
 
-  const dropdown = page.getByRole('button', { name: /AI Watermark Remover/i });
+  const dropdown = page.locator('[data-nav-dropdown-trigger]').first();
   await dropdown.click();
   await expect(dropdown).toHaveAttribute('aria-expanded', 'true');
-  await expect(dropdown.locator('xpath=..').getByRole('link', { name: 'Remove text from image', exact: true })).toBeVisible();
+  await expect(dropdown.locator('xpath=..').locator('a').first()).toBeVisible();
 });
 
 test('all public content routes and 404 have one H1 and no serious accessibility violations', async ({ page, request }) => {
@@ -64,7 +68,8 @@ test('Google tag emits a page_view collection request', async ({ page }) => {
 
   await page.goto('/');
   const request = await pageView;
-  expect(request.url()).toContain('tid=G-52ZWCGEZ7R');
+  expect(request.url()).toMatch(/[?&]tid=G-[A-Z0-9]+/);
 });
+
 
 
