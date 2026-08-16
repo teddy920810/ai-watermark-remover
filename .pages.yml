@@ -44,6 +44,11 @@ content:
         type: string
         required: true
         description: 控制按钮、链接、上传图标和导航交互的品牌强调色，同时用于浏览器主题色；系统会自动加深颜色以保证文字可读性。填写六位十六进制颜色，例如 #a06dff。
+      - name: themeColorFallback
+        label: 品牌强调色兜底 / Theme fallback
+        type: string
+        required: true
+        description: 当主题色未能加载时使用的备用品牌色；填写六位十六进制颜色，例如 #1d6b56。
       - name: logo
         label: 品牌 Logo｜IMG
         type: image

@@ -16,6 +16,7 @@ describe('site settings CMS content', () => {
     expect(parsed.locale).toMatch(/\S/);
     expect(new URL(parsed.canonicalOrigin).protocol).toBe('https:');
     expect(parsed.themeColor).toMatch(/^#[0-9a-f]{6}$/i);
+    expect(parsed.themeColorFallback).toMatch(/^#[0-9a-f]{6}$/i);
     expect(parsed.name).toMatch(/\S/);
     expect(parsed.logo).toMatch(/\S/);
     expect(parsed.defaultShareImage).toMatch(/\S/);

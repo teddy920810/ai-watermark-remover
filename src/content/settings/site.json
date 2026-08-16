@@ -114,5 +114,6 @@
         "href": "/blog"
       }
     ]
-  }
+  },
+  "themeColorFallback": "#1d6b56"
 }
