@@ -1,5 +1,5 @@
 {
-  "title": "Free AI Watermark Remover – Remove Watermarks from Images",
+  "title": "Free AI Watermark Remover – Remove Watermark from Images",
   "description": "Remove watermarks, logos, and text from images with a free AI watermark remover. Upload JPG, PNG, or WEBP files online and download clean images for free.",
   "shareImage": "/uploads/og-card.svg",
   "hero": {
@@ -95,40 +95,40 @@
         "eyebrow": "FEATURE 1",
         "heading": "Simple Online Watermark Remover Workflow",
         "description": "Upload one supported image, sign in with Google to start processing, review the original and returned result side by side, and download the file when it is ready.",
-        "image": "/uploads/simple-before-after-watermark-removal-1.webp",
-        "imageAlt": "Before and after watermark removal",
-        "imagePosition": "right",
         "listItems": [
           "Browser-based workflow—no desktop editor required",
           "Side-by-side original and returned-result view",
           "One image per processing flow"
-        ]
+        ],
+        "image": "/uploads/simple-before-after-watermark-removal-1.webp",
+        "imageAlt": "Before and after watermark removal",
+        "imagePosition": "right"
       },
       {
         "eyebrow": "FEATURE 2",
         "heading": "Image Watermark Remover File Support",
         "description": "The upload tool currently accepts one JPG/JPEG, PNG, or WEBP image up to 10 MB. Video, PDF, batch upload, URL upload, and other image formats are not supported by the homepage tool.",
-        "image": "/uploads/supported-image-formats.webp",
-        "imageAlt": "JPG, PNG and WEBP image support",
-        "imagePosition": "left",
         "listItems": [
           "JPG/JPEG, PNG, and WEBP input",
           "One image up to 10 MB",
           "Clear validation for unsupported file types or sizes"
-        ]
+        ],
+        "image": "/uploads/supported-image-formats.webp",
+        "imageAlt": "JPG, PNG and WEBP image support",
+        "imagePosition": "left"
       },
       {
         "eyebrow": "FEATURE 3",
         "heading": "A Free Watermark Remover with No Credits or Paid Plans",
         "description": "WatermarkGemini is completely free to use. The current workflow does not require credits or a paid package, although Google sign-in is required before processing.",
-        "image": "/uploads/free-no-credits-no-paid-plans.webp",
-        "imageAlt": "Free watermark remover with no paid plans",
-        "imagePosition": "right",
         "listItems": [
           "No credits or paid packages",
           "Google sign-in required before processing",
           "No desktop app required"
-        ]
+        ],
+        "image": "/uploads/free-no-credits-no-paid-plans.webp",
+        "imageAlt": "Free watermark remover with no paid plans",
+        "imagePosition": "right"
       }
     ]
   },
