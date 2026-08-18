@@ -10,6 +10,13 @@
 - Before handing off changes, run `npm run verify`; it includes coverage, lint, build, and browser E2E.
 - Run `npm run test:smoke:production` after production environment, domain, R2, CORS, or deployment changes. It writes temporary objects to the real bucket, so do not run it speculatively or in a loop.
 
+## Delivery target
+
+- For every new request, establish whether the final target is local iteration or a change merged into `main`.
+- If the user's request and current context do not make the target explicit, ask before committing, pushing, opening or merging a pull request, or deploying.
+- For local iteration, implement and verify locally without committing, pushing, opening a pull request, merging, or deploying unless the user later expands the target.
+- For a `main` delivery, use a dedicated branch and complete the requested commit, pull request, merge, deployment, and production verification workflow.
+
 ## Third-party integration contract rules
 
 - Treat vendor-provided installation snippets as integration contracts, not ordinary code to refactor.
