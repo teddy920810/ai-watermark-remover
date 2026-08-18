@@ -6,9 +6,24 @@
   "heading": "Erase unwanted text overlays from images",
   "intro": "Prepare cleaner visuals for personal projects, presentations, or authorized marketing assets—without opening a full editor.",
   "benefits": ["Handles common image formats", "Private temporary storage", "Simple before-and-after review"],
-  "faq": [
-    { "question": "What image formats are supported?", "answer": "You can upload JPG, PNG, and WEBP images up to 10 MB." },
-    { "question": "Are my images kept private?", "answer": "Files are stored in private object storage and scheduled for automatic deletion after 24 hours." },
-    { "question": "Can I remove any watermark?", "answer": "Only edit images you own or have permission to modify. Some protected or complex marks may require manual editing." }
-  ]
+  "process": {
+    "eyebrow": "How it works",
+    "heading": "How to Remove Text from an Image",
+    "intro": "Erase an unwanted text overlay in three simple steps—no brushes, layers, or full editing software required.",
+    "steps": [
+      { "number": "01", "title": "Upload Your Image", "description": "Choose a JPG, PNG, or WEBP image up to 10 MB that you own or have permission to edit." },
+      { "number": "02", "title": "Remove the Text", "description": "The tool processes the visible text overlay while working to preserve the surrounding image details." },
+      { "number": "03", "title": "Review and Download", "description": "Compare the before-and-after result, then download the cleaned image through a temporary link." }
+    ]
+  },
+  "faq": {
+    "eyebrow": "Text removal FAQ",
+    "heading": "Questions About Removing Text from Images",
+    "intro": "Find answers about supported formats, image privacy, and which text overlays you may remove.",
+    "items": [
+      { "question": "What image formats are supported?", "answer": "You can upload JPG, PNG, and WEBP images up to 10 MB." },
+      { "question": "Are my images kept private?", "answer": "Files are stored in private object storage and scheduled for automatic deletion after 24 hours." },
+      { "question": "Can I remove any watermark?", "answer": "Only edit images you own or have permission to modify. Some protected or complex marks may require manual editing." }
+    ]
+  }
 }

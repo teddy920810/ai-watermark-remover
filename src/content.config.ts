@@ -9,7 +9,6 @@ import { trustedHtmlSchema } from './lib/content/trusted-html';
 import { sitemapSettingsSchema } from './lib/content/sitemap-settings';
 import {
   blogIndexSettingsSchema,
-  landingCommonSettingsSchema,
   legalPageSchema,
   notFoundSettingsSchema,
 } from './lib/content/marketing-settings';
@@ -27,11 +26,6 @@ const imageSettings = defineCollection({
 const blogIndexSettings = defineCollection({
   loader: glob({ base: './src/content/settings', pattern: 'blog.json' }),
   schema: blogIndexSettingsSchema,
-});
-
-const landingCommonSettings = defineCollection({
-  loader: glob({ base: './src/content/settings', pattern: 'landing.json' }),
-  schema: landingCommonSettingsSchema,
 });
 
 const notFoundSettings = defineCollection({
@@ -95,7 +89,22 @@ const landingPages = defineCollection({
     heading: z.string().min(1),
     intro: z.string().min(1),
     benefits: z.array(z.string().min(1)).min(1),
-    faq: z.array(faqItem).min(1),
+    process: z.object({
+      eyebrow: z.string().min(1),
+      heading: z.string().min(1),
+      intro: z.string().min(1),
+      steps: z.array(z.object({
+        number: z.string().min(1),
+        title: z.string().min(1),
+        description: z.string().min(1),
+      })).length(3),
+    }),
+    faq: z.object({
+      eyebrow: z.string().min(1),
+      heading: z.string().min(1),
+      intro: z.string().min(1),
+      items: z.array(faqItem).min(1),
+    }),
   }),
 });
 
@@ -103,7 +112,6 @@ export const collections = {
   siteSettings,
   imageSettings,
   blogIndexSettings,
-  landingCommonSettings,
   notFoundSettings,
   sitemapSettings,
   legalPages,

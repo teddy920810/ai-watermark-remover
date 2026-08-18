@@ -5,15 +5,12 @@ import { getCollection, type CollectionEntry } from 'astro:content';
 
 interface Props { page: CollectionEntry<'landingPages'>['data'] }
 const { page } = Astro.props;
-const [commonEntry] = await getCollection('landingCommonSettings');
-if (!commonEntry) throw new Error('Landing-page shared CMS settings are missing.');
 const [siteEntry] = await getCollection('siteSettings');
 if (!siteEntry) throw new Error('Site settings CMS content is missing.');
-const common = commonEntry.data;
 const site = siteEntry.data;
 const faqSchema = {
   '@type': 'FAQPage',
-  mainEntity: page.faq.map((item) => ({
+  mainEntity: page.faq.items.map((item) => ({
     '@type': 'Question',
     name: item.question,
     acceptedAnswer: { '@type': 'Answer', text: item.answer },
@@ -33,14 +30,14 @@ const faqSchema = {
   </section>
 
   <section class="section process-section" id="how-it-works">
-    <div class="section-heading"><span class="eyebrow">{common.process.eyebrow}</span><h2>{common.process.heading}</h2></div>
+    <div class="section-heading"><span class="eyebrow">{page.process.eyebrow}</span><h2>{page.process.heading}</h2><p>{page.process.intro}</p></div>
     <div class="steps">
-      {common.process.steps.map((step) => <article><span>{step.number}</span><h3>{step.title}</h3><p>{step.description}</p></article>)}
+      {page.process.steps.map((step) => <article><span>{step.number}</span><h3>{step.title}</h3><p>{step.description}</p></article>)}
     </div>
   </section>
 
   <section class="section faq-section">
-    <div class="section-heading"><span class="eyebrow">{common.faq.eyebrow}</span><h2>{common.faq.heading}</h2></div>
-    <div class="faq-list">{page.faq.map((item) => <details><summary>{item.question}<span>+</span></summary><p>{item.answer}</p></details>)}</div>
+    <div class="section-heading"><span class="eyebrow">{page.faq.eyebrow}</span><h2>{page.faq.heading}</h2><p>{page.faq.intro}</p></div>
+    <div class="faq-list">{page.faq.items.map((item) => <details><summary>{item.question}<span>+</span></summary><p>{item.answer}</p></details>)}</div>
   </section>
 </SiteLayout>

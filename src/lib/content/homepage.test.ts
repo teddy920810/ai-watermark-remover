@@ -18,4 +18,36 @@ describe('homepage CMS content', () => {
     expect(parsed.process.steps.length).toBeGreaterThan(0);
     expect(parsed.privacy.features.length).toBeGreaterThan(0);
   });
+
+  it('contains at least one editable feature card with image, bullets, and reverse flag', () => {
+    const parsed = homepageSchema.parse(homepage);
+    expect(parsed.features).toBeDefined();
+    expect(parsed.features.eyebrow).toBeTruthy();
+    expect(parsed.features.heading).toBeTruthy();
+    expect(parsed.features.intro).toBeTruthy();
+    expect(parsed.features.items.length).toBeGreaterThan(0);
+    for (const item of parsed.features.items) {
+      expect(item.badge).toBeTruthy();
+      expect(item.title).toBeTruthy();
+      expect(item.description).toBeTruthy();
+      expect(item.image).toBeTruthy();
+      expect(item.imageAlt).toBeTruthy();
+      expect(item.bullets.length).toBeGreaterThan(0);
+      expect(item.bullets.length).toBeLessThanOrEqual(4);
+      expect(typeof item.reverse).toBe('boolean');
+    }
+  });
+
+  it('contains at least one FAQ entry with question and answer text', () => {
+    const parsed = homepageSchema.parse(homepage);
+    expect(parsed.faq).toBeDefined();
+    expect(parsed.faq.eyebrow).toBeTruthy();
+    expect(parsed.faq.heading).toBeTruthy();
+    expect(parsed.faq.intro).toBeTruthy();
+    expect(parsed.faq.items.length).toBeGreaterThan(0);
+    for (const entry of parsed.faq.items) {
+      expect(entry.question).toBeTruthy();
+      expect(entry.answer).toBeTruthy();
+    }
+  });
 });

@@ -85,5 +85,90 @@
     "linkLabel": "View all guides →",
     "linkHref": "/blog",
     "articleLinkLabel": "Read guide →"
+  },
+  "features": {
+    "eyebrow": "Why choose WatermarkGemini",
+    "heading": "Built for clean results, not for guesswork",
+    "intro": "Each feature is designed to remove the manual effort behind watermark cleanup.",
+    "items": [
+      {
+        "badge": "Feature 1",
+        "title": "AI Auto-Detection: Instantly locate and erase watermarks",
+        "description": "Stop wasting time selecting areas manually. Our AI watermark remover automatically detects logos, stamps, and full-screen watermarks and removes them in seconds while keeping original image quality intact.",
+        "image": "/uploads/feature-auto-detection.svg",
+        "imageAlt": "Before-and-after preview showing automatic watermark detection on a sample image.",
+        "bullets": [
+          "Detects logos, stamps, and full-screen marks automatically",
+          "Preserves original image quality with no blur or pixelation",
+          "Removes marks in seconds with no manual selection"
+        ],
+        "reverse": false
+      },
+      {
+        "badge": "Feature 2",
+        "title": "Smart inpainting: restore textures and backgrounds",
+        "description": "Our inpainting engine rebuilds the area behind the watermark so the result looks natural. Edges, gradients, and repeating textures are reconstructed to match the surrounding pixels.",
+        "image": "/uploads/feature-inpainting.svg",
+        "imageAlt": "Side-by-side illustration of textures and backgrounds being restored after watermark removal.",
+        "bullets": [
+          "Reconstructs edges, gradients, and repeating patterns",
+          "Matches surrounding lighting and color tone",
+          "Leaves no obvious patch or clone artifact behind"
+        ],
+        "reverse": true
+      },
+      {
+        "badge": "Feature 3",
+        "title": "Multi-format support: JPG, PNG, WEBP, and more",
+        "description": "Upload common image formats up to 10 MB. Results keep their original dimensions and aspect ratio, so you can drop them straight into your design or product workflow.",
+        "image": "/uploads/feature-formats.svg",
+        "imageAlt": "Format icons for JPG, PNG, and WEBP shown next to a downloaded result preview.",
+        "bullets": [
+          "Supports JPG, PNG, and WEBP up to 10 MB",
+          "Keeps original resolution and aspect ratio",
+          "Outputs are ready for design tools and catalogs"
+        ],
+        "reverse": false
+      }
+    ]
+  },
+  "faq": {
+    "eyebrow": "FAQ",
+    "heading": "Frequently asked questions",
+    "intro": "Here are the most common questions about the free AI watermark remover.",
+    "items": [
+      {
+        "question": "What is the free AI watermark remover and how does it help me?",
+        "answer": "The free AI watermark remover is a focused image cleanup tool that erases visible watermarks, logos, and text overlays from images you have the right to edit."
+      },
+      {
+        "question": "What file types does the free AI watermark remover support?",
+        "answer": "You can upload JPG, PNG, and WEBP images up to 10 MB. Results keep the same format and resolution as the source."
+      },
+      {
+        "question": "Can I remove watermarks from AI-generated images?",
+        "answer": "Yes. You can process screenshots and single frames from AI-generated images. For full videos, export the frames you need first."
+      },
+      {
+        "question": "Does the free AI watermark remover support batch uploads?",
+        "answer": "The MVP processes one image at a time so each result can be reviewed before download. Multi-image workflows are on the roadmap."
+      },
+      {
+        "question": "Is the free AI watermark remover usable on mobile devices?",
+        "answer": "The site works in any modern mobile browser, so you can upload and download from Android or iOS without installing an app."
+      },
+      {
+        "question": "Is the free AI watermark remover really free?",
+        "answer": "Yes. Processing and download are completely free during the MVP, with no signup required."
+      },
+      {
+        "question": "How long are uploaded images kept?",
+        "answer": "Uploaded images and results are scheduled for automatic deletion after 24 hours, and access links expire automatically."
+      },
+      {
+        "question": "How are my images protected?",
+        "answer": "Uploads are stored privately in a private bucket and never receive a permanent public URL."
+      }
+    ]
   }
 }

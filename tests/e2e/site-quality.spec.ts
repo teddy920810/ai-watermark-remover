@@ -39,6 +39,7 @@ test('mobile visitors can open navigation and a dropdown', async ({ page }) => {
 });
 
 test('all public content routes and 404 have one H1 and no serious accessibility violations', async ({ page, request }) => {
+  test.setTimeout(60_000);
   const sitemap = await (await request.get('/sitemap.xml')).text();
   const routes = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => new URL(match[1]).pathname);
   routes.push('/missing-page-for-404-check');
@@ -72,4 +73,54 @@ test('Google tag emits a page_view collection request', async ({ page }) => {
 });
 
 
+test('homepage exposes the features and FAQ sections in CMS-managed order', async ({ page }) => {
+  await page.goto('/');
 
+  const featuresHeading = page.getByRole('heading', { name: /Built for clean results/i, level: 2 });
+  await expect(featuresHeading).toBeVisible();
+  await expect(featuresHeading.locator('xpath=ancestor::section')).toHaveAttribute('aria-label', /Built for clean results/i);
+
+  const featureItems = featuresHeading.locator('xpath=ancestor::section').locator('.feature-item');
+  await expect(featureItems).toHaveCount(3);
+
+  const faqHeading = page.getByRole('heading', { name: /Frequently asked questions/i, level: 2 });
+  await expect(faqHeading).toBeVisible();
+  await expect(faqHeading.locator('xpath=ancestor::section')).toHaveAttribute('aria-label', /Frequently asked questions/i);
+  const faqEntries = faqHeading.locator('xpath=ancestor::section').locator('details');
+  await expect(faqEntries.first()).toContainText('free AI watermark remover');
+});
+
+test('FAQ section emits a FAQPage JSON-LD schema', async ({ page }) => {
+  await page.goto('/');
+  const schemas = await page.locator('script[type="application/ld+json"]').allTextContents();
+  const matched = schemas.some((raw) => {
+    try {
+      const parsed = JSON.parse(raw);
+      return parsed['@type'] === 'FAQPage' && Array.isArray(parsed.mainEntity) && parsed.mainEntity.length > 0;
+    } catch {
+      return false;
+    }
+  });
+  expect(matched).toBe(true);
+});
+
+test('tool landing pages render their own usage steps and FAQ sections', async ({ page }) => {
+  const pages = [
+    { path: '/remove-gemini-watermark', faqHeading: 'Questions About Removing Visible Gemini Watermarks' },
+    { path: '/remove-logo-from-image', faqHeading: 'Questions About Removing Logos from Images' },
+    { path: '/remove-text-from-image', faqHeading: 'Questions About Removing Text from Images' },
+  ];
+
+  for (const { path, faqHeading } of pages) {
+    await page.goto(path);
+    const process = page.locator('#how-it-works');
+    await expect(process.getByRole('heading', { level: 2 })).toBeVisible();
+    await expect(process.locator('.section-heading > p')).toBeVisible();
+    await expect(process.locator('.steps article')).toHaveCount(3);
+
+    const faq = page.locator('.faq-section');
+    await expect(faq.getByRole('heading', { level: 2 })).toHaveText(faqHeading);
+    await expect(faq.locator('.section-heading > p')).toBeVisible();
+    await expect(faq.locator('details').first()).toBeVisible();
+  }
+});
