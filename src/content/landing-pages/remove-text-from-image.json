@@ -51,8 +51,8 @@
     "items": [
       {
         "eyebrow": "Private processing",
-        "heading": "Your uploads are handled privately",
-        "description": "Images are stored privately for processing and scheduled for deletion after 24 hours.",
+        "heading": "Simple Before-and-After Review",
+        "description": "Compare the original and processed image before downloading the result.",
         "image": "/uploads/watermarkgemin-share.webp",
         "imageAlt": "WatermarkGemini image cleanup preview",
         "imagePosition": "right"
