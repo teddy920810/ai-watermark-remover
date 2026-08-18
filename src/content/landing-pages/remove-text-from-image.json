@@ -1,75 +1,107 @@
 {
   "slug": "remove-text-from-image",
-  "title": "remove text from image online free | WatermarkGemini",
-  "description": "Remove text from an image online for free. Upload a JPG, PNG, or WEBP file, erase unwanted words, then review and download your cleaned image.",
+  "title": "Remove Text from Image Online Free | AI Text Remover",
+  "description": "Remove text from image online for free with WatermarkGemini. Use AI to erase captions, date stamps, labels, and unwanted text while keeping your picture clean and",
   "eyebrow": "FREE ONLINE TEXT REMOVER",
   "heading": "Remove Text from Image Online for Free",
-  "intro": "Remove unwanted text from image files you own or are authorized to edit. Clear captions, date stamps, and text overlays from pictures, then review the result before downloading.",
+  "intro": "Remove unwanted text from images in seconds with WatermarkGemini. Use our AI text remover to erase captions, date stamps, labels, and text overlays from your pictures while keeping the surrounding image clean and natural. No complicated photo editing—just upload your image, process the unwanted text, preview the result, and download.",
   "benefits": [
-    "Handles common image formats",
-    "Private temporary storage",
-    "Simple before-and-after review"
+    "Free AI Text Remover",
+    "JPG, PNG & WEBP Supported",
+    "Private 24-Hour File Deletion"
   ],
   "process": {
     "eyebrow": "How it works",
-    "heading": "How to Remove Text from an Image",
-    "intro": "Erase an unwanted text overlay in three simple steps—no brushes, layers, or full editing software required.",
+    "heading": "How to Remove Text from an Image Online",
+    "intro": "Remove text from your image in just three simple steps—no advanced photo editing skills required.",
     "steps": [
-      { "number": "01", "title": "Upload Your Image", "description": "Choose a JPG, PNG, or WEBP image up to 10 MB that you own or have permission to edit." },
-      { "number": "02", "title": "Remove the Text", "description": "The tool processes the visible text overlay while working to preserve the surrounding image details." },
-      { "number": "03", "title": "Review and Download", "description": "Compare the before-and-after result, then download the cleaned image through a temporary link." }
+      {
+        "number": "01",
+        "title": "Upload the Image You Want to Remove Text From",
+        "description": "Upload a JPG, PNG, or WEBP image containing the text you want to remove, whether it's a photo, screenshot, product image, or graphic."
+      },
+      {
+        "number": "02",
+        "title": "Let AI Remove Text from Your Image",
+        "description": "Start processing and let AI clean the unwanted text area while preserving as much of the surrounding image as possible."
+      },
+      {
+        "number": "03",
+        "title": "Preview and Download Your Clean Image",
+        "description": "Compare the original and processed image, check the cleaned area, and download the result when you're satisfied."
+      }
     ]
   },
   "faq": {
-    "eyebrow": "Text removal FAQ",
-    "heading": "Questions About Removing Text from Images",
+    "eyebrow": "COMMON QUESTIONS",
+    "heading": "FAQs About Removing Text from Images",
     "intro": "Find answers about supported formats, image privacy, and which text overlays you may remove.",
     "items": [
-    {
-      "question": "How do I remove text from image online?",
-      "answer": "Upload a supported image, continue with Google, start processing, review the result, and download it if it meets your needs."
-    },
-    {
-      "question": "Is WatermarkGemini free to use?",
-      "answer": "Yes. WatermarkGemini is free to use. Google sign-in is required to start processing."
-    },
-    {
-      "question": "What image formats are supported?",
-      "answer": "You can upload one JPG, PNG, or WEBP image up to 10 MB."
-    },
-    {
-      "question": "Do I need to sign in?",
-      "answer": "Yes. You can choose a file while signed out, but Google sign-in is required before processing starts."
-    },
-    {
-      "question": "How long are uploaded files kept?",
-      "answer": "Uploads, results, and processing records are designed to expire after 24 hours. Temporary signed links expire sooner."
-    },
-    {
-      "question": "Can I process images in bulk?",
-      "answer": "No. The current uploader accepts one image at a time."
-    },
-    {
-      "question": "Will every background look perfect after text is removed?",
-      "answer": "Results can vary with the text and background. Always compare the processed image with the original before downloading."
-    },
-    {
-      "question": "Can I remove copyrighted text or watermarks?",
-      "answer": "Only edit images you own or have permission to modify. Do not remove marks to evade licensing or misrepresent authorship."
-    }
+      {
+        "question": "How do I remove text from image online?",
+        "answer": "Upload a supported image, continue with Google, start processing, review the result, and download it if it meets your needs."
+      },
+      {
+        "question": "Can I remove text from an image online for free?",
+        "answer": "Yes. WatermarkGemini lets you remove text from images online for free. You can upload JPG, PNG, or WEBP images up to 10 MB and process them directly in your browser."
+      },
+      {
+        "question": "Can AI remove text from an image?",
+        "answer": "Yes. AI can help identify and clean unwanted text areas while preserving the surrounding visual details. Results can vary depending on the size of the text and the complexity of the image background."
+      },
+      {
+        "question": "Can I remove unwanted text without damaging the background?",
+        "answer": "WatermarkGemini is designed to remove unwanted text while keeping the surrounding image as natural as possible. Complex textures or text covering detailed objects may produce different results, so always preview the processed image before downloading."
+      },
+      {
+        "question": "What kinds of text can I remove from a picture?",
+        "answer": "You can use WatermarkGemini to clean captions, date stamps, labels, annotations, text overlays, promotional copy, and other unwanted text from pictures you own or have permission to edit."
+      },
+      {
+        "question": "What image formats does WatermarkGemini support?",
+        "answer": "You can upload one JPG, PNG, or WEBP image up to 10 MB."
+      },
+      {
+        "question": "Do I need to sign in to remove text from an image?",
+        "answer": "Yes. You can choose an image before signing in, but Google sign-in is required before processing starts."
+      },
+      {
+        "question": "How long are my uploaded images stored?",
+        "answer": "Uploaded images, processed results, and related processing records are designed to expire after 24 hours. Temporary download links expire sooner."
+      },
+      {
+        "question": "Can I remove text from multiple images at once?",
+        "answer": "Not currently. WatermarkGemini processes one image at a time."
+      }
     ]
   },
   "features": {
     "eyebrow": "Why choose WatermarkGemini",
-    "heading": "Simple, Transparent Image Text Cleanup",
-    "intro": "Practical safeguards and clear results for images you own or are authorized to edit.",
+    "heading": "AI Text Remover from Image for Clean, Natural Results",
+    "intro": "Removing text isn't just about making words disappear. A good text remover should also keep your image looking clean, natural, and ready to use.",
     "items": [
       {
-        "eyebrow": "Private processing",
-        "heading": "Simple Before-and-After Review",
-        "description": "Compare the original and processed image before downloading the result.",
-        "image": "/uploads/watermarkgemin-share.webp",
-        "imageAlt": "WatermarkGemini image cleanup preview",
+        "eyebrow": "FEATURE 1",
+        "heading": "Remove Unwanted Text Without Ruining the Background",
+        "description": "Text often sits on important parts of an image—walls, clothing, product surfaces, skies, or detailed backgrounds. Simply covering or blurring it can leave obvious marks. WatermarkGemini uses AI-assisted cleanup to remove unwanted text from the image while helping the edited area blend naturally with its surroundings. ",
+        "image": "/uploads/preserve-background-final.webp",
+        "imageAlt": "AI text remover",
+        "imagePosition": "right"
+      },
+      {
+        "eyebrow": "FEATURE 2",
+        "heading": "Remove Captions, Date Stamps and Text Overlays from Pictures",
+        "description": "Need to reuse a picture but the old text is getting in the way? Remove captions from social images, date stamps from photos, labels from product pictures, or unwanted text overlays from graphics. Clean the text you no longer need without rebuilding the entire image from scratch.",
+        "image": "/uploads/three-text-removal-scenes-final.webp",
+        "imageAlt": "Remove text from pictures",
+        "imagePosition": "left"
+      },
+      {
+        "eyebrow": "FEATURE 3",
+        "heading": "Remove Text from Images Online Without Complicated Editing",
+        "description": "Forget manually cloning pixels, painting over words, or spending time learning complicated photo-editing tools. With WatermarkGemini's online text remover, simply upload your image, let AI handle the cleanup, preview the result, and download your cleaned picture. No complicated editing workflow—just a faster way to remove text from images online.",
+        "image": "/uploads/online-easy-no-white-border-final.webp",
+        "imageAlt": "Remove text from images online",
         "imagePosition": "right"
       }
     ]
