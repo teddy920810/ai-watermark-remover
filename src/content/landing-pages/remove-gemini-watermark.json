@@ -1,15 +1,89 @@
 {
   "slug": "remove-gemini-watermark",
-  "title": "Remove a Visible Gemini Watermark from an Image",
-  "description": "Clean up visible Gemini labels or marks from images you are authorized to edit. Does not remove invisible SynthID signals.",
+  "title": "Gemini Watermark Remover Online | WatermarkGemini",
+  "description": "Remove the visible Gemini watermark from an image online for free. Upload JPG, PNG, or WEBP, sign in with Google, then review and download.",
   "eyebrow": "Gemini image cleanup",
-  "heading": "Remove visible Gemini marks from your images",
-  "intro": "Use a focused image cleanup workflow for visible labels and overlays. Invisible provenance signals such as SynthID are outside this tool’s scope.",
-  "benefits": ["Clear visible overlays", "No claim to remove SynthID", "Simple image download"],
+  "heading": "Remove Gemini Watermark from Images",
+  "intro": "Use this free Gemini watermark remover for an image you own or are authorized to edit. Upload one supported file, continue with Google, and review the visible-mark result before downloading.",
+  "benefits": [
+    "Clear visible overlays",
+    "No claim to remove SynthID",
+    "Simple image download"
+  ],
   "faq": [
-    { "question": "Does this remove Google SynthID?", "answer": "No. This page concerns visible marks only and does not detect or remove invisible SynthID signals." },
-    { "question": "What image formats are supported?", "answer": "You can upload JPG, PNG, and WEBP images up to 10 MB." },
-    { "question": "Are my images kept private?", "answer": "Files are stored in private object storage and scheduled for automatic deletion after 24 hours." },
-    { "question": "Can I remove any watermark?", "answer": "Only edit images you own or have permission to modify. Some protected or complex marks may require manual editing." }
-  ]
+    {
+      "question": "What does this Gemini watermark remover remove?",
+      "answer": "It is intended for the visible Gemini image mark. It does not remove invisible SynthID or C2PA provenance signals."
+    },
+    {
+      "question": "How do I remove Gemini watermark from image files?",
+      "answer": "Upload one supported image, sign in with Google, start processing, inspect the marked corner, and download only if the result meets your needs."
+    },
+    {
+      "question": "Can Gemini itself hide the visible watermark?",
+      "answer": "Some current accounts may show a Media watermark setting in Gemini or Flow. Check the available settings first; availability may vary by product, account, region, and legal requirements."
+    },
+    {
+      "question": "Is the Gemini watermark remover free to use?",
+      "answer": "Yes. WatermarkGemini is free to use. Google sign-in is required before processing. Confirm there is no route-specific credit limit before publishing this answer."
+    },
+    {
+      "question": "Which image formats are supported?",
+      "answer": "The shared WatermarkGemini uploader supports one JPG, PNG, or WEBP image up to 10 MB. Reconfirm these limits on this exact page before launch."
+    },
+    {
+      "question": "Do I need to sign in?",
+      "answer": "Yes. The shared WatermarkGemini flow requires Google sign-in to start processing, so this page should not promise no-login or no-sign-up use."
+    },
+    {
+      "question": "Does this remove SynthID or other invisible watermarks?",
+      "answer": "No. This page only targets a visible image mark and does not claim to remove SynthID, C2PA, or other provenance signals."
+    },
+    {
+      "question": "Can I remove a Gemini watermark from video?",
+      "answer": "Not on this image page. Video and Veo watermark removal require a separate workflow and separate product verification."
+    },
+    {
+      "question": "Will the result be lossless or perfect?",
+      "answer": "No quality guarantee should be made before real output tests. Inspect the marked corner and surrounding texture before downloading."
+    },
+    {
+      "question": "Is it okay to remove a Gemini watermark?",
+      "answer": "Only edit content you own or have permission to modify. Follow Gemini’s terms, local law, platform rules, and any AI-disclosure obligations. Do not remove marks to misrepresent authorship."
+    },
+    {
+      "question": "Is WatermarkGemini affiliated with Google?",
+      "answer": "No. WatermarkGemini is an independent tool and is not affiliated with or endorsed by Google. Gemini is a trademark of its respective owner."
+    }
+  ],
+  "features": {
+    "eyebrow": "Why choose WatermarkGemini",
+    "heading": "A Focused Google Gemini Watermark Remover for Images",
+    "items": [
+      {
+        "eyebrow": "FEATURE 1",
+        "heading": "Focused on the Visible Gemini Mark",
+        "description": "Use a page designed around the visible corner mark on Gemini-generated images, instead of a generic text, logo, or video watermark workflow.",
+        "image": "/uploads/gemini-visible-watermark-before-after.webp",
+        "imageAlt": "Visible mark before and after",
+        "imagePosition": "right"
+      },
+      {
+        "eyebrow": "FEATURE 2",
+        "heading": "Common Image Formats, Clearly Listed",
+        "description": "Upload one JPG, PNG, or WEBP image up to 10 MB. Video, PDF, batch, and folder uploads are outside this page’s scope.",
+        "image": "/uploads/gemini-image-formats-10mb.webp",
+        "imageAlt": "JPG PNG WEBP up to 10 MB",
+        "imagePosition": "left"
+      },
+      {
+        "eyebrow": "FEATURE 3",
+        "heading": "Visible-Mark Scope, Provenance Kept Clear",
+        "description": "This tool targets a visible image mark only. It does not claim to remove invisible SynthID or C2PA credentials, and you should retain any AI disclosure required for your use case.",
+        "image": "/uploads/visible-mark-not-synthid.webp",
+        "imageAlt": "Visible mark only ",
+        "imagePosition": "right"
+      }
+    ]
+  }
 }
