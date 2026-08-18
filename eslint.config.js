@@ -4,7 +4,7 @@ import astro from 'eslint-plugin-astro';
 import tseslint from 'typescript-eslint';
 
 export default defineConfig(
-  { ignores: ['dist/**', '.astro/**', '.vercel/**', 'coverage/**', 'output/**', '.playwright-cli/**'] },
+  { ignores: ['dist/**', '.astro/**', '.vercel/**', 'coverage/**', 'output/**', '.tools/**', '.playwright-cli/**', '.playwright-mcp/**'] },
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
   ...astro.configs.recommended,

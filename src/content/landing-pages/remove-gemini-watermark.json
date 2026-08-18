@@ -10,7 +10,33 @@
     "No claim to remove SynthID",
     "Simple image download"
   ],
-  "faq": [
+  "process": {
+    "eyebrow": "How it works",
+    "heading": "How to Remove a Visible Gemini Watermark",
+    "intro": "Clean a visible Gemini label or overlay in three simple steps while keeping invisible provenance signals outside the tool’s scope.",
+    "steps": [
+      {
+        "number": "01",
+        "title": "Upload Your Image",
+        "description": "Choose a JPG, PNG, or WEBP image up to 10 MB that you own or have permission to edit."
+      },
+      {
+        "number": "02",
+        "title": "Remove the Visible Mark",
+        "description": "The tool processes the visible Gemini label or overlay while preserving the surrounding image details."
+      },
+      {
+        "number": "03",
+        "title": "Review and Download",
+        "description": "Compare the result, then download the cleaned image through a temporary link."
+      }
+    ]
+  },
+  "faq": {
+    "eyebrow": "Gemini watermark FAQ",
+    "heading": "Questions About Removing Visible Gemini Watermarks",
+    "intro": "Learn what the tool can remove, which files it supports, and how your images are handled.",
+    "items": [
     {
       "question": "What does this Gemini watermark remover remove?",
       "answer": "It is intended for the visible Gemini image mark. It does not remove invisible SynthID or C2PA provenance signals."
@@ -55,10 +81,12 @@
       "question": "Is WatermarkGemini affiliated with Google?",
       "answer": "No. WatermarkGemini is an independent tool and is not affiliated with or endorsed by Google. Gemini is a trademark of its respective owner."
     }
-  ],
+    ]
+  },
   "features": {
     "eyebrow": "Why choose WatermarkGemini",
     "heading": "A Focused Google Gemini Watermark Remover for Images",
+    "intro": "Review the supported image workflow, format limits, and visible-mark-only scope before processing.",
     "items": [
       {
         "eyebrow": "FEATURE 1",

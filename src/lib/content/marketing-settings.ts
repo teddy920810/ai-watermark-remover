@@ -1,11 +1,5 @@
 import { z } from 'zod';
 
-const stepSchema = z.object({
-  number: z.string().min(1),
-  title: z.string().min(1),
-  description: z.string().min(1),
-});
-
 export const blogIndexSettingsSchema = z.object({
   title: z.string().min(1),
   description: z.string().min(1).max(180),
@@ -14,18 +8,6 @@ export const blogIndexSettingsSchema = z.object({
   heading: z.string().min(1),
   intro: z.string().min(1),
   postsPerPage: z.number().int().min(1).max(100),
-});
-
-export const landingCommonSettingsSchema = z.object({
-  process: z.object({
-    eyebrow: z.string().min(1),
-    heading: z.string().min(1),
-    steps: z.array(stepSchema).min(1),
-  }),
-  faq: z.object({
-    eyebrow: z.string().min(1),
-    heading: z.string().min(1),
-  }),
 });
 
 export const notFoundSettingsSchema = z.object({

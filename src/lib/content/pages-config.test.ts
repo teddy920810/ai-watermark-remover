@@ -8,6 +8,11 @@ interface CmsField {
   label?: string;
   type: string;
   description?: string;
+  list?: {
+    min?: number;
+    max?: number;
+    collapsible?: { collapsed?: boolean; summary?: string };
+  };
   options?: {
     media?: string;
     format?: string;
@@ -65,10 +70,57 @@ describe('Pages CMS maintenance safeguards', () => {
       expect.objectContaining({ name: 'intro', label: expect.stringContaining('P'), description: expect.any(String) }),
     ]));
 
-    const landingCommon = config.content.find((entry) => entry.name === 'landing-common');
-    const process = landingCommon?.fields.find((field) => field.name === 'process');
+    const landingPages = config.content.find((entry) => entry.name === 'landing-pages');
+    const process = landingPages?.fields.find((field) => field.name === 'process');
     expect(process?.fields).toEqual(expect.arrayContaining([
       expect.objectContaining({ name: 'heading', label: expect.stringContaining('H2'), description: expect.any(String) }),
+      expect.objectContaining({ name: 'intro', label: expect.stringContaining('P'), description: expect.any(String) }),
+    ]));
+    expect(process?.fields?.find((field) => field.name === 'steps')?.list).toEqual(
+      expect.objectContaining({ min: 3, max: 3 }),
+    );
+    const faq = landingPages?.fields.find((field) => field.name === 'faq');
+    expect(faq?.fields).toEqual(expect.arrayContaining([
+      expect.objectContaining({ name: 'heading', label: expect.stringContaining('H2'), description: expect.any(String) }),
+      expect.objectContaining({ name: 'intro', label: expect.stringContaining('P'), description: expect.any(String) }),
+      expect.objectContaining({ name: 'items', type: 'object' }),
+    ]));
+  });
+  it('exposes editable homepage feature screens', () => {
+    const homepage = config.content.find((entry) => entry.name === 'homepage');
+    const features = homepage?.fields.find((field) => field.name === 'features');
+    expect(features?.type).toBe('object');
+    expect(features?.fields).toEqual(expect.arrayContaining([
+      expect.objectContaining({ name: 'heading', label: expect.stringContaining('H2'), description: expect.any(String) }),
+      expect.objectContaining({ name: 'intro', label: expect.stringContaining('P'), description: expect.any(String) }),
+      expect.objectContaining({ name: 'items', type: 'object' }),
+    ]));
+    const items = features?.fields?.find((field) => field.name === 'items');
+    expect(items?.list).toEqual(expect.objectContaining({ min: 1 }));
+    expect(items?.fields).toEqual(expect.arrayContaining([
+      expect.objectContaining({ name: 'eyebrow', type: 'string' }),
+      expect.objectContaining({ name: 'heading', type: 'string' }),
+      expect.objectContaining({ name: 'image', type: 'image' }),
+      expect.objectContaining({ name: 'imageAlt', type: 'string' }),
+      expect.objectContaining({ name: 'listItems', type: 'string' }),
+      expect.objectContaining({ name: 'imagePosition', type: 'select' }),
+    ]));
+  });
+
+  it('exposes an editable FAQ list of question and answer pairs', () => {
+    const homepage = config.content.find((entry) => entry.name === 'homepage');
+    const faq = homepage?.fields.find((field) => field.name === 'faq');
+    expect(faq?.type).toBe('object');
+    expect(faq?.fields).toEqual(expect.arrayContaining([
+      expect.objectContaining({ name: 'heading', label: expect.stringContaining('H2'), description: expect.any(String) }),
+      expect.objectContaining({ name: 'intro', label: expect.stringContaining('P'), description: expect.any(String) }),
+      expect.objectContaining({ name: 'items', type: 'object' }),
+    ]));
+    const items = faq?.fields?.find((field) => field.name === 'items');
+    expect(items?.list).toEqual(expect.objectContaining({ min: 1 }));
+    expect(items?.fields).toEqual(expect.arrayContaining([
+      expect.objectContaining({ name: 'question', type: 'string' }),
+      expect.objectContaining({ name: 'answer', type: 'text' }),
     ]));
   });
 
@@ -179,15 +231,14 @@ describe('Pages CMS maintenance safeguards', () => {
     ]));
   });
 
-  it('exposes legal pages and shared marketing page settings', () => {
+  it('exposes legal pages and marketing page settings without a shared landing entry', () => {
     expect(config.content.map((entry) => entry.name)).toEqual(expect.arrayContaining([
       'legal-pages',
       'blog-index',
-      'landing-common',
       'not-found',
     ]));
+    expect(config.content.find((entry) => entry.name === 'landing-common')).toBeUndefined();
     const legalPages = config.content.find((entry) => entry.name === 'legal-pages');
     expect(legalPages?.operations).toEqual({ create: false, rename: false, delete: false });
   });
 });
-

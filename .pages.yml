@@ -377,65 +377,6 @@ content:
           min: 1
           max: 100
 
-  - name: landing-common
-    label: 落地页公共模块 / Landing shared sections
-    type: file
-    path: src/content/settings/landing.json
-    format: json
-    fields:
-      - name: process
-        label: 使用步骤
-        type: object
-        fields:
-          - name: eyebrow
-            label: 模块小标题｜SPAN
-            type: string
-            required: true
-            description: 显示在模块标题上方的装饰性短文字。
-          - name: heading
-            label: 模块标题｜H2
-            type: string
-            required: true
-            description: 所有工具落地页“使用步骤”区域的 H2。
-          - name: steps
-            label: 步骤
-            type: object
-            list:
-              min: 1
-              collapsible:
-                collapsed: true
-                summary: "{number} {title}"
-            fields:
-              - name: number
-                label: 步骤序号｜SPAN
-                type: string
-                required: true
-                description: 装饰性步骤编号，例如 01。
-              - name: title
-                label: 步骤标题｜H3
-                type: string
-                required: true
-                description: 单个步骤卡片的 H3 标题。
-              - name: description
-                label: 步骤说明｜P
-                type: text
-                required: true
-                description: 步骤标题下方的普通说明段落。
-      - name: faq
-        label: FAQ 标题
-        type: object
-        fields:
-          - name: eyebrow
-            label: 模块小标题｜SPAN
-            type: string
-            required: true
-            description: 显示在 FAQ 标题上方的装饰性短文字。
-          - name: heading
-            label: FAQ 模块标题｜H2
-            type: string
-            required: true
-            description: 所有工具落地页 FAQ 区域的 H2。
-
   - name: not-found
     label: 404 页面 / Not found
     type: file
@@ -668,10 +609,12 @@ content:
             label: 模块标题｜H2
             type: string
             required: true
+            description: 首页功能亮点区域的 H2。
           - name: intro
             label: 模块简介｜P
             type: text
             required: true
+            description: 功能亮点 H2 下方的普通说明段落。
           - name: items
             label: 图文功能屏
             type: object
@@ -814,10 +757,12 @@ content:
             label: 模块标题｜H2
             type: string
             required: true
+            description: 首页 FAQ 区域的 H2。
           - name: intro
             label: 模块简介｜P
             type: text
             required: true
+            description: FAQ 标题下方的普通说明段落。
           - name: items
             label: 问答
             type: object
@@ -1002,6 +947,50 @@ content:
         list:
           min: 1
         description: 每一项会显示为列表条目，不属于标题层级。
+      - name: process
+        label: 使用步骤
+        type: object
+        fields:
+          - name: eyebrow
+            label: 模块小标题｜SPAN
+            type: string
+            required: true
+            description: 使用步骤标题上方的装饰性短文字。
+          - name: heading
+            label: 模块标题｜H2
+            type: string
+            required: true
+            description: 当前工具页“使用步骤”区域的 H2。
+          - name: intro
+            label: 模块简介｜P
+            type: text
+            required: true
+            description: H2 下方的普通说明段落。
+          - name: steps
+            label: 步骤
+            type: object
+            list:
+              min: 3
+              max: 3
+              collapsible:
+                collapsed: true
+                summary: "{number} {title}"
+            fields:
+              - name: number
+                label: 步骤序号｜SPAN
+                type: string
+                required: true
+                description: 装饰性步骤编号，例如 01。
+              - name: title
+                label: 步骤标题｜H3
+                type: string
+                required: true
+                description: 单个步骤卡片的 H3 标题。
+              - name: description
+                label: 步骤说明｜P
+                type: text
+                required: true
+                description: 步骤标题下方的普通说明段落。
       - name: features
         label: 功能亮点 / Features（可选）
         type: object
@@ -1066,20 +1055,38 @@ content:
       - name: faq
         label: 常见问题 / FAQ
         type: object
-        list:
-          min: 1
-          collapsible:
-            collapsed: true
-            summary: "{question}"
         fields:
-          - name: question
-            label: FAQ 问题｜SUMMARY
+          - name: eyebrow
+            label: FAQ 小标题｜SPAN
             type: string
             required: true
-            description: 可展开 FAQ 条目的问题文字；当前不是 H2/H3。
-          - name: answer
-            label: FAQ 回答｜P
+            description: 当前工具页 FAQ 区域 H2 上方的装饰性短文字。
+          - name: heading
+            label: FAQ 模块标题｜H2
+            type: string
+            required: true
+            description: 当前工具页 FAQ 区域的 H2。
+          - name: intro
+            label: FAQ 简介｜P
             type: text
             required: true
-            description: FAQ 展开后的普通回答段落。
-
+            description: FAQ 标题下方的普通说明段落。
+          - name: items
+            label: FAQ 条目
+            type: object
+            list:
+              min: 1
+              collapsible:
+                collapsed: true
+                summary: "{question}"
+            fields:
+              - name: question
+                label: FAQ 问题｜SUMMARY
+                type: string
+                required: true
+                description: 可展开 FAQ 条目的问题文字；当前不是 H2/H3。
+              - name: answer
+                label: FAQ 回答｜P
+                type: text
+                required: true
+                description: FAQ 展开后的普通回答段落。

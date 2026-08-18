@@ -17,9 +17,17 @@ const featureItems = home.features.items.map((item) => ({
   ...item,
   copy: splitFeatureCopy(item.description, item.listItems),
 }));
+const faqSchema = {
+  '@type': 'FAQPage',
+  mainEntity: home.faq.items.map((item) => ({
+    '@type': 'Question',
+    name: item.question,
+    acceptedAnswer: { '@type': 'Answer', text: item.answer },
+  })),
+};
 ---
 
-<SiteLayout title={home.title} description={home.description} image={home.shareImage}>
+<SiteLayout title={home.title} description={home.description} image={home.shareImage} schema={faqSchema}>
   <section class="hero home-hero">
     <div class="hero-copy">
       <span class="eyebrow">{home.hero.eyebrow}</span>

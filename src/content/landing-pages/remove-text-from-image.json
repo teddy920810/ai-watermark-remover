@@ -10,7 +10,21 @@
     "Private temporary storage",
     "Simple before-and-after review"
   ],
-  "faq": [
+  "process": {
+    "eyebrow": "How it works",
+    "heading": "How to Remove Text from an Image",
+    "intro": "Erase an unwanted text overlay in three simple steps—no brushes, layers, or full editing software required.",
+    "steps": [
+      { "number": "01", "title": "Upload Your Image", "description": "Choose a JPG, PNG, or WEBP image up to 10 MB that you own or have permission to edit." },
+      { "number": "02", "title": "Remove the Text", "description": "The tool processes the visible text overlay while working to preserve the surrounding image details." },
+      { "number": "03", "title": "Review and Download", "description": "Compare the before-and-after result, then download the cleaned image through a temporary link." }
+    ]
+  },
+  "faq": {
+    "eyebrow": "Text removal FAQ",
+    "heading": "Questions About Removing Text from Images",
+    "intro": "Find answers about supported formats, image privacy, and which text overlays you may remove.",
+    "items": [
     {
       "question": "How do I remove text from image online?",
       "answer": "Upload a supported image, continue with Google, start processing, review the result, and download it if it meets your needs."
@@ -43,7 +57,8 @@
       "question": "Can I remove copyrighted text or watermarks?",
       "answer": "Only edit images you own or have permission to modify. Do not remove marks to evade licensing or misrepresent authorship."
     }
-  ],
+    ]
+  },
   "features": {
     "eyebrow": "Why choose WatermarkGemini",
     "heading": "Simple, Transparent Image Text Cleanup",

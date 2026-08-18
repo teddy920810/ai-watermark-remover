@@ -30,7 +30,7 @@ npm run site:init -- site.config.json --apply
 
 1. 上传新 Logo、Favicon 和分享图片，并确认 `site.config.json` 中的路径存在。
 2. 在“站点设置”修改 Header、Footer、公告和结构化数据。
-3. 重写首页、博客列表、落地页公共模块、法律页和 404。
+3. 重写首页、博客列表、各工具落地页、法律页和 404。
 4. 删除或改成草稿的旧博客；删除不需要的工具落地页。
 5. 在“图片信息”登记复用图片的 Alt、标题和尺寸。
 6. 检查自动生成的 `/sitemap.xml` 不再包含旧内容 URL。

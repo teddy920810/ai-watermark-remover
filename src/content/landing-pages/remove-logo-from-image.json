@@ -6,9 +6,24 @@
   "heading": "Remove distracting logos from your images",
   "intro": "Clean product shots, presentation assets, and personal images with a streamlined browser-based workflow.",
   "benefits": ["Useful for product imagery", "Preserves the original upload", "Download when ready"],
-  "faq": [
-    { "question": "What image formats are supported?", "answer": "You can upload JPG, PNG, and WEBP images up to 10 MB." },
-    { "question": "Are my images kept private?", "answer": "Files are stored in private object storage and scheduled for automatic deletion after 24 hours." },
-    { "question": "Can I remove any watermark?", "answer": "Only edit images you own or have permission to modify. Some protected or complex marks may require manual editing." }
-  ]
+  "process": {
+    "eyebrow": "How it works",
+    "heading": "How to Remove a Logo from an Image",
+    "intro": "Remove an unwanted logo from an authorized image in three simple browser-based steps.",
+    "steps": [
+      { "number": "01", "title": "Upload Your Image", "description": "Choose a JPG, PNG, or WEBP image up to 10 MB that you own or have permission to edit." },
+      { "number": "02", "title": "Remove the Logo", "description": "The tool processes the visible logo while working to preserve the surrounding colors and details." },
+      { "number": "03", "title": "Review and Download", "description": "Compare the before-and-after result, then download the cleaned image through a temporary link." }
+    ]
+  },
+  "faq": {
+    "eyebrow": "Logo removal FAQ",
+    "heading": "Questions About Removing Logos from Images",
+    "intro": "Find answers about supported images, privacy, and responsible logo removal.",
+    "items": [
+      { "question": "What image formats are supported?", "answer": "You can upload JPG, PNG, and WEBP images up to 10 MB." },
+      { "question": "Are my images kept private?", "answer": "Files are stored in private object storage and scheduled for automatic deletion after 24 hours." },
+      { "question": "Can I remove any watermark?", "answer": "Only edit images you own or have permission to modify. Some protected or complex marks may require manual editing." }
+    ]
+  }
 }
