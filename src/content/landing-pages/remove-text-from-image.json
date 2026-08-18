@@ -1,10 +1,10 @@
 {
   "slug": "remove-text-from-image",
-  "title": "Remove Text from an Image Online",
-  "description": "Clean unwanted text overlays from an image with a fast, private online processing workflow.",
-  "eyebrow": "Text cleanup tool",
-  "heading": "Erase unwanted text overlays from images",
-  "intro": "Prepare cleaner visuals for personal projects, presentations, or authorized marketing assets—without opening a full editor.",
+  "title": "remove text from image online free | WatermarkGemini",
+  "description": "Remove text from an image online for free. Upload a JPG, PNG, or WEBP file, erase unwanted words, then review and download your cleaned image.",
+  "eyebrow": "FREE ONLINE TEXT REMOVER",
+  "heading": "Remove Text from Image Online for Free",
+  "intro": "Remove unwanted text from image files you own or are authorized to edit. Clear captions, date stamps, and text overlays from pictures, then review the result before downloading.",
   "benefits": [
     "Handles common image formats",
     "Private temporary storage",
@@ -12,21 +12,41 @@
   ],
   "faq": [
     {
+      "question": "How do I remove text from image online?",
+      "answer": "Upload a supported image, continue with Google, start processing, review the result, and download it if it meets your needs."
+    },
+    {
+      "question": "Is WatermarkGemini free to use?",
+      "answer": "Yes. WatermarkGemini is free to use. Google sign-in is required to start processing."
+    },
+    {
       "question": "What image formats are supported?",
-      "answer": "You can upload JPG, PNG, and WEBP images up to 10 MB."
+      "answer": "You can upload one JPG, PNG, or WEBP image up to 10 MB."
     },
     {
-      "question": "Are my images kept private?",
-      "answer": "Files are stored in private object storage and scheduled for automatic deletion after 24 hours."
+      "question": "Do I need to sign in?",
+      "answer": "Yes. You can choose a file while signed out, but Google sign-in is required before processing starts."
     },
     {
-      "question": "Can I remove any watermark?",
-      "answer": "Only edit images you own or have permission to modify. Some protected or complex marks may require manual editing."
+      "question": "How long are uploaded files kept?",
+      "answer": "Uploads, results, and processing records are designed to expire after 24 hours. Temporary signed links expire sooner."
+    },
+    {
+      "question": "Can I process images in bulk?",
+      "answer": "No. The current uploader accepts one image at a time."
+    },
+    {
+      "question": "Will every background look perfect after text is removed?",
+      "answer": "Results can vary with the text and background. Always compare the processed image with the original before downloading."
+    },
+    {
+      "question": "Can I remove copyrighted text or watermarks?",
+      "answer": "Only edit images you own or have permission to modify. Do not remove marks to evade licensing or misrepresent authorship."
     }
   ],
   "features": {
     "eyebrow": "Why choose WatermarkGemini",
-    "heading": "Clean image details with confidence",
+    "heading": "Simple, Transparent Image Text Cleanup",
     "intro": "Practical safeguards and clear results for images you own or are authorized to edit.",
     "items": [
       {
