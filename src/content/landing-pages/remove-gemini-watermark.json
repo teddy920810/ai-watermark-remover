@@ -86,6 +86,7 @@
   "features": {
     "eyebrow": "Why choose WatermarkGemini",
     "heading": "A Focused Google Gemini Watermark Remover for Images",
+    "intro": "Review the supported image workflow, format limits, and visible-mark-only scope before processing.",
     "items": [
       {
         "eyebrow": "FEATURE 1",

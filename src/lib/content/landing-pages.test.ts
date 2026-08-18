@@ -41,4 +41,21 @@ describe('tool landing-page usage steps', () => {
     });
     expect(page.faq.items.length).toBeGreaterThan(0);
   });
+
+  it.each(landingPageFiles)('keeps every optional feature section schema-complete in %s', (fileName) => {
+    const page = JSON.parse(
+      readFileSync(new URL(`../../content/landing-pages/${fileName}`, import.meta.url), 'utf8'),
+    );
+
+    if (!page.features) return;
+
+    expect(page.features).toMatchObject({
+      eyebrow: expect.any(String),
+      heading: expect.any(String),
+      intro: expect.any(String),
+      items: expect.any(Array),
+    });
+    expect(page.features.intro.length).toBeGreaterThan(0);
+    expect(page.features.items.length).toBeGreaterThan(0);
+  });
 });
