@@ -288,6 +288,127 @@ content:
                 required: true
                 description: 链接目标；站内链接使用以 / 开头的路径。
 
+  - name: sitemap-settings
+    label: Sitemap 设置 / Sitemap settings
+    type: file
+    path: src/content/settings/sitemap.json
+    format: json
+    fields:
+      - name: lastmod
+        label: 公共页面最后更新时间 / LASTMOD
+        type: date
+        required: true
+        description: 首页、博客列表、法律页和工具落地页共用的最近一次实质内容更新时间；博客文章使用自己的发布日期。
+        options:
+          format: yyyy-MM-dd
+      - name: groups
+        label: 页面类型默认规则
+        type: object
+        fields:
+          - name: homepage
+            label: 首页
+            type: object
+            fields:
+              - name: changefreq
+                label: 更新频率 / CHANGEFREQ
+                type: select
+                required: true
+                options:
+                  values: [always, hourly, daily, weekly, monthly, yearly, never]
+              - name: priority
+                label: 相对优先级 / PRIORITY
+                type: number
+                required: true
+                options: { min: 0, max: 1, step: 0.1 }
+          - name: landingPages
+            label: 工具落地页
+            type: object
+            fields:
+              - name: changefreq
+                label: 更新频率 / CHANGEFREQ
+                type: select
+                required: true
+                options:
+                  values: [always, hourly, daily, weekly, monthly, yearly, never]
+              - name: priority
+                label: 相对优先级 / PRIORITY
+                type: number
+                required: true
+                options: { min: 0, max: 1, step: 0.1 }
+          - name: blogIndex
+            label: 博客列表页
+            type: object
+            fields:
+              - name: changefreq
+                label: 更新频率 / CHANGEFREQ
+                type: select
+                required: true
+                options:
+                  values: [always, hourly, daily, weekly, monthly, yearly, never]
+              - name: priority
+                label: 相对优先级 / PRIORITY
+                type: number
+                required: true
+                options: { min: 0, max: 1, step: 0.1 }
+          - name: blogPosts
+            label: 博客文章
+            type: object
+            fields:
+              - name: changefreq
+                label: 更新频率 / CHANGEFREQ
+                type: select
+                required: true
+                options:
+                  values: [always, hourly, daily, weekly, monthly, yearly, never]
+              - name: priority
+                label: 相对优先级 / PRIORITY
+                type: number
+                required: true
+                options: { min: 0, max: 1, step: 0.1 }
+          - name: legalPages
+            label: 法律页面
+            type: object
+            fields:
+              - name: changefreq
+                label: 更新频率 / CHANGEFREQ
+                type: select
+                required: true
+                options:
+                  values: [always, hourly, daily, weekly, monthly, yearly, never]
+              - name: priority
+                label: 相对优先级 / PRIORITY
+                type: number
+                required: true
+                options: { min: 0, max: 1, step: 0.1 }
+      - name: overrides
+        label: 单个页面覆盖规则
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{path}"
+        description: 只覆盖自动发现的真实页面；在这里填写不存在的路径不会把 404 地址加入 sitemap。
+        fields:
+          - name: path
+            label: 页面路径
+            type: string
+            required: true
+            description: 必须以 / 开头且不使用末尾斜杠，例如 /remove-gemini-watermark。
+          - name: lastmod
+            label: 单独最后更新时间（可选）
+            type: date
+            options:
+              format: yyyy-MM-dd
+          - name: changefreq
+            label: 单独更新频率（可选）
+            type: select
+            options:
+              values: [always, hourly, daily, weekly, monthly, yearly, never]
+          - name: priority
+            label: 单独优先级（可选）
+            type: number
+            options: { min: 0, max: 1, step: 0.1 }
+
   - name: image-metadata
     label: 图片信息 / Image metadata
     type: file

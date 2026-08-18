@@ -17,6 +17,9 @@ interface CmsField {
     media?: string;
     format?: string;
     switcher?: boolean;
+    min?: number;
+    max?: number;
+    step?: number;
     values?: Array<string | { name: string; label: string }>;
   };
   fields?: CmsField[];
@@ -57,8 +60,41 @@ describe('Pages CMS maintenance safeguards', () => {
     }
   });
 
-  it('keeps sitemap generation automatic instead of exposing raw XML', () => {
+  it('keeps sitemap generation automatic while exposing its metadata settings', () => {
     expect(config.content.find((entry) => entry.name === 'sitemap')).toBeUndefined();
+
+    const sitemap = config.content.find((entry) => entry.name === 'sitemap-settings');
+    expect(sitemap).toMatchObject({
+      type: 'file',
+      path: 'src/content/settings/sitemap.json',
+    });
+    expect(sitemap?.fields.find((field) => field.name === 'lastmod')).toMatchObject({
+      type: 'date',
+      options: { format: 'yyyy-MM-dd' },
+    });
+
+    const groups = sitemap?.fields.find((field) => field.name === 'groups');
+    const groupNames = ['homepage', 'landingPages', 'blogIndex', 'blogPosts', 'legalPages'];
+    expect(groups?.fields?.map((field) => field.name)).toEqual(groupNames);
+    for (const groupName of groupNames) {
+      const group = groups?.fields?.find((field) => field.name === groupName);
+      expect(group?.fields?.find((field) => field.name === 'changefreq')).toMatchObject({
+        type: 'select',
+        options: { values: ['always', 'hourly', 'daily', 'weekly', 'monthly', 'yearly', 'never'] },
+      });
+      expect(group?.fields?.find((field) => field.name === 'priority')).toMatchObject({
+        type: 'number',
+        options: { min: 0, max: 1, step: 0.1 },
+      });
+    }
+
+    const overrides = sitemap?.fields.find((field) => field.name === 'overrides');
+    expect(overrides?.fields).toEqual(expect.arrayContaining([
+      expect.objectContaining({ name: 'path', type: 'string' }),
+      expect.objectContaining({ name: 'lastmod', type: 'date' }),
+      expect.objectContaining({ name: 'changefreq', type: 'select' }),
+      expect.objectContaining({ name: 'priority', type: 'number' }),
+    ]));
   });
 
   it('explains rendered HTML semantics in operator-facing labels', () => {
