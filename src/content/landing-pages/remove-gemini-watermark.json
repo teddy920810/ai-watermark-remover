@@ -92,24 +92,24 @@
         "eyebrow": "FEATURE 1",
         "heading": "Remove Gemini Watermark Without Cropping Your Image",
         "description": "Cropping out a corner watermark can cut away important subjects, backgrounds, or space you planned to use for text.\nWatermarkGemini removes the visible Gemini mark from the image instead, helping you keep the original frame and composition intact.",
-        "image": "/uploads/gemini-visible-watermark-before-after.webp",
-        "imageAlt": "Visible mark before and after",
+        "image": "/uploads/gemini-no-crop.webp",
+        "imageAlt": "Remove Gemini watermark without cropping",
         "imagePosition": "right"
       },
       {
         "eyebrow": "FEATURE 2",
         "heading": "Clean the Gemini Logo Without Blurring the Background",
         "description": "Simply blurring or covering a watermark can leave an obvious patch behind.\nWatermarkGemini cleans the visible mark while restoring the surrounding area so backgrounds such as skies, walls, textures, illustrations, and product surfaces look more natural.",
-        "image": "/uploads/gemini-image-formats-10mb.webp",
-        "imageAlt": "JPG PNG WEBP up to 10 MB",
+        "image": "/uploads/gemini-natural-background.webp",
+        "imageAlt": "Gemini watermark remover with natural background",
         "imagePosition": "left"
       },
       {
         "eyebrow": "FEATURE 3",
         "heading": "Clean Gemini Images Without Complicated Editing",
         "description": "You shouldn't need Photoshop, clone tools, or manual pixel editing just to clean a small Gemini watermark.\nUpload your image, process the visible mark online, preview the result, and download a cleaner version ready for presentations, social posts, product visuals, and other projects.",
-        "image": "/uploads/visible-mark-not-synthid.webp",
-        "imageAlt": "Visible mark only ",
+        "image": "/uploads/gemini-easy-online.webp",
+        "imageAlt": "Remove Gemini watermark online easily",
         "imagePosition": "right"
       }
     ]
