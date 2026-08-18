@@ -1,12 +1,12 @@
 {
-  "title": "Free AI Watermark Remover – Remove Watermarks from Images",
-  "description": "Remove watermarks, logos, and text from images with a free AI watermark remover. Upload JPG, PNG, or WEBP files online and download clean images for free.",
+  "title": "Free AI Watermark Remover Online– Remove Watermark from Images",
+  "description": "Remove watermark, logo, and text from images with a free AI watermark remover. Upload JPG, PNG, or WEBP files online and download clean images for free.",
   "shareImage": "/uploads/og-card.svg",
   "hero": {
     "eyebrow": "100% Free · Online · Private",
-    "heading": "Free AI Watermark Remover",
-    "highlightedHeading": " for Images",
-    "intro": "Remove a watermark from any image online for free. Our AI watermark remover cleans up visible watermarks, logos, text, and stamps while preserving the surrounding image details.",
+    "heading": "Free Watermark Remover",
+    "highlightedHeading": " from Images",
+    "intro": "Remove watermark from image online for free. Our AI watermark remover for photo to clean up visible watermarks, logos, text, and stamps while preserving the surrounding image details. WatermarkGemni is the best picture watermark remover free online for you with no-signup.",
     "trustItems": [
       "✓ 100% Free",
       "✓ Up to 10 MB",
@@ -35,23 +35,23 @@
   ],
   "process": {
     "eyebrow": "How it works",
-    "heading": "How to Remove a Watermark from an Image for Free",
-    "intro": "Remove watermarks online in three simple steps—no downloads, brushes, layers, or complicated editing tools.",
+    "heading": "How to Remove Watermark for Free Online",
+    "intro": "Remove watermarks free online in three simple steps—no downloads, brushes, layers, or complicated editing tools.",
     "steps": [
       {
         "number": "01",
         "title": "Upload Your Image",
-        "description": "Choose a JPG, PNG, or WEBP image up to 10 MB. Your image is uploaded to private storage for secure processing."
+        "description": "Choose a JPG, PNG, or WEBP image up to 10 MB and upload to WatermarkGemini image watermark remover. Your image is uploaded to private storage for secure processing."
       },
       {
         "number": "02",
-        "title": "Remove the Watermark",
-        "description": "Our AI watermark remover detects visible watermarks, logos, text, and stamps while working to preserve the surrounding image details."
+        "title": "Remove Watermark from Image",
+        "description": "Our photo watermark remover detects visible watermarks, logos, text, and stamps while working to preserve the surrounding image details."
       },
       {
         "number": "03",
         "title": "Download Your Image",
-        "description": "Review the before-and-after result, then download your cleaned image online for free."
+        "description": "Review the before-and-after result after remove image watermrk, then download your cleaned image online for free."
       }
     ]
   },
@@ -81,93 +81,97 @@
   },
   "guides": {
     "eyebrow": "Helpful guides",
-    "heading": "Learn More About Image Watermark Removal",
+    "heading": "Learn More About Free AI Watermark Remover from Image",
     "linkLabel": "View all guides →",
     "linkHref": "/blog",
     "articleLinkLabel": "Read guide →"
   },
   "features": {
     "eyebrow": "Why choose WatermarkGemini",
-    "heading": "Built for clean results, not for guesswork",
-    "intro": "Each feature is designed to remove the manual effort behind watermark cleanup.",
+    "heading": "A Free Online Watermark Remover for Supported Image Files",
+    "intro": "Use WatermarkGemini online watermark remover in your browser to upload one supported image, start the current processing flow, compare the original and returned result, and download the file when it is ready.",
     "items": [
       {
-        "badge": "Feature 1",
-        "title": "AI Auto-Detection: Instantly locate and erase watermarks",
-        "description": "Stop wasting time selecting areas manually. Our AI watermark remover automatically detects logos, stamps, and full-screen watermarks and removes them in seconds while keeping original image quality intact.",
-        "image": "/uploads/feature-auto-detection.svg",
-        "imageAlt": "Before-and-after preview showing automatic watermark detection on a sample image.",
-        "bullets": [
-          "Detects logos, stamps, and full-screen marks automatically",
-          "Preserves original image quality with no blur or pixelation",
-          "Removes marks in seconds with no manual selection"
+        "eyebrow": "FEATURE 1",
+        "heading": "Simple Online Watermark Remover Workflow",
+        "description": "Upload one supported image to a simple online ai watermark remover, sign in with Google to start processing, review the original and returned result side by side, and download the file when it is ready.",
+        "listItems": [
+          "Browser-based workflow—no desktop editor required",
+          "Side-by-side original and returned-result view",
+          "One image per processing flow"
         ],
-        "reverse": false
+        "image": "/uploads/simple-before-after-watermark-removal-1.webp",
+        "imageAlt": "Before and after watermark removal",
+        "imagePosition": "right"
       },
       {
-        "badge": "Feature 2",
-        "title": "Smart inpainting: restore textures and backgrounds",
-        "description": "Our inpainting engine rebuilds the area behind the watermark so the result looks natural. Edges, gradients, and repeating textures are reconstructed to match the surrounding pixels.",
-        "image": "/uploads/feature-inpainting.svg",
-        "imageAlt": "Side-by-side illustration of textures and backgrounds being restored after watermark removal.",
-        "bullets": [
-          "Reconstructs edges, gradients, and repeating patterns",
-          "Matches surrounding lighting and color tone",
-          "Leaves no obvious patch or clone artifact behind"
+        "eyebrow": "FEATURE 2",
+        "heading": "Image Watermark Remover File Support",
+        "description": "The WatermarkGemini image watermark remover currently accepts one JPG/JPEG, PNG, or WEBP image up to 10 MB. Video, PDF, batch upload, URL upload, and other image formats are not supported by the homepage tool.",
+        "listItems": [
+          "JPG/JPEG, PNG, and WEBP input",
+          "One image up to 10 MB",
+          "Clear validation for unsupported file types or sizes"
         ],
-        "reverse": true
+        "image": "/uploads/supported-image-formats.webp",
+        "imageAlt": "JPG, PNG and WEBP image support",
+        "imagePosition": "left"
       },
       {
-        "badge": "Feature 3",
-        "title": "Multi-format support: JPG, PNG, WEBP, and more",
-        "description": "Upload common image formats up to 10 MB. Results keep their original dimensions and aspect ratio, so you can drop them straight into your design or product workflow.",
-        "image": "/uploads/feature-formats.svg",
-        "imageAlt": "Format icons for JPG, PNG, and WEBP shown next to a downloaded result preview.",
-        "bullets": [
-          "Supports JPG, PNG, and WEBP up to 10 MB",
-          "Keeps original resolution and aspect ratio",
-          "Outputs are ready for design tools and catalogs"
+        "eyebrow": "FEATURE 3",
+        "heading": "A Free Watermark Remover with No Credits or Paid Plans",
+        "description": "WatermarkGemini online free watermark remover is completely free to use. The current workflow does not require credits or a paid package, although Google sign-in is required before processing.",
+        "listItems": [
+          "No credits or paid packages",
+          "Google sign-in required before processing",
+          "No desktop app required"
         ],
-        "reverse": false
+        "image": "/uploads/free-no-credits-no-paid-plans.webp",
+        "imageAlt": "Free watermark remover with no paid plans",
+        "imagePosition": "right"
       }
     ]
   },
   "faq": {
     "eyebrow": "FAQ",
-    "heading": "Frequently asked questions",
-    "intro": "Here are the most common questions about the free AI watermark remover.",
+    "heading": "Image Watermark Remover FAQs",
+    "intro": "Answers about supported files, online use, pricing, sign-in, processing limits, and responsible use.",
     "items": [
       {
-        "question": "What is the free AI watermark remover and how does it help me?",
-        "answer": "The free AI watermark remover is a focused image cleanup tool that erases visible watermarks, logos, and text overlays from images you have the right to edit."
+        "question": "Is WatermarkGemini a free watermark remover?",
+        "answer": "Yes. WatermarkGemini is completely free to use. There are no credits or paid packages. Google sign-in is required before processing."
       },
       {
-        "question": "What file types does the free AI watermark remover support?",
-        "answer": "You can upload JPG, PNG, and WEBP images up to 10 MB. Results keep the same format and resolution as the source."
+        "question": "What file types does the image watermark remover support?",
+        "answer": "The homepage upload tool accepts one JPG/JPEG, PNG, or WEBP image up to 10 MB. Video, PDF, URL upload, batch processing, and other file types are not supported."
       },
       {
-        "question": "Can I remove watermarks from AI-generated images?",
-        "answer": "Yes. You can process screenshots and single frames from AI-generated images. For full videos, export the frames you need first."
+        "question": "Can I use this online watermark remover without installing software?",
+        "answer": "Yes. The upload, processing, comparison, and download workflow runs in your browser. You still need to sign in with Google before processing."
       },
       {
-        "question": "Does the free AI watermark remover support batch uploads?",
-        "answer": "The MVP processes one image at a time so each result can be reviewed before download. Multi-image workflows are on the roadmap."
+        "question": "How do I remove watermark from image files on the homepage?",
+        "answer": "Upload a supported image, sign in with Google, start processing, compare the original and returned result, and download the file when it is ready. The current interface does not include a manual selection brush."
       },
       {
-        "question": "Is the free AI watermark remover usable on mobile devices?",
-        "answer": "The site works in any modern mobile browser, so you can upload and download from Android or iOS without installing an app."
+        "question": "Can I remove watermark from photo files?",
+        "answer": "The homepage accepts supported photo files in JPG/JPEG, PNG, and WEBP format, up to 10 MB per file. Only one photo can be processed at a time."
       },
       {
-        "question": "Is the free AI watermark remover really free?",
-        "answer": "Yes. Processing and download are completely free during the MVP, with no signup required."
+        "question": "Does the photo watermark remover support batch processing?",
+        "answer": "No. The current homepage supports one image per processing flow."
       },
       {
-        "question": "How long are uploaded images kept?",
-        "answer": "Uploaded images and results are scheduled for automatic deletion after 24 hours, and access links expire automatically."
+        "question": "Does WatermarkGemini support video watermark removal?",
+        "answer": "No. The homepage tool is for supported image files only. It does not accept video or PDF files."
       },
       {
-        "question": "How are my images protected?",
-        "answer": "Uploads are stored privately in a private bucket and never receive a permanent public URL."
+        "question": "Can I use a watermark remover without losing quality?",
+        "answer": "No watermark remover can guarantee identical quality in every case. Review the original and returned result side by side before downloading."
+      },
+      {
+        "question": "When is it appropriate to remove a watermark?",
+        "answer": "Only process content you own or have permission to edit. Do not use the tool to misrepresent ownership or bypass another creator’s rights."
       }
     ]
   }

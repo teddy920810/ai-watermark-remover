@@ -76,18 +76,18 @@ test('Google tag emits a page_view collection request', async ({ page }) => {
 test('homepage exposes the features and FAQ sections in CMS-managed order', async ({ page }) => {
   await page.goto('/');
 
-  const featuresHeading = page.getByRole('heading', { name: /Built for clean results/i, level: 2 });
+  const featuresHeading = page.getByRole('heading', { name: /A Free Online Watermark Remover/i, level: 2 });
   await expect(featuresHeading).toBeVisible();
-  await expect(featuresHeading.locator('xpath=ancestor::section')).toHaveAttribute('aria-label', /Built for clean results/i);
+  await expect(featuresHeading.locator('xpath=ancestor::section')).toHaveAttribute('aria-labelledby', 'features-heading');
 
   const featureItems = featuresHeading.locator('xpath=ancestor::section').locator('.feature-item');
   await expect(featureItems).toHaveCount(3);
 
-  const faqHeading = page.getByRole('heading', { name: /Frequently asked questions/i, level: 2 });
+  const faqHeading = page.getByRole('heading', { name: /Image Watermark Remover FAQs/i, level: 2 });
   await expect(faqHeading).toBeVisible();
-  await expect(faqHeading.locator('xpath=ancestor::section')).toHaveAttribute('aria-label', /Frequently asked questions/i);
+  await expect(faqHeading.locator('xpath=ancestor::section')).toHaveAttribute('aria-labelledby', 'faq-heading');
   const faqEntries = faqHeading.locator('xpath=ancestor::section').locator('details');
-  await expect(faqEntries.first()).toContainText('free AI watermark remover');
+  await expect(faqEntries.first()).toContainText('WatermarkGemini');
 });
 
 test('FAQ section emits a FAQPage JSON-LD schema', async ({ page }) => {

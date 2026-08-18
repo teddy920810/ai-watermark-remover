@@ -16,10 +16,12 @@ describe('homepage CMS content', () => {
     expect(parsed.hero.trustItems.length).toBeGreaterThan(0);
     expect(parsed.useCases.length).toBeGreaterThan(0);
     expect(parsed.process.steps.length).toBeGreaterThan(0);
+    expect(parsed.features.items.length).toBeGreaterThan(0);
+    expect(parsed.faq.items.length).toBeGreaterThan(0);
     expect(parsed.privacy.features.length).toBeGreaterThan(0);
   });
 
-  it('contains at least one editable feature card with image, bullets, and reverse flag', () => {
+  it('contains editable feature screens with images and list items', () => {
     const parsed = homepageSchema.parse(homepage);
     expect(parsed.features).toBeDefined();
     expect(parsed.features.eyebrow).toBeTruthy();
@@ -27,14 +29,13 @@ describe('homepage CMS content', () => {
     expect(parsed.features.intro).toBeTruthy();
     expect(parsed.features.items.length).toBeGreaterThan(0);
     for (const item of parsed.features.items) {
-      expect(item.badge).toBeTruthy();
-      expect(item.title).toBeTruthy();
+      expect(item.eyebrow).toBeTruthy();
+      expect(item.heading).toBeTruthy();
       expect(item.description).toBeTruthy();
       expect(item.image).toBeTruthy();
       expect(item.imageAlt).toBeTruthy();
-      expect(item.bullets.length).toBeGreaterThan(0);
-      expect(item.bullets.length).toBeLessThanOrEqual(4);
-      expect(typeof item.reverse).toBe('boolean');
+      expect(item.listItems.length).toBeGreaterThan(0);
+      expect(['left', 'right']).toContain(item.imagePosition);
     }
   });
 

@@ -86,7 +86,7 @@ describe('Pages CMS maintenance safeguards', () => {
       expect.objectContaining({ name: 'items', type: 'object' }),
     ]));
   });
-  it('exposes editable feature cards with bullets and a reverse flag', () => {
+  it('exposes editable homepage feature screens', () => {
     const homepage = config.content.find((entry) => entry.name === 'homepage');
     const features = homepage?.fields.find((field) => field.name === 'features');
     expect(features?.type).toBe('object');
@@ -98,12 +98,12 @@ describe('Pages CMS maintenance safeguards', () => {
     const items = features?.fields?.find((field) => field.name === 'items');
     expect(items?.list).toEqual(expect.objectContaining({ min: 1 }));
     expect(items?.fields).toEqual(expect.arrayContaining([
-      expect.objectContaining({ name: 'badge', type: 'string' }),
-      expect.objectContaining({ name: 'title', type: 'string' }),
+      expect.objectContaining({ name: 'eyebrow', type: 'string' }),
+      expect.objectContaining({ name: 'heading', type: 'string' }),
       expect.objectContaining({ name: 'image', type: 'image' }),
       expect.objectContaining({ name: 'imageAlt', type: 'string' }),
-      expect.objectContaining({ name: 'bullets', type: 'string' }),
-      expect.objectContaining({ name: 'reverse', type: 'boolean' }),
+      expect.objectContaining({ name: 'listItems', type: 'string' }),
+      expect.objectContaining({ name: 'imagePosition', type: 'select' }),
     ]));
   });
 
@@ -148,6 +148,8 @@ describe('Pages CMS maintenance safeguards', () => {
     expect(homepage?.fields).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ name: 'shareImage', type: 'image', options: { media: 'images' } }),
+        expect.objectContaining({ name: 'features', type: 'object' }),
+        expect.objectContaining({ name: 'faq', type: 'object' }),
       ]),
     );
   });

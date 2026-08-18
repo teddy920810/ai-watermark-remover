@@ -79,6 +79,23 @@ const faqItem = z.object({
   answer: z.string().min(1),
 });
 
+const landingFeatureItemSchema = z.object({
+  eyebrow: z.string().min(1),
+  heading: z.string().min(1),
+  description: z.string().min(1),
+  listItems: z.array(z.string().min(1)).default([]),
+  image: z.string().min(1),
+  imageAlt: z.string().min(1),
+  imagePosition: z.enum(['left', 'right']).default('right'),
+});
+
+const landingFeaturesSchema = z.object({
+  eyebrow: z.string().min(1),
+  heading: z.string().min(1),
+  intro: z.string().min(1),
+  items: z.array(landingFeatureItemSchema).min(1),
+});
+
 const landingPages = defineCollection({
   loader: glob({ base: './src/content/landing-pages', pattern: '**/*.json' }),
   schema: z.object({
@@ -99,6 +116,7 @@ const landingPages = defineCollection({
         description: z.string().min(1),
       })).length(3),
     }),
+    features: landingFeaturesSchema.optional(),
     faq: z.object({
       eyebrow: z.string().min(1),
       heading: z.string().min(1),

@@ -19,14 +19,14 @@ const featureSchema = z.object({
   description: z.string().min(1),
 });
 
-const featureItemSchema = z.object({
-  badge: z.string().min(1),
-  title: z.string().min(1),
+const homepageFeatureSchema = z.object({
+  eyebrow: z.string().min(1),
+  heading: z.string().min(1),
   description: z.string().min(1),
+  listItems: z.array(z.string().min(1)).default([]),
   image: z.string().min(1),
   imageAlt: z.string().min(1),
-  bullets: z.array(z.string().min(1)).min(1).max(4),
-  reverse: z.boolean().default(false),
+  imagePosition: z.enum(['left', 'right']),
 });
 
 const faqItemSchema = z.object({
@@ -56,7 +56,7 @@ export const homepageSchema = z.object({
     eyebrow: z.string().min(1),
     heading: z.string().min(1),
     intro: z.string().min(1),
-    items: z.array(featureItemSchema).min(1),
+    items: z.array(homepageFeatureSchema).min(1),
   }),
   privacy: z.object({
     eyebrow: z.string().min(1),
@@ -66,18 +66,18 @@ export const homepageSchema = z.object({
     linkHref: z.string().min(1),
     features: z.array(featureSchema).min(1),
   }),
-  faq: z.object({
-    eyebrow: z.string().min(1),
-    heading: z.string().min(1),
-    intro: z.string().min(1),
-    items: z.array(faqItemSchema).min(1),
-  }),
   guides: z.object({
     eyebrow: z.string().min(1),
     heading: z.string().min(1),
     linkLabel: z.string().min(1),
     linkHref: z.string().min(1),
     articleLinkLabel: z.string().min(1),
+  }),
+  faq: z.object({
+    eyebrow: z.string().min(1),
+    heading: z.string().min(1),
+    intro: z.string().min(1),
+    items: z.array(faqItemSchema).min(1),
   }),
 });
 

@@ -18,6 +18,17 @@ settings:
       delete: "content(delete): {path}"
       rename: "content(rename): {oldPath} -> {newPath}"
 
+actions:
+  - name: publish-cms-drafts
+    label: 发布到正式站 / Publish
+    workflow: cms-publish.yml
+    ref: cms-drafts
+    cancelable: false
+    confirm:
+      title: 发布这批内容到正式站？
+      message: 系统会先同步最新 main；无冲突后将 cms-drafts 合并到 main，并触发一次正式部署。
+      button: 发布到正式站
+
 content:
   - name: site-settings
     label: 站点设置 / Site settings
@@ -29,6 +40,14 @@ content:
         label: 站点名称
         type: string
         required: true
+      - name: analytics
+        label: 数据分析 / Analytics
+        type: object
+        fields:
+          - name: googleMeasurementId
+            label: Google Analytics GA4 ID
+            type: string
+            description: 填写 G- 开头的 Measurement ID；留空会完全停用 GA 脚本。
       - name: canonicalOrigin
         label: SEO 规范域名 / Canonical origin
         type: string
@@ -80,14 +99,6 @@ content:
         required: true
         options:
           media: images
-      - name: analytics
-        label: 数据分析 / Analytics
-        type: object
-        fields:
-          - name: googleMeasurementId
-            label: Google Analytics GA4 ID
-            type: string
-            description: 填写 G- 开头的 Measurement ID；留空会完全停用 GA 脚本。
       - name: structuredData
         label: 应用结构化数据 / Schema.org
         type: object
@@ -276,127 +287,6 @@ content:
                 type: string
                 required: true
                 description: 链接目标；站内链接使用以 / 开头的路径。
-
-  - name: sitemap-settings
-    label: Sitemap 设置 / Sitemap settings
-    type: file
-    path: src/content/settings/sitemap.json
-    format: json
-    fields:
-      - name: lastmod
-        label: 公共页面最后更新时间 / LASTMOD
-        type: date
-        required: true
-        description: 首页、博客列表、法律页和落地页最近一次实质内容更新时间；文章默认使用自己的发布日期。
-        options:
-          format: yyyy-MM-dd
-      - name: groups
-        label: 页面类型默认规则
-        type: object
-        fields:
-          - name: homepage
-            label: 首页
-            type: object
-            fields:
-              - name: changefreq
-                label: 更新频率 / CHANGEFREQ
-                type: select
-                required: true
-                options:
-                  values: [always, hourly, daily, weekly, monthly, yearly, never]
-              - name: priority
-                label: 相对优先级 / PRIORITY
-                type: number
-                required: true
-                options: { min: 0, max: 1, step: 0.1 }
-          - name: landingPages
-            label: 工具落地页
-            type: object
-            fields:
-              - name: changefreq
-                label: 更新频率 / CHANGEFREQ
-                type: select
-                required: true
-                options:
-                  values: [always, hourly, daily, weekly, monthly, yearly, never]
-              - name: priority
-                label: 相对优先级 / PRIORITY
-                type: number
-                required: true
-                options: { min: 0, max: 1, step: 0.1 }
-          - name: blogIndex
-            label: 博客列表页
-            type: object
-            fields:
-              - name: changefreq
-                label: 更新频率 / CHANGEFREQ
-                type: select
-                required: true
-                options:
-                  values: [always, hourly, daily, weekly, monthly, yearly, never]
-              - name: priority
-                label: 相对优先级 / PRIORITY
-                type: number
-                required: true
-                options: { min: 0, max: 1, step: 0.1 }
-          - name: blogPosts
-            label: 博客文章
-            type: object
-            fields:
-              - name: changefreq
-                label: 更新频率 / CHANGEFREQ
-                type: select
-                required: true
-                options:
-                  values: [always, hourly, daily, weekly, monthly, yearly, never]
-              - name: priority
-                label: 相对优先级 / PRIORITY
-                type: number
-                required: true
-                options: { min: 0, max: 1, step: 0.1 }
-          - name: legalPages
-            label: 法律页面
-            type: object
-            fields:
-              - name: changefreq
-                label: 更新频率 / CHANGEFREQ
-                type: select
-                required: true
-                options:
-                  values: [always, hourly, daily, weekly, monthly, yearly, never]
-              - name: priority
-                label: 相对优先级 / PRIORITY
-                type: number
-                required: true
-                options: { min: 0, max: 1, step: 0.1 }
-      - name: overrides
-        label: 单个页面覆盖规则
-        type: object
-        list:
-          collapsible:
-            collapsed: true
-            summary: "{path}"
-        description: 只覆盖自动发现的真实页面；在这里填写不存在的路径不会把 404 地址加入 sitemap。
-        fields:
-          - name: path
-            label: 页面路径
-            type: string
-            required: true
-            description: 必须以 / 开头且不使用末尾斜杠，例如 /remove-gemini-watermark。
-          - name: lastmod
-            label: 单独最后更新时间（可选）
-            type: date
-            options:
-              format: yyyy-MM-dd
-          - name: changefreq
-            label: 单独更新频率（可选）
-            type: select
-            options:
-              values: [always, hourly, daily, weekly, monthly, yearly, never]
-          - name: priority
-            label: 单独优先级（可选）
-            type: number
-            options: { min: 0, max: 1, step: 0.1 }
 
   - name: image-metadata
     label: 图片信息 / Image metadata
@@ -715,65 +605,63 @@ content:
             label: 模块小标题｜SPAN
             type: string
             required: true
-            description: 功能亮点区域 H2 上方的装饰性短文字，不属于标题层级。
           - name: heading
             label: 模块标题｜H2
             type: string
             required: true
-            description: 首页功能亮点区域唯一的 H2。
+            description: 首页功能亮点区域的 H2。
           - name: intro
             label: 模块简介｜P
             type: text
             required: true
-            description: H2 下方的普通说明段落。
+            description: 功能亮点 H2 下方的普通说明段落。
           - name: items
-            label: 功能亮点条目
+            label: 图文功能屏
             type: object
             list:
               min: 1
               collapsible:
                 collapsed: true
-                summary: "{badge} · {title}"
+                summary: "{heading}"
             fields:
-              - name: badge
-                label: 标签文字｜SPAN
+              - name: eyebrow
+                label: 小标题｜SPAN
                 type: string
                 required: true
-                description: 每张功能卡片左上角的装饰性短标签，例如 FEATURE 1。
-              - name: title
-                label: 卡片标题｜H3
+              - name: heading
+                label: 功能标题｜H3
                 type: string
                 required: true
-                description: 单张功能卡片的 H3 标题。
               - name: description
-                label: 卡片说明｜P
+                label: 功能说明｜P
                 type: text
                 required: true
-                description: 卡片标题下方的普通说明段落。
+                description: 普通段落内容；如旧文案使用 • 或 · 分隔，系统会自动作为列表展示。
+              - name: listItems
+                label: 功能要点｜UL（可选）
+                type: string
+                list:
+                  collapsible:
+                    collapsed: true
+                description: 每一项显示为无序列表条目；留空时会自动识别“功能说明”中的 • 或 ·。
               - name: image
-                label: 卡片配图｜IMG
+                label: 功能图片｜IMG
                 type: image
                 required: true
                 options:
                   media: images
-                description: 单张功能卡片右侧或左侧的配图，建议上传 SVG 占位图，例如 /uploads/feature-auto-detection.svg。
               - name: imageAlt
-                label: 图片替代文本｜IMG ALT
+                label: 图片替代文字｜IMG ALT
                 type: string
                 required: true
-                description: 配图的替代文字，用于屏幕阅读器和搜索结果；描述卡片可视内容。
-              - name: bullets
-                label: 卖点条目｜LI
-                type: string
-                list:
-                  min: 1
-                  max: 4
-                description: 卡片底部要点列表，每条对应一个 LI，不是标题层级；建议控制 1-4 条。
-              - name: reverse
-                label: 反转布局
-                type: boolean
-                default: false
-                description: 勾选后该卡片的配图与文字互换左右位置；用于错落排版。
+              - name: imagePosition
+                label: 图片位置
+                type: select
+                required: true
+                options:
+                  values:
+                    - { name: right, label: 右侧 }
+                    - { name: left, label: 左侧 }
       - name: privacy
         label: 隐私说明
         type: object
@@ -862,22 +750,21 @@ content:
         type: object
         fields:
           - name: eyebrow
-            label: FAQ 小标题｜SPAN
+            label: 模块小标题｜SPAN
             type: string
             required: true
-            description: FAQ 区域 H2 上方的装饰性短文字，不属于标题层级。
           - name: heading
-            label: FAQ 模块标题｜H2
+            label: 模块标题｜H2
             type: string
             required: true
-            description: 首页 FAQ 区域唯一的 H2；同时作为可展开 FAQ 列表的标题。
+            description: 首页 FAQ 区域的 H2。
           - name: intro
-            label: FAQ 简介｜P
+            label: 模块简介｜P
             type: text
             required: true
-            description: H2 下方的普通说明段落，用于解释 FAQ 内容。
+            description: FAQ 标题下方的普通说明段落。
           - name: items
-            label: FAQ 条目
+            label: 问答
             type: object
             list:
               min: 1
@@ -886,15 +773,13 @@ content:
                 summary: "{question}"
             fields:
               - name: question
-                label: FAQ 问题｜SUMMARY
+                label: 问题｜SUMMARY
                 type: string
                 required: true
-                description: 可展开 FAQ 条目的问题文字；当前不是 H2/H3，会渲染成 SUMMARY。
               - name: answer
-                label: FAQ 回答｜P
+                label: 回答｜P
                 type: text
                 required: true
-                description: FAQ 展开后的普通回答段落；同时用作页面 FAQPage JSON-LD 的 acceptedAnswer。
 
   - name: blog
     label: 博客文章 / Blog posts
@@ -1106,6 +991,67 @@ content:
                 type: text
                 required: true
                 description: 步骤标题下方的普通说明段落。
+      - name: features
+        label: 功能亮点 / Features（可选）
+        type: object
+        description: 显示在“使用步骤”和 FAQ 之间；至少添加一项图文功能屏后才会在页面展示。
+        fields:
+          - name: eyebrow
+            label: 模块小标题｜SPAN
+            type: string
+          - name: heading
+            label: 模块标题｜H2
+            type: string
+          - name: intro
+            label: 模块简介｜P
+            type: text
+          - name: items
+            label: 图文功能屏
+            type: object
+            list:
+              collapsible:
+                collapsed: true
+                summary: "{heading}"
+            fields:
+              - name: eyebrow
+                label: 小标题｜SPAN
+                type: string
+                required: true
+              - name: heading
+                label: 功能标题｜H3
+                type: string
+                required: true
+              - name: description
+                label: 功能说明｜P
+                type: text
+                required: true
+                description: 普通段落内容；如旧文案使用 • 或 · 分隔，系统会自动作为列表展示。
+              - name: listItems
+                label: 功能要点｜UL（可选）
+                type: string
+                list:
+                  collapsible:
+                    collapsed: true
+                description: 每一项显示为无序列表条目；留空时会自动识别“功能说明”中的 • 或 ·。
+              - name: image
+                label: 功能图片｜IMG
+                type: image
+                required: true
+                options:
+                  media: images
+              - name: imageAlt
+                label: 图片替代文字｜IMG ALT
+                type: string
+                required: true
+              - name: imagePosition
+                label: 图片位置
+                type: select
+                required: true
+                default: right
+                options:
+                  values:
+                    - { name: right, label: 右侧 }
+                    - { name: left, label: 左侧 }
       - name: faq
         label: 常见问题 / FAQ
         type: object
