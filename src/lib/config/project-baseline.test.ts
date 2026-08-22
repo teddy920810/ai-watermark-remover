@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
 const readProjectFile = (path: string) => readFileSync(new URL(`../../../${path}`, import.meta.url), 'utf8');
@@ -59,6 +59,17 @@ describe('project baseline configuration', () => {
     expect(workflow).toContain('if: failure()');
     expect(workflow).toContain('test-results/');
     expect(packageJson.scripts['audit:dependencies']).toBe('npm audit --audit-level=high');
+  });
+
+  it('validates direct-main CMS saves without requiring operators to manage a draft branch', () => {
+    const workflow = readProjectFile('.github/workflows/cms-content-check.yml');
+    const packageJson = JSON.parse(readProjectFile('package.json')) as { scripts: Record<string, string> };
+
+    expect(workflow).toContain('workflow_dispatch:');
+    expect(workflow).toContain('branches: [main]');
+    expect(workflow).toContain('npm run content:validate');
+    expect(packageJson.scripts['content:validate']).toBe('astro sync');
+    expect(existsSync(new URL('../../../.github/workflows/cms-publish.yml', import.meta.url))).toBe(false);
   });
 });
 

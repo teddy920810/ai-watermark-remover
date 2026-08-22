@@ -20,6 +20,7 @@ const featureSchema = z.object({
 });
 
 const homepageFeatureSchema = z.object({
+  enabled: z.boolean().default(true),
   eyebrow: z.string().min(1),
   heading: z.string().min(1),
   description: z.string().min(1),
@@ -30,6 +31,7 @@ const homepageFeatureSchema = z.object({
 });
 
 const faqItemSchema = z.object({
+  enabled: z.boolean().default(true),
   question: z.string().min(1),
   answer: z.string().min(1),
 });

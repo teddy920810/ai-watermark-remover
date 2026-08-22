@@ -16,6 +16,7 @@
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
     "test:smoke:production": "node scripts/production-smoke.mjs",
+    "content:validate": "astro sync",
     "audit:dependencies": "npm audit --audit-level=high",
     "auth:import": "node scripts/import-google-credentials.mjs",
     "site:init": "node scripts/initialize-site.mjs",

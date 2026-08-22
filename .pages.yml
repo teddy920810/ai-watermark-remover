@@ -19,15 +19,15 @@ settings:
       rename: "content(rename): {oldPath} -> {newPath}"
 
 actions:
-  - name: publish-cms-drafts
-    label: 发布到正式站 / Publish
-    workflow: cms-publish.yml
-    ref: cms-drafts
+  - name: validate-cms-content
+    label: 检查站点内容 / Validate content
+    workflow: cms-content-check.yml
+    ref: current
     cancelable: false
     confirm:
-      title: 发布这批内容到正式站？
-      message: 系统会先同步最新 main；无冲突后将 cms-drafts 合并到 main，并触发一次正式部署。
-      button: 发布到正式站
+      title: 检查当前已保存的内容？
+      message: 系统会检查字段结构和站点内容；不会修改或发布额外内容。
+      button: 开始检查
 
 content:
   - name: site-settings
@@ -745,6 +745,11 @@ content:
                 collapsed: true
                 summary: "{heading}"
             fields:
+              - name: enabled
+                label: 显示此功能 / Visible
+                type: boolean
+                default: true
+                description: 关闭后保留内容但不在页面显示；可以随时重新开启。
               - name: eyebrow
                 label: 小标题｜SPAN
                 type: string
@@ -893,6 +898,11 @@ content:
                 collapsed: true
                 summary: "{question}"
             fields:
+              - name: enabled
+                label: 显示此条 FAQ / Visible
+                type: boolean
+                default: true
+                description: 关闭后保留问答但不在页面和 FAQ 结构化数据中显示。
               - name: question
                 label: 问题｜SUMMARY
                 type: string
@@ -1138,6 +1148,11 @@ content:
                 collapsed: true
                 summary: "{heading}"
             fields:
+              - name: enabled
+                label: 显示此功能 / Visible
+                type: boolean
+                default: true
+                description: 关闭后保留内容但不在当前工具页显示；可以随时重新开启。
               - name: eyebrow
                 label: 小标题｜SPAN
                 type: string
@@ -1205,6 +1220,11 @@ content:
                 collapsed: true
                 summary: "{question}"
             fields:
+              - name: enabled
+                label: 显示此条 FAQ / Visible
+                type: boolean
+                default: true
+                description: 关闭后保留问答但不在当前工具页和 FAQ 结构化数据中显示。
               - name: question
                 label: FAQ 问题｜SUMMARY
                 type: string

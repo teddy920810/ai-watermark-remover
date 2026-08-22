@@ -4,6 +4,7 @@ import SiteLayout from '../layouts/SiteLayout.astro';
 import { getCollection, type CollectionEntry } from 'astro:content';
 import { splitFeatureCopy } from '../lib/content/feature-copy';
 import { resolvePublicImageDimensions } from '../lib/content/public-image-dimensions';
+import { visibleItems } from '../lib/content/item-visibility';
 
 interface Props { page: CollectionEntry<'landingPages'>['data'] }
 const { page } = Astro.props;
@@ -11,19 +12,20 @@ const [siteEntry] = await getCollection('siteSettings');
 if (!siteEntry) throw new Error('Site settings CMS content is missing.');
 const site = siteEntry.data;
 const features = page.features;
-const featureItems = features?.items.map((item) => ({
+const featureItems = visibleItems(features?.items ?? []).map((item) => ({
   ...item,
   copy: splitFeatureCopy(item.description, item.listItems),
   dimensions: resolvePublicImageDimensions(item.image),
-})) ?? [];
-const faqSchema = {
+}));
+const visibleFaqItems = visibleItems(page.faq.items);
+const faqSchema = visibleFaqItems.length > 0 ? {
   '@type': 'FAQPage',
-  mainEntity: page.faq.items.map((item) => ({
+  mainEntity: visibleFaqItems.map((item) => ({
     '@type': 'Question',
     name: item.question,
     acceptedAnswer: { '@type': 'Answer', text: item.answer },
   })),
-};
+} : undefined;
 ---
 
 <SiteLayout title={page.title} description={page.description} schema={faqSchema}>
@@ -56,8 +58,8 @@ const faqSchema = {
     </section>
   ) : null}
 
-  <section class="section faq-section">
+  {visibleFaqItems.length > 0 && <section class="section faq-section">
     <div class="section-heading"><span class="eyebrow">{page.faq.eyebrow}</span><h2>{page.faq.heading}</h2><p>{page.faq.intro}</p></div>
-    <div class="faq-list">{page.faq.items.map((item) => <details><summary>{item.question}<span>+</span></summary><p>{item.answer}</p></details>)}</div>
-  </section>
+    <div class="faq-list">{visibleFaqItems.map((item) => <details><summary>{item.question}<span>+</span></summary><p>{item.answer}</p></details>)}</div>
+  </section>}
 </SiteLayout>

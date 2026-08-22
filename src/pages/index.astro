@@ -5,6 +5,7 @@ import { getCollection } from 'astro:content';
 import { sortBlogEntries } from '../lib/content/entries';
 import { splitFeatureCopy } from '../lib/content/feature-copy';
 import { resolvePublicImageDimensions } from '../lib/content/public-image-dimensions';
+import { visibleItems } from '../lib/content/item-visibility';
 
 export const prerender = true;
 const [homepage] = await getCollection('homepage');
@@ -14,19 +15,20 @@ if (!siteEntry) throw new Error('Site settings CMS content is missing.');
 const home = homepage.data;
 const site = siteEntry.data;
 const blogPosts = sortBlogEntries(await getCollection('blog')).slice(0, 2);
-const featureItems = home.features.items.map((item) => ({
+const featureItems = visibleItems(home.features.items).map((item) => ({
   ...item,
   copy: splitFeatureCopy(item.description, item.listItems),
   dimensions: resolvePublicImageDimensions(item.image),
 }));
-const faqSchema = {
+const visibleFaqItems = visibleItems(home.faq.items);
+const faqSchema = visibleFaqItems.length > 0 ? {
   '@type': 'FAQPage',
-  mainEntity: home.faq.items.map((item) => ({
+  mainEntity: visibleFaqItems.map((item) => ({
     '@type': 'Question',
     name: item.question,
     acceptedAnswer: { '@type': 'Answer', text: item.answer },
   })),
-};
+} : undefined;
 ---
 
 <SiteLayout title={home.title} description={home.description} image={home.shareImage} schema={faqSchema}>
@@ -52,7 +54,7 @@ const faqSchema = {
   </section>
 
 
-  <section class="section features-section" aria-labelledby="features-heading">
+  {featureItems.length > 0 && <section class="section features-section" aria-labelledby="features-heading">
     <div class="section-heading"><span class="eyebrow">{home.features.eyebrow}</span><h2 id="features-heading">{home.features.heading}</h2><p>{home.features.intro}</p></div>
     <div class="feature-list">
       {featureItems.map((item) => <article class:list={{ 'feature-item': true, 'is-image-left': item.imagePosition === 'left' }}>
@@ -60,7 +62,7 @@ const faqSchema = {
         <div class="feature-media"><img src={item.image} alt={item.imageAlt} loading="lazy" decoding="async" width={item.dimensions?.width} height={item.dimensions?.height} /></div>
       </article>)}
     </div>
-  </section>
+  </section>}
 
   <section class="section standards-section">
     <div><span class="eyebrow">{home.privacy.eyebrow}</span><h2>{home.privacy.heading}</h2><p>{home.privacy.description}</p><a class="text-link" href={home.privacy.linkHref}>{home.privacy.linkLabel}</a></div>
@@ -72,8 +74,8 @@ const faqSchema = {
     <div class="guide-grid">{blogPosts.map(({ data: post }) => <article><span>{post.readTime}</span><h3><a href={`/blog/${post.slug}`}>{post.title}</a></h3><p>{post.description}</p><a class="text-link" href={`/blog/${post.slug}`}>{home.guides.articleLinkLabel}</a></article>)}</div>
   </section>
 
-  <section class="section faq-section home-faq-section" aria-labelledby="faq-heading">
+  {visibleFaqItems.length > 0 && <section class="section faq-section home-faq-section" aria-labelledby="faq-heading">
     <div class="section-heading"><span class="eyebrow">{home.faq.eyebrow}</span><h2 id="faq-heading">{home.faq.heading}</h2><p>{home.faq.intro}</p></div>
-    <div class="faq-list">{home.faq.items.map((item) => <details><summary>{item.question}<span aria-hidden="true">+</span></summary><p>{item.answer}</p></details>)}</div>
-  </section>
+    <div class="faq-list">{visibleFaqItems.map((item) => <details><summary>{item.question}<span aria-hidden="true">+</span></summary><p>{item.answer}</p></details>)}</div>
+  </section>}
 </SiteLayout>
