@@ -11,6 +11,7 @@ playwright-report/
 test-results/
 output/
 .playwright-cli/
+.playwright-mcp/
 .tools/
 .secrets/
 .site-init-backup/

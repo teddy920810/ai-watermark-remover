@@ -6,7 +6,7 @@ vi.mock('../../../lib/auth', () => ({ getSession }));
 
 import { POST } from './index';
 
-const inputKey = 'uploads/00000000-0000-4000-8000-000000000001.png';
+const inputKey = 'uploads/users/5bd39a3d505d21099461dc1b7a3f4d9f/00000000-0000-4000-8000-000000000001.png';
 
 function context(body: unknown) {
   return { request: new Request('https://example.test/api/jobs', {
@@ -49,6 +49,13 @@ describe('POST /api/jobs', () => {
     const response = await POST(context({ inputKey }));
     expect(response.status).toBe(404);
     await expect(response.json()).resolves.toEqual({ error: 'Upload not found' });
+  });
+
+  it('returns 400 for uploaded object metadata that fails server verification', async () => {
+    getServices.mockReturnValue({ jobs: { create: vi.fn().mockRejectedValue(new Error('Invalid uploaded image')) } });
+    const response = await POST(context({ inputKey }));
+    expect(response.status).toBe(400);
+    await expect(response.json()).resolves.toEqual({ error: 'Invalid uploaded image' });
   });
 
   it('returns 503 without leaking service configuration', async () => {
