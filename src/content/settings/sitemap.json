@@ -24,7 +24,7 @@
   },
   "overrides": [
     {
-      "path": "/remove-gemini-watermark",
+      "path": "/gemini-watermark-remover",
       "priority": 0.9
     }
   ]

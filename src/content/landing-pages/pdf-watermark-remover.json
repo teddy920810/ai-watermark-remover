@@ -1,0 +1,30 @@
+{
+  "slug": "pdf-watermark-remover",
+  "title": "PDF Watermark Remover for Exported Page Images",
+  "description": "Use this PDF watermark remover workflow on a page image you are authorized to edit. Export the page as JPG or PNG before uploading.",
+  "eyebrow": "PDF WATERMARK REMOVER",
+  "heading": "PDF Watermark Remover for Authorized Page Images",
+  "intro": "The current WatermarkGemini uploader does not accept PDF documents. Export the page you are permitted to edit as an image, process that single page image, and review it before rebuilding or sharing your document.",
+  "benefits": ["Clear PDF-to-image workflow", "Single-page image review", "No direct PDF upload"],
+  "process": {
+    "eyebrow": "How it works",
+    "heading": "How to Use the PDF Watermark Remover Workflow",
+    "intro": "Convert one permitted PDF page to an image before using the tool.",
+    "steps": [
+      { "number": "01", "title": "Export the PDF Page", "description": "Save the page you are authorized to edit as JPG, PNG, or WEBP. Password-protected or restricted documents should not be bypassed." },
+      { "number": "02", "title": "Upload the Page Image", "description": "Upload one exported page image up to 10 MB, sign in with Google, and start processing." },
+      { "number": "03", "title": "Review and Rebuild", "description": "Check the returned page image carefully, then use your own document software if you need to place it back into a PDF." }
+    ]
+  },
+  "faq": {
+    "eyebrow": "PDF page FAQ",
+    "heading": "Questions About the PDF Watermark Remover Workflow",
+    "intro": "Understand document limits and how to prepare a page image safely.",
+    "items": [
+      { "question": "Can I upload a PDF directly?", "answer": "No. The current tool accepts JPG, PNG, or WEBP images only. Export the permitted PDF page as an image first." },
+      { "question": "Does the tool rebuild my PDF?", "answer": "No. It returns an image. Use document software separately if you need to create a new PDF from the processed page." },
+      { "question": "Can I process a protected document?", "answer": "Do not bypass document protections. Only edit a document when you own it or have explicit permission and the change complies with applicable rules." },
+      { "question": "Can I process multiple pages at once?", "answer": "No. The current workflow accepts one image at a time, up to 10 MB." }
+    ]
+  }
+}

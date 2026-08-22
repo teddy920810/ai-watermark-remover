@@ -1,0 +1,30 @@
+{
+  "slug": "veo-watermark-remover",
+  "title": "Veo Watermark Remover for Still Image Frames",
+  "description": "Use this Veo watermark remover for an authorized still image or exported frame. Process supported JPG, PNG, and WEBP image files online.",
+  "eyebrow": "VEO WATERMARK REMOVER",
+  "heading": "Veo Watermark Remover for Images You Can Edit",
+  "intro": "Prepare a still image from Veo content you own or are permitted to modify, then use the image-only workflow to review a returned copy. Direct video upload and invisible watermark removal are not supported.",
+  "benefits": ["Works with still image exports", "Clear image-only limits", "Temporary private storage"],
+  "process": {
+    "eyebrow": "How it works",
+    "heading": "How to Use the Veo Watermark Remover",
+    "intro": "Convert the permitted frame to a supported image before starting.",
+    "steps": [
+      { "number": "01", "title": "Save the Veo Frame", "description": "Export the frame you are allowed to edit as a JPG, PNG, or WEBP image." },
+      { "number": "02", "title": "Upload the Image", "description": "Choose one image up to 10 MB, sign in with Google, and start processing." },
+      { "number": "03", "title": "Inspect and Download", "description": "Review the visible area and surrounding details before downloading the returned image." }
+    ]
+  },
+  "faq": {
+    "eyebrow": "Veo image FAQ",
+    "heading": "Questions About the Veo Watermark Remover",
+    "intro": "Understand what the image workflow can and cannot process.",
+    "items": [
+      { "question": "Does the tool accept Veo video files?", "answer": "No. Upload an exported JPG, PNG, or WEBP frame. The current uploader does not accept MP4, MOV, or other video formats." },
+      { "question": "Can it remove SynthID?", "answer": "No. The tool does not claim to remove SynthID, metadata, C2PA credentials, or other invisible provenance information." },
+      { "question": "Is WatermarkGemini a Google or Veo product?", "answer": "No. WatermarkGemini is independent and is not affiliated with or endorsed by Google." },
+      { "question": "How long is my uploaded image stored?", "answer": "Uploads and returned results use private storage and are scheduled for automatic deletion after 24 hours." }
+    ]
+  }
+}

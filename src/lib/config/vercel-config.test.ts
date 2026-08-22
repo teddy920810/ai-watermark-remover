@@ -24,4 +24,12 @@ describe('Vercel canonical URL redirects', () => {
       permanent: true,
     });
   });
+
+  it('permanently redirects the former Gemini landing-page path', () => {
+    expect(config.redirects).toContainEqual({
+      source: '/remove-gemini-watermark',
+      destination: '/gemini-watermark-remover',
+      permanent: true,
+    });
+  });
 });
