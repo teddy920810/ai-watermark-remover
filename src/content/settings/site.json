@@ -83,8 +83,40 @@
             "href": "/remove-logo-from-image"
           },
           {
-            "label": "Remove Gemini Watermark",
+            "label": "Gemini Watermark Remover",
             "href": "/gemini-watermark-remover"
+          },
+          {
+            "label": "Sora Watermark Remover",
+            "href": "/sora-watermark-remover"
+          },
+          {
+            "label": "Veo Watermark Remover",
+            "href": "/veo-watermark-remover"
+          },
+          {
+            "label": "Grok Watermark Remover",
+            "href": "/grok-watermark-remover"
+          },
+          {
+            "label": "Kling Watermark Remover",
+            "href": "/kling-watermark-remover"
+          },
+          {
+            "label": "PDF Watermark Remover",
+            "href": "/pdf-watermark-remover"
+          },
+          {
+            "label": "NotebookLM Watermark Remover",
+            "href": "/notebooklm-watermark-remover"
+          },
+          {
+            "label": "TikTok Watermark Remover",
+            "href": "/tiktok-watermark-remover"
+          },
+          {
+            "label": "Video Watermark Remover",
+            "href": "/video-watermark-remover"
           }
         ]
       },
