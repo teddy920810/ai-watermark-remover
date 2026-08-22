@@ -8,6 +8,7 @@ interface CmsField {
   label?: string;
   type: string;
   description?: string;
+  default?: boolean;
   list?: {
     min?: number;
     max?: number;
@@ -35,6 +36,7 @@ const config = YAML.parse(configSource) as {
     rename: string;
   }>;
   settings: { content: { merge: boolean }; commit: { identity: string } };
+  actions?: Array<{ name: string; label: string; workflow: string; ref?: string }>;
   content: Array<{
     name: string;
     label: string;
@@ -47,6 +49,17 @@ const config = YAML.parse(configSource) as {
 };
 
 describe('Pages CMS maintenance safeguards', () => {
+  it('offers direct-main content validation without a draft-branch publish action', () => {
+    expect(config.actions).toEqual([
+      expect.objectContaining({
+        name: 'validate-cms-content',
+        workflow: 'cms-content-check.yml',
+        ref: 'current',
+      }),
+    ]);
+    expect(config.actions?.some((action) => action.name === 'publish-cms-drafts')).toBe(false);
+  });
+
   it('preserves unmanaged fields and uses the GitHub app identity', () => {
     expect(config.settings.content.merge).toBe(true);
     expect(config.settings.commit.identity).toBe('app');
@@ -158,6 +171,24 @@ describe('Pages CMS maintenance safeguards', () => {
       expect.objectContaining({ name: 'question', type: 'string' }),
       expect.objectContaining({ name: 'answer', type: 'text' }),
     ]));
+  });
+
+  it('lets operators hide every homepage and landing-page item without deleting it', () => {
+    const homepage = config.content.find((entry) => entry.name === 'homepage');
+    const landingPages = config.content.find((entry) => entry.name === 'landing-pages');
+    const itemGroups = [
+      homepage?.fields.find((field) => field.name === 'features'),
+      homepage?.fields.find((field) => field.name === 'faq'),
+      landingPages?.fields.find((field) => field.name === 'features'),
+      landingPages?.fields.find((field) => field.name === 'faq'),
+    ];
+
+    for (const group of itemGroups) {
+      const items = group?.fields?.find((field) => field.name === 'items');
+      expect(items?.fields).toEqual(expect.arrayContaining([
+        expect.objectContaining({ name: 'enabled', type: 'boolean', default: true }),
+      ]));
+    }
   });
 
   it('exposes a named image library backed by public uploads', () => {

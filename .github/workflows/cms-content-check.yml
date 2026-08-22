@@ -1,0 +1,35 @@
+name: Check CMS content
+
+on:
+  workflow_dispatch:
+    inputs:
+      payload:
+        description: Pages CMS action payload
+        required: false
+        type: string
+  push:
+    branches: [main]
+    paths:
+      - '.pages.yml'
+      - 'src/content/**'
+      - 'public/uploads/**'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cms-content-check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate saved CMS content
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run content:validate

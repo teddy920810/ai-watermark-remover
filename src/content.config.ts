@@ -76,11 +76,13 @@ const blog = defineCollection({
 });
 
 const faqItem = z.object({
+  enabled: z.boolean().default(true),
   question: z.string().min(1),
   answer: z.string().min(1),
 });
 
 const landingFeatureItemSchema = z.object({
+  enabled: z.boolean().default(true),
   eyebrow: z.string().min(1),
   heading: z.string().min(1),
   description: z.string().min(1),

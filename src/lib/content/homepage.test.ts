@@ -29,6 +29,7 @@ describe('homepage CMS content', () => {
     expect(parsed.features.intro).toBeTruthy();
     expect(parsed.features.items.length).toBeGreaterThan(0);
     for (const item of parsed.features.items) {
+      expect(item.enabled).toBe(true);
       expect(item.eyebrow).toBeTruthy();
       expect(item.heading).toBeTruthy();
       expect(item.description).toBeTruthy();
@@ -47,6 +48,7 @@ describe('homepage CMS content', () => {
     expect(parsed.faq.intro).toBeTruthy();
     expect(parsed.faq.items.length).toBeGreaterThan(0);
     for (const entry of parsed.faq.items) {
+      expect(entry.enabled).toBe(true);
       expect(entry.question).toBeTruthy();
       expect(entry.answer).toBeTruthy();
     }
