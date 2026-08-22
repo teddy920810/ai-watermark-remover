@@ -27,7 +27,7 @@ test('critical public routes and SEO files are available', async ({ page, reques
 
 test('mobile visitors can open navigation and a dropdown', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto('/');
+  await page.goto('/', { waitUntil: 'networkidle' });
 
   const menuButton = page.locator('[data-mobile-menu-toggle]');
   await menuButton.click();
