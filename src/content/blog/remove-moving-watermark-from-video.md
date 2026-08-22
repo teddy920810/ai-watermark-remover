@@ -224,7 +224,7 @@ WatermarkGemini is an adjacent still-image workflow for authorized thumbnails, c
 
 *WatermarkGemini workflow for a video thumbnail, cover, poster, screenshot, or exported still.*
 
-**WatermarkGemini —** [Clean a video thumbnail or still with WatermarkGemini]([https://www.watermarkgemini.com/](https://www.watermarkgemini.com/))  Open the image workflow, review the repaired area at full size, and keep the untouched original.
+**WatermarkGemini —** [Clean a video thumbnail or still with WatermarkGemini](https://www.watermarkgemini.com)  Open the image workflow, review the repaired area at full size, and keep the untouched original.
 
 Product boundary: WatermarkGemini does not process moving video. Do not clean one frame and describe that result as moving-watermark removal; the video repair still has to remain stable over time.
 
