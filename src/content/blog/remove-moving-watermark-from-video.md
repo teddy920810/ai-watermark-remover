@@ -23,9 +23,11 @@ A moving watermark is harder than a fixed logo because the problem changes from 
 
 **The safest way to remove a moving watermark from video is to remove or replace the original overlay in the source project. If the mark is already baked into footage you are authorized to edit, choose the least destructive route: crop a safe edge, track an intentional cover, use temporal repair only on a simple background, or replace the shot when the mark crosses faces, text, or product detail.**
 
-![Decision map showing how a moving watermark's location and motion determine the safest removal route.](How_to_Remove_Moving_Watermark_Publish_Final_v3.1终极版_images/image1.png)
+![](/uploads/moving-watermark-situation.png)
 
 *Figure 1. Match the moving-watermark situation before choosing a tool.*
+
+
 
 ## Why Moving Watermarks Are Harder to Remove
 
@@ -47,7 +49,7 @@ A still frame can look perfect while the video fails a second later. If you are 
 
 ## **Choose the Safest Moving Watermark Removal Method**
 
-![Method-selection visual comparing source editing, cropping, tracked covers, temporal repair, and shot replacement.](How_to_Remove_Moving_Watermark_Publish_Final_v3.1终极版_images/image2.png)
+![](/uploads/moving-watermark-methods-compared.png)
 
 *Figure 2. Crop, tracked cover, temporal repair, and shot replacement compared.*
 
@@ -74,7 +76,7 @@ If the source project still exists, this is the first method to try. When the ma
 
 **5.** Only after the test passes, export the full video and keep a new project revision beside the original.
 
-![Video editor timeline showing an overlay layer switched off and a clean preview of the original shot.](How_to_Remove_Moving_Watermark_Publish_Final_v3.1终极版_images/image3.png)
+![](/uploads/remove-moving-watermark-from-original-object.png)
 
 *Figure 3. Source-layer removal keeps the original composition intact and is the preferred route whenever an editable project is available.*
 
@@ -103,7 +105,7 @@ Cropping is often the most predictable way to remove a moving watermark from vid
 
 **5.** Export a short sample and compare sharpness, framing, and scaling with the original.
 
-![Before-and-after crop example where a small moving corner mark is removed without cutting off the presenter.](How_to_Remove_Moving_Watermark_Publish_Final_v3.1终极版_images/image4.png)
+![](/uploads/crop-watermark.png)
 
 *Figure 4. Crop only when the watermark stays in a safe edge zone and the new composition still supports the subject.*
 
@@ -128,7 +130,7 @@ Mask tracking does not reconstruct the hidden background. It keeps a blur, cover
 
 **5.** Preview fast motion, lighting changes, occlusions, and the first and last frames before exporting.
 
-![Tracked cover example showing a graphic following a moving watermark path.](How_to_Remove_Moving_Watermark_Publish_Final_v3.1终极版_images/image5.png)
+![](/uploads/track-the-moving-watermark.png)
 
 *Figure 5. Track the moving region within one shot, then review it in motion.*
 
@@ -157,7 +159,7 @@ For remove moving watermark from video ai workflows, temporally aware repair is 
 
 **5.** Render a short sample using the final codec and resolution, then process the full shot only if the temporal result is stable.
 
-![Temporal video repair workspace showing a selected moving watermark area and a stable repaired preview across a clip timeline.](How_to_Remove_Moving_Watermark_Publish_Final_v3.1终极版_images/image6.png)
+![](/uploads/temporal-repair-for-moving-watermark.png)
 
 *Figure 6. Temporal repair needs a tracked area and a clean surrounding background; inspect the whole motion path before export.*
 
@@ -176,7 +178,7 @@ A clean alternate take, licensed source, B-roll shot, or nearby edit is availabl
 
 A clean source replacement is often the professional choice when repair would force the viewer to notice a patch. Replace the affected shot, then match framing, color, speed, and audio continuity. Keep the license or source record with the project.
 
-![Video editing timeline contrasting an artifact-prone repair with a clean alternate B-roll shot selected for replacement.](How_to_Remove_Moving_Watermark_Publish_Final_v3.1终极版_images/image7.png)
+![](/uploads/replace-the-shot-for-moving-watermark.png)
 
 *Figure 7. Replace a shot when repair would visibly damage a face, text, product detail, or a complex edit point.*
 
@@ -206,7 +208,7 @@ Do not approve a moving watermark repair from a paused frame. Review it in sever
 - **Across cuts:** make sure crop, cover, and repair style do not change abruptly between shots.
 - **With captions and audio:** confirm the visual fix does not cover meaning, subtitles, safety information, or timing cues.
 
-![Frame-by-frame quality-control example for checking a repaired clip for flicker and drift.](How_to_Remove_Moving_Watermark_Publish_Final_v3.1终极版_images/image8.png)
+![](/uploads/temporal-qa-before-the-final-export.png)
 
 *Figure 8. Temporal QA before the final export.*
 
@@ -229,7 +231,7 @@ Do not approve a moving watermark repair from a paused frame. Review it in sever
 3. Review the result at full size, paying particular attention to faces, small text, product edges, logos, and patterned backgrounds.
 4. Download the cleaned image only when it is suitable for use, then return to the video project for the separate moving-watermark workflow.
 
-![WatermarkGemini interface example for cleaning authorized thumbnails, covers, and exported still images.](How_to_Remove_Moving_Watermark_Publish_Final_v3.1终极版_images/image9.png)
+![](/uploads/watermarkgemini-workflow-for-moving-watermark.png)
 
 *WatermarkGemini workflow for a video thumbnail, cover, poster, screenshot, or exported still.*
 
