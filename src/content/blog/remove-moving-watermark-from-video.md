@@ -9,7 +9,7 @@ updatedAt: 2026-08-22
 readTime: 5 min read
 featured: true
 draft: false
-contentMode: html
+contentMode: markdown
 bodyHtml: <p></p>
 category: Guide
 ---
