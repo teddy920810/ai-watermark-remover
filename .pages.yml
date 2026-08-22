@@ -933,6 +933,10 @@ content:
         type: string
         required: true
         description: 文章详情页唯一的 H1；在博客列表页显示为 H2。
+      - name: seoTitle
+        label: 独立 SEO 标题｜TITLE（可选）
+        type: string
+        description: 单独控制文章详情页 head 中的 title 标签；留空时自动使用“文章标题 | 站点名称”，不会改变页面 H1 或博客列表 H2。
       - name: description
         label: 文章摘要｜META + P（不超过 180 字符）
         type: text

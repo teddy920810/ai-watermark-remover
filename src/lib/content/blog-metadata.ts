@@ -1,5 +1,6 @@
 interface BlogMetadataInput {
   title: string;
+  seoTitle?: string;
   author?: string;
   category?: string;
 }
@@ -15,7 +16,7 @@ export function resolveBlogMetadata(
   siteName: string,
 ) {
   return {
-    title: `${post.title} | ${siteName}`,
+    title: post.seoTitle ?? `${post.title} | ${siteName}`,
     author: post.author ?? defaults.author,
     category: post.category ?? defaults.category,
   };
