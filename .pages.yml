@@ -1015,10 +1015,10 @@ content:
         type: string
         description: 单独控制文章详情页 head 中的 title 标签；留空时自动使用“文章标题 | 站点名称”，不会改变页面 H1 或博客列表 H2。
       - name: description
-        label: 文章摘要｜META + P（不超过 180 字符）
+        label: 文章摘要｜META + 列表 P（不超过 180 字符）
         type: text
         required: true
-        description: 同时用于搜索摘要，以及文章标题下方和列表卡片中的普通段落。
+        description: 用于搜索摘要和博客列表卡片中的普通段落，不在文章详情页标题下方显示。
         options:
           maxlength: 180
       - name: publishedAt
@@ -1079,7 +1079,7 @@ content:
       - name: body
         label: Markdown 正文｜H2 / H3 / P
         type: rich-text
-        description: 正文格式选择 Markdown 时填写。普通段落使用 P；主要章节使用 H2；不要再添加 H1。
+        description: 正文格式选择 Markdown 时填写。支持段落、H2、H3、无序列表、有序列表、Quote、Table、Code block 和图片；不要再添加 H1。选中文字后使用浮动工具栏添加链接。
         options:
           media: images
           format: markdown

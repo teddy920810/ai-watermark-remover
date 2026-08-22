@@ -36,7 +36,7 @@ const schema = buildArticleSchema({
 });
 ---
 <SiteLayout title={metadata.title} description={post.data.description} image={post.data.coverImage} type="article" schema={schema}>
-  <header class="article-header"><div class="article-meta">{metadata.category} · {post.data.publishedAt} · {post.data.readTime} · {metadata.author}</div><h1>{post.data.title}</h1><p>{post.data.description}</p></header>
+  <header class="article-header"><div class="article-meta">{metadata.category} · {post.data.publishedAt} · {post.data.readTime} · {metadata.author}</div><h1>{post.data.title}</h1></header>
   {post.data.coverImage && <img class="article-cover" src={post.data.coverImage} alt={coverAlt} />}
   <article class="article-body">
     {post.data.contentMode === 'html' ? <div set:html={post.data.bodyHtml} /> : <Content />}
