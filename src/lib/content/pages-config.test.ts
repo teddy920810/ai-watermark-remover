@@ -52,7 +52,7 @@ const config = YAML.parse(configSource) as {
 };
 
 describe('Pages CMS maintenance safeguards', () => {
-  it('offers direct-main content validation without a draft-branch publish action', () => {
+  it('offers content validation for direct-main CMS saves', () => {
     expect(config.actions).toEqual([
       expect.objectContaining({
         name: 'validate-cms-content',
@@ -60,7 +60,6 @@ describe('Pages CMS maintenance safeguards', () => {
         ref: 'current',
       }),
     ]);
-    expect(config.actions?.some((action) => action.name === 'publish-cms-drafts')).toBe(false);
   });
 
   it('preserves unmanaged fields and uses the GitHub app identity', () => {
