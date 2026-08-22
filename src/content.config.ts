@@ -3,7 +3,7 @@ import { glob } from 'astro/loaders';
 import { z } from 'zod';
 import { publishedAtSchema } from './lib/content/published-date';
 import { homepageSchema } from './lib/content/homepage';
-import { siteSettingsSchema } from './lib/content/site-settings';
+import { siteSettingsSchema, uploaderCopyOverrideSchema } from './lib/content/site-settings';
 import { imageSettingsSchema } from './lib/content/image-metadata';
 import { trustedHtmlSchema } from './lib/content/trusted-html';
 import { sitemapSettingsSchema } from './lib/content/sitemap-settings';
@@ -109,6 +109,7 @@ const landingPages = defineCollection({
     heading: z.string().min(1),
     intro: z.string().min(1),
     benefits: z.array(z.string().min(1)).min(1),
+    uploader: uploaderCopyOverrideSchema.optional(),
     process: z.object({
       eyebrow: z.string().min(1),
       heading: z.string().min(1),

@@ -19,4 +19,14 @@ describe('CMS item visibility', () => {
       expect(source).toContain('mainEntity: visibleFaqItems.map');
     }
   });
+
+  it('resolves page-specific uploader copy before rendering the uploader island', () => {
+    const homepageSource = readFileSync(new URL('../../pages/index.astro', import.meta.url), 'utf8');
+    const landingSource = readFileSync(new URL('../../components/LandingPage.astro', import.meta.url), 'utf8');
+
+    for (const source of [homepageSource, landingSource]) {
+      expect(source).toContain('resolveUploaderCopy(');
+      expect(source).toContain('copy={uploaderCopy}');
+    }
+  });
 });

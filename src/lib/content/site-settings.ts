@@ -20,7 +20,7 @@ const headerNavigationItemSchema = z.object({
   }
 });
 
-const uploaderCopySchema = z.object({
+export const uploaderCopySchema = z.object({
   hero: z.object({
     eyebrow: z.string().min(1), heading: z.string().min(1), demoBadge: z.string().min(1), demoBadgeTitle: z.string().min(1),
   }),
@@ -40,6 +40,47 @@ const uploaderCopySchema = z.object({
 });
 
 export type UploaderCopy = z.infer<typeof uploaderCopySchema>;
+
+const optionalCopyGroup = <T extends z.ZodRawShape>(shape: T) => z.object(shape).partial().optional();
+
+export const uploaderCopyOverrideSchema = z.object({
+  hero: optionalCopyGroup({
+    eyebrow: z.string(), heading: z.string(), demoBadge: z.string(), demoBadgeTitle: z.string(),
+  }),
+  dropzone: optionalCopyGroup({
+    dropLabel: z.string(), browseLabel: z.string(), formatLabel: z.string(), maxSizeLabel: z.string(), fileInputLabel: z.string(),
+  }),
+  preview: optionalCopyGroup({
+    altTemplate: z.string(), processingLabel: z.string(), readyLabel: z.string(), removeButton: z.string(), uploadingButton: z.string(), processingButton: z.string(), chooseAnotherButton: z.string(),
+  }),
+  result: optionalCopyGroup({
+    originalLabel: z.string(), resultLabel: z.string(), originalAlt: z.string(), resultAlt: z.string(), demoNote: z.string(), downloadButton: z.string(), processAnotherButton: z.string(),
+  }),
+  auth: optionalCopyGroup({
+    closeLabel: z.string(), title: z.string(), description: z.string(), connectingButton: z.string(), continueButton: z.string(), dismissButton: z.string(),
+  }),
+  privacyNote: z.string().optional(),
+});
+
+export type UploaderCopyOverride = z.infer<typeof uploaderCopyOverrideSchema>;
+
+function resolveCopyGroup<T extends Record<string, string>>(shared: T, override?: Partial<T>): T {
+  return Object.fromEntries(Object.entries(shared).map(([key, value]) => {
+    const candidate = override?.[key];
+    return [key, typeof candidate === 'string' && candidate.trim().length > 0 ? candidate : value];
+  })) as T;
+}
+
+export function resolveUploaderCopy(shared: UploaderCopy, override?: UploaderCopyOverride): UploaderCopy {
+  return {
+    hero: resolveCopyGroup(shared.hero, override?.hero),
+    dropzone: resolveCopyGroup(shared.dropzone, override?.dropzone),
+    preview: resolveCopyGroup(shared.preview, override?.preview),
+    result: resolveCopyGroup(shared.result, override?.result),
+    auth: resolveCopyGroup(shared.auth, override?.auth),
+    privacyNote: override?.privacyNote?.trim() ? override.privacyNote : shared.privacyNote,
+  };
+}
 
 export const siteSettingsSchema = z.object({
   name: z.string().min(1),

@@ -21,6 +21,15 @@ describe('homepage CMS content', () => {
     expect(parsed.privacy.features.length).toBeGreaterThan(0);
   });
 
+  it('accepts a partial homepage uploader-copy override', () => {
+    const customized = structuredClone(homepage);
+    customized.uploader = { hero: { heading: 'Homepage uploader heading' } };
+
+    expect(homepageSchema.parse(customized).uploader).toEqual({
+      hero: { heading: 'Homepage uploader heading' },
+    });
+  });
+
   it('contains editable feature screens with images and list items', () => {
     const parsed = homepageSchema.parse(homepage);
     expect(parsed.features).toBeDefined();

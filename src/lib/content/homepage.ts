@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { uploaderCopyOverrideSchema } from './site-settings';
 
 const linkedCardSchema = z.object({
   icon: z.string().min(1),
@@ -40,6 +41,7 @@ export const homepageSchema = z.object({
   title: z.string().min(1),
   description: z.string().min(1).max(180),
   shareImage: z.string().min(1),
+  uploader: uploaderCopyOverrideSchema.optional(),
   hero: z.object({
     eyebrow: z.string().min(1),
     heading: z.string().min(1),

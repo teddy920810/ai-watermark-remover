@@ -6,6 +6,7 @@ import { sortBlogEntries } from '../lib/content/entries';
 import { splitFeatureCopy } from '../lib/content/feature-copy';
 import { resolvePublicImageDimensions } from '../lib/content/public-image-dimensions';
 import { visibleItems } from '../lib/content/item-visibility';
+import { resolveUploaderCopy } from '../lib/content/site-settings';
 
 export const prerender = true;
 const [homepage] = await getCollection('homepage');
@@ -14,6 +15,7 @@ const [siteEntry] = await getCollection('siteSettings');
 if (!siteEntry) throw new Error('Site settings CMS content is missing.');
 const home = homepage.data;
 const site = siteEntry.data;
+const uploaderCopy = resolveUploaderCopy(site.uploader, home.uploader);
 const blogPosts = sortBlogEntries(await getCollection('blog')).slice(0, 2);
 const featureItems = visibleItems(home.features.items).map((item) => ({
   ...item,
@@ -39,7 +41,7 @@ const faqSchema = visibleFaqItems.length > 0 ? {
       <p>{home.hero.intro}</p>
       <div class="trust-row">{home.hero.trustItems.map((item) => <span>{item}</span>)}</div>
     </div>
-    <div id="tool" class="hero-tool"><ImageUploader logo={site.logo} siteName={site.name} copy={site.uploader} client:load /></div>
+    <div id="tool" class="hero-tool"><ImageUploader logo={site.logo} siteName={site.name} copy={uploaderCopy} client:load /></div>
   </section>
 
   <section class="use-cases" aria-label="Popular tools">
