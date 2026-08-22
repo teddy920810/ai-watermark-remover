@@ -21,3 +21,4 @@ jobs:
       - run: npm run test:smoke:production
         env:
           SMOKE_BASE_URL: https://watermarkgemini.com
+          SMOKE_SESSION_COOKIE: ${{ secrets.PRODUCTION_SMOKE_SESSION_COOKIE }}

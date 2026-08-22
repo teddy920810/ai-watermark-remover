@@ -1,11 +1,15 @@
 import type { WatermarkProvider } from '../providers/watermark-provider';
-import { isUploadKey } from '../upload/validation';
+import { contentTypeForUploadKey, isUploadKey, isUploadKeyForOwner } from '../upload/upload-key';
+import { validateUploadMetadata } from '../upload/validation';
 import { createJob, failJob, finishJob, type Job } from './job';
 import type { JobStore } from './job-store';
 
 interface JobServiceDependencies {
   jobStore: JobStore;
-  objects: { exists(key: string): Promise<boolean> };
+  objects: {
+    head(key: string): Promise<{ contentLength: number; contentType: string } | null>;
+    delete(key: string): Promise<void>;
+  };
   provider: WatermarkProvider;
 }
 
@@ -17,12 +21,20 @@ export class JobService {
 
   async create(inputKey: string, ownerId: string): Promise<Job> {
     if (!isUploadKey(inputKey)) throw new Error('Invalid upload key');
-    if (!(await this.dependencies.objects.exists(inputKey))) throw new Error('Upload not found');
+    if (!isUploadKeyForOwner(inputKey, ownerId)) throw new Error('Upload not found');
+
+    const metadata = await this.dependencies.objects.head(inputKey);
+    if (!metadata) throw new Error('Upload not found');
+    const validation = validateUploadMetadata({ contentType: metadata.contentType, size: metadata.contentLength });
+    if (!validation.ok || contentTypeForUploadKey(inputKey) !== metadata.contentType) {
+      await this.cleanupInput(inputKey);
+      throw new Error('Invalid uploaded image');
+    }
 
     let job = createJob(this.createId(), inputKey, ownerId);
-    await this.dependencies.jobStore.save(job);
 
     try {
+      await this.dependencies.jobStore.save(job);
       const result = await this.dependencies.provider.remove({ jobId: job.id, inputKey });
       if (result.status === 'completed') {
         job = finishJob(job, result.resultKey);
@@ -30,10 +42,22 @@ export class JobService {
       }
     } catch {
       job = failJob(job, 'Image processing failed. Please try again.');
-      await this.dependencies.jobStore.save(job);
+      try {
+        await this.dependencies.jobStore.save(job);
+      } finally {
+        await this.cleanupInput(inputKey);
+      }
     }
 
     return job;
+  }
+
+  private async cleanupInput(inputKey: string): Promise<void> {
+    try {
+      await this.dependencies.objects.delete(inputKey);
+    } catch {
+      // Best-effort cleanup must not replace the safe job failure returned to the client.
+    }
   }
 
   get(id: string): Promise<Job | null> {

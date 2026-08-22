@@ -1,5 +1,6 @@
 import {
   CopyObjectCommand,
+  DeleteObjectCommand,
   GetObjectCommand,
   HeadObjectCommand,
   PutObjectCommand,
@@ -57,15 +58,22 @@ export class R2ObjectStore {
     );
   }
 
-  async exists(key: string): Promise<boolean> {
+  async head(key: string): Promise<{ contentLength: number; contentType: string } | null> {
     try {
-      await this.client.send(new HeadObjectCommand({ Bucket: this.config.bucket, Key: key }));
-      return true;
+      const response = await this.client.send(new HeadObjectCommand({ Bucket: this.config.bucket, Key: key }));
+      return {
+        contentLength: response.ContentLength ?? Number.NaN,
+        contentType: response.ContentType ?? '',
+      };
     } catch (error) {
       const status = (error as { $metadata?: { httpStatusCode?: number } }).$metadata?.httpStatusCode;
-      if (status === 404) return false;
+      if (status === 404) return null;
       throw error;
     }
+  }
+
+  async delete(key: string): Promise<void> {
+    await this.client.send(new DeleteObjectCommand({ Bucket: this.config.bucket, Key: key }));
   }
 
   async copyObject(sourceKey: string, destinationKey: string): Promise<void> {

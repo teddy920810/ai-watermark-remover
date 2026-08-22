@@ -10,12 +10,26 @@
 - Before handing off changes, run `npm run verify`; it includes coverage, lint, build, and browser E2E.
 - Run `npm run test:smoke:production` after production environment, domain, R2, CORS, or deployment changes. It writes temporary objects to the real bucket, so do not run it speculatively or in a loop.
 
+## Project startup
+
+- The canonical repository is `teddy920810/ai-watermark-remover`; reject similarly named checkouts whose `origin` does not match.
+- Before editing, report the normalized path, `origin`, branch, HEAD, and working-tree status. Preserve unrelated user changes.
+- Read this file, `README.md`, and `docs/DEVELOPER_GUIDE.md` completely before implementing.
+- Separate user-gated prerequisites from work Codex can complete. Continue all unblocked Codex-owned work and batch the minimum user requests.
+- Keep implementation and repository scripts cross-platform; prefer Node/npm scripts over shell-specific logic.
+
 ## Delivery target
 
 - For every new request, establish whether the final target is local iteration or a change merged into `main`.
 - If the user's request and current context do not make the target explicit, ask before committing, pushing, opening or merging a pull request, or deploying.
 - For local iteration, implement and verify locally without committing, pushing, opening a pull request, merging, or deploying unless the user later expands the target.
 - For a `main` delivery, use a dedicated branch and complete the requested commit, pull request, merge, deployment, and production verification workflow.
+
+## Release status gates
+
+- Report code verification, repository/PR state, Vercel deployment, DNS/certificate state, OAuth flow, and production smoke as separate gates.
+- Do not label a delivery complete when an applicable gate is pending or blocked.
+- If similar failures affect multiple repositories, check provider status and local process conflicts before changing code or branches. Avoid repeated retries during a confirmed platform incident.
 
 ## Third-party integration contract rules
 

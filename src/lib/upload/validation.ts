@@ -23,13 +23,3 @@ export function validateUploadMetadata(input: { contentType: string; size: numbe
 
   return { ok: true };
 }
-
-export function createUploadKey(contentType: string, id: string = crypto.randomUUID()): string {
-  const extension = extensions[contentType as AllowedContentType];
-  if (!extension) throw new Error('Unsupported image type');
-  return `uploads/${id}.${extension}`;
-}
-
-export function isUploadKey(key: string): boolean {
-  return /^uploads\/[0-9a-f-]+\.(?:jpg|png|webp)$/i.test(key);
-}

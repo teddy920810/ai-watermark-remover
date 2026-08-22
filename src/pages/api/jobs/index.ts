@@ -24,8 +24,8 @@ export const POST: APIRoute = async ({ request }) => {
     const job = await getServices().jobs.create(inputKey, session.user.id);
     return json({ id: job.id, status: job.status }, { status: 201 });
   } catch (error) {
-    const message = publicApiError(error, 'Unable to create job', ['Upload not found']);
-    const status = message === 'Upload not found' ? 404 : 503;
+    const message = publicApiError(error, 'Unable to create job', ['Upload not found', 'Invalid uploaded image']);
+    const status = message === 'Upload not found' ? 404 : message === 'Invalid uploaded image' ? 400 : 503;
     return json({ error: message }, { status });
   }
 };

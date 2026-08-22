@@ -28,5 +28,37 @@ describe('project baseline configuration', () => {
     expect(e2e).toContain("page.locator('main h1')");
     expect(e2e).toContain('new AxeBuilder({ page }).analyze()');
   });
+
+  it('runs Playwright against an isolated project-owned development server', () => {
+    const playwright = readProjectFile('playwright.config.ts');
+    expect(playwright).toContain("const e2eOrigin = 'http://127.0.0.1:4379'");
+    expect(playwright).toContain('reuseExistingServer: false');
+    expect(playwright).toContain('baseURL: e2eOrigin');
+    expect(playwright).toContain("SITE_URL: e2eOrigin");
+    expect(playwright).toContain("ASTRO_DEV_BACKGROUND: '1'");
+  });
+
+  it('ships compatible security headers with CSP in report-only mode', () => {
+    const vercel = JSON.parse(readProjectFile('vercel.json')) as {
+      headers: Array<{ headers: Array<{ key: string; value: string }> }>;
+    };
+    const headers = Object.fromEntries(vercel.headers[0]!.headers.map(({ key, value }) => [key, value]));
+    expect(headers['Content-Security-Policy-Report-Only']).toContain("default-src 'self'");
+    expect(headers['Content-Security-Policy-Report-Only']).toContain('https://www.googletagmanager.com');
+    expect(headers['Content-Security-Policy-Report-Only']).toContain('https://*.r2.cloudflarestorage.com');
+    expect(headers['Cross-Origin-Opener-Policy']).toBe('same-origin-allow-popups');
+    expect(headers['Strict-Transport-Security']).toContain('max-age=63072000');
+  });
+
+  it('cancels stale CI runs, audits dependencies, and retains E2E failure evidence', () => {
+    const workflow = readProjectFile('.github/workflows/ci.yml');
+    const packageJson = JSON.parse(readProjectFile('package.json')) as { scripts: Record<string, string> };
+    expect(workflow).toContain('cancel-in-progress: true');
+    expect(workflow).toContain('npm run audit:dependencies');
+    expect(workflow).toContain('actions/upload-artifact@v4');
+    expect(workflow).toContain('if: failure()');
+    expect(workflow).toContain('test-results/');
+    expect(packageJson.scripts['audit:dependencies']).toBe('npm audit --audit-level=high');
+  });
 });
 

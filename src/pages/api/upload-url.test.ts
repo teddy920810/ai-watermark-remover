@@ -1,7 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { getServices } = vi.hoisted(() => ({ getServices: vi.fn() }));
+const { getServices, getSession } = vi.hoisted(() => ({ getServices: vi.fn(), getSession: vi.fn() }));
 vi.mock('../../lib/services', () => ({ getServices }));
+vi.mock('../../lib/auth', () => ({ getSession }));
 
 import { POST } from './upload-url';
 
@@ -16,13 +17,30 @@ function context(body: unknown) {
 }
 
 describe('POST /api/upload-url', () => {
-  beforeEach(() => getServices.mockReset());
+  beforeEach(() => {
+    getServices.mockReset();
+    getSession.mockReset();
+    getSession.mockResolvedValue({ user: { id: 'google-user-1' } });
+  });
+
+  it('requires a session before parsing metadata or creating a signed URL', async () => {
+    getSession.mockResolvedValue(null);
+    const response = await POST(context({ contentType: 'image/png', size: 68 }));
+    expect(response.status).toBe(401);
+    await expect(response.json()).resolves.toEqual({ error: 'Sign in with Google to upload an image.' });
+    expect(getServices).not.toHaveBeenCalled();
+  });
 
   it('returns a signed upload contract', async () => {
-    getServices.mockReturnValue({ objects: { createUploadUrl: vi.fn().mockResolvedValue('https://signed.example') } });
+    const createUploadUrl = vi.fn().mockResolvedValue('https://signed.example');
+    getServices.mockReturnValue({ objects: { createUploadUrl } });
     const response = await POST(context({ contentType: 'image/png', size: 68 }));
     expect(response.status).toBe(200);
-    await expect(response.json()).resolves.toMatchObject({ url: 'https://signed.example', expiresIn: 600 });
+    const body = await response.json();
+    expect(body).toMatchObject({ url: 'https://signed.example', expiresIn: 600 });
+    expect(body.key).toMatch(/^uploads\/users\/[0-9a-f]{32}\/[0-9a-f-]+\.png$/);
+    expect(body.key).not.toContain('google-user-1');
+    expect(createUploadUrl).toHaveBeenCalledWith(body.key, 'image/png');
   });
 
   it('returns 400 for invalid upload metadata', async () => {
