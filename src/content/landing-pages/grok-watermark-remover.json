@@ -1,0 +1,30 @@
+{
+  "slug": "grok-watermark-remover",
+  "title": "Grok Watermark Remover for Authorized Images",
+  "description": "Use this Grok watermark remover for a supported image you own or have permission to edit. Upload JPG, PNG, or WEBP files online.",
+  "eyebrow": "GROK WATERMARK REMOVER",
+  "heading": "Grok Watermark Remover for Supported Image Files",
+  "intro": "Clean a visible mark from an image or exported frame associated with Grok when you have the right to edit it. WatermarkGemini accepts images only and does not alter metadata or invisible provenance signals.",
+  "benefits": ["JPG, PNG, and WEBP support", "One image at a time", "Review before download"],
+  "process": {
+    "eyebrow": "How it works",
+    "heading": "How to Use the Grok Watermark Remover",
+    "intro": "Process one authorized image in a simple three-step flow.",
+    "steps": [
+      { "number": "01", "title": "Choose an Authorized Image", "description": "Prepare a JPG, PNG, or WEBP image up to 10 MB that you own or have permission to modify." },
+      { "number": "02", "title": "Sign In and Process", "description": "Upload the image, continue with Google sign-in, and start the current processing flow." },
+      { "number": "03", "title": "Check the Returned Copy", "description": "Compare the original and returned image carefully before downloading or publishing it." }
+    ]
+  },
+  "faq": {
+    "eyebrow": "Grok image FAQ",
+    "heading": "Questions About the Grok Watermark Remover",
+    "intro": "Review supported files, service independence, and permitted use.",
+    "items": [
+      { "question": "What Grok files can I upload?", "answer": "The uploader accepts one JPG, PNG, or WEBP image up to 10 MB. It does not accept video files or URLs." },
+      { "question": "Does the tool remove metadata or invisible watermarks?", "answer": "No. It only provides an image-processing workflow for a visible area and makes no claim about invisible signals or metadata." },
+      { "question": "Is WatermarkGemini affiliated with xAI or Grok?", "answer": "No. WatermarkGemini is an independent service and is not affiliated with or endorsed by xAI." },
+      { "question": "Do I need permission to remove a visible mark?", "answer": "Yes. Only process images you own or are authorized to edit, and follow any applicable platform, license, attribution, and disclosure rules." }
+    ]
+  }
+}

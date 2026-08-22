@@ -88,7 +88,7 @@ Remove watermark from images online with AI technology.
     /
      /watermark-remover
 
-    /remove-gemini-watermark
+    /gemini-watermark-remover
 
     /ai-watermark-remover
 

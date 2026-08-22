@@ -1,0 +1,30 @@
+{
+  "slug": "notebooklm-watermark-remover",
+  "title": "NotebookLM Watermark Remover for Image Exports",
+  "description": "Use this NotebookLM watermark remover for an authorized screenshot or image export. Process one JPG, PNG, or WEBP image online.",
+  "eyebrow": "NOTEBOOKLM WATERMARK REMOVER",
+  "heading": "NotebookLM Watermark Remover for Authorized Images",
+  "intro": "Clean a visible mark from a NotebookLM screenshot or visual export when you have permission to edit it. The current tool works with image files only and does not edit NotebookLM projects, source documents, audio, or video.",
+  "benefits": ["Screenshot and image-export workflow", "One image at a time", "Independent browser tool"],
+  "process": {
+    "eyebrow": "How it works",
+    "heading": "How to Use the NotebookLM Watermark Remover",
+    "intro": "Prepare an authorized screenshot or image export and follow three steps.",
+    "steps": [
+      { "number": "01", "title": "Save the Visual as an Image", "description": "Export or capture the visual you may edit as JPG, PNG, or WEBP." },
+      { "number": "02", "title": "Upload and Process", "description": "Upload one image up to 10 MB, sign in with Google, and start the image-processing flow." },
+      { "number": "03", "title": "Verify the Returned Image", "description": "Review the visible area, surrounding text, and graphics before downloading the result." }
+    ]
+  },
+  "faq": {
+    "eyebrow": "NotebookLM image FAQ",
+    "heading": "Questions About the NotebookLM Watermark Remover",
+    "intro": "Check supported exports, privacy, and service boundaries.",
+    "items": [
+      { "question": "Can the tool open a NotebookLM notebook?", "answer": "No. It only accepts one JPG, PNG, or WEBP image up to 10 MB. It cannot access notebooks, sources, audio, or video." },
+      { "question": "Will small text remain readable?", "answer": "Results vary, especially when a visible mark overlaps fine text or diagrams. Always inspect the returned image before use." },
+      { "question": "Is WatermarkGemini affiliated with Google or NotebookLM?", "answer": "No. WatermarkGemini is independent and is not affiliated with or endorsed by Google." },
+      { "question": "Are uploaded screenshots public?", "answer": "No permanent public URL is created. Files use private storage and are scheduled for deletion after 24 hours." }
+    ]
+  }
+}

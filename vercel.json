@@ -12,6 +12,11 @@
       "source": "/:path*/index.html",
       "destination": "/:path*",
       "permanent": true
+    },
+    {
+      "source": "/remove-gemini-watermark",
+      "destination": "/gemini-watermark-remover",
+      "permanent": true
     }
   ],
   "headers": [

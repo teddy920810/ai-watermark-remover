@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 
 test('critical public routes and SEO files are available', async ({ page, request }) => {
   for (const path of ['/', '/blog', '/privacy', '/robots.txt', '/sitemap.xml']) {
@@ -106,13 +106,10 @@ test('FAQ section emits a FAQPage JSON-LD schema', async ({ page }) => {
 });
 
 test('tool landing pages render their own usage steps and FAQ sections', async ({ page }) => {
-  const pages = [
-    'remove-gemini-watermark.json',
-    'remove-logo-from-image.json',
-    'remove-text-from-image.json',
-  ].map((fileName) => {
+  const contentDirectory = new URL('../../src/content/landing-pages/', import.meta.url);
+  const pages = readdirSync(contentDirectory, { encoding: 'utf8' }).filter((fileName) => fileName.endsWith('.json')).map((fileName) => {
     const content = JSON.parse(
-      readFileSync(new URL(`../../src/content/landing-pages/${fileName}`, import.meta.url), 'utf8'),
+      readFileSync(new URL(fileName, contentDirectory), 'utf8'),
     );
     return { path: `/${content.slug}`, faqHeading: content.faq.heading as string };
   });

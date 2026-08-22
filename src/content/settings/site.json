@@ -84,7 +84,7 @@
           },
           {
             "label": "Remove Gemini Watermark",
-            "href": "/remove-gemini-watermark"
+            "href": "/gemini-watermark-remover"
           }
         ]
       },
