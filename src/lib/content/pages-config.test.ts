@@ -6,7 +6,9 @@ const configSource = readFileSync(new URL('../../../.pages.yml', import.meta.url
 interface CmsField {
   name: string;
   label?: string;
-  type: string;
+  type?: string;
+  component?: string;
+  required?: boolean;
   description?: string;
   default?: boolean;
   list?: {
@@ -26,6 +28,7 @@ interface CmsField {
   fields?: CmsField[];
 }
 const config = YAML.parse(configSource) as {
+  components?: Record<string, Omit<CmsField, 'name'>>;
   media: Array<{
     name: string;
     label: string;
@@ -217,8 +220,32 @@ describe('Pages CMS maintenance safeguards', () => {
         expect.objectContaining({ name: 'shareImage', type: 'image', options: { media: 'images' } }),
         expect.objectContaining({ name: 'features', type: 'object' }),
         expect.objectContaining({ name: 'faq', type: 'object' }),
+        expect.objectContaining({ name: 'uploader', component: 'uploader-copy-override' }),
       ]),
     );
+  });
+
+  it('reuses an optional uploader-copy override on the homepage and tool pages', () => {
+    const override = config.components?.['uploader-copy-override'];
+    expect(override).toMatchObject({ type: 'object' });
+    expect(override?.fields?.map((field) => field.name)).toEqual([
+      'hero',
+      'dropzone',
+      'preview',
+      'result',
+      'auth',
+      'privacyNote',
+    ]);
+
+    for (const field of override?.fields ?? []) {
+      expect(field.required).not.toBe(true);
+      for (const child of field.fields ?? []) expect(child.required).not.toBe(true);
+    }
+
+    const landingPages = config.content.find((entry) => entry.name === 'landing-pages');
+    expect(landingPages?.fields).toEqual(expect.arrayContaining([
+      expect.objectContaining({ name: 'uploader', component: 'uploader-copy-override' }),
+    ]));
   });
 
   it('exposes shared header and footer settings as a single editable file', () => {
