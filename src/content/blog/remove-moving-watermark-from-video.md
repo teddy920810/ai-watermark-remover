@@ -74,7 +74,7 @@ If the source project still exists, this is the first method to try. When the ma
 
 | **Source-first rule:** Do not start with a moving watermark remover when the watermark is still editable. Pixel repair is for marks that are already baked into the frames. |
 
-| --- |
+
 
 ## **Method 2: Crop or Reframe a Safe-Edge Watermark**
 
@@ -83,7 +83,11 @@ The watermark moves, but its entire path stays close to a safe border.
 Important faces, subtitles, controls, and product details remain inside the new frame.  
 A small change in framing or aspect ratio is acceptable. |
 
+
+
 Cropping is often the most predictable way to remove a moving watermark from video because the same geometric change applies through the shot. The key is to crop for the watermark’s entire motion path, not only its first position.
+
+
 
 **1.** Duplicate the sequence and scrub through the whole shot to identify the largest area occupied by the watermark.
 
@@ -98,6 +102,8 @@ Cropping is often the most predictable way to remove a moving watermark from vid
 ![](/uploads/crop-watermark.png)
 
 *Figure 4. Crop only when the watermark stays in a safe edge zone and the new composition still supports the subject.*
+
+
 
 ## **Method 3: Track a Mask and Use an Intentional Cover**
 
