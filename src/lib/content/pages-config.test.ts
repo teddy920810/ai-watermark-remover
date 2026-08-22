@@ -258,6 +258,7 @@ describe('Pages CMS maintenance safeguards', () => {
   it('exposes blog cover, author, category, featured, and draft fields', () => {
     const blog = config.content.find((entry) => entry.name === 'blog');
     expect(blog?.fields).toEqual(expect.arrayContaining([
+      expect.objectContaining({ name: 'seoTitle', type: 'string', label: expect.stringContaining('TITLE') }),
       expect.objectContaining({ name: 'coverImage', type: 'image', options: { media: 'images' } }),
       expect.objectContaining({ name: 'coverAlt', type: 'string' }),
       expect.objectContaining({ name: 'author', type: 'string' }),

@@ -19,4 +19,12 @@ describe('resolveBlogMetadata', () => {
       'Example Site',
     )).toMatchObject({ author: 'Guest Author', category: 'News' });
   });
+
+  it('uses an independent SEO title without changing the article title', () => {
+    expect(resolveBlogMetadata(
+      { title: 'Visible article heading', seoTitle: 'Search-focused article title' },
+      defaults,
+      'Example Site',
+    )).toMatchObject({ title: 'Search-focused article title' });
+  });
 });

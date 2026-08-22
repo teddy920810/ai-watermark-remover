@@ -51,6 +51,7 @@ const homepage = defineCollection({
 const blogEntrySchema = z.object({
     slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
     title: z.string().min(1),
+    seoTitle: z.string().min(1).optional(),
     description: z.string().min(1),
     publishedAt: publishedAtSchema,
     updatedAt: publishedAtSchema.optional(),

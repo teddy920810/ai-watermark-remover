@@ -7,6 +7,7 @@ const astroConfigSource = readFileSync(new URL('../../../astro.config.mjs', impo
 
 describe('blog content mode', () => {
   it('models Markdown and HTML as explicit content choices', () => {
+    expect(configSource).toContain('seoTitle: z.string().min(1).optional()');
     expect(configSource).toContain("contentMode: z.enum(['markdown', 'html']).default('markdown')");
     expect(configSource).toContain('bodyHtml: trustedHtmlSchema.optional()');
     expect(configSource).toContain("post.contentMode === 'html'");
