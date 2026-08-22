@@ -51,10 +51,15 @@ function readJpeg(buffer: Buffer): ImageDimensions | undefined {
   return undefined;
 }
 
-export function resolvePublicImageDimensions(src: string): ImageDimensions | undefined {
+type ReadImage = (path: URL) => Buffer;
+
+export function resolvePublicImageDimensions(
+  src: string,
+  readImage: ReadImage = (path) => readFileSync(path),
+): ImageDimensions | undefined {
   if (!/^\/uploads\/[a-z0-9/_-]+\.(?:jpe?g|png|webp)$/i.test(src) || src.includes('..')) return undefined;
   try {
-    const buffer = readFileSync(new URL(`../../../public/${src.slice(1)}`, import.meta.url));
+    const buffer = readImage(new URL(`../../../public/${src.slice(1)}`, import.meta.url));
     return readPng(buffer) ?? readWebp(buffer) ?? readJpeg(buffer);
   } catch {
     return undefined;
