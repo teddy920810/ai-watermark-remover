@@ -35,6 +35,12 @@ describe('blog article reading layout', () => {
     expect(globalCssSource).toContain('.article-body p:has(> img:only-child) + p:has(> em:only-child) {');
   });
 
+  it('lets article h3 headings inherit the neutral text color', () => {
+    const h3Rule = globalCssSource.match(/\.article-body h3\s*\{([^}]*)\}/)?.[1] ?? '';
+
+    expect(h3Rule).not.toMatch(/\bcolor\s*:/);
+  });
+
   it('uses real quote markup for highlighted guidance instead of visible pipe characters', () => {
     expect(referenceArticleSource).toContain('> **Official Adobe note:**');
     expect(referenceArticleSource).toContain('> **Best for**');
