@@ -6,15 +6,31 @@
   "statusLabel": "Coming Soon",
   "heading": "Video Watermark Remover for Authorized Still Frames",
   "intro": "The current WatermarkGemini tool processes images rather than complete video files. Export an authorized frame as an image, process that single still, and review the result before returning it to your own video-editing workflow.",
-  "benefits": ["Still-frame image workflow", "No direct video upload", "Review each returned image"],
+  "benefits": [
+    "Still-frame image workflow",
+    "No direct video upload",
+    "Review each returned image"
+  ],
   "process": {
     "eyebrow": "How it works",
     "heading": "How to Use the Video Watermark Remover Workflow",
     "intro": "Prepare one permitted video frame as an image before starting.",
     "steps": [
-      { "number": "01", "title": "Export an Authorized Frame", "description": "Use your video editor to save the frame you may modify as JPG, PNG, or WEBP. MP4 and MOV files are not accepted." },
-      { "number": "02", "title": "Upload the Still Image", "description": "Upload one frame image up to 10 MB, sign in with Google, and start the current processing flow." },
-      { "number": "03", "title": "Review and Continue Editing", "description": "Inspect the returned frame, then use your own video editor if you need to place it back into a video project." }
+      {
+        "number": "01",
+        "title": "Export an Authorized Frame",
+        "description": "Use your video editor to save the frame you may modify as JPG, PNG, or WEBP. MP4 and MOV files are not accepted."
+      },
+      {
+        "number": "02",
+        "title": "Upload the Still Image",
+        "description": "Upload one frame image up to 10 MB, sign in with Google, and start the current processing flow."
+      },
+      {
+        "number": "03",
+        "title": "Review and Continue Editing",
+        "description": "Inspect the returned frame, then use your own video editor if you need to place it back into a video project."
+      }
     ]
   },
   "faq": {
@@ -22,10 +38,31 @@
     "heading": "Questions About the Video Watermark Remover Workflow",
     "intro": "Understand the difference between this tool page and the site's educational video-removal guide.",
     "items": [
-      { "question": "Can I upload a complete video?", "answer": "No. The current uploader accepts one JPG, PNG, or WEBP image up to 10 MB. Export an authorized still frame first." },
-      { "question": "Does this remove a moving watermark across every frame?", "answer": "No. It processes one still image at a time and does not track movement or rebuild a video. The blog guide separately explains the broader editing considerations for moving marks." },
-      { "question": "Will the tool return a video file?", "answer": "No. The returned result is an image. Any video reconstruction must be completed separately in your own video editor." },
-      { "question": "Which videos may I edit?", "answer": "Only work with videos you own or have permission to modify. Do not remove ownership marks to misrepresent authorship or bypass another creator's rights." }
+      {
+        "enabled": true,
+        "question": "Can I upload a complete video?",
+        "answer": "No. The current uploader accepts one JPG, PNG, or WEBP image up to 10 MB. Export an authorized still frame first."
+      },
+      {
+        "enabled": true,
+        "question": "Does this remove a moving watermark across every frame?",
+        "answer": "No. It processes one still image at a time and does not track movement or rebuild a video. The blog guide separately explains the broader editing considerations for moving marks."
+      },
+      {
+        "enabled": true,
+        "question": "Will the tool return a video file?",
+        "answer": "No. The returned result is an image. Any video reconstruction must be completed separately in your own video editor."
+      },
+      {
+        "enabled": true,
+        "question": "Which videos may I edit?",
+        "answer": "Only work with videos you own or have permission to modify. Do not remove ownership marks to misrepresent authorship or bypass another creator's rights."
+      }
     ]
+  },
+  "uploader": {
+    "dropzone": {
+      "dropLabel": "Coming Soon"
+    }
   }
 }
