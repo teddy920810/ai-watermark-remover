@@ -4,6 +4,7 @@ import { putFileWithRetry } from '../../lib/upload/direct-upload';
 import { MAX_UPLOAD_BYTES, validateUploadMetadata } from '../../lib/upload/validation';
 import { initialUploadState, uploadReducer } from './upload-machine';
 import type { UploaderCopy } from '../../lib/content/site-settings';
+import { CloudUpload, LockKeyhole } from 'lucide-react';
 
 type JsonRecord = Record<string, unknown>;
 
@@ -182,8 +183,7 @@ export default function ImageUploader({ logo, siteName, copy }: Props) {
           onDragLeave={() => setDragging(false)}
           onDrop={onDrop}
         >
-          <span className="upload-icon" aria-hidden="true">↑</span>
-          <strong>{copy.dropzone.dropLabel}</strong>
+          <span className="upload-action"><CloudUpload size={20} strokeWidth={2.4} aria-hidden="true" /><strong>{copy.dropzone.dropLabel}</strong></span>
           <span>{copy.dropzone.browseLabel}</span>
           <small>{copy.dropzone.formatLabel} · {formatCopy(copy.dropzone.maxSizeLabel, { maxSize: String(MAX_UPLOAD_BYTES / 1024 / 1024) })}</small>
           <input ref={inputRef} className="sr-only" type="file" accept="image/jpeg,image/png,image/webp" aria-label={copy.dropzone.fileInputLabel} onChange={onInput} />
@@ -236,7 +236,7 @@ export default function ImageUploader({ logo, siteName, copy }: Props) {
         </div>
       ) : null}
 
-      <p className="privacy-note"><span aria-hidden="true">◇</span> {copy.privacyNote}</p>
+      <p className="privacy-note"><LockKeyhole size={14} strokeWidth={2.2} aria-hidden="true" /> {copy.privacyNote}</p>
     </section>
   );
 }

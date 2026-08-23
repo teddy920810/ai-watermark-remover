@@ -6,6 +6,7 @@ import { splitFeatureCopy } from '../lib/content/feature-copy';
 import { resolvePublicImageDimensions } from '../lib/content/public-image-dimensions';
 import { visibleItems } from '../lib/content/item-visibility';
 import { resolveUploaderCopy } from '../lib/content/site-settings';
+import { ArrowRight, CircleCheck, CloudUpload, Download, Plus, Sparkles, WandSparkles } from '@lucide/astro';
 
 interface Props { page: CollectionEntry<'landingPages'>['data'] }
 const { page } = Astro.props;
@@ -20,6 +21,7 @@ const featureItems = visibleItems(features?.items ?? []).map((item) => ({
   dimensions: resolvePublicImageDimensions(item.image),
 }));
 const visibleFaqItems = visibleItems(page.faq.items);
+const processIcons = [CloudUpload, WandSparkles, Download];
 const faqSchema = visibleFaqItems.length > 0 ? {
   '@type': 'FAQPage',
   mainEntity: visibleFaqItems.map((item) => ({
@@ -36,7 +38,7 @@ const faqSchema = visibleFaqItems.length > 0 ? {
       <span class="eyebrow">{page.eyebrow}</span>
       <h1>{page.heading}</h1>
       <p>{page.intro}</p>
-      <ul class="check-list">{page.benefits.map((benefit) => <li>{benefit}</li>)}</ul>
+      <ul class="check-list">{page.benefits.map((benefit) => <li><CircleCheck size={19} stroke-width={2.5} />{benefit}</li>)}</ul>
     </div>
     <div id="tool" class="hero-tool"><ImageUploader logo={site.logo} siteName={site.name} copy={uploaderCopy} client:load /></div>
   </section>
@@ -44,7 +46,10 @@ const faqSchema = visibleFaqItems.length > 0 ? {
   <section class="section process-section" id="how-it-works">
     <div class="section-heading"><span class="eyebrow">{page.process.eyebrow}</span><h2>{page.process.heading}</h2><p>{page.process.intro}</p></div>
     <div class="steps">
-      {page.process.steps.map((step) => <article><span>{step.number}</span><h3>{step.title}</h3><p>{step.description}</p></article>)}
+      {page.process.steps.map((step, index) => {
+        const Icon = processIcons[index] ?? Sparkles;
+        return <><article><span class="step-number">{step.number}</span><span class="step-icon"><Icon size={28} stroke-width={2} /></span><h3>{step.title}</h3><p>{step.description}</p></article>{index < page.process.steps.length - 1 && <span class="step-arrow" aria-hidden="true"><ArrowRight size={21} stroke-width={2.2} /></span>}</>;
+      })}
     </div>
   </section>
 
@@ -62,6 +67,6 @@ const faqSchema = visibleFaqItems.length > 0 ? {
 
   {visibleFaqItems.length > 0 && <section class="section faq-section">
     <div class="section-heading"><span class="eyebrow">{page.faq.eyebrow}</span><h2>{page.faq.heading}</h2><p>{page.faq.intro}</p></div>
-    <div class="faq-list">{visibleFaqItems.map((item) => <details><summary>{item.question}<span>+</span></summary><p>{item.answer}</p></details>)}</div>
+    <div class="faq-list">{visibleFaqItems.map((item) => <details><summary>{item.question}<span aria-hidden="true"><Plus size={20} /></span></summary><p>{item.answer}</p></details>)}</div>
   </section>}
 </SiteLayout>

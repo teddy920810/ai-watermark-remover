@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import AuthControls from '../components/auth/AuthControls';
 import { getCollection } from 'astro:content';
+import { ArrowRight, ChevronDown, Menu, X } from '@lucide/astro';
 
 interface Props {
   title?: string;
@@ -80,25 +81,25 @@ const schemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [defaultS
     {site.announcement.enabled && (
       <aside class="site-announcement" aria-label="Site announcement">
         <span>{site.announcement.text}</span>
-        {site.announcement.linkLabel && site.announcement.linkHref && <a href={site.announcement.linkHref}>{site.announcement.linkLabel} →</a>}
+        {site.announcement.linkLabel && site.announcement.linkHref && <a href={site.announcement.linkHref}>{site.announcement.linkLabel}<ArrowRight size={14} aria-hidden="true" /></a>}
       </aside>
     )}
     <header class="site-header">
       <a class="brand" href="/" aria-label={`${site.name} home`}><img class="brand-logo" src={site.logo} alt="" /><span>{site.name}</span></a>
       <button class="mobile-menu-toggle" type="button" aria-label="Open navigation" aria-controls="site-navigation" aria-expanded="false" data-mobile-menu-toggle>
-        <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
+        <Menu class="menu-open-icon" size={21} aria-hidden="true" /><X class="menu-close-icon" size={21} aria-hidden="true" />
       </button>
       <nav id="site-navigation" aria-label="Main navigation">
         {site.header.navigation.map((item, index) => (item.children?.length ?? 0) > 0 ? (
           <div class="nav-dropdown">
-            <button class="nav-dropdown-trigger" type="button" aria-haspopup="true" aria-expanded="false" aria-controls={`nav-dropdown-${index}`} data-nav-dropdown-trigger>{item.label}<span aria-hidden="true">⌄</span></button>
+            <button class="nav-dropdown-trigger" type="button" aria-haspopup="true" aria-expanded="false" aria-controls={`nav-dropdown-${index}`} data-nav-dropdown-trigger>{item.label}<ChevronDown class="nav-chevron" size={15} aria-hidden="true" /></button>
             <div class="nav-dropdown-panel" id={`nav-dropdown-${index}`}>
               {(item.children ?? []).map((child) => <a href={child.href}>{child.label}</a>)}
             </div>
           </div>
         ) : <a href={item.href}>{item.label}</a>)}
       </nav>
-      <AuthControls client:load />
+      <div class="header-auth"><AuthControls client:load /></div>
     </header>
     <main><slot /></main>
     <footer class="site-footer">
