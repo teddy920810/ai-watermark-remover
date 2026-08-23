@@ -44,6 +44,18 @@ describe('site-wide operations visual system', () => {
     expect(globalCss).toContain('.footer-group {');
   });
 
+  it('matches the reference carousel, highlighted headings, tool grid, and guide lists', () => {
+    expect(homePage).toContain('data-scenario-direction="previous"');
+    expect(homePage).toContain('data-scenario-direction="next"');
+    expect(homePage).toContain("getCollection('landingPages')");
+    expect(homePage).toContain('.slice(0, 6)');
+    expect(homePage).toContain('class="guides-list-grid"');
+    expect(globalCss).toContain('.scenario-stage-controls {');
+    expect(globalCss).toContain('.section-heading h2 em');
+    expect(globalCss).toContain('.guides-list-grid {');
+    expect(globalCss).toMatch(/\.section\s*\{[^}]*padding:\s*110px max\(32px, calc\(\(100vw - 1320px\) \/ 2\)\);/s);
+  });
+
   it('uses generated imagery for the journey and library icons for controls', () => {
     expect(homePage).toContain("from '@lucide/astro'");
     expect(homePage).toContain('class="process-step-media"');

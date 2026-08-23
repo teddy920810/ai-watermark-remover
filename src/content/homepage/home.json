@@ -42,11 +42,13 @@
   "useCaseSection": {
     "eyebrow": "Real-world results",
     "heading": "Clean images for everyday moments",
+    "headingHighlight": "everyday moments",
     "intro": "Choose a cleanup scenario to preview the kind of image you can prepare."
   },
   "process": {
     "eyebrow": "How it works",
     "heading": "How to Remove Watermark for Free Online",
+    "headingHighlight": "for Free Online",
     "intro": "Remove watermarks free online in three simple steps—no downloads, brushes, layers, or complicated editing tools.",
     "steps": [
       {
@@ -69,6 +71,7 @@
   "privacy": {
     "eyebrow": "Private by Design",
     "heading": "Your Images Stay Private",
+    "headingHighlight": "Stay Private",
     "description": "Your uploads are stored privately, access links expire, and images are scheduled for automatic deletion after 24 hours. Processing and downloading are completely free.",
     "linkLabel": "Learn About Our Privacy Approach →",
     "linkHref": "/privacy",
@@ -93,6 +96,8 @@
   "guides": {
     "eyebrow": "Helpful guides",
     "heading": "Learn More About Free AI Watermark Remover from Image",
+    "headingHighlight": "AI Watermark Remover from Image",
+    "intro": "Practical guides for cleaner, more polished images.",
     "linkLabel": "View all guides →",
     "linkHref": "/blog",
     "articleLinkLabel": "Read guide →"
@@ -100,6 +105,7 @@
   "features": {
     "eyebrow": "Why choose WatermarkGemini",
     "heading": "A Free Online Watermark Remover for Supported Image Files",
+    "headingHighlight": "Supported Image Files",
     "intro": "Use WatermarkGemini online watermark remover in your browser to upload one supported image, start the current processing flow, compare the original and returned result, and download the file when it is ready.",
     "items": [
       {
@@ -146,6 +152,7 @@
   "faq": {
     "eyebrow": "FAQ",
     "heading": "Image Watermark Remover FAQs",
+    "headingHighlight": "FAQs",
     "intro": "Answers about supported files, online use, pricing, sign-in, processing limits, and responsible use.",
     "items": [
       {

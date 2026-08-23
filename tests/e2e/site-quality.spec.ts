@@ -123,6 +123,29 @@ test('homepage exposes the features and FAQ sections in CMS-managed order', asyn
   await expect(faqEntries.first()).toContainText('WatermarkGemini');
 });
 
+test('homepage reference controls, tools, highlighted headings, and guide lists work together', async ({ page }) => {
+  await page.goto('/');
+
+  const results = page.locator('[data-scenario-section]');
+  const tabs = results.getByRole('tab');
+  await expect(tabs.first()).toHaveAttribute('aria-selected', 'true');
+  await results.getByRole('button', { name: 'Next scenario' }).click();
+  await expect(tabs.nth(1)).toHaveAttribute('aria-selected', 'true');
+  await results.getByRole('button', { name: 'Previous scenario' }).click();
+  await expect(tabs.first()).toHaveAttribute('aria-selected', 'true');
+
+  const toolCards = page.locator('.removal-grid .removal-card');
+  await expect(toolCards).toHaveCount(6);
+  for (const card of await toolCards.all()) {
+    await expect(card).toHaveAttribute('href', /^\/[a-z0-9-]+$/);
+  }
+
+  await expect(page.locator('.section-heading h2 em')).toHaveCount(6);
+  await expect(page.locator('.standards-section h2 em')).toHaveCount(1);
+  await expect(page.locator('.guides-list-grid .guides-list')).toHaveCount(2);
+  await expect(page.locator('.guides-list-grid li')).toHaveCount(6);
+});
+
 test('FAQ section emits a FAQPage JSON-LD schema', async ({ page }) => {
   await page.goto('/');
   const schemas = await page.locator('script[type="application/ld+json"]').allTextContents();
