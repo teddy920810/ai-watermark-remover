@@ -88,11 +88,13 @@
           },
           {
             "label": "Sora Watermark Remover",
-            "href": "/sora-watermark-remover"
+            "href": "/sora-watermark-remover",
+            "badge": "Coming Soon"
           },
           {
             "label": "Veo Watermark Remover",
-            "href": "/veo-watermark-remover"
+            "href": "/veo-watermark-remover",
+            "badge": "Coming Soon"
           },
           {
             "label": "Grok Watermark Remover",
@@ -100,7 +102,8 @@
           },
           {
             "label": "Kling Watermark Remover",
-            "href": "/kling-watermark-remover"
+            "href": "/kling-watermark-remover",
+            "badge": "Coming Soon"
           },
           {
             "label": "PDF Watermark Remover",
@@ -112,11 +115,13 @@
           },
           {
             "label": "TikTok Watermark Remover",
-            "href": "/tiktok-watermark-remover"
+            "href": "/tiktok-watermark-remover",
+            "badge": "Coming Soon"
           },
           {
             "label": "Video Watermark Remover",
-            "href": "/video-watermark-remover"
+            "href": "/video-watermark-remover",
+            "badge": "Coming Soon"
           }
         ]
       },

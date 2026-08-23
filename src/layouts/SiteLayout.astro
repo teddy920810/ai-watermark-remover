@@ -94,7 +94,12 @@ const schemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [defaultS
           <div class="nav-dropdown">
             <button class="nav-dropdown-trigger" type="button" aria-haspopup="true" aria-expanded="false" aria-controls={`nav-dropdown-${index}`} data-nav-dropdown-trigger>{item.label}<ChevronDown class="nav-chevron" size={15} aria-hidden="true" /></button>
             <div class="nav-dropdown-panel" id={`nav-dropdown-${index}`}>
-              {(item.children ?? []).map((child) => <a href={child.href}>{child.label}</a>)}
+              {(item.children ?? []).map((child) => (
+                <a href={child.href}>
+                  <span>{child.label}</span>
+                  {child.badge && <span class="nav-badge">{child.badge}</span>}
+                </a>
+              ))}
             </div>
           </div>
         ) : <a href={item.href}>{item.label}</a>)}

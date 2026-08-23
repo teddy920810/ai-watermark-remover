@@ -267,6 +267,10 @@ describe('Pages CMS maintenance safeguards', () => {
     expect(navigation?.fields).toEqual(expect.arrayContaining([
       expect.objectContaining({ name: 'children', type: 'object' }),
     ]));
+    const children = navigation?.fields?.find((field) => field.name === 'children');
+    expect(children?.fields).toEqual(expect.arrayContaining([
+      expect.objectContaining({ name: 'badge', type: 'string' }),
+    ]));
   });
 
   it('connects the blog rich-text editor to the static image library', () => {
