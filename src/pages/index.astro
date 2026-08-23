@@ -7,6 +7,7 @@ import { splitFeatureCopy } from '../lib/content/feature-copy';
 import { resolvePublicImageDimensions } from '../lib/content/public-image-dimensions';
 import { visibleItems } from '../lib/content/item-visibility';
 import { resolveUploaderCopy } from '../lib/content/site-settings';
+import { ArrowRight, CircleCheck, Clock3, CloudUpload, Download, Image, Link2, Plus, ShieldCheck, Sparkles, Type, WandSparkles } from '@lucide/astro';
 
 export const prerender = true;
 const [homepage] = await getCollection('homepage');
@@ -23,6 +24,9 @@ const featureItems = visibleItems(home.features.items).map((item) => ({
   dimensions: resolvePublicImageDimensions(item.image),
 }));
 const visibleFaqItems = visibleItems(home.faq.items);
+const useCaseIcons = [Image, Type, Sparkles];
+const processIcons = [CloudUpload, WandSparkles, Download];
+const privacyIcons = [ShieldCheck, Clock3, Link2];
 const faqSchema = visibleFaqItems.length > 0 ? {
   '@type': 'FAQPage',
   mainEntity: visibleFaqItems.map((item) => ({
@@ -39,19 +43,25 @@ const faqSchema = visibleFaqItems.length > 0 ? {
       <span class="eyebrow">{home.hero.eyebrow}</span>
       <h1>{home.hero.heading}<br /><em>{home.hero.highlightedHeading}</em></h1>
       <p>{home.hero.intro}</p>
-      <div class="trust-row">{home.hero.trustItems.map((item) => <span>{item}</span>)}</div>
+      <div class="trust-row">{home.hero.trustItems.map((item) => <span><CircleCheck size={18} stroke-width={2.5} />{item.replace(/^✓\s*/, '')}</span>)}</div>
     </div>
     <div id="tool" class="hero-tool"><ImageUploader logo={site.logo} siteName={site.name} copy={uploaderCopy} client:load /></div>
   </section>
 
   <section class="use-cases" aria-label="Popular tools">
-    {home.useCases.map((item) => <a href={item.href}><span class="case-icon">{item.icon}</span><span><strong>{item.title}</strong><small>{item.description}</small></span><b>→</b></a>)}
+    {home.useCases.map((item, index) => {
+      const Icon = useCaseIcons[index] ?? Sparkles;
+      return <a href={item.href}><span class="case-icon"><Icon size={22} stroke-width={2.2} /></span><span><strong>{item.title}</strong><small>{item.description}</small></span><span class="case-arrow" aria-hidden="true"><ArrowRight size={18} /></span></a>;
+    })}
   </section>
 
   <section class="section process-section" id="how-it-works">
     <div class="section-heading"><span class="eyebrow">{home.process.eyebrow}</span><h2>{home.process.heading}</h2><p>{home.process.intro}</p></div>
     <div class="steps">
-      {home.process.steps.map((step) => <article><span>{step.number}</span><h3>{step.title}</h3><p>{step.description}</p></article>)}
+      {home.process.steps.map((step, index) => {
+        const Icon = processIcons[index] ?? Sparkles;
+        return <><article><span class="step-number">{step.number}</span><span class="step-icon"><Icon size={28} stroke-width={2} /></span><h3>{step.title}</h3><p>{step.description}</p></article>{index < home.process.steps.length - 1 && <span class="step-arrow" aria-hidden="true"><ArrowRight size={21} stroke-width={2.2} /></span>}</>;
+      })}
     </div>
   </section>
 
@@ -68,7 +78,10 @@ const faqSchema = visibleFaqItems.length > 0 ? {
 
   <section class="section standards-section">
     <div><span class="eyebrow">{home.privacy.eyebrow}</span><h2>{home.privacy.heading}</h2><p>{home.privacy.description}</p><a class="text-link" href={home.privacy.linkHref}>{home.privacy.linkLabel}</a></div>
-    <div class="standards-card">{home.privacy.features.map((feature) => <div><span>{feature.icon}</span><strong>{feature.title}</strong><small>{feature.description}</small></div>)}</div>
+    <div class="standards-card">{home.privacy.features.map((feature, index) => {
+      const Icon = privacyIcons[index] ?? ShieldCheck;
+      return <div><span><Icon size={21} stroke-width={2.1} /></span><strong>{feature.title}</strong><small>{feature.description}</small></div>;
+    })}</div>
   </section>
 
   <section class="section guides-section">
@@ -78,6 +91,6 @@ const faqSchema = visibleFaqItems.length > 0 ? {
 
   {visibleFaqItems.length > 0 && <section class="section faq-section home-faq-section" aria-labelledby="faq-heading">
     <div class="section-heading"><span class="eyebrow">{home.faq.eyebrow}</span><h2 id="faq-heading">{home.faq.heading}</h2><p>{home.faq.intro}</p></div>
-    <div class="faq-list">{visibleFaqItems.map((item) => <details><summary>{item.question}<span aria-hidden="true">+</span></summary><p>{item.answer}</p></details>)}</div>
+    <div class="faq-list">{visibleFaqItems.map((item) => <details><summary>{item.question}<span aria-hidden="true"><Plus size={20} /></span></summary><p>{item.answer}</p></details>)}</div>
   </section>}
 </SiteLayout>
