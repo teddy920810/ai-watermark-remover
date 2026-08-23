@@ -1,9 +1,9 @@
 ---
 import ImageUploader from './uploader/ImageUploader';
+import ResponsiveImage from './ResponsiveImage.astro';
 import SiteLayout from '../layouts/SiteLayout.astro';
 import { getCollection, type CollectionEntry } from 'astro:content';
 import { splitFeatureCopy } from '../lib/content/feature-copy';
-import { resolvePublicImageDimensions } from '../lib/content/public-image-dimensions';
 import { visibleItems } from '../lib/content/item-visibility';
 import { resolveUploaderCopy } from '../lib/content/site-settings';
 import { ArrowRight, CircleCheck, CloudUpload, Download, Plus, Sparkles, WandSparkles } from '@lucide/astro';
@@ -18,7 +18,6 @@ const features = page.features;
 const featureItems = visibleItems(features?.items ?? []).map((item) => ({
   ...item,
   copy: splitFeatureCopy(item.description, item.listItems),
-  dimensions: resolvePublicImageDimensions(item.image),
 }));
 const visibleFaqItems = visibleItems(page.faq.items);
 const processIcons = [CloudUpload, WandSparkles, Download];
@@ -61,7 +60,7 @@ const faqSchema = visibleFaqItems.length > 0 ? {
       <div class="feature-list">
         {featureItems.map((item) => <article class:list={{ 'feature-item': true, 'is-image-left': item.imagePosition === 'left' }}>
           <div class="feature-copy"><span class="eyebrow">{item.eyebrow}</span><h3>{item.heading}</h3><p>{item.copy.description}</p>{item.copy.listItems.length > 0 && <ul class="feature-list-items">{item.copy.listItems.map((listItem) => <li>{listItem}</li>)}</ul>}</div>
-          <div class="feature-media"><img src={item.image} alt={item.imageAlt} loading="lazy" decoding="async" width={item.dimensions?.width} height={item.dimensions?.height} /></div>
+          <div class="feature-media"><ResponsiveImage src={item.image} alt={item.imageAlt} sizes="(max-width: 900px) calc(100vw - 40px), 520px" /></div>
         </article>)}
       </div>
     </section>

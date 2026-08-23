@@ -6,6 +6,7 @@ import { defineConfig } from 'astro/config';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath, URL } from 'node:url';
 import { omitMissingBlogImages } from './src/lib/content/remark-missing-blog-images';
+import { optimizeBlogImages } from './src/lib/content/remark-optimized-blog-images';
 
 const siteSettings = JSON.parse(readFileSync(new URL('./src/content/settings/site.json', import.meta.url), 'utf8'));
 const blogContentDirectory = fileURLToPath(new URL('./src/content/blog', import.meta.url));
@@ -18,7 +19,10 @@ export default defineConfig({
   integrations: [react()],
   markdown: {
     processor: unified({
-      remarkPlugins: [[omitMissingBlogImages, { blogDirectory: blogContentDirectory }]],
+      remarkPlugins: [
+        [omitMissingBlogImages, { blogDirectory: blogContentDirectory }],
+        [optimizeBlogImages, { blogDirectory: blogContentDirectory }],
+      ],
     }),
   },
   vite: { plugins: [tailwindcss()] },

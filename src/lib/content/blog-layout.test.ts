@@ -33,7 +33,8 @@ describe('blog article reading layout', () => {
     expect(globalCssSource).toContain('.article-body tbody tr:nth-child(even) {');
     expect(globalCssSource).toContain('.article-body a {');
     expect(globalCssSource).toContain('.article-body pre {');
-    expect(globalCssSource).toContain('.article-body p:has(> img:only-child) + p:has(> em:only-child) {');
+    expect(globalCssSource).toContain('.responsive-picture, .responsive-blog-image { display: block; }');
+    expect(globalCssSource).toContain('.article-body p:has(> :is(img, picture):only-child) + p:has(> em:only-child) {');
   });
 
   it('lets article h3 headings inherit the neutral text color', () => {

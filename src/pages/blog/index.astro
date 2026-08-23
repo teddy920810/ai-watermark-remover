@@ -1,5 +1,6 @@
 ---
 import SiteLayout from '../../layouts/SiteLayout.astro';
+import ResponsiveImage from '../../components/ResponsiveImage.astro';
 import { getCollection } from 'astro:content';
 import { sortBlogEntries } from '../../lib/content/entries';
 import { resolveBlogMetadata } from '../../lib/content/blog-metadata';
@@ -26,7 +27,7 @@ const schema = buildCollectionPageSchema({
   <header class="blog-hero"><span class="eyebrow">{settings.eyebrow}</span><h1>{settings.heading}</h1><p>{settings.intro}</p></header>
   <section class="blog-list">
     {blogPosts.slice(0, settings.postsPerPage).map(({ data: post }) => <article class:list={{ 'has-cover': post.coverImage }}>
-      {post.coverImage && <img class="blog-card-image" src={post.coverImage} alt={resolveImageAlt(post.coverImage, post.coverAlt, imageSettingsEntry.data.images, post.title)} loading="lazy" />}
+      {post.coverImage && <ResponsiveImage class="blog-card-image" src={post.coverImage} alt={resolveImageAlt(post.coverImage, post.coverAlt, imageSettingsEntry.data.images, post.title)} sizes="(max-width: 900px) calc(100vw - 36px), 560px" />}
       <div><span class="article-category">{resolveBlogMetadata(post, siteEntry.data.contentDefaults, siteEntry.data.name).category}</span><h2><a href={`/blog/${post.slug}`}>{post.title}</a></h2><p>{post.description}</p></div>
       <small>{post.readTime}</small>
     </article>)}
