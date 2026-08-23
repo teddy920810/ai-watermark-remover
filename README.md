@@ -72,13 +72,16 @@ Google OAuth 回调地址为 `/api/auth/callback/google`。本地 3000 端口与
 
 ## 质量检查
 
-行为变更采用 TDD：先写失败测试，再实现。提交前运行：
+行为变更采用 TDD：先写失败测试，再实现。本地检查按改动范围选择：
 
 ```sh
-npm run verify
+npm run check:fast       # 普通小改
+npm run check:content    # CMS、Blog、落地页、图片内容
+npm run check:ui         # 布局、全局样式、公共 UI
+npm run release:verify   # API、安全、构建链、依赖或其他高风险改动
 ```
 
-它会依次执行覆盖率测试、代码检查、生产构建和 Chromium E2E。首次在本机运行 E2E 前执行 `npx playwright install chromium`。生产环境真实链路使用 `npm run test:smoke:production`，该命令会向 R2 写入无敏感的 1×1 测试图片并由生命周期自动清理，不能在不知情的情况下反复运行。
+PR 的 GitHub CI 始终运行完整 `npm run verify`，它是合并 `main` 的必需门禁。低风险改动无需在本地和 CI 重复执行同一套全量检查。首次在本机运行 E2E 前执行 `npx playwright install chromium`。生产环境真实链路使用 `npm run test:smoke:production`，该命令会向 R2 写入无敏感的 1×1 测试图片并由生命周期自动清理，不能在不知情的情况下反复运行。
 
 测试分层、CI、失败处理和共创者操作说明见 [测试与质量指南](docs/TESTING_GUIDE.md)。不要提交 `.env.local`、R2 密钥、`S3-info.txt`、构建输出或本地测试截图。
 

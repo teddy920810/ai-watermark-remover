@@ -15,13 +15,16 @@ Pages CMS 会直接向 `main` 写入内容提交。因此长时间开发期间�
 
 1. 添加或更新测试，并确认测试因目标行为尚未实现而失败。
 2. 实现最小改动使测试通过。
-3. 重构并运行全量检查。
+3. 根据改动范围选择本地检查；PR CI 负责统一执行完整全量检查。
 
 ```sh
-npm run verify
+npm run check:fast       # 普通小改
+npm run check:content    # CMS、Blog、落地页、图片内容
+npm run check:ui         # 布局、全局样式、公共 UI
+npm run release:verify   # API、安全、依赖、构建与 CI 等高风险改动
 ```
 
-`verify` 包含覆盖率、Lint、生产构建和浏览器 E2E。首次运行浏览器测试前执行 `npx playwright install chromium`。只改文案也必须至少运行 `npm run verify`，因为内容 schema、SEO 路由和 Pages CMS 数据可能导致构建失败。
+PR CI 中的 `verify` 包含覆盖率、Lint、生产构建和浏览器 E2E，并且必须通过后才能合并 `main`。首次运行浏览器测试前执行 `npx playwright install chromium`。内容修改使用 `check:content` 在本地验证 schema、SEO 路由和生产构建，无需与 CI 重复运行完整 `verify`。
 
 测试职责：
 

@@ -64,12 +64,13 @@ npm run blog:import-docx -- --input "审核稿.docx" --slug "how-to-remove-examp
 ## 测试与发布
 
 ```sh
-npm test
-npm run lint
-npm run build
-# 或一次执行全部：
-npm run verify
+npm run check:fast       # 普通小改：内容同步 + 全部单元测试
+npm run check:content    # CMS、Blog、落地页、图片：内容测试 + Build
+npm run check:ui         # 布局、样式、公共 UI：相关测试 + 公共页面 E2E
+npm run release:verify   # 高风险改动：依赖审计 + 站点校验 + 完整 verify
 ```
+
+所有行为变化先运行定向红测和绿测。本地根据改动范围选择上面的检查；PR CI 仍会运行完整 `npm run verify`，且必须成功后才能合并 `main`。API、鉴权、R2、Provider、安全策略、依赖、构建或 CI 修改必须在本地运行 `release:verify`。视觉验收应抽查代表模板的桌面与移动端，并同时检查一个应出现目标行为的正向页面和一个不应出现的负向页面。
 
 Pages CMS 可能随时提交到 `main`。推送前执行 `git fetch origin main` 并检查分歧；如远端领先，先安全 rebase/merge，禁止 force push。合并到 `main` 后 Vercel 自动发布。
 
