@@ -41,6 +41,16 @@ Astro 负责内容路由和服务端 API；React 只用于上传交互岛。浏�
 
 博客 Markdown 正文中的相对图片如果尚未提交，构建会跳过该图片并输出 `[content] Missing blog image omitted` 警告，避免单张正文配图阻塞整站发布。其他内容 schema 仍严格校验；封面图等 CMS 图片应继续通过 `public/uploads`（页面路径 `/uploads`）管理。
 
+### 从审核后的 Word 快速导入博客
+
+审核稿使用一个 H1 标题、紧随其后的摘要、H2/H3 正文、Word 表格和 Caption 图片说明。运行跨平台导入命令后，会生成 Pages CMS 兼容的 Markdown、保留原始图片字节，并把单列表格转成 quote、多列表格转成 Markdown table：
+
+```sh
+npm run blog:import-docx -- --input "审核稿.docx" --slug "how-to-remove-example-watermark" --seo-title "SEO title" --published-at "2026-08-23"
+```
+
+导入器会拒绝已存在的 slug，避免覆盖已发布博客。导入后仍需运行内容校验、检查图片与来源、在浏览器抽查最终页面，并按正常 PR 流程发布。
+
 ## R2 约束
 
 - Bucket：`watermark`，保持私有。
