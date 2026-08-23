@@ -1,0 +1,32 @@
+---
+import { buildOptimizedImageSrcSet } from '../lib/content/optimized-image';
+import { resolvePublicImageDimensions } from '../lib/content/public-image-dimensions';
+
+interface Props {
+  src: string;
+  alt: string;
+  class?: string;
+  sizes: string;
+  loading?: 'eager' | 'lazy';
+  fetchpriority?: 'high' | 'low' | 'auto';
+}
+
+const {
+  src,
+  alt,
+  class: className,
+  sizes,
+  loading = 'lazy',
+  fetchpriority,
+} = Astro.props;
+const dimensions = resolvePublicImageDimensions(src);
+const srcSet = dimensions ? buildOptimizedImageSrcSet(src, dimensions.width) : undefined;
+---
+{srcSet ? (
+  <picture class:list={['responsive-picture', className]}>
+    <source type="image/webp" srcset={srcSet} sizes={sizes} />
+    <img src={src} alt={alt} width={dimensions?.width} height={dimensions?.height} loading={loading} decoding="async" fetchpriority={fetchpriority} />
+  </picture>
+) : (
+  <img class={className} src={src} alt={alt} width={dimensions?.width} height={dimensions?.height} loading={loading} decoding="async" fetchpriority={fetchpriority} />
+)}

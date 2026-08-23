@@ -41,6 +41,8 @@ Astro 负责内容路由和服务端 API；React 只用于上传交互岛。浏�
 
 博客 Markdown 正文中的相对图片如果尚未提交，构建会跳过该图片并输出 `[content] Missing blog image omitted` 警告，避免单张正文配图阻塞整站发布。其他内容 schema 仍严格校验；封面图等 CMS 图片应继续通过 `public/uploads`（页面路径 `/uploads`）管理。
 
+Pages CMS 上传的 PNG/JPG 会在 `prebuild` 阶段自动生成 480、768、1200 px（不放大原图）的 WebP 衍生图。CMS 内容仍保存原始 `/uploads/...` 路径，页面通过 `<picture>` 优先提供 WebP 并保留原图回退；不要删除原始运营图片。SVG、GIF 和已是 WebP 的资源不会再次转换，生成目录 `public/generated/` 不提交到 Git。
+
 ### 从审核后的 Word 快速导入博客
 
 审核稿使用一个 H1 标题、紧随其后的摘要、H2/H3 正文、Word 表格和 Caption 图片说明。运行跨平台导入命令后，会生成 Pages CMS 兼容的 Markdown、保留原始图片字节，并把单列表格转成 quote、多列表格转成 Markdown table：

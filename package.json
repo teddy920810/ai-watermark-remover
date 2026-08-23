@@ -8,6 +8,7 @@
   },
   "scripts": {
     "dev": "astro dev",
+    "prebuild": "npm run images:optimize",
     "build": "astro check && astro build",
     "preview": "astro preview",
     "lint": "astro check && eslint .",
@@ -20,6 +21,7 @@
     "audit:dependencies": "npm audit --audit-level=high",
     "auth:import": "node scripts/import-google-credentials.mjs",
     "blog:import-docx": "node scripts/import-blog-docx.mjs",
+    "images:optimize": "node scripts/optimize-images.mjs",
     "site:init": "node scripts/initialize-site.mjs",
     "site:validate": "node scripts/validate-site.mjs",
     "verify:deploy": "npm run site:validate && npm run test:coverage && npm run lint && npm run build",
@@ -52,6 +54,7 @@
     "eslint": "^9.33.0",
     "eslint-plugin-astro": "^1.3.1",
     "mammoth": "^1.12.1",
+    "sharp": "^0.35.3",
     "turndown": "^7.2.4",
     "turndown-plugin-gfm": "^1.0.2",
     "typescript": "^5.9.2",

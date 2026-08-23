@@ -1,10 +1,10 @@
 ---
 import ImageUploader from '../components/uploader/ImageUploader';
+import ResponsiveImage from '../components/ResponsiveImage.astro';
 import SiteLayout from '../layouts/SiteLayout.astro';
 import { getCollection } from 'astro:content';
 import { sortBlogEntries } from '../lib/content/entries';
 import { splitFeatureCopy } from '../lib/content/feature-copy';
-import { resolvePublicImageDimensions } from '../lib/content/public-image-dimensions';
 import { visibleItems } from '../lib/content/item-visibility';
 import { resolveUploaderCopy } from '../lib/content/site-settings';
 import { ArrowRight, CircleCheck, Clock3, CloudUpload, Download, Image, Link2, Plus, ShieldCheck, Sparkles, Type, WandSparkles } from '@lucide/astro';
@@ -21,7 +21,6 @@ const blogPosts = sortBlogEntries(await getCollection('blog')).slice(0, 2);
 const featureItems = visibleItems(home.features.items).map((item) => ({
   ...item,
   copy: splitFeatureCopy(item.description, item.listItems),
-  dimensions: resolvePublicImageDimensions(item.image),
 }));
 const visibleFaqItems = visibleItems(home.faq.items);
 const useCaseIcons = [Image, Type, Sparkles];
@@ -73,7 +72,7 @@ const faqSchema = visibleFaqItems.length > 0 ? {
     <div class="feature-list">
       {featureItems.map((item) => <article class:list={{ 'feature-item': true, 'is-image-left': item.imagePosition === 'left' }}>
         <div class="feature-copy"><span class="eyebrow">{item.eyebrow}</span><h3>{item.heading}</h3><p>{item.copy.description}</p>{item.copy.listItems.length > 0 && <ul class="feature-list-items">{item.copy.listItems.map((listItem) => <li>{listItem}</li>)}</ul>}</div>
-        <div class="feature-media"><img src={item.image} alt={item.imageAlt} loading="lazy" decoding="async" width={item.dimensions?.width} height={item.dimensions?.height} /></div>
+        <div class="feature-media"><ResponsiveImage src={item.image} alt={item.imageAlt} sizes="(max-width: 900px) calc(100vw - 40px), 520px" /></div>
       </article>)}
     </div>
   </section>}
