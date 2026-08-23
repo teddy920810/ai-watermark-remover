@@ -63,6 +63,27 @@
     },
     "privacyNote": "Private upload · Automatically deleted after 24 hours"
   },
+  "processVisuals": [
+    {
+      "image": "/uploads/workflow-upload-step.png",
+      "imageAlt": "Image entering the secure upload workflow"
+    },
+    {
+      "image": "/uploads/workflow-ai-detection-step.png",
+      "imageAlt": "AI detecting a visible watermark area in an image"
+    },
+    {
+      "image": "/uploads/workflow-download-step.png",
+      "imageAlt": "Before and after image ready for secure download"
+    }
+  ],
+  "cta": {
+    "eyebrow": "Ready when you are",
+    "heading": "Make the distraction disappear.",
+    "description": "Upload an image and try WatermarkGemini for free.",
+    "buttonLabel": "Upload your image",
+    "buttonHref": "/#tool"
+  },
   "announcement": {
     "enabled": false,
     "text": "New features and service updates will appear here.",
@@ -132,18 +153,28 @@
   },
   "footer": {
     "tagline": "Simple, private image cleanup for work you own.",
-    "links": [
+    "groups": [
       {
-        "label": "Privacy",
-        "href": "/privacy"
+        "heading": "Product",
+        "links": [
+          { "label": "Watermark remover", "href": "/" },
+          { "label": "Remove logo", "href": "/remove-logo-from-image" },
+          { "label": "Remove text", "href": "/remove-text-from-image" }
+        ]
       },
       {
-        "label": "Terms",
-        "href": "/terms"
+        "heading": "Resources",
+        "links": [
+          { "label": "Guides", "href": "/blog" },
+          { "label": "How it works", "href": "/#how-it-works" }
+        ]
       },
       {
-        "label": "Guides",
-        "href": "/blog"
+        "heading": "Legal",
+        "links": [
+          { "label": "Privacy", "href": "/privacy" },
+          { "label": "Terms", "href": "/terms" }
+        ]
       }
     ]
   },

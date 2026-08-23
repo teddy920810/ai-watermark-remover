@@ -32,11 +32,23 @@ describe('site-wide operations visual system', () => {
     expect(globalCss).toContain('.legal-body {');
   });
 
-  it('uses library icons for the upload and three-step journey', () => {
+  it('implements the supplied post-hero section system', () => {
+    expect(homePage).toContain('class="process-step-media"');
+    expect(homePage).toContain('class="removal-grid"');
+    expect(homePage).toContain('class="scenario-showcase"');
+    expect(landingPage).toContain('class="process-step-media"');
+    expect(globalCss).toContain('.process-step-media {');
+    expect(globalCss).toContain('.removal-grid {');
+    expect(globalCss).toContain('.scenario-showcase {');
+    expect(globalCss).toContain('.site-cta {');
+    expect(globalCss).toContain('.footer-group {');
+  });
+
+  it('uses generated imagery for the journey and library icons for controls', () => {
     expect(homePage).toContain("from '@lucide/astro'");
-    expect(homePage).toContain('class="step-icon"');
+    expect(homePage).toContain('class="process-step-media"');
     expect(landingPage).toContain("from '@lucide/astro'");
-    expect(landingPage).toContain('class="step-icon"');
+    expect(landingPage).toContain('class="process-step-media"');
     expect(uploader).toContain("from 'lucide-react'");
     expect(uploader).toContain('className="upload-action"');
   });

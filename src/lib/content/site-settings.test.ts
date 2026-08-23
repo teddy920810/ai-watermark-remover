@@ -21,7 +21,10 @@ describe('site settings CMS content', () => {
     expect(parsed.logo).toMatch(/\S/);
     expect(parsed.defaultShareImage).toMatch(/\S/);
     expect(parsed.header.navigation.length).toBeGreaterThan(0);
-    expect(parsed.footer.links.length).toBeGreaterThan(0);
+    expect(parsed.footer.groups.length).toBeGreaterThan(0);
+    expect(parsed.footer.groups.every((group) => group.links.length > 0)).toBe(true);
+    expect(parsed.processVisuals).toHaveLength(3);
+    expect(parsed.cta.heading).toBeTruthy();
     expect(parsed.uploader.hero.heading).toBeTruthy();
     expect(parsed.uploader.dropzone.fileInputLabel).toBeTruthy();
   });

@@ -15,10 +15,23 @@ describe('homepage CMS content', () => {
     const parsed = homepageSchema.parse(homepage);
     expect(parsed.hero.trustItems.length).toBeGreaterThan(0);
     expect(parsed.useCases.length).toBeGreaterThan(0);
+    expect(parsed.useCaseSection.heading).toBeTruthy();
     expect(parsed.process.steps.length).toBeGreaterThan(0);
     expect(parsed.features.items.length).toBeGreaterThan(0);
     expect(parsed.faq.items.length).toBeGreaterThan(0);
     expect(parsed.privacy.features.length).toBeGreaterThan(0);
+    expect(parsed.useCases.every((item) => item.image && item.imageAlt)).toBe(true);
+  });
+
+  it('allows each process step to override the shared CMS visual', () => {
+    const customized = structuredClone(homepage);
+    customized.process.steps[0].image = '/uploads/custom-step.webp';
+    customized.process.steps[0].imageAlt = 'Custom upload step';
+
+    expect(homepageSchema.parse(customized).process.steps[0]).toMatchObject({
+      image: '/uploads/custom-step.webp',
+      imageAlt: 'Custom upload step',
+    });
   });
 
   it('accepts a partial homepage uploader-copy override', () => {

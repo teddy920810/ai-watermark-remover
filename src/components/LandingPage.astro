@@ -6,7 +6,7 @@ import { getCollection, type CollectionEntry } from 'astro:content';
 import { splitFeatureCopy } from '../lib/content/feature-copy';
 import { visibleItems } from '../lib/content/item-visibility';
 import { resolveUploaderCopy } from '../lib/content/site-settings';
-import { ArrowRight, CircleCheck, CloudUpload, Download, Plus, Sparkles, WandSparkles } from '@lucide/astro';
+import { CircleCheck, Plus } from '@lucide/astro';
 
 interface Props { page: CollectionEntry<'landingPages'>['data'] }
 const { page } = Astro.props;
@@ -20,7 +20,6 @@ const featureItems = visibleItems(features?.items ?? []).map((item) => ({
   copy: splitFeatureCopy(item.description, item.listItems),
 }));
 const visibleFaqItems = visibleItems(page.faq.items);
-const processIcons = [CloudUpload, WandSparkles, Download];
 const faqSchema = visibleFaqItems.length > 0 ? {
   '@type': 'FAQPage',
   mainEntity: visibleFaqItems.map((item) => ({
@@ -51,8 +50,8 @@ const faqSchema = visibleFaqItems.length > 0 ? {
     <div class="section-heading"><span class="eyebrow">{page.process.eyebrow}</span><h2>{page.process.heading}</h2><p>{page.process.intro}</p></div>
     <div class="steps">
       {page.process.steps.map((step, index) => {
-        const Icon = processIcons[index] ?? Sparkles;
-        return <><article><span class="step-number">{step.number}</span><span class="step-icon"><Icon size={28} stroke-width={2} /></span><h3>{step.title}</h3><p>{step.description}</p></article>{index < page.process.steps.length - 1 && <span class="step-arrow" aria-hidden="true"><ArrowRight size={21} stroke-width={2.2} /></span>}</>;
+        const visual = site.processVisuals[index];
+        return <article><div class="process-step-media"><ResponsiveImage src={step.image ?? visual.image} alt={step.imageAlt ?? visual.imageAlt} sizes="(max-width: 900px) calc(100vw - 40px), 360px" /></div><div class="process-step-copy"><span class="step-number">{step.number}</span><h3>{step.title}</h3><p>{step.description}</p></div></article>;
       })}
     </div>
   </section>

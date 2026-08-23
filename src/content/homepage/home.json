@@ -18,21 +18,32 @@
       "icon": "◎",
       "title": "Remove logo from image",
       "description": "Remove unwanted logos and brand marks from images you own.",
-      "href": "/remove-logo-from-image"
+      "href": "/remove-logo-from-image",
+      "image": "/uploads/remove-logo-from-product-image.webp",
+      "imageAlt": "Product image prepared for logo removal"
     },
     {
       "icon": "T",
       "title": "Remove text from image",
       "description": "Erase unwanted text, captions, labels, and stamps from images.",
-      "href": "/remove-text-from-image"
+      "href": "/remove-text-from-image",
+      "image": "/uploads/three-text-removal-scenes-final.webp",
+      "imageAlt": "Examples of text removal from images"
     },
     {
       "icon": "✦",
       "title": "Remove Gemini watermark",
       "description": "Remove visible Gemini watermarks from images you own or have permission to edit.",
-      "href": "/gemini-watermark-remover"
+      "href": "/gemini-watermark-remover",
+      "image": "/uploads/gemini-easy-online.webp",
+      "imageAlt": "Before and after Gemini watermark cleanup example"
     }
   ],
+  "useCaseSection": {
+    "eyebrow": "Real-world results",
+    "heading": "Clean images for everyday moments",
+    "intro": "Choose a cleanup scenario to preview the kind of image you can prepare."
+  },
   "process": {
     "eyebrow": "How it works",
     "heading": "How to Remove Watermark for Free Online",

@@ -86,5 +86,12 @@ describe('SiteLayout Google Analytics integration', () => {
     expect(notFoundSource).toContain('noindex={true}');
     expect(popupSource).toContain('<meta name="robots" content="noindex, nofollow" />');
   });
+
+  it('renders the CMS-managed conversion banner and grouped footer', () => {
+    expect(layoutSource).toContain('class="site-cta"');
+    expect(layoutSource).toContain('site.cta.heading');
+    expect(layoutSource).toContain('site.footer.groups.map');
+    expect(layoutSource).toContain('class="footer-group"');
+  });
 });
 

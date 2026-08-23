@@ -10,6 +10,16 @@ const navigationLinkSchema = z.object({
   href: z.string().min(1),
 });
 
+const processVisualSchema = z.object({
+  image: z.string().min(1),
+  imageAlt: z.string().min(1),
+});
+
+const footerGroupSchema = z.object({
+  heading: z.string().min(1),
+  links: z.array(navigationLinkSchema).min(1),
+});
+
 const headerNavigationItemSchema = z.object({
   label: z.string().min(1),
   href: z.string().default(''),
@@ -107,6 +117,14 @@ export const siteSettingsSchema = z.object({
     category: z.string().min(1),
   }),
   uploader: uploaderCopySchema,
+  processVisuals: z.array(processVisualSchema).length(3),
+  cta: z.object({
+    eyebrow: z.string().min(1),
+    heading: z.string().min(1),
+    description: z.string().min(1),
+    buttonLabel: z.string().min(1),
+    buttonHref: z.string().min(1),
+  }),
   announcement: z.object({
     enabled: z.boolean(),
     text: z.string().min(1),
@@ -118,7 +136,7 @@ export const siteSettingsSchema = z.object({
   }),
   footer: z.object({
     tagline: z.string().min(1),
-    links: z.array(navigationLinkSchema).min(1),
+    groups: z.array(footerGroupSchema).min(1),
   }),
 });
 

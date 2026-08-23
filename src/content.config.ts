@@ -119,6 +119,8 @@ const landingPages = defineCollection({
         number: z.string().min(1),
         title: z.string().min(1),
         description: z.string().min(1),
+        image: z.string().min(1).optional(),
+        imageAlt: z.string().min(1).optional(),
       })).length(3),
     }),
     features: landingFeaturesSchema.optional(),
