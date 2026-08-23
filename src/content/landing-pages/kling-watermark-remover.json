@@ -6,15 +6,31 @@
   "statusLabel": "Coming Soon",
   "heading": "Kling Watermark Remover for Authorized Still Images",
   "intro": "Export a still frame from Kling content you may edit, then upload that image to the browser-based workflow. The tool does not accept video files and does not claim to remove invisible provenance information.",
-  "benefits": ["Designed for still-frame exports", "No desktop editor required", "Private image handling"],
+  "benefits": [
+    "Designed for still-frame exports",
+    "No desktop editor required",
+    "Private image handling"
+  ],
   "process": {
     "eyebrow": "How it works",
     "heading": "How to Use the Kling Watermark Remover",
     "intro": "Start with a permitted frame and finish in three image-focused steps.",
     "steps": [
-      { "number": "01", "title": "Export a Still Frame", "description": "Save the frame as JPG, PNG, or WEBP. The current workflow does not upload or process a complete video." },
-      { "number": "02", "title": "Upload and Start", "description": "Upload one image up to 10 MB, sign in with Google, and begin processing." },
-      { "number": "03", "title": "Review the Image", "description": "Inspect the returned image and download it only if the visible area and background look acceptable." }
+      {
+        "number": "01",
+        "title": "Export a Still Frame",
+        "description": "Save the frame as JPG, PNG, or WEBP. The current workflow does not upload or process a complete video."
+      },
+      {
+        "number": "02",
+        "title": "Upload and Start",
+        "description": "Upload one image up to 10 MB, sign in with Google, and begin processing."
+      },
+      {
+        "number": "03",
+        "title": "Review the Image",
+        "description": "Inspect the returned image and download it only if the visible area and background look acceptable."
+      }
     ]
   },
   "faq": {
@@ -22,10 +38,31 @@
     "heading": "Questions About the Kling Watermark Remover",
     "intro": "Learn about still-frame preparation, file limits, and responsible editing.",
     "items": [
-      { "question": "Can I upload a full Kling video?", "answer": "No. Export a still frame and upload it as JPG, PNG, or WEBP. Video formats are not supported." },
-      { "question": "Will every background look perfect?", "answer": "No result is guaranteed. Complex motion blur, textures, or subjects behind a visible mark may require manual review or editing." },
-      { "question": "Is WatermarkGemini affiliated with Kling AI or Kuaishou?", "answer": "No. WatermarkGemini is an independent image-cleanup tool and is not affiliated with or endorsed by Kling AI or Kuaishou." },
-      { "question": "What content may I process?", "answer": "Only process content you own or have permission to modify. Preserve required attribution and disclosures." }
+      {
+        "enabled": true,
+        "question": "Can I upload a full Kling video?",
+        "answer": "No. Export a still frame and upload it as JPG, PNG, or WEBP. Video formats are not supported."
+      },
+      {
+        "enabled": true,
+        "question": "Will every background look perfect?",
+        "answer": "No result is guaranteed. Complex motion blur, textures, or subjects behind a visible mark may require manual review or editing."
+      },
+      {
+        "enabled": true,
+        "question": "Is WatermarkGemini affiliated with Kling AI or Kuaishou?",
+        "answer": "No. WatermarkGemini is an independent image-cleanup tool and is not affiliated with or endorsed by Kling AI or Kuaishou."
+      },
+      {
+        "enabled": true,
+        "question": "What content may I process?",
+        "answer": "Only process content you own or have permission to modify. Preserve required attribution and disclosures."
+      }
     ]
+  },
+  "uploader": {
+    "dropzone": {
+      "dropLabel": "Coming Soon"
+    }
   }
 }
