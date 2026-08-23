@@ -9,7 +9,11 @@
 | 单元/集成 | `npm test` | 内容 schema、环境变量、API、Job、Provider、R2 命令与安全错误 | 否 |
 | 覆盖率 | `npm run test:coverage` | 核心服务与 API，强制阈值 | 否 |
 | 浏览器 E2E | `npm run test:e2e` | 上传 UI、失败提示、GA page_view、SEO、路由、无障碍 | 否，本地 Astro |
+| 快速本地检查 | `npm run check:fast` | 内容同步和全部单元测试 | 否 |
+| 内容检查 | `npm run check:content` | CMS/Blog/落地页/图片相关测试和生产 Build | 否 |
+| UI 检查 | `npm run check:ui` | 公共布局相关测试和公共页面 Playwright | 否 |
 | 完整验证 | `npm run verify` | 覆盖率、Lint、Build、E2E | 否 |
+| 高风险发布检查 | `npm run release:verify` | 依赖审计、站点配置和完整验证 | 否 |
 | Production Smoke | `npm run test:smoke:production` | 正式域名、Vercel Production、真实 R2 上传/处理/下载 | 是 |
 
 ## 首次准备
@@ -36,7 +40,29 @@ Pages CMS 保存会提交到 `main`，随后触发 GitHub Actions 和 Vercel。�
 
 ### 开发者
 
-行为变更遵循 TDD：先添加会因目标行为缺失而失败的测试，再实现并运行 `npm run verify`。第三方集成必须验证真实信号，不能只检查脚本存在。
+行为变更遵循 TDD：先添加会因目标行为缺失而失败的测试，再做最小实现并运行定向绿测。之后根据改动范围选择本地检查；PR CI 的完整 `verify` 必须成功后才能合并。第三方集成必须验证真实信号，不能只检查脚本存在。
+
+## 动态验证矩阵
+
+| 改动范围 | 本地必选 | 生产抽查 |
+|---|---|---|
+| 普通小改、局部纯函数 | 定向红/绿测试 + `check:fast` | 仅检查受影响功能 |
+| CMS、Blog、落地页、图片内容 | `check:content` | 全部改动 URL 返回 200；浏览器抽查代表模板 |
+| 布局、全局 CSS、公共 UI | `check:ui` | 首页、工具页、Blog 中受影响模板的桌面/移动端 |
+| API、鉴权、R2、Provider、安全策略 | `release:verify` | 不采用抽样；执行适用的安全和认证检查 |
+| 依赖、构建、CI、全局配置 | `release:verify` | 核对 CI、Vercel 和相应运行时结果 |
+| 域名、OAuth、第三方集成 | `release:verify` + 专项测试 | 必须验证真实端到端信号 |
+
+低风险改动不需要在本地和 CI 重复运行完整 `verify`；完整全量门禁统一由 PR CI 执行。若改动范围不确定、定向检查失败、跨越多个风险类别，升级到 `release:verify`。
+
+## 抽查标准
+
+- Schema、URL、字段存在性、状态数量等可程序化约束，对全部改动记录执行检查，不抽样。
+- 同一模板影响多个页面时，视觉上至少检查 1 个正向页面和 1 个负向页面；正向页面应出现目标行为，负向页面应保持不变。
+- 全局 UI 改动至少覆盖首页、工具页、Blog 三类模板，以及桌面和移动端两个视口。
+- 内容批量发布时，所有新增 URL 做 HTTP/标题/H1 检查，浏览器重点抽查第一篇、最后一篇和结构最复杂的一篇。
+- 图片链路至少抽查 Blog 与工具页各一张，并验证 `<picture>`、WebP `srcset`、原图 fallback 和尺寸信息。
+- 鉴权、对象归属、越权、安全头和第三方真实业务信号不能用代表页面抽查代替。
 
 ### 运维人员
 
@@ -44,7 +70,7 @@ Pages CMS 保存会提交到 `main`，随后触发 GitHub Actions 和 Vercel。�
 
 ## 自动化保护
 
-- `.github/workflows/ci.yml`：每次 PR 和 `main` 推送运行完整 `verify`。
+- `.github/workflows/ci.yml`：每次 PR 和 `main` 推送运行完整 `verify`；这是合并 `main` 的统一全量门禁。
 - `.github/workflows/production-smoke.yml`：每天定时及手工运行生产 Smoke。
 - `vercel.json`：Vercel 构建先运行 `verify:deploy`，单元测试、覆盖率、Lint 或 Build 失败时不发布新版本。
 - 覆盖率门槛：核心代码 lines/functions/statements ≥ 80%，branches ≥ 70%。当前结果应高于最低线，不能通过降低阈值掩盖缺失测试。

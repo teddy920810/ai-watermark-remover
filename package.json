@@ -18,6 +18,9 @@
     "test:e2e": "playwright test",
     "test:smoke:production": "node scripts/production-smoke.mjs",
     "content:validate": "astro sync",
+    "check:fast": "npm run content:validate && npm test",
+    "check:content": "npm run content:validate && vitest run src/lib/content && npm run build",
+    "check:ui": "vitest run src/layouts src/lib/content/blog-layout.test.ts src/lib/content/site-visual-system.test.ts src/lib/content/landing-pages.test.ts src/lib/content/homepage.test.ts src/lib/content/item-visibility.test.ts && playwright test tests/e2e/site-quality.spec.ts",
     "audit:dependencies": "npm audit --audit-level=high",
     "auth:import": "node scripts/import-google-credentials.mjs",
     "blog:import-docx": "node scripts/import-blog-docx.mjs",
@@ -25,7 +28,8 @@
     "site:init": "node scripts/initialize-site.mjs",
     "site:validate": "node scripts/validate-site.mjs",
     "verify:deploy": "npm run site:validate && npm run test:coverage && npm run lint && npm run build",
-    "verify": "npm run test:coverage && npm run lint && npm run build && npm run test:e2e"
+    "verify": "npm run test:coverage && npm run lint && npm run build && npm run test:e2e",
+    "release:verify": "npm run audit:dependencies && npm run site:validate && npm run verify"
   },
   "dependencies": {
     "@astrojs/react": "^6.0.2",
