@@ -22,9 +22,10 @@ describe('SiteLayout Google Analytics integration', () => {
     expect(layoutSource).toContain('--theme-color-fallback: ${site.themeColorFallback};');
     expect(globalCss).toContain('--green: color-mix(in srgb, var(--theme-color, var(--theme-color-fallback)) 68%, black);');
     expect(globalCss).not.toContain('--green: #1d6b56;');
-    expect(globalCss).toContain('font-family: "Montserrat", system-ui');
-    expect(globalCss).toContain('font-size: clamp(3rem, 4vw, 3.5rem);');
-    expect(globalCss).toContain('font-size: clamp(2rem, 3vw, 2.25rem);');
+    expect(globalCss).toContain('--font-body: "DM Sans", system-ui, sans-serif;');
+    expect(globalCss).toContain('--font-display: "Plus Jakarta Sans"');
+    expect(globalCss).toContain('font-size: clamp(3rem, 4.8vw, 4.35rem);');
+    expect(globalCss).toContain('font-size: clamp(2rem, 3.2vw, 3rem);');
     expect(layoutSource).toContain('applicationCategory: site.structuredData.applicationCategory');
     expect(layoutSource).toContain('operatingSystem: site.structuredData.operatingSystem');
     expect(layoutSource).toContain('priceCurrency: site.structuredData.priceCurrency');

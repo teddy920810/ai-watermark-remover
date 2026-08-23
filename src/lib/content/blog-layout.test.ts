@@ -14,11 +14,11 @@ describe('blog article reading layout', () => {
     expect(pagesConfigSource).toContain('用于搜索摘要和博客列表卡片中的普通段落，不在文章详情页标题下方显示。');
   });
 
-  it('uses wider limits for the article header and body without widening legal pages', () => {
-    expect(globalCssSource).toContain('.article-header { max-width: 1040px; }');
+  it('uses a full-width article header with bounded article and legal reading columns', () => {
+    expect(globalCssSource).toContain('.article-header { padding-right: max(28px, calc((100vw - 1080px) / 2));');
     expect(globalCssSource).toContain('.article-body { max-width: 900px;');
     expect(globalCssSource).toMatch(/\.article-body\s*\{[^}]*overflow-x:\s*clip;/s);
-    expect(globalCssSource).toContain('.legal-body { max-width: 720px;');
+    expect(globalCssSource).toContain('.legal-body { max-width: 760px;');
     expect(globalCssSource).toContain('.article-body table { width: 100%; max-width: 100%; display: block; overflow-x: auto;');
     expect(globalCssSource).toContain('.article-header h1 { font-size: clamp(2.25rem, 10vw, 2.75rem);');
   });

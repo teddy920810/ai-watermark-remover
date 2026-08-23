@@ -1,55 +1,46 @@
-# Design QA — Alternating full-section surfaces
+# Design QA
 
 ## Evidence
 
-- Source visual truth: `C:\Users\ermei\AppData\Local\Temp\watermarkgemini-blue-rhythm-production-20260823\01-production-home-desktop.png` — current production layout before this iteration, 1425 × 5708 pixels.
-- Browser-rendered implementation:
-  - `C:\Users\ermei\AppData\Local\Temp\watermarkgemini-section-alternation-20260823\02-local-after-desktop.png` — homepage desktop, 1425 × 5678 pixels from a 1440 × 900 requested viewport (1425-pixel browser content width), device scale factor 1.
-  - `C:\Users\ermei\AppData\Local\Temp\watermarkgemini-section-alternation-20260823\03-local-after-mobile.png` — homepage mobile, 375 × 844 pixels from a 390 × 844 requested viewport (375-pixel browser content width), device scale factor 1.
-  - `C:\Users\ermei\AppData\Local\Temp\watermarkgemini-section-alternation-20260823\04-tool-after-desktop.png` — tool landing page desktop, 1425 × 4295 pixels.
-- Combined comparison: `C:\Users\ermei\AppData\Local\Temp\watermarkgemini-section-alternation-20260823\05-before-after-comparison.png`.
-- State: signed out, idle uploader; desktop and mobile responsive layouts.
+- Source visual truth: `C:/Users/ermei/OneDrive/Desktop/index.html` and `C:/Users/ermei/OneDrive/Desktop/style.css`
+- Source capture: `test-results/design-qa/reference-desktop.png`
+- Implementation captures: `test-results/design-qa/home-desktop.png`, `test-results/design-qa/blog-index-desktop.png`, `test-results/design-qa/blog-article-desktop.png`, and `test-results/design-qa/privacy-desktop.png`
+- Combined comparison: `test-results/design-qa/reference-vs-home.png`
+- Desktop comparison viewport: source 1265 x 712 px; implementation captured at 1425 x 990 CSS px and normalized by cropping the same above-the-fold region, then resizing to 1265 x 712 px at density 1
+- Responsive verification viewport: 390 x 844 CSS px in the repository Playwright suite
+- State: public, signed-out, initial page state
 
 ## Full-view comparison
 
-The requested sequence is visibly complete: full-width deep hero, light process, deep Features, light privacy/standards, deep guides, and light FAQ. The previous dark-card-on-light-page hero has become one uninterrupted full-width dark section. Features and guides now use the same deep surface, while their white content cards remain high-contrast focal points.
+The implementation carries over the reference's cool white and pale-blue hero, strong navy display type, bright blue emphasis, compact sticky navigation, softly elevated white cards, rounded upload surface, and generous whitespace. The functional uploader remains in the right-hand visual slot instead of the reference's decorative before/after illustration so the existing product journey and content model stay intact.
 
 ## Focused-region comparison
 
-- Hero: the full viewport width is dark at desktop and mobile sizes; its content remains constrained to the established site grid.
-- Features: the whole section is dark, including the spacing around and between white feature cards.
-- Privacy/standards: the section returns to ice blue with navy text and standard white information card treatment.
-- Guides: the entire section is dark with white heading text and readable white article cards.
-- Tool landing pages: full-width dark hero, light process, dark Features, and light FAQ follow the same system.
-
-## Required fidelity surfaces
-
-- Fonts and typography: families, sizes, weights, wrapping, and CMS headings are unchanged; only foreground colors needed for dark surfaces changed.
-- Spacing and layout rhythm: existing 1240-pixel hero and 1120-pixel content grids are preserved inside full-width backgrounds. Desktop and mobile checks found zero horizontal overflow.
-- Colors and tokens: deep sections use `#07142b`; light alternating sections use ice `#f3f7ff` or white `#ffffff`.
-- Image quality and assets: all existing CMS images, logos, screenshots, and icons are unchanged.
-- Copy and content: operational copy, SEO content, FAQ values, Blog content, legal text, and CMS values are unchanged.
-
-## Findings
-
-- No actionable P0, P1, or P2 findings remain.
-- Browser console warning/error scan is clean.
-- Mobile menu opens, the first FAQ expands, and horizontal overflow remains zero.
+- Hero: matched the reference's two-column rhythm, headline scale, blue emphasis, pale atmospheric background, and elevated tool card.
+- Header and actions: matched the reference's white sticky bar, compact navigation, rounded primary action, and restrained border/shadow language.
+- Blog and legal templates: extended the same pale page header, display type, bounded white reading card, light border, and soft elevation without changing article or legal content.
+- Article elements: quote, list, table, image, caption, link, and code styles remain readable and use the same token system.
 
 ## Comparison history
 
-1. Before-state: Hero was a dark rounded card inside a light page; Features was light, privacy was dark, and guides was light.
-2. Requested iteration: Hero became full-width dark and subsequent main sections now alternate light/dark through the FAQ.
-3. Final comparison: desktop homepage, mobile homepage, and desktop tool page show the intended sequence without clipping, layout regression, or contrast issue.
+1. Initial implementation matched the visual direction, but the first accessibility pass found insufficient contrast for small blue labels and muted copy on pale surfaces.
+2. Added separate accessible action/text blue tokens and darkened muted text while preserving the supplied bright blue as the visual accent.
+3. Post-fix `npm run check:ui` passed all 84 targeted unit tests and all 8 browser tests, including the 390 x 844 mobile overflow, navigation, and serious/critical accessibility checks.
 
-## Implementation checklist
+## Findings
 
-- [x] Hero background spans the full section.
-- [x] Third screen Features is fully dark.
-- [x] Fourth screen privacy/standards is light.
-- [x] Fifth screen guides is fully dark.
-- [x] Sixth screen FAQ is light.
-- [x] Homepage and tool landing pages share the technical surface system without sharing content.
-- [x] Operational content and media unchanged.
+- No actionable P0, P1, or P2 differences remain.
+- The CMS-owned wording and existing product imagery intentionally differ from the visual draft.
+- The live uploader intentionally replaces the draft's decorative comparison scene; this preserves the site's core conversion flow.
+
+## Interaction and console checks
+
+- Verified the upload control is visible and enabled.
+- Verified the desktop pages render without horizontal overflow.
+- Verified mobile navigation and dropdown behavior through the 390 x 844 browser test.
+- Verified homepage, tool pages, Blog, article, Privacy, sitemap, robots, and 404 accessibility coverage.
+- Browser console check returned no warnings or errors for the inspected public pages.
+
+## Final result
 
 final result: passed
