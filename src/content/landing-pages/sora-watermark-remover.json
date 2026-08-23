@@ -63,6 +63,9 @@
   "uploader": {
     "hero": {
       "heading": "Coming Soon"
+    },
+    "dropzone": {
+      "dropLabel": "Coming Soon"
     }
   }
 }
