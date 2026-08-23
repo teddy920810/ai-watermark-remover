@@ -44,4 +44,17 @@ describe('site-wide blue visual system', () => {
     expect(globalCss).toMatch(/@media \(max-width: 620px\)[\s\S]*\.hero h1\s*\{/);
     expect(globalCss).toMatch(/@media \(max-width: 620px\)[\s\S]*\.drop-zone\s*\{/);
   });
+
+  it('uses alternating full-width blue surfaces to separate homepage screens', () => {
+    expect(globalCss).toContain('--section-ice: #f3f7ff;');
+    expect(globalCss).toContain('--section-white: #ffffff;');
+    expect(globalCss).toContain('--section-deep: #07142b;');
+    expect(globalCss).toContain('--section-mist: #edf4ff;');
+    expect(globalCss).toMatch(/\.hero\s*\{[^}]*background:\s*var\(--section-deep\);/s);
+    expect(globalCss).toMatch(/\.process-section\s*\{[^}]*background:\s*var\(--section-ice\);/s);
+    expect(globalCss).toMatch(/\.features-section\s*\{[^}]*background:\s*var\(--section-white\);/s);
+    expect(globalCss).toMatch(/\.standards-section\s*\{[^}]*background:\s*var\(--section-deep\);/s);
+    expect(globalCss).toMatch(/\.guides-section\s*\{[^}]*background:\s*var\(--section-mist\);/s);
+    expect(globalCss).toMatch(/\.faq-section\s*\{[^}]*background:\s*var\(--section-white\);/s);
+  });
 });
