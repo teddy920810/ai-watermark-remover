@@ -39,6 +39,38 @@ test('mobile visitors can open navigation and a dropdown', async ({ page }) => {
   await expect(dropdown.locator('xpath=..').locator('a').first()).toBeVisible();
 });
 
+test('blog tables scroll inside the article without widening the mobile page', async ({ page }) => {
+  const contentDirectory = new URL('../../src/content/blog/', import.meta.url);
+  const routes = readdirSync(contentDirectory, { encoding: 'utf8' })
+    .filter((fileName) => fileName.endsWith('.md'))
+    .map((fileName) => `/blog/${fileName.replace(/\.md$/, '')}`);
+  await page.setViewportSize({ width: 390, height: 844 });
+
+  for (const route of routes) {
+    await page.goto(route, { waitUntil: 'networkidle' });
+    await expect(page.locator('article')).toBeVisible();
+    const dimensions = await page.evaluate(() => ({
+      clientWidth: document.documentElement.clientWidth,
+      scrollWidth: document.documentElement.scrollWidth,
+      overflowing: [...document.querySelectorAll<HTMLElement>('body *')]
+        .filter((element) => element.getBoundingClientRect().right > document.documentElement.clientWidth)
+        .slice(0, 5)
+        .map((element) => ({
+          className: element.className,
+          right: Math.round(element.getBoundingClientRect().right),
+          tagName: element.tagName,
+        })),
+    }));
+    expect(
+      dimensions.scrollWidth,
+      `${route} should not widen the mobile page: ${JSON.stringify(dimensions.overflowing)}`,
+    ).toBeLessThanOrEqual(dimensions.clientWidth);
+    for (const table of await page.locator('.article-body table').all()) {
+      expect(await table.evaluate((element) => getComputedStyle(element).overflowX)).toBe('auto');
+    }
+  }
+});
+
 test('all public content routes and 404 have one H1 and no serious accessibility violations', async ({ page, request }) => {
   test.setTimeout(60_000);
   const sitemap = await (await request.get('/sitemap.xml')).text();

@@ -17,8 +17,9 @@ describe('blog article reading layout', () => {
   it('uses wider limits for the article header and body without widening legal pages', () => {
     expect(globalCssSource).toContain('.article-header { max-width: 1040px; }');
     expect(globalCssSource).toContain('.article-body { max-width: 900px;');
+    expect(globalCssSource).toContain('overflow-x: clip; }');
     expect(globalCssSource).toContain('.legal-body { max-width: 720px;');
-    expect(globalCssSource).toContain('.article-body table { width: 100%; display: block; overflow-x: auto;');
+    expect(globalCssSource).toContain('.article-body table { width: 100%; max-width: 100%; display: block; overflow-x: auto;');
     expect(globalCssSource).toContain('.article-header h1 { font-size: clamp(2.25rem, 10vw, 2.75rem);');
   });
 
