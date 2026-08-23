@@ -34,13 +34,15 @@ const faqSchema = visibleFaqItems.length > 0 ? {
 
 <SiteLayout title={page.title} description={page.description} schema={faqSchema}>
   <section class="hero compact-hero">
-    <div class="hero-copy">
-      <span class="eyebrow">{page.eyebrow}</span>
-      <h1>{page.heading}</h1>
-      <p>{page.intro}</p>
-      <ul class="check-list">{page.benefits.map((benefit) => <li><CircleCheck size={19} stroke-width={2.5} />{benefit}</li>)}</ul>
+    <div class="hero-inner">
+      <div class="hero-copy">
+        <span class="eyebrow">{page.eyebrow}</span>
+        <h1>{page.heading}</h1>
+        <p>{page.intro}</p>
+        <ul class="check-list">{page.benefits.map((benefit) => <li><CircleCheck size={19} stroke-width={2.5} />{benefit}</li>)}</ul>
+      </div>
+      <div id="tool" class="hero-tool"><ImageUploader logo={site.logo} siteName={site.name} copy={uploaderCopy} client:load /></div>
     </div>
-    <div id="tool" class="hero-tool"><ImageUploader logo={site.logo} siteName={site.name} copy={uploaderCopy} client:load /></div>
   </section>
 
   <section class="section process-section" id="how-it-works">
