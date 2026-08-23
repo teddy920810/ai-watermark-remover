@@ -39,13 +39,15 @@ const faqSchema = visibleFaqItems.length > 0 ? {
 
 <SiteLayout title={home.title} description={home.description} image={home.shareImage} schema={faqSchema}>
   <section class="hero home-hero">
-    <div class="hero-copy">
-      <span class="eyebrow">{home.hero.eyebrow}</span>
-      <h1>{home.hero.heading}<br /><em>{home.hero.highlightedHeading}</em></h1>
-      <p>{home.hero.intro}</p>
-      <div class="trust-row">{home.hero.trustItems.map((item) => <span><CircleCheck size={18} stroke-width={2.5} />{item.replace(/^✓\s*/, '')}</span>)}</div>
+    <div class="hero-inner">
+      <div class="hero-copy">
+        <span class="eyebrow">{home.hero.eyebrow}</span>
+        <h1>{home.hero.heading}<br /><em>{home.hero.highlightedHeading}</em></h1>
+        <p>{home.hero.intro}</p>
+        <div class="trust-row">{home.hero.trustItems.map((item) => <span><CircleCheck size={18} stroke-width={2.5} />{item.replace(/^✓\s*/, '')}</span>)}</div>
+      </div>
+      <div id="tool" class="hero-tool"><ImageUploader logo={site.logo} siteName={site.name} copy={uploaderCopy} client:load /></div>
     </div>
-    <div id="tool" class="hero-tool"><ImageUploader logo={site.logo} siteName={site.name} copy={uploaderCopy} client:load /></div>
   </section>
 
   <section class="use-cases" aria-label="Popular tools">

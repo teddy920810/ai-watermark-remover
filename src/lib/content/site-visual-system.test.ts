@@ -50,11 +50,14 @@ describe('site-wide blue visual system', () => {
     expect(globalCss).toContain('--section-white: #ffffff;');
     expect(globalCss).toContain('--section-deep: #07142b;');
     expect(globalCss).toContain('--section-mist: #edf4ff;');
-    expect(globalCss).toMatch(/\.hero\s*\{[^}]*background:\s*var\(--section-deep\);/s);
+    expect(globalCss).toMatch(/\.hero\s*\{[^}]*max-width:\s*none;[^}]*margin:\s*0;[^}]*background:\s*var\(--section-deep\);/s);
+    expect(globalCss).toMatch(/\.hero-inner\s*\{[^}]*max-width:\s*1240px;[^}]*margin:\s*0 auto;[^}]*display:\s*grid;/s);
     expect(globalCss).toMatch(/\.process-section\s*\{[^}]*background:\s*var\(--section-ice\);/s);
-    expect(globalCss).toMatch(/\.features-section\s*\{[^}]*background:\s*var\(--section-white\);/s);
-    expect(globalCss).toMatch(/\.standards-section\s*\{[^}]*background:\s*var\(--section-deep\);/s);
-    expect(globalCss).toMatch(/\.guides-section\s*\{[^}]*background:\s*var\(--section-mist\);/s);
+    expect(globalCss).toMatch(/\.features-section\s*\{[^}]*background:\s*var\(--section-deep\);/s);
+    expect(globalCss).toMatch(/\.standards-section\s*\{[^}]*background:\s*var\(--section-ice\);/s);
+    expect(globalCss).toMatch(/\.guides-section\s*\{[^}]*background:\s*var\(--section-deep\);/s);
     expect(globalCss).toMatch(/\.faq-section\s*\{[^}]*background:\s*var\(--section-white\);/s);
+    expect(homePage).toContain('<div class="hero-inner">');
+    expect(landingPage).toContain('<div class="hero-inner">');
   });
 });

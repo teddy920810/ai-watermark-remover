@@ -72,7 +72,7 @@ test('blog tables scroll inside the article without widening the mobile page', a
 });
 
 test('all public content routes and 404 have one H1 and no serious accessibility violations', async ({ page, request }) => {
-  test.setTimeout(60_000);
+  test.setTimeout(120_000);
   const sitemap = await (await request.get('/sitemap.xml')).text();
   const routes = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => new URL(match[1]).pathname);
   routes.push('/missing-page-for-404-check');

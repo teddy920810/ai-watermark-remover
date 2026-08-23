@@ -72,7 +72,8 @@ img { display: block; max-width: 100%; }
 .header-account:disabled { opacity: .6; cursor: wait; }
 .header-auth { display: flex; }
 
-.hero { max-width: 1240px; margin: 28px auto 0; padding: 64px; position: relative; display: grid; grid-template-columns: .95fr 1.05fr; align-items: center; gap: 68px; overflow: hidden; border: 1px solid #1b3158; border-radius: 28px; background: var(--section-deep); box-shadow: 0 20px 52px rgba(7, 20, 43, .18); }
+.hero { max-width: none; margin: 0; padding: 64px max(28px, calc((100vw - 1240px) / 2)); position: relative; overflow: hidden; background: var(--section-deep); }
+.hero-inner { width: 100%; max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: .95fr 1.05fr; align-items: center; gap: 68px; }
 .hero-copy, .hero-tool { position: relative; z-index: 1; }
 .eyebrow { width: fit-content; padding: 6px 11px; display: inline-flex; align-items: center; gap: 7px; border: 1px solid #c9dafb; border-radius: 999px; color: var(--brand-blue); background: var(--brand-soft); font-size: .7rem; font-weight: 850; letter-spacing: .055em; text-transform: uppercase; }
 .hero h1 { max-width: 650px; margin: 17px 0 18px; color: #fff; font-size: clamp(3rem, 4vw, 3.5rem); line-height: 1.04; letter-spacing: -.052em; font-weight: 850; }
@@ -141,9 +142,9 @@ img { display: block; max-width: 100%; }
 
 .section { max-width: none; margin: 0; padding: 96px max(28px, calc((100vw - 1120px) / 2)); }
 .process-section { background: var(--section-ice); }
-.features-section { background: var(--section-white); }
-.standards-section { background: var(--section-deep); }
-.guides-section { background: var(--section-mist); }
+.features-section { background: var(--section-deep); }
+.standards-section { background: var(--section-ice); }
+.guides-section { background: var(--section-deep); }
 .faq-section { background: var(--section-white); }
 .section-heading { max-width: 680px; margin: 0 auto 45px; text-align: center; }
 .section-heading h2, .standards-section h2 { margin: 12px 0; color: var(--brand-navy); font-size: clamp(2rem, 3vw, 2.25rem); line-height: 1.1; letter-spacing: -.04em; font-weight: 820; }
@@ -156,10 +157,7 @@ img { display: block; max-width: 100%; }
 .steps h3 { margin: 27px 0 8px; color: var(--brand-navy); font-size: 1.02rem; }
 .steps p { margin: 0; color: var(--muted); font-size: .84rem; line-height: 1.65; }
 .standards-section { display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 72px; }
-.standards-section h2 { color: #fff; }
-.standards-section .eyebrow { border-color: #29436f; color: #93c5fd; background: #10254a; }
-.standards-section > div:first-child > p { color: #b9c6dc; }
-.standards-section .text-link { color: #93c5fd; }
+.standards-section > div:first-child > p { color: var(--muted); }
 .text-link { color: var(--brand-blue); font-size: .84rem; font-weight: 780; }
 .standards-card { overflow: hidden; border: 1px solid var(--line); border-radius: 18px; background: var(--card); box-shadow: var(--shadow-soft); }
 .standards-card div { padding: 22px 24px; display: grid; grid-template-columns: auto 1fr; column-gap: 14px; border-bottom: 1px solid var(--line); }
@@ -167,12 +165,12 @@ img { display: block; max-width: 100%; }
 .standards-card span { grid-row: 1 / 3; width: 42px; height: 42px; display: grid; place-items: center; border-radius: 12px; color: var(--brand-blue); background: var(--brand-soft); }
 .standards-card strong { font-size: .88rem; }
 .standards-card small { color: var(--muted); }
-.standards-section .standards-card { border-color: #263b62; background: #0d2042; box-shadow: 0 22px 54px rgba(0, 0, 0, .18); }
-.standards-section .standards-card div { border-color: #263b62; }
-.standards-section .standards-card span { color: #93c5fd; background: #162e58; }
-.standards-section .standards-card strong { color: #fff; }
-.standards-section .standards-card small { color: #b9c6dc; }
+.features-section > .section-heading h2, .guides-section > .section-heading h2 { color: #fff; }
+.features-section > .section-heading p { color: #b9c6dc; }
+.features-section > .section-heading .eyebrow, .guides-section > .section-heading .eyebrow { border-color: #29436f; color: #93c5fd; background: #10254a; }
+.guides-section > .section-heading .text-link { color: #93c5fd; }
 .guides-section, .features-section, .faq-section, .home-faq-section { border-top: 1px solid var(--line); }
+.guides-section, .features-section { border-top-color: #1b3158; }
 .row-heading { max-width: none; display: flex; align-items: flex-end; justify-content: space-between; text-align: left; }
 .guide-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
 .guide-grid article { padding: 28px; border: 1px solid var(--line); border-radius: 18px; background: var(--card); box-shadow: 0 10px 28px rgba(22, 53, 109, .05); }
@@ -258,7 +256,6 @@ img { display: block; max-width: 100%; }
 .site-footer > p { grid-column: 1 / -1; margin: 10px 0 0; }
 
 @media (max-width: 1180px) {
-  .hero { margin-right: 20px; margin-left: 20px; }
   .use-cases { margin-right: 28px; margin-left: 28px; }
   .site-footer { margin-right: 20px; margin-left: 20px; }
 }
@@ -276,7 +273,8 @@ img { display: block; max-width: 100%; }
   .nav-dropdown-panel::before { display: none; }
   .nav-dropdown:hover .nav-dropdown-panel, .nav-dropdown:has(:focus-visible) .nav-dropdown-panel { display: none; transform: none; }
   .nav-dropdown.is-open .nav-dropdown-panel { display: grid; transform: none; }
-  .hero { padding: 48px 38px; grid-template-columns: 1fr; gap: 42px; }
+  .hero { padding: 48px 38px; }
+  .hero-inner { grid-template-columns: 1fr; gap: 42px; }
   .use-cases { grid-template-columns: 1fr; }
   .steps { grid-template-columns: 1fr; }
   .step-arrow { display: none; }
@@ -293,7 +291,7 @@ img { display: block; max-width: 100%; }
   .header-cta { min-height: 38px; padding: 0 12px; font-size: .75rem; }
   .header-account span, .header-account small { display: none; }
   .header-account { padding: 3px; }
-  .hero { margin: 12px 12px 0; padding: 34px 20px; border-radius: 20px; }
+  .hero { margin: 0; padding: 34px 18px; }
   .hero h1 { font-size: clamp(2.45rem, 12vw, 3.2rem); }
   .hero-copy > p { font-size: .93rem; }
   .tool-card { padding: 16px; }
