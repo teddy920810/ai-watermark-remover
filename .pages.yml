@@ -317,10 +317,6 @@ content:
                     type: string
                     required: true
                     description: 下拉菜单中用户可点击的文字。
-                  - name: badge
-                    label: 状态标签｜Badge（可选）
-                    type: string
-                    description: 显示在链接右侧的短状态，例如 Coming Soon；留空则不显示。
                   - name: href
                     label: 下拉链接地址｜HREF
                     type: string
@@ -1137,6 +1133,10 @@ content:
         type: string
         required: true
         description: H1 上方的装饰性短文字，不属于标题层级。
+      - name: statusLabel
+        label: 页面状态｜Status（可选）
+        type: string
+        description: 显示在 Hero 小标题右侧的短状态，例如 Coming Soon；留空则不显示。
       - name: heading
         label: 页面主标题｜H1
         type: string

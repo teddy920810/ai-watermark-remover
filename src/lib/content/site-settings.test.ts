@@ -53,20 +53,10 @@ describe('site settings CMS content', () => {
     expect(parsed.header.navigation[0].children).toHaveLength(2);
   });
 
-  it('marks only video-oriented tool links as coming soon', () => {
-    const children = siteSettingsSchema.parse(settings).header.navigation[0].children;
-    const comingSoonPaths = [
-      '/sora-watermark-remover',
-      '/veo-watermark-remover',
-      '/kling-watermark-remover',
-      '/tiktok-watermark-remover',
-      '/video-watermark-remover',
-    ];
-
-    for (const href of comingSoonPaths) {
-      expect(children.find((item) => item.href === href)?.badge).toBe('Coming Soon');
-    }
-    expect(children.find((item) => item.href === '/grok-watermark-remover')?.badge).toBeUndefined();
+  it('keeps status labels out of header navigation links', () => {
+    const children = settings.header.navigation.flatMap((item: { children?: unknown[] }) => item.children ?? []);
+    expect(children.length).toBeGreaterThan(0);
+    for (const child of children) expect(child).not.toHaveProperty('badge');
   });
 });
 

@@ -243,6 +243,7 @@ describe('Pages CMS maintenance safeguards', () => {
 
     const landingPages = config.content.find((entry) => entry.name === 'landing-pages');
     expect(landingPages?.fields).toEqual(expect.arrayContaining([
+      expect.objectContaining({ name: 'statusLabel', type: 'string' }),
       expect.objectContaining({ name: 'uploader', component: 'uploader-copy-override' }),
     ]));
   });
@@ -268,8 +269,8 @@ describe('Pages CMS maintenance safeguards', () => {
       expect.objectContaining({ name: 'children', type: 'object' }),
     ]));
     const children = navigation?.fields?.find((field) => field.name === 'children');
-    expect(children?.fields).toEqual(expect.arrayContaining([
-      expect.objectContaining({ name: 'badge', type: 'string' }),
+    expect(children?.fields).not.toEqual(expect.arrayContaining([
+      expect.objectContaining({ name: 'badge' }),
     ]));
   });
 

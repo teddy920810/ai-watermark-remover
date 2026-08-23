@@ -106,6 +106,7 @@ const landingPages = defineCollection({
     title: z.string().min(1),
     description: z.string().min(1),
     eyebrow: z.string().min(1),
+    statusLabel: z.string().min(1).optional(),
     heading: z.string().min(1),
     intro: z.string().min(1),
     benefits: z.array(z.string().min(1)).min(1),

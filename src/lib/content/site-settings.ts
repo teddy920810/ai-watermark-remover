@@ -10,14 +10,10 @@ const navigationLinkSchema = z.object({
   href: z.string().min(1),
 });
 
-const navigationChildSchema = navigationLinkSchema.extend({
-  badge: z.string().min(1).optional(),
-});
-
 const headerNavigationItemSchema = z.object({
   label: z.string().min(1),
   href: z.string().default(''),
-  children: z.array(navigationChildSchema).default([]),
+  children: z.array(navigationLinkSchema).default([]),
 }).superRefine((item, context) => {
   if (item.children.length === 0 && item.href.length === 0) {
     context.addIssue({ code: 'custom', path: ['href'], message: 'A normal navigation link requires a URL.' });

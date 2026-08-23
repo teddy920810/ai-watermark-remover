@@ -3,6 +3,7 @@
   "title": "TikTok Watermark Remover for Authorized Image Frames",
   "description": "Use this TikTok watermark remover on a still frame or image you own or have permission to edit. The current tool does not download or process videos.",
   "eyebrow": "TIKTOK WATERMARK REMOVER",
+  "statusLabel": "Coming Soon",
   "heading": "TikTok Watermark Remover for Permitted Image Frames",
   "intro": "Prepare a still frame from your own TikTok content or another asset you are authorized to edit. WatermarkGemini accepts supported images only; it does not download TikTok links, process full videos, or remove audio metadata.",
   "benefits": ["No TikTok URL required", "Still-image workflow", "Review before sharing"],
