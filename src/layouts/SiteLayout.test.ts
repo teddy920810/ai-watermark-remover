@@ -40,6 +40,8 @@ describe('SiteLayout Google Analytics integration', () => {
     expect(layoutSource).toContain('class="nav-dropdown"');
     expect(layoutSource).toContain('class="nav-dropdown-trigger"');
     expect(layoutSource).toContain('(item.children ?? []).map');
+    expect(layoutSource).toContain('child.badge && <span class="nav-badge">{child.badge}</span>');
+    expect(globalCss).toContain('.nav-badge {');
     expect(globalCss).toContain('.nav-dropdown:hover .nav-dropdown-panel');
     expect(globalCss).toContain('.nav-dropdown:has(:focus-visible) .nav-dropdown-panel');
     expect(globalCss).toContain('pointer-events: none');
