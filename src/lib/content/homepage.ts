@@ -57,23 +57,27 @@ export const homepageSchema = z.object({
   useCaseSection: z.object({
     eyebrow: z.string().min(1),
     heading: z.string().min(1),
+    headingHighlight: z.string().min(1),
     intro: z.string().min(1),
   }),
   process: z.object({
     eyebrow: z.string().min(1),
     heading: z.string().min(1),
+    headingHighlight: z.string().min(1),
     intro: z.string().min(1),
     steps: z.array(stepSchema).min(1),
   }),
   features: z.object({
     eyebrow: z.string().min(1),
     heading: z.string().min(1),
+    headingHighlight: z.string().min(1),
     intro: z.string().min(1),
     items: z.array(homepageFeatureSchema).min(1),
   }),
   privacy: z.object({
     eyebrow: z.string().min(1),
     heading: z.string().min(1),
+    headingHighlight: z.string().min(1),
     description: z.string().min(1),
     linkLabel: z.string().min(1),
     linkHref: z.string().min(1),
@@ -82,6 +86,8 @@ export const homepageSchema = z.object({
   guides: z.object({
     eyebrow: z.string().min(1),
     heading: z.string().min(1),
+    headingHighlight: z.string().min(1),
+    intro: z.string().min(1),
     linkLabel: z.string().min(1),
     linkHref: z.string().min(1),
     articleLinkLabel: z.string().min(1),
@@ -89,6 +95,7 @@ export const homepageSchema = z.object({
   faq: z.object({
     eyebrow: z.string().min(1),
     heading: z.string().min(1),
+    headingHighlight: z.string().min(1),
     intro: z.string().min(1),
     items: z.array(faqItemSchema).min(1),
   }),

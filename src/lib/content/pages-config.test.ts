@@ -175,6 +175,20 @@ describe('Pages CMS maintenance safeguards', () => {
     ]));
   });
 
+  it('lets operators choose the blue-highlighted phrase for every homepage section heading', () => {
+    const homepage = config.content.find((entry) => entry.name === 'homepage');
+    for (const sectionName of ['process', 'useCaseSection', 'features', 'privacy', 'guides', 'faq']) {
+      const section = homepage?.fields.find((field) => field.name === sectionName);
+      expect(section?.fields).toEqual(expect.arrayContaining([
+        expect.objectContaining({
+          name: 'headingHighlight',
+          type: 'string',
+          label: expect.stringContaining('高亮'),
+        }),
+      ]));
+    }
+  });
+
   it('lets operators hide every homepage and landing-page item without deleting it', () => {
     const homepage = config.content.find((entry) => entry.name === 'homepage');
     const landingPages = config.content.find((entry) => entry.name === 'landing-pages');

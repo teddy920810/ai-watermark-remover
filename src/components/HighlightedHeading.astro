@@ -1,0 +1,14 @@
+---
+interface Props {
+  text: string;
+  highlight?: string;
+  id?: string;
+}
+
+const { text, highlight = '', id } = Astro.props;
+const highlightIndex = highlight ? text.indexOf(highlight) : -1;
+const before = highlightIndex >= 0 ? text.slice(0, highlightIndex) : text;
+const after = highlightIndex >= 0 ? text.slice(highlightIndex + highlight.length) : '';
+---
+
+<h2 id={id}>{before}{highlightIndex >= 0 && <em>{highlight}</em>}{after}</h2>

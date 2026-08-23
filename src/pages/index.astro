@@ -1,5 +1,6 @@
 ---
 import ImageUploader from '../components/uploader/ImageUploader';
+import HighlightedHeading from '../components/HighlightedHeading.astro';
 import ResponsiveImage from '../components/ResponsiveImage.astro';
 import SiteLayout from '../layouts/SiteLayout.astro';
 import { getCollection } from 'astro:content';
@@ -7,7 +8,7 @@ import { sortBlogEntries } from '../lib/content/entries';
 import { splitFeatureCopy } from '../lib/content/feature-copy';
 import { visibleItems } from '../lib/content/item-visibility';
 import { resolveUploaderCopy } from '../lib/content/site-settings';
-import { ArrowRight, CircleCheck, Clock3, Link2, Plus, ShieldCheck } from '@lucide/astro';
+import { ArrowLeft, ArrowRight, CircleCheck, Clock3, Link2, Plus, ShieldCheck } from '@lucide/astro';
 
 export const prerender = true;
 const [homepage] = await getCollection('homepage');
@@ -18,6 +19,28 @@ const home = homepage.data;
 const site = siteEntry.data;
 const uploaderCopy = resolveUploaderCopy(site.uploader, home.uploader);
 const blogPosts = sortBlogEntries(await getCollection('blog')).slice(0, 6);
+const landingPages = await getCollection('landingPages');
+const activeLandingPages = new Map(
+  landingPages
+    .filter(({ data }) => !data.statusLabel)
+    .map(({ data }) => [`/${data.slug}`, data]),
+);
+const configuredToolLinks = site.header.navigation.flatMap((item) => item.children ?? []);
+const popularTools = configuredToolLinks.flatMap((link, index) => {
+  const page = activeLandingPages.get(link.href);
+  if (!page) return [];
+  const feature = page.features ? visibleItems(page.features.items)[0] : undefined;
+  const matchingUseCase = home.useCases.find((item) => item.href === link.href);
+  const fallbackVisual = site.processVisuals[index % site.processVisuals.length];
+  return [{
+    title: link.label,
+    description: page.description,
+    href: link.href,
+    image: feature?.image ?? matchingUseCase?.image ?? fallbackVisual.image,
+    imageAlt: feature?.imageAlt ?? matchingUseCase?.imageAlt ?? `${link.label} tool preview`,
+  }];
+}).slice(0, 6);
+const guideColumns = [blogPosts.slice(0, 3), blogPosts.slice(3, 6)];
 const featureItems = visibleItems(home.features.items).map((item) => ({
   ...item,
   copy: splitFeatureCopy(item.description, item.listItems),
@@ -48,7 +71,7 @@ const faqSchema = visibleFaqItems.length > 0 ? {
   </section>
 
   <section class="section process-section" id="how-it-works">
-    <div class="section-heading"><span class="eyebrow">{home.process.eyebrow}</span><h2>{home.process.heading}</h2><p>{home.process.intro}</p></div>
+    <div class="section-heading"><span class="eyebrow">{home.process.eyebrow}</span><HighlightedHeading text={home.process.heading} highlight={home.process.headingHighlight} /><p>{home.process.intro}</p></div>
     <div class="steps">
       {home.process.steps.map((step, index) => {
         const visual = site.processVisuals[index];
@@ -58,18 +81,18 @@ const faqSchema = visibleFaqItems.length > 0 ? {
   </section>
 
   <section class="section results-section" aria-labelledby="results-heading" data-scenario-section>
-    <div class="section-heading"><span class="eyebrow">{home.useCaseSection.eyebrow}</span><h2 id="results-heading">{home.useCaseSection.heading}</h2><p>{home.useCaseSection.intro}</p></div>
+    <div class="section-heading"><span class="eyebrow">{home.useCaseSection.eyebrow}</span><HighlightedHeading id="results-heading" text={home.useCaseSection.heading} highlight={home.useCaseSection.headingHighlight} /><p>{home.useCaseSection.intro}</p></div>
     <div class="scenario-tabs" role="tablist" aria-label="Image cleanup scenarios">
       {home.useCases.map((item, index) => <button type="button" role="tab" aria-selected={index === 0 ? 'true' : 'false'} data-scenario-tab={index}><strong>{item.title}</strong><small>{item.description}</small></button>)}
     </div>
     <div class="scenario-showcase">
-      {home.useCases.map((item, index) => <article class:list={{ 'scenario-panel': true, 'is-active': index === 0 }} data-scenario-panel={index}><div class="scenario-image"><ResponsiveImage src={item.image} alt={item.imageAlt} sizes="(max-width: 900px) calc(100vw - 40px), 900px" /><span class="scenario-label scenario-before">Before</span><span class="scenario-label scenario-after">After</span></div><div class="scenario-caption"><span>{item.title}</span><p>{item.description}</p><a class="text-link" href={item.href}>Explore tool <ArrowRight size={16} aria-hidden="true" /></a></div></article>)}
+      {home.useCases.map((item, index) => <article class:list={{ 'scenario-panel': true, 'is-active': index === 0 }} data-scenario-panel={index}><div class="scenario-stage"><div class="scenario-image"><ResponsiveImage src={item.image} alt={item.imageAlt} sizes="(max-width: 900px) calc(100vw - 40px), 940px" /><span class="scenario-label scenario-before">Before</span><span class="scenario-label scenario-after">After</span></div><div class="scenario-stage-controls" aria-label="Scenario carousel controls"><button type="button" data-scenario-direction="previous" aria-label="Previous scenario"><ArrowLeft size={18} aria-hidden="true" /></button><button type="button" data-scenario-direction="next" aria-label="Next scenario"><ArrowRight size={18} aria-hidden="true" /></button></div></div><div class="scenario-caption"><span>{item.title}</span><p>{item.description}</p><a class="text-link" href={item.href}>Explore tool <ArrowRight size={16} aria-hidden="true" /></a></div></article>)}
     </div>
   </section>
 
 
   {featureItems.length > 0 && <section class="section features-section" aria-labelledby="features-heading">
-    <div class="section-heading"><span class="eyebrow">{home.features.eyebrow}</span><h2 id="features-heading">{home.features.heading}</h2><p>{home.features.intro}</p></div>
+    <div class="section-heading"><span class="eyebrow">{home.features.eyebrow}</span><HighlightedHeading id="features-heading" text={home.features.heading} highlight={home.features.headingHighlight} /><p>{home.features.intro}</p></div>
     <div class="feature-list">
       {featureItems.map((item) => <article class:list={{ 'feature-item': true, 'is-image-left': item.imagePosition === 'left' }}>
         <div class="feature-copy"><span class="eyebrow">{item.eyebrow}</span><h3>{item.heading}</h3><p>{item.copy.description}</p>{item.copy.listItems.length > 0 && <ul class="feature-list-items">{item.copy.listItems.map((listItem) => <li>{listItem}</li>)}</ul>}</div>
@@ -79,14 +102,14 @@ const faqSchema = visibleFaqItems.length > 0 ? {
   </section>}
 
   <section class="section removal-section" aria-labelledby="removal-heading">
-    <div class="section-heading"><span class="eyebrow">Popular tools</span><h2 id="removal-heading">Choose what you want to remove</h2><p>Start with the cleanup workflow that best matches your image.</p></div>
+    <div class="section-heading"><span class="eyebrow">Popular tools</span><HighlightedHeading id="removal-heading" text="Choose what you want to remove" highlight="you want to remove" /><p>Start with the cleanup workflow that best matches your image.</p></div>
     <div class="removal-grid">
-      {home.useCases.map((item) => <a class="removal-card" href={item.href}><div class="removal-media"><ResponsiveImage src={item.image} alt={item.imageAlt} sizes="(max-width: 700px) calc(100vw - 36px), 350px" /></div><div><h3>{item.title}</h3><p>{item.description}</p><span class="text-link">Explore tool <ArrowRight size={16} aria-hidden="true" /></span></div></a>)}
+      {popularTools.map((item) => <a class="removal-card" href={item.href}><div class="removal-media"><ResponsiveImage src={item.image} alt={item.imageAlt} sizes="(max-width: 700px) calc(100vw - 36px), 420px" /></div><div><h3>{item.title}</h3><p>{item.description}</p><span class="text-link">Explore tool <ArrowRight size={16} aria-hidden="true" /></span></div></a>)}
     </div>
   </section>
 
   <section class="section standards-section">
-    <div><span class="eyebrow">{home.privacy.eyebrow}</span><h2>{home.privacy.heading}</h2><p>{home.privacy.description}</p><a class="text-link" href={home.privacy.linkHref}>{home.privacy.linkLabel}</a></div>
+    <div><span class="eyebrow">{home.privacy.eyebrow}</span><HighlightedHeading text={home.privacy.heading} highlight={home.privacy.headingHighlight} /><p>{home.privacy.description}</p><a class="text-link" href={home.privacy.linkHref}>{home.privacy.linkLabel}</a></div>
     <div class="standards-card">{home.privacy.features.map((feature, index) => {
       const Icon = privacyIcons[index] ?? ShieldCheck;
       return <div><span><Icon size={21} stroke-width={2.1} /></span><strong>{feature.title}</strong><small>{feature.description}</small></div>;
@@ -94,12 +117,12 @@ const faqSchema = visibleFaqItems.length > 0 ? {
   </section>
 
   <section class="section guides-section">
-    <div class="section-heading row-heading"><div><span class="eyebrow">{home.guides.eyebrow}</span><h2>{home.guides.heading}</h2></div><a class="text-link" href={home.guides.linkHref}>{home.guides.linkLabel}</a></div>
-    <div class="guide-grid">{blogPosts.map(({ data: post }) => <article><span>{post.readTime}</span><h3><a href={`/blog/${post.slug}`}>{post.title}</a></h3><p>{post.description}</p><a class="text-link" href={`/blog/${post.slug}`}>{home.guides.articleLinkLabel}</a></article>)}</div>
+    <div class="section-heading row-heading"><div><span class="eyebrow">{home.guides.eyebrow}</span><HighlightedHeading text={home.guides.heading} highlight={home.guides.headingHighlight} /><p>{home.guides.intro}</p></div><a class="outline-button" href={home.guides.linkHref}>{home.guides.linkLabel}</a></div>
+    <div class="guides-list-grid">{guideColumns.map((column) => <ul class="guides-list">{column.map(({ data: post }) => <li><a href={`/blog/${post.slug}`}><span>{post.title}</span><ArrowRight size={18} aria-hidden="true" /></a></li>)}</ul>)}</div>
   </section>
 
   {visibleFaqItems.length > 0 && <section class="section faq-section home-faq-section" aria-labelledby="faq-heading">
-    <div class="section-heading"><span class="eyebrow">{home.faq.eyebrow}</span><h2 id="faq-heading">{home.faq.heading}</h2><p>{home.faq.intro}</p></div>
+    <div class="section-heading"><span class="eyebrow">{home.faq.eyebrow}</span><HighlightedHeading id="faq-heading" text={home.faq.heading} highlight={home.faq.headingHighlight} /><p>{home.faq.intro}</p></div>
     <div class="faq-list">{visibleFaqItems.map((item) => <details><summary>{item.question}<span aria-hidden="true"><Plus size={20} /></span></summary><p>{item.answer}</p></details>)}</div>
   </section>}
 </SiteLayout>
@@ -108,10 +131,15 @@ const faqSchema = visibleFaqItems.length > 0 ? {
   document.querySelectorAll<HTMLElement>('[data-scenario-section]').forEach((section) => {
     const tabs = Array.from(section.querySelectorAll<HTMLButtonElement>('[data-scenario-tab]'));
     const panels = Array.from(section.querySelectorAll<HTMLElement>('[data-scenario-panel]'));
-    tabs.forEach((tab) => tab.addEventListener('click', () => {
-      const selected = tab.dataset.scenarioTab;
-      tabs.forEach((item) => item.setAttribute('aria-selected', String(item === tab)));
-      panels.forEach((panel) => panel.classList.toggle('is-active', panel.dataset.scenarioPanel === selected));
+    const selectScenario = (index: number) => {
+      const normalizedIndex = (index + tabs.length) % tabs.length;
+      tabs.forEach((item, itemIndex) => item.setAttribute('aria-selected', String(itemIndex === normalizedIndex)));
+      panels.forEach((panel, panelIndex) => panel.classList.toggle('is-active', panelIndex === normalizedIndex));
+    };
+    tabs.forEach((tab, index) => tab.addEventListener('click', () => selectScenario(index)));
+    section.querySelectorAll<HTMLButtonElement>('[data-scenario-direction]').forEach((button) => button.addEventListener('click', () => {
+      const activeIndex = tabs.findIndex((tab) => tab.getAttribute('aria-selected') === 'true');
+      selectScenario(activeIndex + (button.dataset.scenarioDirection === 'next' ? 1 : -1));
     }));
   });
 </script>

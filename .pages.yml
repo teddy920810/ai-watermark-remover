@@ -809,6 +809,11 @@ content:
             type: string
             required: true
             description: 首页“使用步骤”区域的 H2。
+          - name: headingHighlight
+            label: 标题蓝色高亮文字｜H2 高亮
+            type: string
+            required: true
+            description: 必须是上方 H2 中完整出现的一段文字；该段会显示为蓝色。
           - name: intro
             label: 模块简介｜P
             type: text
@@ -855,6 +860,7 @@ content:
         fields:
           - { name: eyebrow, label: 模块小标题｜SPAN, type: string, required: true }
           - { name: heading, label: 模块标题｜H2, type: string, required: true }
+          - { name: headingHighlight, label: 标题蓝色高亮文字｜H2 高亮, type: string, required: true, description: 必须是上方 H2 中完整出现的一段文字。 }
           - { name: intro, label: 模块简介｜P, type: text, required: true }
       - name: features
         label: 功能亮点 / Features
@@ -869,6 +875,11 @@ content:
             type: string
             required: true
             description: 首页功能亮点区域的 H2。
+          - name: headingHighlight
+            label: 标题蓝色高亮文字｜H2 高亮
+            type: string
+            required: true
+            description: 必须是上方 H2 中完整出现的一段文字；该段会显示为蓝色。
           - name: intro
             label: 模块简介｜P
             type: text
@@ -940,6 +951,11 @@ content:
             type: string
             required: true
             description: 首页隐私说明区域的 H2。
+          - name: headingHighlight
+            label: 标题蓝色高亮文字｜H2 高亮
+            type: string
+            required: true
+            description: 必须是上方 H2 中完整出现的一段文字；该段会显示为蓝色。
           - name: description
             label: 模块说明｜P
             type: text
@@ -993,6 +1009,16 @@ content:
             type: string
             required: true
             description: 首页指南区域的 H2。
+          - name: headingHighlight
+            label: 标题蓝色高亮文字｜H2 高亮
+            type: string
+            required: true
+            description: 必须是上方 H2 中完整出现的一段文字；该段会显示为蓝色。
+          - name: intro
+            label: 模块简介｜P
+            type: text
+            required: true
+            description: 指南标题下方的普通说明段落。
           - name: linkLabel
             label: 全部指南链接文字｜A
             type: string
@@ -1022,6 +1048,11 @@ content:
             type: string
             required: true
             description: 首页 FAQ 区域的 H2。
+          - name: headingHighlight
+            label: 标题蓝色高亮文字｜H2 高亮
+            type: string
+            required: true
+            description: 必须是上方 H2 中完整出现的一段文字；该段会显示为蓝色。
           - name: intro
             label: 模块简介｜P
             type: text

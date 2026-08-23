@@ -25,7 +25,7 @@ describe('SiteLayout Google Analytics integration', () => {
     expect(globalCss).toContain('--font-body: "DM Sans", system-ui, sans-serif;');
     expect(globalCss).toContain('--font-display: "Plus Jakarta Sans"');
     expect(globalCss).toContain('font-size: clamp(3rem, 4.8vw, 4.35rem);');
-    expect(globalCss).toContain('font-size: clamp(2rem, 3.2vw, 3rem);');
+    expect(globalCss).toContain('font-size: clamp(2.125rem, 3.2vw, 3rem);');
     expect(layoutSource).toContain('applicationCategory: site.structuredData.applicationCategory');
     expect(layoutSource).toContain('operatingSystem: site.structuredData.operatingSystem');
     expect(layoutSource).toContain('priceCurrency: site.structuredData.priceCurrency');

@@ -3,6 +3,7 @@
 ## Evidence
 
 - Source visual truth: `C:/Users/ermei/OneDrive/Desktop/index.html` and `C:/Users/ermei/OneDrive/Desktop/style.css`
+- Focused source references: `codex-clipboard-1ed80635-8b42-44b1-8e0b-80c21140e16b.png`, `codex-clipboard-dee94402-01d6-4225-9a2c-e3e4db8f4c6d.png`, and `codex-clipboard-3a97826e-f44b-48c7-a1a6-566c0986bb30.png`
 - Source capture: `test-results/design-qa/reference-desktop.png`
 - Implementation captures: `test-results/design-qa/home-final.png`, `test-results/design-qa/landing-final.png`, `test-results/design-qa/blog-final.png`, and `test-results/design-qa/privacy-final.png`
 - Combined comparison: `test-results/design-qa/reference-vs-final.png`
@@ -18,8 +19,10 @@ The implementation reproduces the supplied layout after the intentionally unchan
 
 - Hero: intentionally unchanged as requested.
 - Process: three real image-led cards with the same horizontal rhythm and blue framing as the reference.
-- Results: working scenario tabs update the large visual and selected state.
+- Results: working scenario tabs and the new outside previous/next controls update the large visual and selected state.
 - Feature and use-case sections: match the reference's alternating section rhythm and card hierarchy while preserving CMS-owned content.
+- Popular tools: six active tool-page links render as two rows of three cards and inherit their labels, URLs, descriptions, and imagery from the existing site/tool content.
+- Guides: the latest six published articles render in two bordered three-item lists, with the reference's left-aligned heading, blue title emphasis, and outlined action.
 - Blog, article, tool, and legal templates: share the CTA and grouped footer treatment without rewriting page content.
 - Footer: grouped Product, Resources, and Legal columns are CMS editable.
 
@@ -29,6 +32,7 @@ The implementation reproduces the supplied layout after the intentionally unchan
 2. Accessibility review found insufficient contrast in the green step label and selected-tab helper text.
 3. Darkened those text/background combinations while preserving the supplied blue visual direction.
 4. Recompared the source and implementation side by side and exercised the scenario tabs.
+5. Recompared the focused Results and Guides references against implementation captures from the same desktop browser surface; spacing, typography, blue emphasis, borders, and control placement match the supplied direction.
 
 ## Findings
 
@@ -40,6 +44,8 @@ The implementation reproduces the supplied layout after the intentionally unchan
 ## Interaction and console checks
 
 - Verified the scenario tab selection changes the active image panel and ARIA state.
+- Verified previous and next controls cycle the scenario selection in both directions.
+- Verified exactly six active Popular tools cards and two Guide lists containing six published articles.
 - Verified process images, shared CTA, and grouped footer on homepage and a representative tool page.
 - Verified the shared visual system on Blog index, Blog article, and Privacy pages.
 - Repository browser tests cover mobile navigation, public-route accessibility, homepage order, FAQ schema, and independent landing-page content.

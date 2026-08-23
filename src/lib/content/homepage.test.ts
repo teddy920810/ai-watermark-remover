@@ -21,6 +21,10 @@ describe('homepage CMS content', () => {
     expect(parsed.faq.items.length).toBeGreaterThan(0);
     expect(parsed.privacy.features.length).toBeGreaterThan(0);
     expect(parsed.useCases.every((item) => item.image && item.imageAlt)).toBe(true);
+    for (const section of [parsed.process, parsed.useCaseSection, parsed.features, parsed.privacy, parsed.guides, parsed.faq]) {
+      expect(section.headingHighlight).toBeTruthy();
+      expect(section.heading).toContain(section.headingHighlight);
+    }
   });
 
   it('allows each process step to override the shared CMS visual', () => {
