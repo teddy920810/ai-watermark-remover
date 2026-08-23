@@ -15,6 +15,17 @@ const landingPageFiles = [
   'video-watermark-remover.json',
 ];
 
+const videoLandingPageFiles = new Set([
+  'kling-watermark-remover.json',
+  'sora-watermark-remover.json',
+  'tiktok-watermark-remover.json',
+  'veo-watermark-remover.json',
+  'video-watermark-remover.json',
+]);
+
+const landingPageSource = readFileSync(new URL('../../components/LandingPage.astro', import.meta.url), 'utf8');
+const globalCss = readFileSync(new URL('../../styles/global.css', import.meta.url), 'utf8');
+
 const requestedKeywords = new Map([
   ['gemini-watermark-remover.json', 'gemini watermark remover'],
   ['grok-watermark-remover.json', 'grok watermark remover'],
@@ -28,6 +39,20 @@ const requestedKeywords = new Map([
 ]);
 
 describe('tool landing-page usage steps', () => {
+  it.each(landingPageFiles)('shows Coming Soon only on video-oriented tool page %s', (fileName) => {
+    const page = JSON.parse(
+      readFileSync(new URL(`../../content/landing-pages/${fileName}`, import.meta.url), 'utf8'),
+    );
+
+    expect(page.statusLabel).toBe(videoLandingPageFiles.has(fileName) ? 'Coming Soon' : undefined);
+  });
+
+  it('renders the optional status next to the landing-page eyebrow', () => {
+    expect(landingPageSource).toContain('class="hero-eyebrow-row"');
+    expect(landingPageSource).toContain('page.statusLabel && <span class="hero-status-badge">{page.statusLabel}</span>');
+    expect(globalCss).toContain('.hero-status-badge {');
+  });
+
   it.each(landingPageFiles)('keeps an editable three-step process in %s', (fileName) => {
     const page = JSON.parse(
       readFileSync(new URL(`../../content/landing-pages/${fileName}`, import.meta.url), 'utf8'),

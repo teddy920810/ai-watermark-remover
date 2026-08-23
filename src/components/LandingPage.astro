@@ -35,7 +35,10 @@ const faqSchema = visibleFaqItems.length > 0 ? {
   <section class="hero compact-hero">
     <div class="hero-inner">
       <div class="hero-copy">
-        <span class="eyebrow">{page.eyebrow}</span>
+        <div class="hero-eyebrow-row">
+          <span class="eyebrow">{page.eyebrow}</span>
+          {page.statusLabel && <span class="hero-status-badge">{page.statusLabel}</span>}
+        </div>
         <h1>{page.heading}</h1>
         <p>{page.intro}</p>
         <ul class="check-list">{page.benefits.map((benefit) => <li><CircleCheck size={19} stroke-width={2.5} />{benefit}</li>)}</ul>

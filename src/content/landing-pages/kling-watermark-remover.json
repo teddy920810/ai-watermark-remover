@@ -3,6 +3,7 @@
   "title": "Kling Watermark Remover for Exported Image Frames",
   "description": "Use this Kling watermark remover for an authorized still frame saved as JPG, PNG, or WEBP. The current online tool processes images only.",
   "eyebrow": "KLING WATERMARK REMOVER",
+  "statusLabel": "Coming Soon",
   "heading": "Kling Watermark Remover for Authorized Still Images",
   "intro": "Export a still frame from Kling content you may edit, then upload that image to the browser-based workflow. The tool does not accept video files and does not claim to remove invisible provenance information.",
   "benefits": ["Designed for still-frame exports", "No desktop editor required", "Private image handling"],

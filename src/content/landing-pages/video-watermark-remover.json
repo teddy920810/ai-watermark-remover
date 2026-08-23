@@ -3,6 +3,7 @@
   "title": "Video Watermark Remover for Exported Image Frames",
   "description": "Use this video watermark remover workflow on a still frame you own or have permission to edit. Export the frame as JPG, PNG, or WEBP first.",
   "eyebrow": "VIDEO WATERMARK REMOVER",
+  "statusLabel": "Coming Soon",
   "heading": "Video Watermark Remover for Authorized Still Frames",
   "intro": "The current WatermarkGemini tool processes images rather than complete video files. Export an authorized frame as an image, process that single still, and review the result before returning it to your own video-editing workflow.",
   "benefits": ["Still-frame image workflow", "No direct video upload", "Review each returned image"],
