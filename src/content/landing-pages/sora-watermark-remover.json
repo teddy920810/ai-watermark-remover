@@ -6,15 +6,31 @@
   "statusLabel": "Coming Soon",
   "heading": "Sora Watermark Remover for Authorized Image Frames",
   "intro": "Clean a visible mark from a Sora still image, thumbnail, or exported frame that you are authorized to edit. The current tool accepts images rather than video files, so export the frame first and review the result before using it.",
-  "benefits": ["Made for exported image frames", "No video upload required", "Private temporary storage"],
+  "benefits": [
+    "Made for exported image frames",
+    "No video upload required",
+    "Private temporary storage"
+  ],
   "process": {
     "eyebrow": "How it works",
     "heading": "How to Use the Sora Watermark Remover",
     "intro": "Prepare an authorized still image and complete the browser-based workflow in three steps.",
     "steps": [
-      { "number": "01", "title": "Export an Image Frame", "description": "Save the authorized Sora frame as JPG, PNG, or WEBP. Video files are not accepted by the current tool." },
-      { "number": "02", "title": "Upload and Process", "description": "Upload one image up to 10 MB, sign in with Google, and start the current image-processing flow." },
-      { "number": "03", "title": "Review the Result", "description": "Compare the original and returned image, then download it only when the visible area meets your needs." }
+      {
+        "number": "01",
+        "title": "Export an Image Frame",
+        "description": "Save the authorized Sora frame as JPG, PNG, or WEBP. Video files are not accepted by the current tool."
+      },
+      {
+        "number": "02",
+        "title": "Upload and Process",
+        "description": "Upload one image up to 10 MB, sign in with Google, and start the current image-processing flow."
+      },
+      {
+        "number": "03",
+        "title": "Review the Result",
+        "description": "Compare the original and returned image, then download it only when the visible area meets your needs."
+      }
     ]
   },
   "faq": {
@@ -22,10 +38,31 @@
     "heading": "Questions About the Sora Watermark Remover",
     "intro": "Check file support, privacy, and responsible use before processing an image.",
     "items": [
-      { "question": "Can I upload a Sora video?", "answer": "No. The current tool accepts one JPG, PNG, or WEBP image up to 10 MB. Export an authorized still frame before uploading." },
-      { "question": "Does this remove invisible provenance information?", "answer": "No. This workflow only targets a visible area in an image and does not claim to remove metadata, credentials, or invisible provenance signals." },
-      { "question": "Is WatermarkGemini affiliated with OpenAI or Sora?", "answer": "No. WatermarkGemini is an independent image-cleanup tool and is not affiliated with or endorsed by OpenAI." },
-      { "question": "When may I edit a Sora frame?", "answer": "Only edit content you own or have permission to modify, and retain disclosures or attribution required by the platform, license, or applicable law." }
+      {
+        "enabled": true,
+        "question": "Can I upload a Sora video?",
+        "answer": "No. The current tool accepts one JPG, PNG, or WEBP image up to 10 MB. Export an authorized still frame before uploading."
+      },
+      {
+        "enabled": true,
+        "question": "Does this remove invisible provenance information?",
+        "answer": "No. This workflow only targets a visible area in an image and does not claim to remove metadata, credentials, or invisible provenance signals."
+      },
+      {
+        "enabled": true,
+        "question": "Is WatermarkGemini affiliated with OpenAI or Sora?",
+        "answer": "No. WatermarkGemini is an independent image-cleanup tool and is not affiliated with or endorsed by OpenAI."
+      },
+      {
+        "enabled": true,
+        "question": "When may I edit a Sora frame?",
+        "answer": "Only edit content you own or have permission to modify, and retain disclosures or attribution required by the platform, license, or applicable law."
+      }
     ]
+  },
+  "uploader": {
+    "hero": {
+      "heading": "Coming Soon"
+    }
   }
 }
