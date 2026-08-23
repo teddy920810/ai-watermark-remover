@@ -102,10 +102,15 @@ const schemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [defaultS
       <div class="header-auth"><AuthControls client:load /></div>
     </header>
     <main><slot /></main>
+    <section class="site-cta" aria-labelledby="site-cta-heading">
+      <div><span class="eyebrow">{site.cta.eyebrow}</span><h2 id="site-cta-heading">{site.cta.heading}</h2><p>{site.cta.description}</p></div>
+      <a class="cta-button" href={site.cta.buttonHref}>{site.cta.buttonLabel}<ArrowRight size={18} aria-hidden="true" /></a>
+    </section>
     <footer class="site-footer">
-      <div><a class="brand" href="/"><img class="brand-logo" src={site.logo} alt="" /><span>{site.name}</span></a><p>{site.footer.tagline}</p></div>
-      <div class="footer-links">{site.footer.links.map((item) => <a href={item.href}>{item.label}</a>)}</div>
-      <p>© {new Date().getFullYear()} {site.name}</p>
+      <div class="footer-main"><div class="footer-brand"><a class="brand" href="/"><img class="brand-logo" src={site.logo} alt="" /><span>{site.name}</span></a><p>{site.footer.tagline}</p></div>
+        <div class="footer-groups">{site.footer.groups.map((group) => <div class="footer-group"><h2>{group.heading}</h2>{group.links.map((item) => <a href={item.href}>{item.label}</a>)}</div>)}</div>
+      </div>
+      <p class="footer-bottom">© {new Date().getFullYear()} {site.name}. All rights reserved.</p>
     </footer>
     <script>
       const header = document.querySelector<HTMLElement>('.site-header');

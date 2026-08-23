@@ -281,6 +281,37 @@ content:
               - { name: continueButton, label: Google 登录按钮｜BUTTON, type: string, required: true }
               - { name: dismissButton, label: 暂不登录按钮｜BUTTON, type: string, required: true }
           - { name: privacyNote, label: 隐私说明｜P, type: text, required: true }
+      - name: processVisuals
+        label: 公共使用步骤配图 / Process visuals
+        type: object
+        list:
+          min: 3
+          max: 3
+          collapsible:
+            collapsed: true
+            summary: "{imageAlt}"
+        description: 首页和工具页未单独选择配图时，按顺序读取这里的三张公共默认图。
+        fields:
+          - name: image
+            label: 步骤配图｜IMG
+            type: image
+            required: true
+            options:
+              media: images
+          - name: imageAlt
+            label: 图片替代文字｜IMG ALT
+            type: string
+            required: true
+      - name: cta
+        label: 公共行动模块 / CTA
+        type: object
+        description: 显示在所有公开页面 Footer 上方。
+        fields:
+          - { name: eyebrow, label: 模块小标题｜SPAN, type: string, required: true }
+          - { name: heading, label: 行动标题｜H2, type: string, required: true }
+          - { name: description, label: 行动说明｜P, type: text, required: true }
+          - { name: buttonLabel, label: 按钮文字｜A, type: string, required: true }
+          - { name: buttonHref, label: 按钮链接｜HREF, type: string, required: true }
       - name: header
         label: 页头 / Header
         type: object
@@ -331,25 +362,37 @@ content:
             type: text
             required: true
             description: Footer 品牌名称下方的普通说明段落。
-          - name: links
-            label: 页脚链接
+          - name: groups
+            label: 页脚链接分组
             type: object
             list:
               min: 1
               collapsible:
                 collapsed: true
-                summary: "{label}"
+                summary: "{heading}"
             fields:
-              - name: label
-                label: 链接文字｜A
+              - name: heading
+                label: 分组标题｜H2
                 type: string
                 required: true
-                description: Footer 中用户可点击的链接文字。
-              - name: href
-                label: 链接地址｜HREF
-                type: string
-                required: true
-                description: 链接目标；站内链接使用以 / 开头的路径。
+              - name: links
+                label: 分组链接
+                type: object
+                list:
+                  min: 1
+                  collapsible:
+                    collapsed: true
+                    summary: "{label}"
+                fields:
+                  - name: label
+                    label: 链接文字｜A
+                    type: string
+                    required: true
+                  - name: href
+                    label: 链接地址｜HREF
+                    type: string
+                    required: true
+                    description: 链接目标；站内链接使用以 / 开头的路径。
 
   - name: sitemap-settings
     label: Sitemap 设置 / Sitemap settings
@@ -742,6 +785,16 @@ content:
             type: string
             required: true
             description: 点击整个工具入口后打开的页面地址。
+          - name: image
+            label: 入口图片｜IMG
+            type: image
+            required: true
+            options:
+              media: images
+          - name: imageAlt
+            label: 图片替代文字｜IMG ALT
+            type: string
+            required: true
       - name: process
         label: 使用步骤
         type: object
@@ -785,6 +838,24 @@ content:
                 type: text
                 required: true
                 description: 步骤标题下方的普通说明段落。
+              - name: image
+                label: 当前步骤独立配图｜IMG（可选）
+                type: image
+                description: 留空时按步骤顺序读取站点设置中的公共步骤配图。
+                options:
+                  media: images
+              - name: imageAlt
+                label: 独立配图替代文字｜IMG ALT（可选）
+                type: string
+                description: 仅在选择独立步骤配图时填写。
+      - name: useCaseSection
+        label: 使用场景展示 / Result showcase
+        type: object
+        description: 使用“常用工具入口”的图片和文案生成可切换的大图展示。
+        fields:
+          - { name: eyebrow, label: 模块小标题｜SPAN, type: string, required: true }
+          - { name: heading, label: 模块标题｜H2, type: string, required: true }
+          - { name: intro, label: 模块简介｜P, type: text, required: true }
       - name: features
         label: 功能亮点 / Features
         type: object
@@ -1201,6 +1272,16 @@ content:
                 type: text
                 required: true
                 description: 步骤标题下方的普通说明段落。
+              - name: image
+                label: 当前步骤独立配图｜IMG（可选）
+                type: image
+                description: 留空时按步骤顺序读取站点设置中的公共步骤配图。
+                options:
+                  media: images
+              - name: imageAlt
+                label: 独立配图替代文字｜IMG ALT（可选）
+                type: string
+                description: 仅在选择独立步骤配图时填写。
       - name: features
         label: 功能亮点 / Features（可选）
         type: object

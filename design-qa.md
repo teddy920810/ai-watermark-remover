@@ -4,42 +4,45 @@
 
 - Source visual truth: `C:/Users/ermei/OneDrive/Desktop/index.html` and `C:/Users/ermei/OneDrive/Desktop/style.css`
 - Source capture: `test-results/design-qa/reference-desktop.png`
-- Implementation captures: `test-results/design-qa/home-desktop.png`, `test-results/design-qa/blog-index-desktop.png`, `test-results/design-qa/blog-article-desktop.png`, and `test-results/design-qa/privacy-desktop.png`
-- Combined comparison: `test-results/design-qa/reference-vs-home.png`
-- Desktop comparison viewport: source 1265 x 712 px; implementation captured at 1425 x 990 CSS px and normalized by cropping the same above-the-fold region, then resizing to 1265 x 712 px at density 1
-- Responsive verification viewport: 390 x 844 CSS px in the repository Playwright suite
-- State: public, signed-out, initial page state
+- Implementation captures: `test-results/design-qa/home-final.png`, `test-results/design-qa/landing-final.png`, `test-results/design-qa/blog-final.png`, and `test-results/design-qa/privacy-final.png`
+- Combined comparison: `test-results/design-qa/reference-vs-final.png`
+- Desktop viewport: 1280 x 720 CSS px at density 1; full-page captures were 1265 x 7894 px for the source and 1265 x 8611 px for the implementation
+- Responsive viewport: 390 x 844 CSS px in the repository Playwright suite
+- State: public, signed-out, with the homepage result-scenario tabs also checked after interaction
 
 ## Full-view comparison
 
-The implementation carries over the reference's cool white and pale-blue hero, strong navy display type, bright blue emphasis, compact sticky navigation, softly elevated white cards, rounded upload surface, and generous whitespace. The functional uploader remains in the right-hand visual slot instead of the reference's decorative before/after illustration so the existing product journey and content model stay intact.
+The implementation reproduces the supplied layout after the intentionally unchanged hero: visual three-step process cards, scenario tabs with a large result image, alternating feature rows, removal-scenario cards, assurance cards, guide lists, split FAQ, blue CTA, and a deep multi-column footer. Existing SEO and CMS copy remains the source of truth, so content density differs where the supplied mock used placeholder wording.
 
 ## Focused-region comparison
 
-- Hero: matched the reference's two-column rhythm, headline scale, blue emphasis, pale atmospheric background, and elevated tool card.
-- Header and actions: matched the reference's white sticky bar, compact navigation, rounded primary action, and restrained border/shadow language.
-- Blog and legal templates: extended the same pale page header, display type, bounded white reading card, light border, and soft elevation without changing article or legal content.
-- Article elements: quote, list, table, image, caption, link, and code styles remain readable and use the same token system.
+- Hero: intentionally unchanged as requested.
+- Process: three real image-led cards with the same horizontal rhythm and blue framing as the reference.
+- Results: working scenario tabs update the large visual and selected state.
+- Feature and use-case sections: match the reference's alternating section rhythm and card hierarchy while preserving CMS-owned content.
+- Blog, article, tool, and legal templates: share the CTA and grouped footer treatment without rewriting page content.
+- Footer: grouped Product, Resources, and Legal columns are CMS editable.
 
 ## Comparison history
 
-1. Initial implementation matched the visual direction, but the first accessibility pass found insufficient contrast for small blue labels and muted copy on pale surfaces.
-2. Added separate accessible action/text blue tokens and darkened muted text while preserving the supplied bright blue as the visual accent.
-3. Post-fix `npm run check:ui` passed all 84 targeted unit tests and all 8 browser tests, including the 390 x 844 mobile overflow, navigation, and serious/critical accessibility checks.
+1. The first pass reproduced the section order and visual hierarchy.
+2. Accessibility review found insufficient contrast in the green step label and selected-tab helper text.
+3. Darkened those text/background combinations while preserving the supplied blue visual direction.
+4. Recompared the source and implementation side by side and exercised the scenario tabs.
 
 ## Findings
 
-- No actionable P0, P1, or P2 differences remain.
-- The CMS-owned wording and existing product imagery intentionally differ from the visual draft.
-- The live uploader intentionally replaces the draft's decorative comparison scene; this preserves the site's core conversion flow.
+- No actionable P0, P1, or P2 visual differences remain.
+- The hero intentionally remains the existing production implementation.
+- Existing product copy and images are retained where reusable; three missing process illustrations were generated for the new visual slots.
+- No horizontal overflow was found on the inspected desktop or mobile layouts.
 
 ## Interaction and console checks
 
-- Verified the upload control is visible and enabled.
-- Verified the desktop pages render without horizontal overflow.
-- Verified mobile navigation and dropdown behavior through the 390 x 844 browser test.
-- Verified homepage, tool pages, Blog, article, Privacy, sitemap, robots, and 404 accessibility coverage.
-- Browser console check returned no warnings or errors for the inspected public pages.
+- Verified the scenario tab selection changes the active image panel and ARIA state.
+- Verified process images, shared CTA, and grouped footer on homepage and a representative tool page.
+- Verified the shared visual system on Blog index, Blog article, and Privacy pages.
+- Repository browser tests cover mobile navigation, public-route accessibility, homepage order, FAQ schema, and independent landing-page content.
 
 ## Final result
 

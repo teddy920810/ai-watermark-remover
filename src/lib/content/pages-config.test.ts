@@ -218,6 +218,7 @@ describe('Pages CMS maintenance safeguards', () => {
       expect.arrayContaining([
         expect.objectContaining({ name: 'shareImage', type: 'image', options: { media: 'images' } }),
         expect.objectContaining({ name: 'features', type: 'object' }),
+        expect.objectContaining({ name: 'useCaseSection', type: 'object' }),
         expect.objectContaining({ name: 'faq', type: 'object' }),
         expect.objectContaining({ name: 'uploader', component: 'uploader-copy-override' }),
       ]),
@@ -260,6 +261,8 @@ describe('Pages CMS maintenance safeguards', () => {
         expect.objectContaining({ name: 'logo', type: 'image', options: { media: 'images' } }),
         expect.objectContaining({ name: 'favicon', type: 'image', options: { media: 'images' } }),
         expect.objectContaining({ name: 'header', type: 'object' }),
+        expect.objectContaining({ name: 'processVisuals', type: 'object' }),
+        expect.objectContaining({ name: 'cta', type: 'object' }),
         expect.objectContaining({ name: 'footer', type: 'object' }),
       ]),
     );
@@ -271,6 +274,34 @@ describe('Pages CMS maintenance safeguards', () => {
     const children = navigation?.fields?.find((field) => field.name === 'children');
     expect(children?.fields).not.toEqual(expect.arrayContaining([
       expect.objectContaining({ name: 'badge' }),
+    ]));
+    const footer = siteSettings?.fields.find((field) => field.name === 'footer');
+    expect(footer?.fields).toEqual(expect.arrayContaining([
+      expect.objectContaining({ name: 'groups', type: 'object' }),
+    ]));
+  });
+
+  it('lets Pages CMS manage process visuals and card imagery', () => {
+    const siteSettings = config.content.find((entry) => entry.name === 'site-settings');
+    const sharedVisuals = siteSettings?.fields.find((field) => field.name === 'processVisuals');
+    expect(sharedVisuals?.fields).toEqual(expect.arrayContaining([
+      expect.objectContaining({ name: 'image', type: 'image', options: { media: 'images' } }),
+      expect.objectContaining({ name: 'imageAlt', type: 'string' }),
+    ]));
+
+    for (const contentName of ['homepage', 'landing-pages']) {
+      const entry = config.content.find((item) => item.name === contentName);
+      const steps = entry?.fields.find((field) => field.name === 'process')?.fields?.find((field) => field.name === 'steps');
+      expect(steps?.fields).toEqual(expect.arrayContaining([
+        expect.objectContaining({ name: 'image', type: 'image', options: { media: 'images' } }),
+        expect.objectContaining({ name: 'imageAlt', type: 'string' }),
+      ]));
+    }
+
+    const useCases = config.content.find((entry) => entry.name === 'homepage')?.fields.find((field) => field.name === 'useCases');
+    expect(useCases?.fields).toEqual(expect.arrayContaining([
+      expect.objectContaining({ name: 'image', type: 'image', options: { media: 'images' } }),
+      expect.objectContaining({ name: 'imageAlt', type: 'string' }),
     ]));
   });
 

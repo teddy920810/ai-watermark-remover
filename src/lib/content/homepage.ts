@@ -6,12 +6,16 @@ const linkedCardSchema = z.object({
   title: z.string().min(1),
   description: z.string().min(1),
   href: z.string().min(1),
+  image: z.string().min(1),
+  imageAlt: z.string().min(1),
 });
 
 const stepSchema = z.object({
   number: z.string().min(1),
   title: z.string().min(1),
   description: z.string().min(1),
+  image: z.string().min(1).optional(),
+  imageAlt: z.string().min(1).optional(),
 });
 
 const featureSchema = z.object({
@@ -50,6 +54,11 @@ export const homepageSchema = z.object({
     trustItems: z.array(z.string().min(1)).min(1),
   }),
   useCases: z.array(linkedCardSchema).min(1),
+  useCaseSection: z.object({
+    eyebrow: z.string().min(1),
+    heading: z.string().min(1),
+    intro: z.string().min(1),
+  }),
   process: z.object({
     eyebrow: z.string().min(1),
     heading: z.string().min(1),
