@@ -6,15 +6,31 @@
   "statusLabel": "Coming Soon",
   "heading": "TikTok Watermark Remover for Permitted Image Frames",
   "intro": "Prepare a still frame from your own TikTok content or another asset you are authorized to edit. WatermarkGemini accepts supported images only; it does not download TikTok links, process full videos, or remove audio metadata.",
-  "benefits": ["No TikTok URL required", "Still-image workflow", "Review before sharing"],
+  "benefits": [
+    "No TikTok URL required",
+    "Still-image workflow",
+    "Review before sharing"
+  ],
   "process": {
     "eyebrow": "How it works",
     "heading": "How to Use the TikTok Watermark Remover",
     "intro": "Start with your own permitted frame rather than a third-party video URL.",
     "steps": [
-      { "number": "01", "title": "Export Your Frame", "description": "Save a frame from content you own or may edit as JPG, PNG, or WEBP." },
-      { "number": "02", "title": "Upload the Image", "description": "Upload one image up to 10 MB, sign in with Google, and start processing." },
-      { "number": "03", "title": "Review Before Reuse", "description": "Inspect the returned image and confirm you still meet the source platform, attribution, and rights requirements." }
+      {
+        "number": "01",
+        "title": "Export Your Frame",
+        "description": "Save a frame from content you own or may edit as JPG, PNG, or WEBP."
+      },
+      {
+        "number": "02",
+        "title": "Upload the Image",
+        "description": "Upload one image up to 10 MB, sign in with Google, and start processing."
+      },
+      {
+        "number": "03",
+        "title": "Review Before Reuse",
+        "description": "Inspect the returned image and confirm you still meet the source platform, attribution, and rights requirements."
+      }
     ]
   },
   "faq": {
@@ -22,10 +38,31 @@
     "heading": "Questions About the TikTok Watermark Remover",
     "intro": "Understand URL, video, rights, and image-format limits.",
     "items": [
-      { "question": "Can I paste a TikTok URL?", "answer": "No. The tool does not download from TikTok. Upload a supported still image that you already own or have permission to edit." },
-      { "question": "Can I upload MP4 or MOV video?", "answer": "No. The current uploader accepts one JPG, PNG, or WEBP image up to 10 MB." },
-      { "question": "Is WatermarkGemini affiliated with TikTok?", "answer": "No. WatermarkGemini is an independent image-cleanup tool and is not affiliated with or endorsed by TikTok or ByteDance." },
-      { "question": "May I remove a watermark from another creator's frame?", "answer": "Not without permission. Only edit content you own or are authorized to modify, and preserve required attribution and disclosures." }
+      {
+        "enabled": true,
+        "question": "Can I paste a TikTok URL?",
+        "answer": "No. The tool does not download from TikTok. Upload a supported still image that you already own or have permission to edit."
+      },
+      {
+        "enabled": true,
+        "question": "Can I upload MP4 or MOV video?",
+        "answer": "No. The current uploader accepts one JPG, PNG, or WEBP image up to 10 MB."
+      },
+      {
+        "enabled": true,
+        "question": "Is WatermarkGemini affiliated with TikTok?",
+        "answer": "No. WatermarkGemini is an independent image-cleanup tool and is not affiliated with or endorsed by TikTok or ByteDance."
+      },
+      {
+        "enabled": true,
+        "question": "May I remove a watermark from another creator's frame?",
+        "answer": "Not without permission. Only edit content you own or are authorized to modify, and preserve required attribution and disclosures."
+      }
     ]
+  },
+  "uploader": {
+    "dropzone": {
+      "dropLabel": "Coming Soon"
+    }
   }
 }
