@@ -144,6 +144,7 @@ test('homepage reference controls, tools, highlighted headings, and guide lists 
   await expect(page.locator('.standards-section h2 em')).toHaveCount(1);
   await expect(page.locator('.guides-list-grid .guides-list')).toHaveCount(2);
   await expect(page.locator('.guides-list-grid li')).toHaveCount(6);
+  await expect(page.locator('.standards-card > div')).toHaveCount(4);
 });
 
 test('FAQ section emits a FAQPage JSON-LD schema', async ({ page }) => {

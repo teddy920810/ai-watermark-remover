@@ -90,6 +90,11 @@
         "icon": "⌁",
         "title": "Secure Download Links",
         "description": "Temporary links help keep access to your processed images private."
+      },
+      {
+        "icon": "$",
+        "title": "Free Processing",
+        "description": "Processing and downloading are completely free."
       }
     ]
   },

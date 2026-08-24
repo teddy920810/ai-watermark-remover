@@ -19,7 +19,7 @@ describe('homepage CMS content', () => {
     expect(parsed.process.steps.length).toBeGreaterThan(0);
     expect(parsed.features.items.length).toBeGreaterThan(0);
     expect(parsed.faq.items.length).toBeGreaterThan(0);
-    expect(parsed.privacy.features.length).toBeGreaterThan(0);
+    expect(parsed.privacy.features).toHaveLength(4);
     expect(parsed.useCases.every((item) => item.image && item.imageAlt)).toBe(true);
     for (const section of [parsed.process, parsed.useCaseSection, parsed.features, parsed.privacy, parsed.guides, parsed.faq]) {
       expect(section.headingHighlight).toBeTruthy();
