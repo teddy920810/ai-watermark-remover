@@ -147,6 +147,27 @@ test('homepage reference controls, tools, highlighted headings, and guide lists 
   await expect(page.locator('.standards-card > div')).toHaveCount(4);
 });
 
+test('homepage CMS PNG and JPEG images load generated responsive WebP variants', async ({ page }) => {
+  await page.goto('/');
+
+  const results = page.locator('[data-scenario-section]');
+  const panels = results.locator('[data-scenario-panel]');
+  await expect(panels).toHaveCount(3);
+
+  for (let index = 0; index < await panels.count(); index += 1) {
+    await results.getByRole('tab').nth(index).click();
+    const image = panels.nth(index).locator('img');
+    await image.scrollIntoViewIfNeeded();
+    await expect(image.locator('xpath=..')).toHaveJSProperty('tagName', 'PICTURE');
+    await expect(image.locator('xpath=..').locator('source[type="image/webp"]')).toHaveAttribute(
+      'srcset',
+      /\/generated\/uploads\/.*\.(?:png|jpe?g)-\d+\.webp \d+w/i,
+    );
+    await expect.poll(() => image.evaluate((element) => (element as HTMLImageElement).currentSrc)).toMatch(/\/generated\/uploads\/.*\.webp$/i);
+    await expect(image).toHaveAttribute('src', /\/uploads\/.*\.(?:png|jpe?g)$/i);
+  }
+});
+
 test('FAQ section emits a FAQPage JSON-LD schema', async ({ page }) => {
   await page.goto('/');
   const schemas = await page.locator('script[type="application/ld+json"]').allTextContents();

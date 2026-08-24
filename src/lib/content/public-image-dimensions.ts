@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 
 export interface ImageDimensions {
   width: number;
@@ -51,7 +52,7 @@ function readJpeg(buffer: Buffer): ImageDimensions | undefined {
   return undefined;
 }
 
-type ReadImage = (path: URL) => Buffer;
+type ReadImage = (path: string) => Buffer;
 
 export function resolvePublicImageDimensions(
   src: string,
@@ -59,7 +60,7 @@ export function resolvePublicImageDimensions(
 ): ImageDimensions | undefined {
   if (!/^\/uploads\/[a-z0-9/_-]+\.(?:jpe?g|png|webp)$/i.test(src) || src.includes('..')) return undefined;
   try {
-    const buffer = readImage(new URL(`../../../public/${src.slice(1)}`, import.meta.url));
+    const buffer = readImage(resolve(process.cwd(), 'public', src.slice(1)));
     return readPng(buffer) ?? readWebp(buffer) ?? readJpeg(buffer);
   } catch {
     return undefined;
