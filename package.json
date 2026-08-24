@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "astro dev",
     "prebuild": "npm run images:optimize",
-    "build": "astro check && astro build",
+    "build": "astro check && astro build && npm run verify:responsive-images",
     "preview": "astro preview",
     "lint": "astro check && eslint .",
     "test": "vitest run",
@@ -25,6 +25,7 @@
     "auth:import": "node scripts/import-google-credentials.mjs",
     "blog:import-docx": "node scripts/import-blog-docx.mjs",
     "images:optimize": "node scripts/optimize-images.mjs",
+    "verify:responsive-images": "node scripts/verify-responsive-images.mjs",
     "site:init": "node scripts/initialize-site.mjs",
     "site:validate": "node scripts/validate-site.mjs",
     "verify:deploy": "npm run site:validate && npm run test:coverage && npm run lint && npm run build",
