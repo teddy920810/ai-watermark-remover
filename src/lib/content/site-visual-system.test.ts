@@ -56,6 +56,19 @@ describe('site-wide operations visual system', () => {
     expect(globalCss).toMatch(/\.section\s*\{[^}]*padding:\s*110px max\(32px, calc\(\(100vw - 1320px\) \/ 2\)\);/s);
   });
 
+  it('keeps shared headings and lower-page spacing aligned with the reference system', () => {
+    expect(globalCss).toMatch(/\.steps h3\s*\{[^}]*font:\s*700 19px\/1\.3 var\(--font-display\);/s);
+    expect(globalCss).toMatch(/\.feature-copy h3\s*\{[^}]*font:\s*700 clamp\(28px,\s*2\.4vw,\s*39px\)\/1\.18 var\(--font-display\);[^}]*letter-spacing:\s*-1\.5px;/s);
+    expect(globalCss).toMatch(/\.feature-copy p\s*\{[^}]*font-size:\s*1rem;[^}]*line-height:\s*1\.65;/s);
+    expect(globalCss).toMatch(/\.removal-card h3\s*\{[^}]*font:\s*700 19px\/1\.3 var\(--font-display\);/s);
+    expect(globalCss).toMatch(/\.standards-card strong\s*\{[^}]*font:\s*700 16px\/1\.35 var\(--font-display\);/s);
+    expect(globalCss).toMatch(/\.faq-list summary\s*\{[^}]*font:\s*700 15px\/1\.45 var\(--font-display\);/s);
+    expect(globalCss).toMatch(/\.site-cta\s*\{[^}]*padding:\s*86px max\(32px, calc\(\(100vw - 1320px\) \/ 2\)\);/s);
+    expect(globalCss).toMatch(/\.site-cta h2\s*\{[^}]*font:\s*800 clamp\(33px,\s*3vw,\s*47px\)\/1\.16 var\(--font-display\);/s);
+    expect(globalCss).toMatch(/\.site-footer\s*\{[^}]*padding:\s*72px max\(32px, calc\(\(100vw - 1320px\) \/ 2\)\) 28px;/s);
+    expect(globalCss).toMatch(/\.footer-group h2\s*\{[^}]*font:\s*700 13px\/1\.2 var\(--font-display\);/s);
+  });
+
   it('uses generated imagery for the journey and library icons for controls', () => {
     expect(homePage).toContain("from '@lucide/astro'");
     expect(homePage).toContain('class="process-step-media"');

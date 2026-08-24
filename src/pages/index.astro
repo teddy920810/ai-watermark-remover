@@ -8,7 +8,7 @@ import { sortBlogEntries } from '../lib/content/entries';
 import { splitFeatureCopy } from '../lib/content/feature-copy';
 import { visibleItems } from '../lib/content/item-visibility';
 import { resolveUploaderCopy } from '../lib/content/site-settings';
-import { ArrowLeft, ArrowRight, CircleCheck, Clock3, Link2, Plus, ShieldCheck } from '@lucide/astro';
+import { ArrowLeft, ArrowRight, BadgeDollarSign, CircleCheck, Clock3, Link2, Plus, ShieldCheck } from '@lucide/astro';
 
 export const prerender = true;
 const [homepage] = await getCollection('homepage');
@@ -46,7 +46,7 @@ const featureItems = visibleItems(home.features.items).map((item) => ({
   copy: splitFeatureCopy(item.description, item.listItems),
 }));
 const visibleFaqItems = visibleItems(home.faq.items);
-const privacyIcons = [ShieldCheck, Clock3, Link2];
+const privacyIcons = [ShieldCheck, Clock3, Link2, BadgeDollarSign];
 const faqSchema = visibleFaqItems.length > 0 ? {
   '@type': 'FAQPage',
   mainEntity: visibleFaqItems.map((item) => ({

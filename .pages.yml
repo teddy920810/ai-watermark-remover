@@ -756,45 +756,6 @@ content:
             list:
               min: 1
             description: Hero 下方的短标签，不属于标题层级。
-      - name: useCases
-        label: 常用工具入口
-        type: object
-        list:
-          min: 1
-          collapsible:
-            collapsed: true
-            summary: "{title}"
-        fields:
-          - name: icon
-            label: 图标字符｜SPAN
-            type: string
-            required: true
-            description: 入口卡片的装饰性图标字符。
-          - name: title
-            label: 入口标题｜STRONG
-            type: string
-            required: true
-            description: 工具入口卡片中的加粗文字，不是 H2/H3。
-          - name: description
-            label: 入口说明｜SMALL
-            type: string
-            required: true
-            description: 入口标题下方的简短辅助文字。
-          - name: href
-            label: 入口链接｜HREF
-            type: string
-            required: true
-            description: 点击整个工具入口后打开的页面地址。
-          - name: image
-            label: 入口图片｜IMG
-            type: image
-            required: true
-            options:
-              media: images
-          - name: imageAlt
-            label: 图片替代文字｜IMG ALT
-            type: string
-            required: true
       - name: process
         label: 使用步骤
         type: object
@@ -856,12 +817,52 @@ content:
       - name: useCaseSection
         label: 使用场景展示 / Result showcase
         type: object
-        description: 使用“常用工具入口”的图片和文案生成可切换的大图展示。
+        description: 配置该屏的模块标题；紧随其后的“使用场景条目”配置切换标签、图片、说明和链接。
         fields:
           - { name: eyebrow, label: 模块小标题｜SPAN, type: string, required: true }
           - { name: heading, label: 模块标题｜H2, type: string, required: true }
           - { name: headingHighlight, label: 标题蓝色高亮文字｜H2 高亮, type: string, required: true, description: 必须是上方 H2 中完整出现的一段文字。 }
           - { name: intro, label: 模块简介｜P, type: text, required: true }
+      - name: useCases
+        label: 使用场景条目 / Result showcase items
+        type: object
+        description: 每个条目对应一个切换标签及其大图、说明和工具链接；按列表顺序显示。
+        list:
+          min: 1
+          collapsible:
+            collapsed: true
+            summary: "{title}"
+        fields:
+          - name: icon
+            label: 图标字符｜SPAN
+            type: string
+            required: true
+            description: 使用场景的装饰性图标字符。
+          - name: title
+            label: 标签与场景标题｜STRONG
+            type: string
+            required: true
+            description: 同时显示在切换标签和大图下方的场景标题。
+          - name: description
+            label: 标签与场景说明｜SMALL / P
+            type: string
+            required: true
+            description: 同时显示在切换标签和大图下方的说明文字。
+          - name: href
+            label: 对应工具页链接｜HREF
+            type: string
+            required: true
+            description: 大图下方“Explore tool”打开的站内工具页路径。
+          - name: image
+            label: Before / After 展示图｜IMG
+            type: image
+            required: true
+            options:
+              media: images
+          - name: imageAlt
+            label: 展示图替代文字｜IMG ALT
+            type: string
+            required: true
       - name: features
         label: 功能亮点 / Features
         type: object
@@ -972,10 +973,11 @@ content:
             required: true
             description: 隐私政策链接目标。
           - name: features
-            label: 隐私特点
+            label: 保障卡片 / Standards cards
             type: object
             list:
-              min: 1
+              min: 4
+              max: 4
               collapsible:
                 collapsed: true
                 summary: "{title}"

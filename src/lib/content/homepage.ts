@@ -81,7 +81,7 @@ export const homepageSchema = z.object({
     description: z.string().min(1),
     linkLabel: z.string().min(1),
     linkHref: z.string().min(1),
-    features: z.array(featureSchema).min(1),
+    features: z.array(featureSchema).length(4),
   }),
   guides: z.object({
     eyebrow: z.string().min(1),

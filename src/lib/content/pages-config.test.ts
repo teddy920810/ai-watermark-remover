@@ -319,6 +319,27 @@ describe('Pages CMS maintenance safeguards', () => {
     ]));
   });
 
+  it('groups the result showcase controls and keeps exactly four standards cards', () => {
+    const homepage = config.content.find((entry) => entry.name === 'homepage');
+    const fieldNames = homepage?.fields.map((field) => field.name) ?? [];
+    const useCaseSectionIndex = fieldNames.indexOf('useCaseSection');
+    const useCasesIndex = fieldNames.indexOf('useCases');
+    expect(useCasesIndex).toBe(useCaseSectionIndex + 1);
+
+    const useCases = homepage?.fields[useCasesIndex];
+    expect(useCases).toMatchObject({
+      label: '使用场景条目 / Result showcase items',
+      description: expect.stringContaining('切换标签'),
+    });
+
+    const standards = homepage?.fields.find((field) => field.name === 'privacy')
+      ?.fields?.find((field) => field.name === 'features');
+    expect(standards).toMatchObject({
+      label: '保障卡片 / Standards cards',
+      list: { min: 4, max: 4 },
+    });
+  });
+
   it('connects the blog rich-text editor to the static image library', () => {
     const blog = config.content.find((entry) => entry.name === 'blog');
     expect(blog?.fields).toEqual(
