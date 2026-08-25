@@ -20,8 +20,9 @@ describe('blog content mode', () => {
     expect(blogPageSource).toContain('<Content />');
   });
 
-  it('tolerates only missing images in Markdown blog bodies', () => {
-    expect(astroConfigSource).toContain('omitMissingBlogImages');
+  it('replaces missing images only in Markdown blog bodies', () => {
+    expect(astroConfigSource).toContain('replaceMissingBlogImages');
     expect(astroConfigSource).toContain("new URL('./src/content/blog', import.meta.url)");
+    expect(astroConfigSource).toContain("new URL('./public', import.meta.url)");
   });
 });

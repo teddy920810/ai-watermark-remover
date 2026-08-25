@@ -168,6 +168,22 @@ test('homepage CMS PNG and JPEG images load generated responsive WebP variants',
   }
 });
 
+test('missing and failed images use the site-wide placeholder without broken markup', async ({ page }) => {
+  await page.goto('/remove-logo-from-image');
+
+  const missingFeature = page.getByRole('heading', { name: 'AI Logo Remover for Detailed Product Surfaces' })
+    .locator('xpath=ancestor::article')
+    .locator('img');
+  await expect(missingFeature).toHaveAttribute('src', '/images/image-placeholder.svg');
+  await expect(missingFeature).toHaveAttribute('data-image-fallback', 'true');
+
+  await page.route('**/uploads/watermarkgemini-logo.svg', (route) => route.abort());
+  await page.reload();
+  const logo = page.locator('.site-header .brand-logo');
+  await expect(logo).toHaveAttribute('src', '/images/image-placeholder.svg');
+  await expect(logo).toHaveAttribute('data-image-fallback', 'true');
+});
+
 test('FAQ section emits a FAQPage JSON-LD schema', async ({ page }) => {
   await page.goto('/');
   const schemas = await page.locator('script[type="application/ld+json"]').allTextContents();

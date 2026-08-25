@@ -1,9 +1,12 @@
 ---
 import { getCollection } from 'astro:content';
+import ImageFallbackScript from '../../components/ImageFallbackScript.astro';
+import { resolvePublicImageSource } from '../../lib/content/image-fallback';
 export const prerender = true;
 const [siteEntry] = await getCollection('siteSettings');
 if (!siteEntry) throw new Error('Site settings CMS content is missing.');
 const site = siteEntry.data;
+const siteLogo = resolvePublicImageSource(site.logo);
 ---
 
 <!doctype html>
@@ -16,7 +19,7 @@ const site = siteEntry.data;
   </head>
   <body>
     <main class="popup-status">
-      <img class="brand-logo" src={site.logo} alt={`${site.name} logo`} />
+      <img class="brand-logo" src={siteLogo} alt={`${site.name} logo`} data-image-fallback={siteLogo === site.logo ? undefined : 'true'} />
       <p>Sign-in complete. Returning to your upload…</p>
     </main>
     <script is:inline>
@@ -27,6 +30,7 @@ const site = siteEntry.data;
         window.location.replace('/#tool');
       }
     </script>
+    <ImageFallbackScript />
   </body>
 </html>
 

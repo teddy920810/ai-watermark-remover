@@ -39,9 +39,9 @@ Astro 负责内容路由和服务端 API；React 只用于上传交互岛。浏�
 
 新增或调整字段必须同步修改 Astro schema、Pages CMS 配置、页面渲染组件及测试。Pages CMS 的 `merge: true` 会保留表单未管理的字段；不要移除这一设置。
 
-博客 Markdown 正文中的相对图片如果尚未提交，构建会跳过该图片并输出 `[content] Missing blog image omitted` 警告，避免单张正文配图阻塞整站发布。其他内容 schema 仍严格校验；封面图等 CMS 图片应继续通过 `public/uploads`（页面路径 `/uploads`）管理。
+博客 Markdown 正文中的相对图片如果尚未提交，构建会用全站占位图替换并输出警告。首页、工具页、Blog、站点 Logo 等 CMS 图片引用缺失时同样使用 `/images/image-placeholder.svg`，内容校验只告警而不阻塞发布；浏览器还会为网络加载失败和动态图片提供同一回退。其他内容 schema 仍严格校验；封面图等 CMS 图片应继续通过 `public/uploads`（页面路径 `/uploads`）管理。
 
-Pages CMS 上传的 PNG/JPG 会在 `prebuild` 阶段自动生成 480、768、1200 px（不放大原图）的 WebP 衍生图。CMS 内容仍保存原始 `/uploads/...` 路径，页面通过 `<picture>` 优先提供 WebP 并保留原图回退；不要删除原始运营图片。SVG、GIF 和已是 WebP 的资源不会再次转换，生成目录 `public/generated/` 不提交到 Git。
+Pages CMS 上传的 PNG/JPG 会在 `prebuild` 阶段自动生成 480、768、1200 px（不放大原图）的 WebP 衍生图。CMS 内容仍保存原始 `/uploads/...` 路径，页面通过 `<picture>` 优先提供 WebP 并保留原图回退；不要主动删除仍在使用的原始运营图片。若运营误删被引用资源，页面会显示代码内置占位图且构建继续，日志会保留缺失路径供后续修复。SVG、GIF 和已是 WebP 的资源不会再次转换，生成目录 `public/generated/` 不提交到 Git。
 
 ### 从审核后的 Word 快速导入博客
 

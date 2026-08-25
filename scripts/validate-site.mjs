@@ -1,7 +1,7 @@
 import { readFile, readdir } from 'node:fs/promises';
 import path from 'node:path';
 import process from 'node:process';
-import { collectSiteValidationIssues } from './site-validator.mjs';
+import { collectSiteValidationIssues, collectSiteValidationWarnings } from './site-validator.mjs';
 
 const root = process.cwd();
 
@@ -39,6 +39,8 @@ if (!siteDocument || typeof siteDocument.value !== 'object' || !siteDocument.val
 const canonicalOrigin = siteDocument.value.canonicalOrigin;
 
 const issues = collectSiteValidationIssues({ envExample, canonicalOrigin, contentDocuments, landingSlugs, blogSlugs, availableAssets });
+const warnings = collectSiteValidationWarnings({ envExample, canonicalOrigin, contentDocuments, landingSlugs, blogSlugs, availableAssets });
+if (warnings.length > 0) process.stderr.write(`Site validation warnings:\n- ${warnings.join('\n- ')}\n`);
 if (issues.length > 0) {
   process.stderr.write(`Site validation failed:\n- ${issues.join('\n- ')}\n`);
   process.exitCode = 1;

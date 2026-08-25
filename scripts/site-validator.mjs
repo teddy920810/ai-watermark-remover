@@ -23,8 +23,9 @@ function normalizeRoute(value) {
   return route.length > 1 ? route.replace(/\/$/, '') : route;
 }
 
-export function collectSiteValidationIssues(input) {
+function collectSiteValidation(input) {
   const issues = [];
+  const warnings = [];
   const siteUrl = envValue(input.envExample, 'SITE_URL');
   const authUrl = envValue(input.envExample, 'BETTER_AUTH_URL');
   if (!siteUrl || !authUrl || siteUrl !== authUrl) {
@@ -56,7 +57,7 @@ export function collectSiteValidationIssues(input) {
       }
 
       for (const match of value.matchAll(/\/uploads\/[A-Za-z0-9._/-]+/g)) {
-        if (!availableAssets.has(match[0])) issues.push(`${document.path}: referenced asset ${match[0]} does not exist.`);
+        if (!availableAssets.has(match[0])) warnings.push(`${document.path}: referenced asset ${match[0]} does not exist; the placeholder will be used.`);
       }
 
       const internalLinks = [];
@@ -71,5 +72,16 @@ export function collectSiteValidationIssues(input) {
     });
   });
 
-  return [...new Set(issues)].sort();
+  return {
+    issues: [...new Set(issues)].sort(),
+    warnings: [...new Set(warnings)].sort(),
+  };
+}
+
+export function collectSiteValidationIssues(input) {
+  return collectSiteValidation(input).issues;
+}
+
+export function collectSiteValidationWarnings(input) {
+  return collectSiteValidation(input).warnings;
 }

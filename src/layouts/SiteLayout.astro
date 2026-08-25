@@ -1,8 +1,10 @@
 ---
 import '../styles/global.css';
+import ImageFallbackScript from '../components/ImageFallbackScript.astro';
 import AuthControls from '../components/auth/AuthControls';
 import { getCollection } from 'astro:content';
 import { ArrowRight, ChevronDown, Menu, X } from '@lucide/astro';
+import { resolvePublicImageSource } from '../lib/content/image-fallback';
 
 interface Props {
   title?: string;
@@ -26,7 +28,9 @@ const {
   noindex = false,
 } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
-const socialImage = new URL(image, Astro.site);
+const siteLogo = resolvePublicImageSource(site.logo);
+const favicon = resolvePublicImageSource(site.favicon);
+const socialImage = new URL(resolvePublicImageSource(image), Astro.site);
 const analyticsId = site.analytics.googleMeasurementId;
 const defaultSchema = {
   '@type': 'WebApplication',
@@ -74,7 +78,7 @@ const schemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [defaultS
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={socialImage} />
     <meta name="theme-color" content={site.themeColor} />
-    <link rel="icon" href={site.favicon} />
+    <link rel="icon" href={favicon} />
     {schemas.map((item) => <script is:inline type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', ...item })} />)}
   </head>
   <body style={`--theme-color: ${site.themeColor}; --theme-color-fallback: ${site.themeColorFallback};`}>
@@ -85,7 +89,7 @@ const schemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [defaultS
       </aside>
     )}
     <header class="site-header">
-      <a class="brand" href="/" aria-label={`${site.name} home`}><img class="brand-logo" src={site.logo} alt="" /><span>{site.name}</span></a>
+      <a class="brand" href="/" aria-label={`${site.name} home`}><img class="brand-logo" src={siteLogo} alt="" data-image-fallback={siteLogo === site.logo ? undefined : 'true'} /><span>{site.name}</span></a>
       <button class="mobile-menu-toggle" type="button" aria-label="Open navigation" aria-controls="site-navigation" aria-expanded="false" data-mobile-menu-toggle>
         <Menu class="menu-open-icon" size={21} aria-hidden="true" /><X class="menu-close-icon" size={21} aria-hidden="true" />
       </button>
@@ -107,7 +111,7 @@ const schemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [defaultS
       <a class="cta-button" href={site.cta.buttonHref}>{site.cta.buttonLabel}<ArrowRight size={18} aria-hidden="true" /></a>
     </section>
     <footer class="site-footer">
-      <div class="footer-main"><div class="footer-brand"><a class="brand" href="/"><img class="brand-logo" src={site.logo} alt="" /><span>{site.name}</span></a><p>{site.footer.tagline}</p></div>
+      <div class="footer-main"><div class="footer-brand"><a class="brand" href="/"><img class="brand-logo" src={siteLogo} alt="" data-image-fallback={siteLogo === site.logo ? undefined : 'true'} /><span>{site.name}</span></a><p>{site.footer.tagline}</p></div>
         <div class="footer-groups">{site.footer.groups.map((group) => <div class="footer-group"><h2>{group.heading}</h2>{group.links.map((item) => <a href={item.href}>{item.label}</a>)}</div>)}</div>
       </div>
       <p class="footer-bottom">© {new Date().getFullYear()} {site.name}. All rights reserved.</p>
@@ -154,6 +158,7 @@ const schemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [defaultS
         if (header && event.target instanceof Node && !header.contains(event.target)) closeMenu();
       });
     </script>
+    <ImageFallbackScript />
   </body>
 </html>
 

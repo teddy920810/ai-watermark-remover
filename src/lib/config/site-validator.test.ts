@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { collectSiteValidationIssues } from '../../../scripts/site-validator.mjs';
+import { collectSiteValidationIssues, collectSiteValidationWarnings } from '../../../scripts/site-validator.mjs';
 
 const validInput = {
   envExample: 'SITE_URL=https://www.example.com\nBETTER_AUTH_URL=https://www.example.com\n',
@@ -24,7 +24,7 @@ describe('site content validation', () => {
     expect(collectSiteValidationIssues(validInput)).toEqual([]);
   });
 
-  it('finds missing assets, repository blob URLs, origin mismatches, and reserved routes', () => {
+  it('finds repository blob URLs, origin mismatches, and reserved routes without blocking on missing assets', () => {
     const issues = collectSiteValidationIssues({
       ...validInput,
       envExample: 'SITE_URL=https://www.example.com\nBETTER_AUTH_URL=https://example.com\n',
@@ -39,10 +39,17 @@ describe('site content validation', () => {
     expect(issues).toEqual(expect.arrayContaining([
       expect.stringContaining('SITE_URL and BETTER_AUTH_URL'),
       expect.stringContaining('canonical origin'),
-      expect.stringContaining('/uploads/missing.webp'),
       expect.stringContaining('GitHub blob URL'),
       expect.stringContaining('reserved route /blog'),
     ]));
+    expect(issues).not.toEqual(expect.arrayContaining([expect.stringContaining('/uploads/missing.webp')]));
+  });
+
+  it('reports missing referenced assets as non-fatal warnings', () => {
+    expect(collectSiteValidationWarnings({
+      ...validInput,
+      contentDocuments: [{ path: 'home.json', value: { image: '/uploads/missing.webp' } }],
+    })).toEqual(['home.json: referenced asset /uploads/missing.webp does not exist; the placeholder will be used.']);
   });
 
   it('finds broken internal links in structured content', () => {
