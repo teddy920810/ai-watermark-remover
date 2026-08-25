@@ -123,7 +123,7 @@
           "Side-by-side original and returned-result view",
           "One image per processing flow"
         ],
-        "image": "/uploads/simple-before-after-watermark-removal-1.webp",
+        "image": "/uploads/d4a74ddfba30c43dc30fde572e79111b.jpg",
         "imageAlt": "Before and after watermark removal",
         "imagePosition": "right"
       },
@@ -137,7 +137,7 @@
           "One image up to 10 MB",
           "Clear validation for unsupported file types or sizes"
         ],
-        "image": "/uploads/supported-image-formats.webp",
+        "image": "/uploads/c9ecd59ae9458928c659abade76d0d20.jpg",
         "imageAlt": "JPG, PNG and WEBP image support",
         "imagePosition": "left"
       },
@@ -151,7 +151,7 @@
           "Google sign-in required before processing",
           "No desktop app required"
         ],
-        "image": "/uploads/free-no-credits-no-paid-plans.webp",
+        "image": "/uploads/8a44227a85b1c7873ea88b222ead75d6.jpg",
         "imageAlt": "Free watermark remover with no paid plans",
         "imagePosition": "right"
       }
