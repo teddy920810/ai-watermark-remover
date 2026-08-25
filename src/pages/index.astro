@@ -7,6 +7,7 @@ import { getCollection } from 'astro:content';
 import { sortBlogEntries } from '../lib/content/entries';
 import { splitFeatureCopy } from '../lib/content/feature-copy';
 import { visibleItems } from '../lib/content/item-visibility';
+import { resolvePublicImageSource } from '../lib/content/image-fallback';
 import { resolveUploaderCopy } from '../lib/content/site-settings';
 import { ArrowLeft, ArrowRight, BadgeDollarSign, CircleCheck, Clock3, Link2, Plus, ShieldCheck } from '@lucide/astro';
 
@@ -17,6 +18,7 @@ const [siteEntry] = await getCollection('siteSettings');
 if (!siteEntry) throw new Error('Site settings CMS content is missing.');
 const home = homepage.data;
 const site = siteEntry.data;
+const siteLogo = resolvePublicImageSource(site.logo);
 const uploaderCopy = resolveUploaderCopy(site.uploader, home.uploader);
 const blogPosts = sortBlogEntries(await getCollection('blog')).slice(0, 6);
 const landingPages = await getCollection('landingPages');
@@ -66,7 +68,7 @@ const faqSchema = visibleFaqItems.length > 0 ? {
         <p>{home.hero.intro}</p>
         <div class="trust-row">{home.hero.trustItems.map((item) => <span><CircleCheck size={18} stroke-width={2.5} />{item.replace(/^✓\s*/, '')}</span>)}</div>
       </div>
-      <div id="tool" class="hero-tool"><ImageUploader logo={site.logo} siteName={site.name} copy={uploaderCopy} client:load /></div>
+      <div id="tool" class="hero-tool"><ImageUploader logo={siteLogo} siteName={site.name} copy={uploaderCopy} client:load /></div>
     </div>
   </section>
 

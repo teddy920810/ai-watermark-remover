@@ -1,5 +1,6 @@
 ---
 import { buildOptimizedImageSrcSet } from '../lib/content/optimized-image';
+import { IMAGE_PLACEHOLDER_DIMENSIONS, IMAGE_PLACEHOLDER_SRC, resolvePublicImageSource } from '../lib/content/image-fallback';
 import { resolvePublicImageDimensions } from '../lib/content/public-image-dimensions';
 
 interface Props {
@@ -19,14 +20,16 @@ const {
   loading = 'lazy',
   fetchpriority,
 } = Astro.props;
-const dimensions = resolvePublicImageDimensions(src);
-const srcSet = dimensions ? buildOptimizedImageSrcSet(src, dimensions.width) : undefined;
+const resolvedSrc = resolvePublicImageSource(src);
+const isFallback = resolvedSrc === IMAGE_PLACEHOLDER_SRC && resolvedSrc !== src;
+const dimensions = isFallback ? IMAGE_PLACEHOLDER_DIMENSIONS : resolvePublicImageDimensions(resolvedSrc);
+const srcSet = !isFallback && dimensions ? buildOptimizedImageSrcSet(resolvedSrc, dimensions.width) : undefined;
 ---
 {srcSet ? (
   <picture class:list={['responsive-picture', className]}>
     <source type="image/webp" srcset={srcSet} sizes={sizes} />
-    <img src={src} alt={alt} width={dimensions?.width} height={dimensions?.height} loading={loading} decoding="async" fetchpriority={fetchpriority} />
+    <img src={resolvedSrc} alt={alt} width={dimensions?.width} height={dimensions?.height} loading={loading} decoding="async" fetchpriority={fetchpriority} />
   </picture>
 ) : (
-  <img class={className} src={src} alt={alt} width={dimensions?.width} height={dimensions?.height} loading={loading} decoding="async" fetchpriority={fetchpriority} />
+  <img class={className} src={resolvedSrc} alt={alt} width={dimensions?.width} height={dimensions?.height} loading={loading} decoding="async" fetchpriority={fetchpriority} data-image-fallback={isFallback ? 'true' : undefined} />
 )}

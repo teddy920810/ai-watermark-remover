@@ -5,6 +5,7 @@ import SiteLayout from '../layouts/SiteLayout.astro';
 import { getCollection, type CollectionEntry } from 'astro:content';
 import { splitFeatureCopy } from '../lib/content/feature-copy';
 import { visibleItems } from '../lib/content/item-visibility';
+import { resolvePublicImageSource } from '../lib/content/image-fallback';
 import { resolveUploaderCopy } from '../lib/content/site-settings';
 import { CircleCheck, Plus } from '@lucide/astro';
 
@@ -13,6 +14,7 @@ const { page } = Astro.props;
 const [siteEntry] = await getCollection('siteSettings');
 if (!siteEntry) throw new Error('Site settings CMS content is missing.');
 const site = siteEntry.data;
+const siteLogo = resolvePublicImageSource(site.logo);
 const uploaderCopy = resolveUploaderCopy(site.uploader, page.uploader);
 const features = page.features;
 const featureItems = visibleItems(features?.items ?? []).map((item) => ({
@@ -42,7 +44,7 @@ const faqSchema = visibleFaqItems.length > 0 ? {
         <p>{page.intro}</p>
         <ul class="check-list">{page.benefits.map((benefit) => <li><CircleCheck size={19} stroke-width={2.5} />{benefit}</li>)}</ul>
       </div>
-      <div id="tool" class="hero-tool"><ImageUploader logo={site.logo} siteName={site.name} copy={uploaderCopy} client:load /></div>
+      <div id="tool" class="hero-tool"><ImageUploader logo={siteLogo} siteName={site.name} copy={uploaderCopy} client:load /></div>
     </div>
   </section>
 

@@ -1,6 +1,7 @@
 import { join } from 'node:path';
 import { describe, expect, it, vi } from 'vitest';
-import { omitMissingBlogImages } from './remark-missing-blog-images';
+import { IMAGE_PLACEHOLDER_SRC } from './image-fallback';
+import { replaceMissingBlogImages } from './remark-missing-blog-images';
 
 type TestNode = {
   type: string;
@@ -19,29 +20,29 @@ function imageTree(...urls: string[]): TestNode {
 }
 
 describe('missing blog image tolerance', () => {
-  it('omits a missing relative body image and reports a non-fatal warning', () => {
+  it('replaces a missing relative body image with the shared placeholder and reports a non-fatal warning', () => {
     const warn = vi.fn();
     const tree = imageTree('missing/image.png');
 
-    omitMissingBlogImages({ blogDirectory, exists: () => false, warn })(tree, {
+    replaceMissingBlogImages({ blogDirectory, exists: () => false, warn })(tree, {
       path: join(blogDirectory, 'post.md'),
     });
 
     expect(tree.children?.[0].children?.[0]).toEqual({
-      type: 'html',
-      value: '<!-- Missing blog image omitted: missing/image.png -->',
+      type: 'image',
+      url: IMAGE_PLACEHOLDER_SRC,
     });
     expect(warn).toHaveBeenCalledOnce();
-    expect(warn).toHaveBeenCalledWith('[content] Missing blog image omitted: post.md -> missing/image.png');
+    expect(warn).toHaveBeenCalledWith('[content] Missing blog image replaced with placeholder: post.md -> missing/image.png');
   });
 
   it('preserves existing, public, remote, data, and non-blog images', () => {
     const warn = vi.fn();
     const urls = ['existing.png', '/uploads/public.png', 'https://example.com/remote.png', 'data:image/png;base64,AA'];
     const tree = imageTree(...urls);
-    const transformer = omitMissingBlogImages({
+    const transformer = replaceMissingBlogImages({
       blogDirectory,
-      exists: (path) => path.endsWith('existing.png'),
+      exists: (path) => path.endsWith('existing.png') || path.endsWith('public.png'),
       warn,
     });
 
@@ -50,5 +51,15 @@ describe('missing blog image tolerance', () => {
 
     expect(tree.children?.[0].children?.map((node) => node.url)).toEqual(urls);
     expect(warn).not.toHaveBeenCalled();
+  });
+
+  it('replaces a missing public upload referenced from Markdown', () => {
+    const tree = imageTree('/uploads/missing.webp');
+
+    replaceMissingBlogImages({ blogDirectory, publicDirectory: join('repo', 'public'), exists: () => false })(tree, {
+      path: join(blogDirectory, 'post.md'),
+    });
+
+    expect(tree.children?.[0].children?.[0]?.url).toBe(IMAGE_PLACEHOLDER_SRC);
   });
 });

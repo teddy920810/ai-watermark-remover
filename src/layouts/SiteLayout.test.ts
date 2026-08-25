@@ -69,7 +69,8 @@ describe('SiteLayout Google Analytics integration', () => {
   });
 
   it('lets the browser infer the CMS favicon media type', () => {
-    expect(layoutSource).toContain('<link rel="icon" href={site.favicon} />');
+    expect(layoutSource).toContain('const favicon = resolvePublicImageSource(site.favicon)');
+    expect(layoutSource).toContain('<link rel="icon" href={favicon} />');
     expect(layoutSource).not.toContain('type="image/svg+xml"');
   });
 
