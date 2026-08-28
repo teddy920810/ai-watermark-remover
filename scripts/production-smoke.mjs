@@ -36,7 +36,10 @@ export async function runPublicSmoke(baseUrl, fetcher = fetch) {
   if (anonymousBenefits.status !== 401) {
     throw new Error(`/api/me/benefits anonymous check returned ${anonymousBenefits.status}; expected 401`);
   }
-  const anonymousCheckIn = await fetcher(`${baseUrl}/api/me/check-in`, { method: 'POST' });
+  const anonymousCheckIn = await fetcher(`${baseUrl}/api/me/check-in`, {
+    method: 'POST',
+    headers: { Origin: baseUrl },
+  });
   if (anonymousCheckIn.status !== 401) {
     throw new Error(`/api/me/check-in anonymous check returned ${anonymousCheckIn.status}; expected 401`);
   }
