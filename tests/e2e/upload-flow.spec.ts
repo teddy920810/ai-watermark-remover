@@ -15,6 +15,7 @@ async function chooseTestImage(page: import('@playwright/test').Page) {
 }
 
 test('uploads, processes, and exposes a download through the UI', async ({ page }) => {
+  let balance = 1;
   await page.route('**/api/auth/get-session', (route) => route.fulfill({
     status: 200,
     contentType: 'application/json',
@@ -24,6 +25,11 @@ test('uploads, processes, and exposes a download through the UI', async ({ page 
     status: 200,
     contentType: 'application/json',
     body: JSON.stringify({ url: 'https://uploads.test/object', key: uploadKey, expiresIn: 600 }),
+  }));
+  await page.route('**/api/me/benefits', (route) => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify({ balance, cap: 3, dailyReward: 1, checkedInToday: false }),
   }));
   await page.route('https://uploads.test/object', (route) => route.fulfill({ status: 200 }));
   await page.route('**/api/jobs', (route) => route.fulfill({
@@ -42,11 +48,39 @@ test('uploads, processes, and exposes a download through the UI', async ({ page 
   }));
 
   await page.goto('/');
+  await expect(page.locator('.header-benefits')).toContainText('Free uses 1/3');
   await chooseTestImage(page);
+  balance = 0;
   await page.locator('#tool .preview-panel .button-primary').click();
 
   await expect(page.locator('#tool .demo-note')).toBeVisible();
   await expect(page.locator('#tool .result-actions a.button-primary')).toHaveAttribute('href', 'https://results.test/download.png');
+  await expect(page.locator('.header-benefits')).toContainText('Free uses 0/3');
+});
+
+test('daily check-in grants one free use and then becomes unavailable for the day', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.route('**/api/auth/get-session', (route) => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify({ user: { id: 'google-user-1', name: 'Test User' }, session: { id: 'session-1' } }),
+  }));
+  await page.route('**/api/me/benefits', (route) => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify({ balance: 1, cap: 3, dailyReward: 1, checkedInToday: false }),
+  }));
+  await page.route('**/api/me/check-in', (route) => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify({ balance: 2, cap: 3, dailyReward: 1, checkedInToday: true, granted: true, balanceFull: false }),
+  }));
+
+  await page.goto('/');
+  await expect(page.locator('.header-benefits')).toBeVisible();
+  await page.getByRole('button', { name: 'Daily check-in +1' }).click();
+  await expect(page.locator('.header-benefits')).toContainText('Free uses 2/3');
+  await expect(page.getByRole('button', { name: 'Checked in today' })).toBeDisabled();
 });
 
 test('shows a safe message when the upload service is unavailable', async ({ page }) => {

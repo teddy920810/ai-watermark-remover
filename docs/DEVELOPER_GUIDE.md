@@ -40,7 +40,15 @@ npm run processing:import -- dewatermark.txt nero.txt S3-info.txt
 npm run processing:check
 ```
 
-第三个参数是可选的；提供时会从带标签的 Cloudflare S3 信息文件导入 R2 Account ID、Access Key、Secret、Endpoint 和 `watermark` Bucket。导入脚本只更新被 Git 忽略的 `.env.local`，不会自动启用真实 Provider。检查脚本查询 Dewatermark credit 余额并对 Neon 执行 `SELECT 1`，不会提交图片、创建数据库表或消耗图片 credit。`DATABASE_URL` 预留给后续用户、签到和权益账本；图片、结果及 MVP 任务状态仍保存在私有 R2。
+第三个参数是可选的；提供时会从带标签的 Cloudflare S3 信息文件导入 R2 Account ID、Access Key、Secret、Endpoint 和 `watermark` Bucket。导入脚本只更新被 Git 忽略的 `.env.local`，不会自动启用真实 Provider。检查脚本查询 Dewatermark credit 余额并对 Neon 执行 `SELECT 1`，不会提交图片、创建数据库表或消耗图片 credit。
+
+首次部署权益功能前运行：
+
+```sh
+npm run db:migrate
+```
+
+迁移脚本读取 `db/migrations`，在 Neon 事务和 advisory lock 内只执行尚未登记的版本。Neon 保存首次 1 次、每日签到 +1、余额上限 3、任务扣减/失败退回账本及最近活跃时间；图片、结果及 MVP 任务状态仍保存在私有 R2。
 
 ## 内容模型
 

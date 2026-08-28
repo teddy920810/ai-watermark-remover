@@ -77,6 +77,12 @@ img { display: block; max-width: 100%; }
 .header-account small { color: var(--muted); font-size: .64rem; }
 .header-account:disabled { opacity: .6; cursor: wait; }
 .header-auth { display: flex; }
+.header-user-tools { display: flex; align-items: center; gap: 10px; }
+.header-benefits { min-height: 44px; padding: 5px 7px 5px 12px; display: flex; align-items: center; gap: 9px; border: 1px solid #cbd9ff; border-radius: 12px; color: var(--brand-navy); background: #f4f7ff; }
+.header-benefits > span { white-space: nowrap; font-size: .74rem; font-weight: 700; }
+.header-benefits strong { color: var(--brand-blue-text); font-size: .86rem; }
+.header-benefits button { min-height: 32px; padding: 0 10px; border: 0; border-radius: 8px; color: #fff; background: var(--brand-blue-action); font: inherit; font-size: .7rem; font-weight: 780; cursor: pointer; }
+.header-benefits button:disabled { color: var(--muted); background: #e4e9f3; cursor: default; }
 
 .hero { max-width: none; margin: 0; padding: 84px max(28px, calc((100vw - 1240px) / 2)) 68px; position: relative; overflow: hidden; background: linear-gradient(180deg, #f7faff 0%, #fff 92%); }
 .hero::before, .hero::after { content: ""; width: 420px; height: 420px; position: absolute; border-radius: 50%; background: rgba(128, 168, 255, .14); filter: blur(48px); pointer-events: none; }
@@ -415,6 +421,10 @@ img { display: block; max-width: 100%; }
   .header-cta { min-height: 38px; padding: 0 12px; font-size: .75rem; }
   .header-account span, .header-account small { display: none; }
   .header-account { padding: 3px; }
+  .header-user-tools { gap: 6px; }
+  .header-benefits { min-height: 38px; padding: 3px 5px 3px 8px; gap: 5px; }
+  .header-benefits > span { font-size: .66rem; }
+  .header-benefits button { min-height: 30px; padding: 0 7px; font-size: .62rem; }
   .hero { margin: 0; padding: 34px 18px; }
   .hero h1 { font-size: clamp(2.45rem, 12vw, 3.2rem); }
   .hero-copy > p { font-size: .93rem; }
@@ -467,6 +477,7 @@ img { display: block; max-width: 100%; }
 
 @media (max-width: 400px) {
   .site-header > .brand span { display: none; }
+  .header-benefits > span { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {

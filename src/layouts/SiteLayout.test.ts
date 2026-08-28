@@ -5,6 +5,7 @@ const layoutSource = readFileSync(new URL('./SiteLayout.astro', import.meta.url)
 const globalCss = readFileSync(new URL('../styles/global.css', import.meta.url), 'utf8');
 const uploaderSource = readFileSync(new URL('../components/uploader/ImageUploader.tsx', import.meta.url), 'utf8');
 const popupSource = readFileSync(new URL('../pages/auth/popup.astro', import.meta.url), 'utf8');
+const authControlsSource = readFileSync(new URL('../components/auth/AuthControls.tsx', import.meta.url), 'utf8');
 const notFoundSource = readFileSync(new URL('../pages/404.astro', import.meta.url), 'utf8');
 
 describe('SiteLayout Google Analytics integration', () => {
@@ -101,6 +102,15 @@ describe('SiteLayout Google Analytics integration', () => {
     expect(layoutSource).toContain('site.cta.heading');
     expect(layoutSource).toContain('site.footer.groups.map');
     expect(layoutSource).toContain('class="footer-group"');
+  });
+
+  it('shows signed-in users their free-use balance and daily check-in action', () => {
+    expect(layoutSource).toContain('<AuthControls client:only="react" />');
+    expect(authControlsSource).toContain("'/api/me/benefits'");
+    expect(authControlsSource).toContain("'/api/me/check-in'");
+    expect(authControlsSource).toContain('Free uses');
+    expect(authControlsSource).toContain('Daily check-in +1');
+    expect(globalCss).toContain('.header-benefits');
   });
 });
 

@@ -4,7 +4,7 @@ ClearMark AI 是部署在 [www.watermarkgemini.com](https://www.watermarkgemini.
 
 本仓库也可作为同类站点框架完整 fork：WatermarkGemini 内容继续保留在当前仓库，新站在自己的仓库中初始化品牌并通过 Pages CMS 重建内容。操作见 [新站模板指南](docs/TEMPLATE_GUIDE.md)。
 
-> 当前状态：匿名用户可以选择和预览图片，创建处理任务时需要通过 Google 登录。上传、临时存储和任务流程已经可用；生产环境可通过服务端配置启用已完成样图验收的 Dewatermark v3 Provider，本地和测试环境默认仍使用 Mock Provider。
+> 当前状态：匿名用户可以选择和预览图片，创建处理任务时需要通过 Google 登录。首次登录获得 1 次免费处理，每日签到增加 1 次，免费余额上限为 3 次。上传、临时存储和任务流程已经可用；生产环境可通过服务端配置启用已完成样图验收的 Dewatermark v3 Provider，本地和测试环境默认仍使用 Mock Provider。
 
 ## 常用入口
 
@@ -54,9 +54,9 @@ Pages CMS → GitHub main → Vercel 自动构建 → www.watermarkgemini.com
 
 R2 Bucket 为 `watermark`，必须保持私有。`uploads/`、`results/`、`jobs/` 应配置 1 天自动过期。上传密钥只允许在服务端环境变量中使用。
 
-Google OAuth 回调地址为 `/api/auth/callback/google`。本地 3000 端口与正式域名应分别在 Google Cloud 配置完整回调 URI。当前认证采用无数据库加密会话，任务记录会保存会话用户 ID；账户历史列表、额度和订阅仍属于后续 V2 工作。
+Google OAuth 回调地址为 `/api/auth/callback/google`。本地 4321 端口与正式域名应分别在 Google Cloud 配置完整回调 URI。认证采用加密会话；Neon 仅保存会话用户 ID 对应的免费余额、签到、扣减/退回账本和活跃时间，不保存供应商密钥或图片。账户历史列表和订阅仍属于后续版本。
 
-Dewatermark、Neon 与可选 R2 本地凭据可以通过 `npm run processing:import -- <Dewatermark Key 文件> <Neon URL 文件> [S3-info 文件]` 导入到被 Git 忽略的 `.env.local`。`npm run processing:check` 只检查供应商余额和数据库只读连接，不处理图片或消耗图片 credit。本地默认保持 `WATERMARK_PROVIDER=mock`；生产环境通过 Vercel 的服务端变量显式选择真实 Provider。
+Dewatermark、Neon 与可选 R2 本地凭据可以通过 `npm run processing:import -- <Dewatermark Key 文件> <Neon URL 文件> [S3-info 文件]` 导入到被 Git 忽略的 `.env.local`。`npm run processing:check` 只检查供应商余额和数据库只读连接，不处理图片或消耗图片 credit。首次部署权益功能前运行一次 `npm run db:migrate`；该命令使用版本化 SQL 和事务锁安全建表。本地默认保持 `WATERMARK_PROVIDER=mock`；生产环境通过 Vercel 的服务端变量显式选择真实 Provider。
 
 ## 目录说明
 

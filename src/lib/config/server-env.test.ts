@@ -7,6 +7,7 @@ const completeEnv = {
   R2_BUCKET: 'watermark',
   R2_ENDPOINT: 'https://account.r2.cloudflarestorage.com',
   MOCK_PROCESSING_DELAY_MS: '0',
+  DATABASE_URL: 'postgresql://user:password@example.neon.tech/database?sslmode=require',
 };
 
 describe('getServerEnv', () => {
@@ -17,6 +18,7 @@ describe('getServerEnv', () => {
       R2_BUCKET: 'watermark',
       R2_ENDPOINT: 'https://account.r2.cloudflarestorage.com',
       MOCK_PROCESSING_DELAY_MS: 0,
+      DATABASE_URL: 'postgresql://user:password@example.neon.tech/database?sslmode=require',
     });
   });
 
@@ -28,6 +30,11 @@ describe('getServerEnv', () => {
 
   it('rejects missing production credentials', () => {
     expect(() => getServerEnv({ R2_ENDPOINT: completeEnv.R2_ENDPOINT })).toThrow();
+  });
+
+  it('requires the server-only benefits database URL', () => {
+    const withoutDatabase = Object.fromEntries(Object.entries(completeEnv).filter(([key]) => key !== 'DATABASE_URL'));
+    expect(() => getServerEnv(withoutDatabase)).toThrow();
   });
 
   it('requires a server-only API key when the Dewatermark provider is selected', () => {
