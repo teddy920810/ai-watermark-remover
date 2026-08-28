@@ -31,6 +31,17 @@ Astro 负责内容路由和服务端 API；React 只用于上传交互岛。浏�
 
 当前 `MockWatermarkProvider` 仅复制对象。接入真实服务时，实现 `src/lib/providers/watermark-provider.ts` 的契约并在 `src/lib/services.ts` 注入，不要改变公开 API 响应格式。选择和预览图片无需登录；创建与查询任务必须有有效会话，并且任务只能由其 `ownerId` 对应的用户读取。
 
+仓库提供 Dewatermark v3 Provider，按官方契约把服务端读取的图片归一化为最大边不超过 6000px 的 JPEG，再把 Base64 结果写回私有 R2。本地和测试环境默认配置仍是 `WATERMARK_PROVIDER=mock`；生产环境只有在 Key 校验、授权样图效果和真实端到端链路通过后，才通过服务端环境变量切换为 `dewatermark`。官方契约见 <https://dewatermark.ai/api-document>。
+
+本地凭据导入和只读检查：
+
+```sh
+npm run processing:import -- dewatermark.txt nero.txt S3-info.txt
+npm run processing:check
+```
+
+第三个参数是可选的；提供时会从带标签的 Cloudflare S3 信息文件导入 R2 Account ID、Access Key、Secret、Endpoint 和 `watermark` Bucket。导入脚本只更新被 Git 忽略的 `.env.local`，不会自动启用真实 Provider。检查脚本查询 Dewatermark credit 余额并对 Neon 执行 `SELECT 1`，不会提交图片、创建数据库表或消耗图片 credit。`DATABASE_URL` 预留给后续用户、签到和权益账本；图片、结果及 MVP 任务状态仍保存在私有 R2。
+
 ## 内容模型
 
 - 博客 schema：`src/content.config.ts`，文件位于 `src/content/blog/`。

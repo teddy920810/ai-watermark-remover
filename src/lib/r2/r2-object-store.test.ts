@@ -84,4 +84,22 @@ describe('R2ObjectStore', () => {
     send.mockRejectedValueOnce(new Error('R2 unavailable'));
     await expect(store.getJson('jobs/error.json')).rejects.toThrow('R2 unavailable');
   });
+
+  it('reads and writes binary provider objects without exposing their contents', async () => {
+    const bytes = new Uint8Array([1, 2, 3]);
+    const send = vi.spyOn(S3Client.prototype, 'send')
+      .mockResolvedValueOnce({ Body: { transformToByteArray: vi.fn().mockResolvedValue(bytes) } } as never)
+      .mockResolvedValueOnce({} as never);
+    const store = createStore();
+
+    await expect(store.getBytes('uploads/source.png')).resolves.toEqual(bytes);
+    expect(send.mock.calls[0]?.[0]).toBeInstanceOf(GetObjectCommand);
+
+    await store.putBytes('results/job.jpg', bytes, 'image/jpeg');
+    const put = send.mock.calls[1]?.[0];
+    expect(put).toBeInstanceOf(PutObjectCommand);
+    expect((put as PutObjectCommand).input).toMatchObject({
+      Bucket: 'watermark', Key: 'results/job.jpg', Body: bytes, ContentType: 'image/jpeg',
+    });
+  });
 });

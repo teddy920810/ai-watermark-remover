@@ -7,6 +7,15 @@ const schema = z.object({
   R2_BUCKET: z.string().min(1).default('watermark'),
   R2_ENDPOINT: z.url().optional(),
   MOCK_PROCESSING_DELAY_MS: z.coerce.number().int().min(0).max(5000).default(0),
+  WATERMARK_PROVIDER: z.enum(['mock', 'dewatermark']).default('mock'),
+  DEWATERMARK_API_KEY: z.string().min(1).optional(),
+  DEWATERMARK_BASE_URL: z.url().default('https://platform.dewatermark.ai'),
+  DEWATERMARK_PREDICT_MODE: z.enum(['3.0', '4.0']).default('4.0'),
+  DEWATERMARK_TIMEOUT_MS: z.coerce.number().int().min(1000).max(120_000).default(30_000),
+}).superRefine((env, context) => {
+  if (env.WATERMARK_PROVIDER === 'dewatermark' && !env.DEWATERMARK_API_KEY) {
+    context.addIssue({ code: 'custom', path: ['DEWATERMARK_API_KEY'], message: 'Required for Dewatermark provider' });
+  }
 });
 
 export function getServerEnv(source: NodeJS.ProcessEnv = process.env) {

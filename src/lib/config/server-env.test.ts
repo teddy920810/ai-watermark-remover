@@ -29,4 +29,18 @@ describe('getServerEnv', () => {
   it('rejects missing production credentials', () => {
     expect(() => getServerEnv({ R2_ENDPOINT: completeEnv.R2_ENDPOINT })).toThrow();
   });
+
+  it('requires a server-only API key when the Dewatermark provider is selected', () => {
+    expect(() => getServerEnv({ ...completeEnv, WATERMARK_PROVIDER: 'dewatermark' })).toThrow();
+    expect(getServerEnv({
+      ...completeEnv,
+      WATERMARK_PROVIDER: 'dewatermark',
+      DEWATERMARK_API_KEY: 'server-only-key',
+    })).toMatchObject({
+      WATERMARK_PROVIDER: 'dewatermark',
+      DEWATERMARK_API_KEY: 'server-only-key',
+      DEWATERMARK_BASE_URL: 'https://platform.dewatermark.ai',
+      DEWATERMARK_PREDICT_MODE: '4.0',
+    });
+  });
 });
