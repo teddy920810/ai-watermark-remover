@@ -88,6 +88,14 @@ describe('SiteLayout Google Analytics integration', () => {
     expect(popupSource).toContain('<meta name="robots" content="noindex, nofollow" />');
   });
 
+  it('completes Google sign-in when the OAuth provider severs window.opener', () => {
+    expect(uploaderSource).toContain("new BroadcastChannel('clearmark-auth')");
+    expect(uploaderSource).toContain("channel?.addEventListener('message', handleAuthComplete)");
+    expect(popupSource).toContain("new BroadcastChannel('clearmark-auth')");
+    expect(popupSource).toContain("channel.postMessage({ type: 'clearmark-auth-complete' })");
+    expect(popupSource).toContain("window.location.replace('/#tool')");
+  });
+
   it('renders the CMS-managed conversion banner and grouped footer', () => {
     expect(layoutSource).toContain('class="site-cta"');
     expect(layoutSource).toContain('site.cta.heading');

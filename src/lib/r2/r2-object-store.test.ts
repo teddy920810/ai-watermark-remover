@@ -26,6 +26,19 @@ describe('R2ObjectStore', () => {
     expect(download.searchParams.get('response-content-disposition')).toContain('attachment');
   });
 
+  it.each([
+    ['results/job.jpg', 'watermark-removed-image.jpg'],
+    ['results/job.jpeg', 'watermark-removed-image.jpg'],
+    ['results/job.png', 'watermark-removed-image.png'],
+    ['results/job.webp', 'watermark-removed-image.webp'],
+    ['results/job', 'watermark-removed-image.jpg'],
+  ])('adds a safe image suffix to downloads for %s', async (key, expectedFileName) => {
+    const download = new URL(await createStore().createDownloadUrl(key));
+    expect(download.searchParams.get('response-content-disposition')).toBe(
+      `attachment; filename="${expectedFileName}"`,
+    );
+  });
+
   it('reads authoritative object metadata and treats only 404 as missing', async () => {
     const send = vi.spyOn(S3Client.prototype, 'send').mockResolvedValueOnce({ ContentLength: 68, ContentType: 'image/png' } as never);
     const store = createStore();

@@ -102,10 +102,15 @@ export default function ImageUploader({ logo, siteName, copy }: Props) {
   }, [file]);
 
   useEffect(() => {
-    async function handleAuthComplete(event: MessageEvent) {
-      if (event.origin !== window.location.origin || event.data?.type !== 'clearmark-auth-complete') return;
+    let completing = false;
+
+    async function completeAuth(data: unknown) {
+      if (completing || (data as { type?: string } | null)?.type !== 'clearmark-auth-complete') return;
+      completing = true;
       const refreshed = await authClient.getSession();
       if (!refreshed.data?.user) {
+        completing = false;
+        setLoginPending(false);
         dispatch({ type: 'error', message: 'Google sign-in could not be confirmed. Please try again.' });
         return;
       }
@@ -115,8 +120,24 @@ export default function ImageUploader({ logo, siteName, copy }: Props) {
       await uploadAndProcess();
     }
 
-    window.addEventListener('message', handleAuthComplete);
-    return () => window.removeEventListener('message', handleAuthComplete);
+    function handleWindowMessage(event: MessageEvent) {
+      if (event.origin === window.location.origin) void completeAuth(event.data);
+    }
+
+    function handleAuthComplete(event: MessageEvent) {
+      void completeAuth(event.data);
+    }
+
+    const channel = typeof BroadcastChannel === 'undefined'
+      ? null
+      : new BroadcastChannel('clearmark-auth');
+    channel?.addEventListener('message', handleAuthComplete);
+    window.addEventListener('message', handleWindowMessage);
+    return () => {
+      channel?.removeEventListener('message', handleAuthComplete);
+      channel?.close();
+      window.removeEventListener('message', handleWindowMessage);
+    };
   }, [refetchSession, uploadAndProcess]);
 
   function start() {

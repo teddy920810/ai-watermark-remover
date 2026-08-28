@@ -26,6 +26,11 @@ const siteLogo = resolvePublicImageSource(site.logo);
       if (window.opener) {
         window.opener.postMessage({ type: 'clearmark-auth-complete' }, window.location.origin);
         window.close();
+      } else if ('BroadcastChannel' in window) {
+        const channel = new BroadcastChannel('clearmark-auth');
+        channel.postMessage({ type: 'clearmark-auth-complete' });
+        channel.close();
+        window.close();
       } else {
         window.location.replace('/#tool');
       }
