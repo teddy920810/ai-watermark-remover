@@ -15,6 +15,14 @@ export interface R2Config {
   bucket: string;
 }
 
+function downloadFileName(key: string): string {
+  const extension = key.match(/\.([a-z0-9]+)$/i)?.[1]?.toLowerCase();
+  const safeExtension = extension === 'jpeg'
+    ? 'jpg'
+    : ['jpg', 'png', 'webp'].includes(extension ?? '') ? extension : 'jpg';
+  return `watermark-removed-image.${safeExtension}`;
+}
+
 export class R2ObjectStore {
   private readonly client: S3Client;
 
@@ -44,7 +52,7 @@ export class R2ObjectStore {
       new GetObjectCommand({
         Bucket: this.config.bucket,
         Key: key,
-        ResponseContentDisposition: 'attachment; filename="watermark-removed-image"',
+        ResponseContentDisposition: `attachment; filename="${downloadFileName(key)}"`,
       }),
       { expiresIn: 10 * 60 },
     );
