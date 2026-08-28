@@ -23,7 +23,10 @@ describe('production smoke', () => {
     expect(fetcher.mock.calls.slice(0, 3).every(([, init]) => !init || init.method === undefined)).toBe(true);
     expect(fetcher.mock.calls[3]?.[1]).toMatchObject({ method: 'POST' });
     expect(fetcher.mock.calls[4]?.[1]).toBeUndefined();
-    expect(fetcher.mock.calls[5]?.[1]).toMatchObject({ method: 'POST' });
+    expect(fetcher.mock.calls[5]?.[1]).toMatchObject({
+      method: 'POST',
+      headers: { Origin: 'https://example.test' },
+    });
   });
 
   it('does not start an authenticated upload without a session cookie', async () => {
