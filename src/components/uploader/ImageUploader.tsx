@@ -84,6 +84,7 @@ export default function ImageUploader({ logo, siteName, copy }: Props) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ inputKey: signed.key }),
       });
+      window.dispatchEvent(new Event('benefits:changed'));
       dispatch({ type: 'process', jobId: created.id });
 
       for (let attempt = 0; attempt < 60; attempt += 1) {

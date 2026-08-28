@@ -14,6 +14,11 @@ function createDependencies() {
       delete: vi.fn().mockResolvedValue(undefined),
     },
     provider: { remove: vi.fn().mockResolvedValue({ status: 'completed', resultKey: 'results/job-1.png' }) },
+    benefits: {
+      reserve: vi.fn().mockResolvedValue(undefined),
+      consume: vi.fn().mockResolvedValue(undefined),
+      refund: vi.fn().mockResolvedValue(undefined),
+    },
   };
 }
 
@@ -59,6 +64,9 @@ describe('JobService', () => {
     const service = new JobService(deps, () => 'job-1');
     const job = await service.create(inputKey, 'google-user-1');
     expect(deps.jobStore.save).toHaveBeenCalledTimes(2);
+    expect(deps.benefits.reserve).toHaveBeenCalledWith('job-1', 'google-user-1');
+    expect(deps.benefits.consume).toHaveBeenCalledWith('job-1', 'google-user-1');
+    expect(deps.benefits.refund).not.toHaveBeenCalled();
     expect(job).toMatchObject({ id: 'job-1', ownerId: 'google-user-1', status: 'completed', resultKey: 'results/job-1.png' });
   });
 
@@ -68,6 +76,16 @@ describe('JobService', () => {
     const service = new JobService(deps, () => 'job-1');
     const job = await service.create(inputKey, 'google-user-1');
     expect(job).toMatchObject({ status: 'failed', error: 'Image processing failed. Please try again.' });
+    expect(deps.benefits.refund).toHaveBeenCalledWith('job-1', 'google-user-1');
+    expect(deps.objects.delete).toHaveBeenCalledWith(inputKey);
+  });
+
+  it('does not call the provider and cleans up the upload when no free uses remain', async () => {
+    const deps = createDependencies();
+    deps.benefits.reserve.mockRejectedValue(new Error('No free uses remaining'));
+    const service = new JobService(deps, () => 'job-1');
+    await expect(service.create(inputKey, 'google-user-1')).rejects.toThrow('No free uses remaining');
+    expect(deps.provider.remove).not.toHaveBeenCalled();
     expect(deps.objects.delete).toHaveBeenCalledWith(inputKey);
   });
 

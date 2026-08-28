@@ -3,6 +3,7 @@ import { contentTypeForUploadKey, isUploadKey, isUploadKeyForOwner } from '../up
 import { validateUploadMetadata } from '../upload/validation';
 import { createJob, failJob, finishJob, type Job } from './job';
 import type { JobStore } from './job-store';
+import type { BenefitStore } from '../benefits/benefit-store';
 
 interface JobServiceDependencies {
   jobStore: JobStore;
@@ -11,6 +12,7 @@ interface JobServiceDependencies {
     delete(key: string): Promise<void>;
   };
   provider: WatermarkProvider;
+  benefits: Pick<BenefitStore, 'reserve' | 'consume' | 'refund'>;
 }
 
 export class JobService {
@@ -34,18 +36,30 @@ export class JobService {
     let job = createJob(this.createId(), inputKey, ownerId);
 
     try {
+      await this.dependencies.benefits.reserve(job.id, ownerId);
+    } catch (error) {
+      await this.cleanupInput(inputKey);
+      throw error;
+    }
+
+    try {
       await this.dependencies.jobStore.save(job);
       const result = await this.dependencies.provider.remove({ jobId: job.id, inputKey });
       if (result.status === 'completed') {
         job = finishJob(job, result.resultKey);
         await this.dependencies.jobStore.save(job);
+        await this.dependencies.benefits.consume(job.id, ownerId);
       }
     } catch {
       job = failJob(job, 'Image processing failed. Please try again.');
       try {
         await this.dependencies.jobStore.save(job);
       } finally {
-        await this.cleanupInput(inputKey);
+        try {
+          await this.dependencies.benefits.refund(job.id, ownerId);
+        } finally {
+          await this.cleanupInput(inputKey);
+        }
       }
     }
 

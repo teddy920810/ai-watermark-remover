@@ -58,6 +58,13 @@ describe('POST /api/jobs', () => {
     await expect(response.json()).resolves.toEqual({ error: 'Invalid uploaded image' });
   });
 
+  it('returns 402 without calling the provider when no free uses remain', async () => {
+    getServices.mockReturnValue({ jobs: { create: vi.fn().mockRejectedValue(new Error('No free uses remaining')) } });
+    const response = await POST(context({ inputKey }));
+    expect(response.status).toBe(402);
+    await expect(response.json()).resolves.toEqual({ error: 'No free uses remaining' });
+  });
+
   it('returns 503 without leaking service configuration', async () => {
     getServices.mockReturnValue({ jobs: { create: vi.fn().mockRejectedValue(new Error('R2_ENDPOINT invalid')) } });
     const response = await POST(context({ inputKey }));

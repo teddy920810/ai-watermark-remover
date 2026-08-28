@@ -31,6 +31,15 @@ export async function runPublicSmoke(baseUrl, fetcher = fetch) {
   if (anonymousSigning.status !== 401) {
     throw new Error(`/api/upload-url anonymous check returned ${anonymousSigning.status}; expected 401`);
   }
+
+  const anonymousBenefits = await fetcher(`${baseUrl}/api/me/benefits`);
+  if (anonymousBenefits.status !== 401) {
+    throw new Error(`/api/me/benefits anonymous check returned ${anonymousBenefits.status}; expected 401`);
+  }
+  const anonymousCheckIn = await fetcher(`${baseUrl}/api/me/check-in`, { method: 'POST' });
+  if (anonymousCheckIn.status !== 401) {
+    throw new Error(`/api/me/check-in anonymous check returned ${anonymousCheckIn.status}; expected 401`);
+  }
 }
 
 export async function runAuthenticatedSmoke(baseUrl, sessionCookie, fetcher = fetch) {

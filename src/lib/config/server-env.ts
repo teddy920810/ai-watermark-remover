@@ -6,6 +6,7 @@ const schema = z.object({
   R2_SECRET_ACCESS_KEY: z.string().min(1),
   R2_BUCKET: z.string().min(1).default('watermark'),
   R2_ENDPOINT: z.url().optional(),
+  DATABASE_URL: z.url(),
   MOCK_PROCESSING_DELAY_MS: z.coerce.number().int().min(0).max(5000).default(0),
   WATERMARK_PROVIDER: z.enum(['mock', 'dewatermark']).default('mock'),
   DEWATERMARK_API_KEY: z.string().min(1).optional(),

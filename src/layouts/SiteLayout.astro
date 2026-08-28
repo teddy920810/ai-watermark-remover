@@ -103,7 +103,7 @@ const schemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [defaultS
           </div>
         ) : <a href={item.href}>{item.label}</a>)}
       </nav>
-      <div class="header-auth"><AuthControls client:load /></div>
+      <div class="header-auth"><AuthControls client:only="react" /></div>
     </header>
     <main><slot /></main>
     <section class="site-cta" aria-labelledby="site-cta-heading">
