@@ -7,6 +7,9 @@ public/generated/
 .env.*
 !.env.example
 S3-info.txt
+dewatermark.txt
+nero.txt
+test-image/
 coverage/
 playwright-report/
 test-results/

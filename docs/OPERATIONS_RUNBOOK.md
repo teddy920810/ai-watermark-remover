@@ -10,7 +10,7 @@
 
 ## Vercel 必要配置
 
-Production 环境至少配置 `SITE_URL=https://www.watermarkgemini.com`、所有 `R2_*` 变量、`GOOGLE_CLIENT_ID`、`GOOGLE_CLIENT_SECRET`、`BETTER_AUTH_SECRET` 和 `BETTER_AUTH_URL=https://www.watermarkgemini.com`。Preview/Development 如需上传或登录功能，也应单独配置对应变量。密钥变更后需要重新部署才能生效。
+Production 环境至少配置 `SITE_URL=https://www.watermarkgemini.com`、所有 `R2_*` 变量、`GOOGLE_CLIENT_ID`、`GOOGLE_CLIENT_SECRET`、`BETTER_AUTH_SECRET` 和 `BETTER_AUTH_URL=https://www.watermarkgemini.com`。启用真实图片处理时还必须仅在服务端配置 `WATERMARK_PROVIDER=dewatermark` 与 `DEWATERMARK_API_KEY`；不要给变量添加 `PUBLIC_` 前缀。Preview/Development 如需上传、登录或真实处理，也应单独配置对应变量。密钥或 Provider 变更后需要重新部署才能生效。
 
 Google Cloud OAuth Web Client 必须包含正式回调 `https://www.watermarkgemini.com/api/auth/callback/google`。根域名 `https://watermarkgemini.com` 应使用 308 重定向到 `www`。OAuth 修改部署后必须使用真实测试用户完成一次登录、确认回调成功、会话建立、退出登录和处理任务；仅检查按钮或接口 200 不代表集成完成。
 

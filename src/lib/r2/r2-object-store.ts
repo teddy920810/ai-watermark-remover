@@ -97,6 +97,23 @@ export class R2ObjectStore {
     );
   }
 
+  async putBytes(key: string, value: Uint8Array, contentType: string): Promise<void> {
+    await this.client.send(
+      new PutObjectCommand({
+        Bucket: this.config.bucket,
+        Key: key,
+        Body: value,
+        ContentType: contentType,
+      }),
+    );
+  }
+
+  async getBytes(key: string): Promise<Uint8Array> {
+    const response = await this.client.send(new GetObjectCommand({ Bucket: this.config.bucket, Key: key }));
+    if (!response.Body) throw new Error('Object body is missing');
+    return response.Body.transformToByteArray();
+  }
+
   async getJson<T>(key: string): Promise<T | null> {
     try {
       const response = await this.client.send(new GetObjectCommand({ Bucket: this.config.bucket, Key: key }));
