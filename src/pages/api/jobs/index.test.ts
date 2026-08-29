@@ -35,7 +35,15 @@ describe('POST /api/jobs', () => {
     const response = await POST(context({ inputKey }));
     expect(response.status).toBe(201);
     await expect(response.json()).resolves.toEqual({ id: 'job-id', status: 'completed' });
-    expect(create).toHaveBeenCalledWith(inputKey, 'google-user-1');
+    expect(create).toHaveBeenCalledWith(inputKey, 'google-user-1', 'watermark-removal');
+  });
+
+  it('creates a background-removal job through the same authenticated endpoint', async () => {
+    const create = vi.fn().mockResolvedValue({ id: 'job-id', status: 'completed' });
+    getServices.mockReturnValue({ jobs: { create } });
+    const response = await POST(context({ inputKey, operation: 'background-removal' }));
+    expect(response.status).toBe(201);
+    expect(create).toHaveBeenCalledWith(inputKey, 'google-user-1', 'background-removal');
   });
 
   it('returns 400 for an invalid request', async () => {

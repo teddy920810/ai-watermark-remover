@@ -1,5 +1,6 @@
 ---
 import ImageUploader from './uploader/ImageUploader';
+import BackgroundRemoverUploader from './uploader/BackgroundRemoverUploader';
 import ResponsiveImage from './ResponsiveImage.astro';
 import SiteLayout from '../layouts/SiteLayout.astro';
 import { getCollection, type CollectionEntry } from 'astro:content';
@@ -44,7 +45,11 @@ const faqSchema = visibleFaqItems.length > 0 ? {
         <p>{page.intro}</p>
         <ul class="check-list">{page.benefits.map((benefit) => <li><CircleCheck size={19} stroke-width={2.5} />{benefit}</li>)}</ul>
       </div>
-      <div id="tool" class="hero-tool"><ImageUploader logo={siteLogo} siteName={site.name} copy={uploaderCopy} client:load /></div>
+      <div id="tool" class="hero-tool">
+        {page.toolKind === 'background-remover'
+          ? <BackgroundRemoverUploader logo={siteLogo} siteName={site.name} copy={uploaderCopy} client:load />
+          : <ImageUploader logo={siteLogo} siteName={site.name} copy={uploaderCopy} client:load />}
+      </div>
     </div>
   </section>
 

@@ -1,0 +1,177 @@
+{
+  "slug": "background-remover",
+  "toolKind": "background-remover",
+  "title": "Free Background Remover Online | Transparent PNG",
+  "description": "Remove image backgrounds online with AI. Create a transparent PNG or add a clean color background for product photos, portraits, and social posts.",
+  "eyebrow": "FREE AI BACKGROUND REMOVER",
+  "heading": "Remove Image Backgrounds with Precise AI",
+  "intro": "Create clean, transparent cutouts for product photos, portraits, social posts, and design assets. Upload one image, let AI isolate the subject, choose transparency or a color, and download the finished PNG—no editor required.",
+  "benefits": [
+    "Free to Try",
+    "Shared Daily Rewards",
+    "Transparent PNG",
+    "JPG, PNG, WebP & JFIF",
+    "Private Uploads"
+  ],
+  "uploader": {
+    "hero": {
+      "eyebrow": "AI Background Remover",
+      "heading": "Upload an Image to Remove Its Background",
+      "demoBadge": "Shared Credits",
+      "demoBadgeTitle": "Background removal uses the same free balance and daily check-in rewards as watermark removal."
+    },
+    "dropzone": {
+      "dropLabel": "Upload image",
+      "browseLabel": "Drag and drop, click to browse",
+      "formatLabel": "JPG, JPEG, PNG, WebP or JFIF",
+      "maxSizeLabel": "up to {maxSize} MB",
+      "fileInputLabel": "Choose an image to remove its background"
+    },
+    "preview": {
+      "altTemplate": "Preview of {fileName}",
+      "processingLabel": "AI is removing the background…",
+      "readyLabel": "Ready to remove the background",
+      "removeButton": "Remove background",
+      "uploadingButton": "Uploading…",
+      "processingButton": "Removing background…",
+      "chooseAnotherButton": "Choose another"
+    },
+    "result": {
+      "originalLabel": "Original",
+      "resultLabel": "Background removed",
+      "originalAlt": "Original uploaded image",
+      "resultAlt": "Image with its background removed",
+      "demoNote": "Choose transparency or a background color, then download your PNG.",
+      "downloadButton": "Download PNG",
+      "processAnotherButton": "Process another"
+    },
+    "auth": {
+      "closeLabel": "Close sign-in dialog",
+      "title": "Sign in to remove the background",
+      "description": "Your selected image stays ready on this page. Processing starts automatically after Google sign-in and uses your shared free balance.",
+      "connectingButton": "Connecting to Google…",
+      "continueButton": "Continue with Google",
+      "dismissButton": "Not now"
+    },
+    "privacyNote": "Private upload · Automatically deleted after 24 hours"
+  },
+  "process": {
+    "eyebrow": "HOW IT WORKS",
+    "heading": "Remove a Background in Three Simple Steps",
+    "intro": "There is no layer setup or manual tracing. The full workflow runs in your browser and returns a downloadable PNG.",
+    "steps": [
+      {
+        "number": "01",
+        "title": "Upload Your Image",
+        "description": "Drag and drop, browse, or paste a JPG, JPEG, PNG, WebP, or JFIF image up to 10 MB.",
+        "image": "/uploads/background-remover-upload.png",
+        "imageAlt": "Photo being uploaded to the background remover"
+      },
+      {
+        "number": "02",
+        "title": "Let AI Isolate the Subject",
+        "description": "The AI detects the main subject and removes the surrounding background while preserving detailed edges.",
+        "image": "/uploads/background-remover-ai-cutout.png",
+        "imageAlt": "AI isolating a subject from its original background"
+      },
+      {
+        "number": "03",
+        "title": "Choose a Background and Download",
+        "description": "Keep the result transparent or select a preset or custom color, then download the finished PNG directly.",
+        "image": "/uploads/background-remover-download.png",
+        "imageAlt": "Transparent background result ready to download as PNG"
+      }
+    ]
+  },
+  "features": {
+    "eyebrow": "BUILT FOR CLEAN CUTOUTS",
+    "heading": "A Background Remover for Everyday Visual Work",
+    "intro": "Prepare useful image assets without opening a full editor. The result controls stay focused on the decisions that matter after a cutout is created.",
+    "items": [
+      {
+        "enabled": true,
+        "eyebrow": "PRODUCT PHOTOS",
+        "heading": "Create Consistent Product Images",
+        "description": "Remove distracting scenes from product photos and turn them into clean assets for listings, catalogs, presentations, and campaigns.",
+        "listItems": [
+          "Keep a transparent PNG for flexible layouts",
+          "Apply a neutral color for consistent storefront images",
+          "Download without continuing to a separate editor"
+        ],
+        "image": "/uploads/background-remover-product-photo.png",
+        "imageAlt": "Product photo shown before and after background removal",
+        "imagePosition": "right"
+      },
+      {
+        "enabled": true,
+        "eyebrow": "DETAILED EDGES",
+        "heading": "Preserve Hair, Fur, and Fine Outlines",
+        "description": "AI segmentation is designed to follow detailed subject boundaries, helping portraits, pets, clothing, and objects retain a more natural silhouette.",
+        "listItems": [
+          "Useful for portraits and profile images",
+          "Handles soft fur and fine hair better than simple cropping",
+          "Works best with a clear, well-lit source image"
+        ],
+        "image": "/uploads/background-remover-hair-detail.png",
+        "imageAlt": "Detailed hair edges preserved on a transparent background",
+        "imagePosition": "left"
+      },
+      {
+        "enabled": true,
+        "eyebrow": "READY TO USE",
+        "heading": "Transparent, Preset, or Custom Color",
+        "description": "Preview the cutout on transparency, compare it with the original, or place it on a color before downloading—all within the result screen.",
+        "listItems": [
+          "Transparent output by default",
+          "Quick preset colors for common use cases",
+          "Custom color picker for brand and design needs"
+        ],
+        "image": "/uploads/background-remover-background-colors.png",
+        "imageAlt": "Background-removed subject previewed on several color options",
+        "imagePosition": "right"
+      }
+    ]
+  },
+  "faq": {
+    "eyebrow": "BACKGROUND REMOVAL FAQ",
+    "heading": "Frequently Asked Questions About Removing Backgrounds",
+    "intro": "Learn how the AI background remover works, what files it accepts, how shared free uses work, and what happens to uploaded images.",
+    "items": [
+      {
+        "enabled": true,
+        "question": "How do I remove the background from an image?",
+        "answer": "Upload or paste an image, sign in when you are ready to process it, and select Remove background. When processing finishes, preview the transparent result, choose an optional background color, and download the PNG."
+      },
+      {
+        "enabled": true,
+        "question": "Is the background remover free?",
+        "answer": "You can try it with your WatermarkGemini free balance. Background removal and watermark removal share the same balance: a new eligible account receives one initial use, and daily check-in rewards can add uses up to the current account cap."
+      },
+      {
+        "enabled": true,
+        "question": "Which image formats are supported?",
+        "answer": "You can upload JPG, JPEG, PNG, WebP, and JFIF images up to 10 MB. Results are delivered as PNG files so transparent pixels can be preserved."
+      },
+      {
+        "enabled": true,
+        "question": "Can I replace the removed background with a color?",
+        "answer": "Yes. Keep the checkerboard option for transparency, select a preset color, or use the custom color picker. The chosen color is applied when the PNG is prepared for download."
+      },
+      {
+        "enabled": true,
+        "question": "Does it work with hair, fur, and detailed edges?",
+        "answer": "The AI is designed to preserve fine subject edges, including hair and fur. A sharp, well-lit source image with visible separation between subject and background usually produces the cleanest result."
+      },
+      {
+        "enabled": true,
+        "question": "What happens to my uploaded image?",
+        "answer": "Uploads and results are stored in private object storage and are designed to expire after 24 hours. For this feature, a short-lived signed input link is sent to Replicate for processing; Replicate's API prediction data is automatically removed after one hour under its current retention policy."
+      },
+      {
+        "enabled": true,
+        "question": "Can I remove the background from any image?",
+        "answer": "Only upload images you own or are authorized to edit. Do not use the service to infringe copyright, privacy, trademark, or other rights, and avoid uploading confidential material."
+      }
+    ]
+  }
+}

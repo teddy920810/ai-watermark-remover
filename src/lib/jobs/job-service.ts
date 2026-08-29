@@ -1,7 +1,7 @@
-import type { WatermarkProvider } from '../providers/watermark-provider';
+import type { ProviderInput, ProviderResult } from '../providers/watermark-provider';
 import { contentTypeForUploadKey, isUploadKey, isUploadKeyForOwner } from '../upload/upload-key';
 import { validateUploadMetadata } from '../upload/validation';
-import { createJob, failJob, finishJob, type Job } from './job';
+import { createJob, failJob, finishJob, type Job, type ProcessingOperation } from './job';
 import type { JobStore } from './job-store';
 import type { BenefitStore } from '../benefits/benefit-store';
 
@@ -11,7 +11,7 @@ interface JobServiceDependencies {
     head(key: string): Promise<{ contentLength: number; contentType: string } | null>;
     delete(key: string): Promise<void>;
   };
-  provider: WatermarkProvider;
+  providers: Record<ProcessingOperation, { remove(input: ProviderInput): Promise<ProviderResult> }>;
   benefits: Pick<BenefitStore, 'reserve' | 'consume' | 'refund'>;
 }
 
@@ -21,7 +21,11 @@ export class JobService {
     private readonly createId: () => string = () => crypto.randomUUID(),
   ) {}
 
-  async create(inputKey: string, ownerId: string): Promise<Job> {
+  async create(
+    inputKey: string,
+    ownerId: string,
+    operation: ProcessingOperation = 'watermark-removal',
+  ): Promise<Job> {
     if (!isUploadKey(inputKey)) throw new Error('Invalid upload key');
     if (!isUploadKeyForOwner(inputKey, ownerId)) throw new Error('Upload not found');
 
@@ -33,7 +37,7 @@ export class JobService {
       throw new Error('Invalid uploaded image');
     }
 
-    let job = createJob(this.createId(), inputKey, ownerId);
+    let job = createJob(this.createId(), inputKey, ownerId, undefined, operation);
 
     try {
       await this.dependencies.benefits.reserve(job.id, ownerId);
@@ -44,7 +48,7 @@ export class JobService {
 
     try {
       await this.dependencies.jobStore.save(job);
-      const result = await this.dependencies.provider.remove({ jobId: job.id, inputKey });
+      const result = await this.dependencies.providers[operation].remove({ jobId: job.id, inputKey });
       if (result.status === 'completed') {
         job = finishJob(job, result.resultKey);
         await this.dependencies.jobStore.save(job);

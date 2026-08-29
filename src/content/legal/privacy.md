@@ -26,6 +26,8 @@ WatermarkGemini processes the image you choose to upload so it can return a resu
 
 Images and the minimum related processing data may be handled by infrastructure and image-processing providers only as needed to operate the requested service. Do not upload confidential images or images you do not own or have permission to edit.
 
+For background removal, WatermarkGemini sends a short-lived signed link to your uploaded image to Replicate, which runs the 851 Labs background-removal model. Replicate API prediction inputs, outputs, and related prediction data are automatically removed after one hour under Replicate's current API retention policy. WatermarkGemini does not send your Google profile information to Replicate for image processing.
+
 ## Retention
 
 Uploads, results, and processing records are designed to expire after 24 hours. Temporary signed access links expire sooner.
@@ -40,7 +42,7 @@ WatermarkGemini uses Google Analytics to understand aggregate site usage. Depend
 
 ## Service providers and disclosure
 
-WatermarkGemini relies on service providers for Google authentication, website hosting, managed databases, private object storage, analytics, and image processing. They may process data only to provide those services under their applicable terms and safeguards.
+WatermarkGemini relies on service providers for Google authentication, website hosting, managed databases, private object storage, analytics, and image processing, including Replicate for the background-removal feature. They may process data only to provide those services under their applicable terms and safeguards.
 
 Information may also be disclosed when reasonably necessary to protect users or the service, investigate abuse, comply with law, or respond to a valid legal request. WatermarkGemini does not sell personal information.
 

@@ -16,6 +16,7 @@ export interface R2Config {
 }
 
 function downloadFileName(key: string): string {
+  if (key.startsWith('results/background/')) return 'background-removed-image.png';
   const extension = key.match(/\.([a-z0-9]+)$/i)?.[1]?.toLowerCase();
   const safeExtension = extension === 'jpeg'
     ? 'jpg'

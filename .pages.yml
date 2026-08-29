@@ -1220,6 +1220,16 @@ content:
         pattern:
           regex: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
           message: 只能使用小写字母、数字和连字符，例如 remove-logo-from-image。
+      - name: toolKind
+        label: 工具交互类型 / Tool experience
+        type: select
+        required: true
+        default: watermark-remover
+        description: 背景移除页选择 Background remover；现有去水印页面保持 Watermark remover。
+        options:
+          values:
+            - { name: watermark-remover, label: Watermark remover }
+            - { name: background-remover, label: Background remover }
       - name: title
         label: SEO 标题｜TITLE
         type: string

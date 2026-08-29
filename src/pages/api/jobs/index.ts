@@ -14,14 +14,15 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   let inputKey: string;
+  let operation: 'watermark-removal' | 'background-removal';
   try {
-    ({ inputKey } = parseCreateJob(await readJson(request)));
+    ({ inputKey, operation } = parseCreateJob(await readJson(request)));
   } catch {
     return json({ error: 'Invalid job request.' }, { status: 400 });
   }
 
   try {
-    const job = await getServices().jobs.create(inputKey, session.user.id);
+    const job = await getServices().jobs.create(inputKey, session.user.id, operation);
     return json({ id: job.id, status: job.status }, { status: 201 });
   } catch (error) {
     const message = publicApiError(error, 'Unable to create job', ['Upload not found', 'Invalid uploaded image', 'No free uses remaining']);

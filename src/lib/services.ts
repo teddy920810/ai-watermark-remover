@@ -3,6 +3,8 @@ import { JobService } from './jobs/job-service';
 import { R2JobStore } from './jobs/r2-job-store';
 import { DewatermarkProvider } from './providers/dewatermark-provider';
 import { MockWatermarkProvider } from './providers/mock-provider';
+import { MockBackgroundProvider } from './providers/mock-background-provider';
+import { ReplicateBackgroundProvider } from './providers/replicate-background-provider';
 import type { WatermarkProvider } from './providers/watermark-provider';
 import { R2ObjectStore } from './r2/r2-object-store';
 
@@ -31,7 +33,28 @@ function createServices() {
         timeoutMs: env.DEWATERMARK_TIMEOUT_MS,
       })
     : new MockWatermarkProvider(objects, env.MOCK_PROCESSING_DELAY_MS);
-  return { objects, benefits, jobs: new JobService({ jobStore, objects, provider, benefits }) };
+  const backgroundProvider = env.BACKGROUND_REMOVAL_PROVIDER === 'replicate'
+    ? new ReplicateBackgroundProvider(objects, {
+        apiToken: env.REPLICATE_API_TOKEN as string,
+        baseUrl: env.REPLICATE_BASE_URL,
+        modelVersion: env.REPLICATE_BACKGROUND_MODEL_VERSION,
+        timeoutMs: env.REPLICATE_TIMEOUT_MS,
+        waitSeconds: env.REPLICATE_WAIT_SECONDS,
+      })
+    : new MockBackgroundProvider(objects, env.MOCK_PROCESSING_DELAY_MS);
+  return {
+    objects,
+    benefits,
+    jobs: new JobService({
+      jobStore,
+      objects,
+      providers: {
+        'watermark-removal': provider,
+        'background-removal': backgroundProvider,
+      },
+      benefits,
+    }),
+  };
 }
 
 export function getServices() {
