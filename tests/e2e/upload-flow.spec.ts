@@ -130,6 +130,65 @@ test('background remover shares the balance and exposes color choices without an
   expect(operation).toBe('background-removal');
 });
 
+test('background remover refreshes an expired result link without creating another job', async ({ page }) => {
+  let jobReads = 0;
+  let jobsCreated = 0;
+  await page.route('**/api/auth/get-session', (route) => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify({ user: { id: 'google-user-1', name: 'Test User' }, session: { id: 'session-1' } }),
+  }));
+  await page.route('**/api/me/benefits', (route) => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify({ balance: 1, cap: 3, dailyReward: 1, checkedInToday: false }),
+  }));
+  await page.route('**/api/upload-url', (route) => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify({ url: 'https://uploads.test/refresh', key: uploadKey, expiresIn: 600 }),
+  }));
+  await page.route('https://uploads.test/refresh', (route) => route.fulfill({ status: 200 }));
+  await page.route('**/api/jobs', (route) => {
+    jobsCreated += 1;
+    return route.fulfill({
+      status: 201,
+      contentType: 'application/json',
+      body: JSON.stringify({ id: jobId, status: 'completed' }),
+    });
+  });
+  await page.route(`**/api/jobs/${jobId}`, (route) => {
+    jobReads += 1;
+    const refreshed = jobReads > 1;
+    return route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'completed',
+        resultUrl: refreshed ? 'https://results.test/refreshed.png' : 'https://results.test/expired.png',
+        downloadUrl: refreshed ? 'https://results.test/refreshed-download.png' : 'https://results.test/expired-download.png',
+      }),
+    });
+  });
+  await page.route('https://results.test/expired.png', (route) => route.fulfill({ status: 403 }));
+  await page.route('https://results.test/refreshed.png', (route) => route.fulfill({
+    status: 200,
+    contentType: 'image/png',
+    body: png,
+  }));
+
+  await page.goto('/background-remover');
+  await chooseTestImage(page);
+  await page.getByRole('button', { name: 'Remove background' }).click();
+
+  const resultImage = page.locator('.background-result-stage img');
+  await expect(resultImage).toHaveAttribute('src', 'https://results.test/refreshed.png');
+  await expect(page.locator('.background-result')).toBeVisible();
+  await expect(page.getByRole('alert')).toHaveCount(0);
+  expect(jobsCreated).toBe(1);
+  expect(jobReads).toBe(2);
+});
+
 test('daily check-in grants one free use and then becomes unavailable for the day', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.route('**/api/auth/get-session', (route) => route.fulfill({

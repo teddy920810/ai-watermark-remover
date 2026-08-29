@@ -27,4 +27,12 @@ describe('BackgroundRemoverUploader source contract', () => {
     expect(source).toContain('showOriginal ? state.previewUrl : state.resultUrl');
     expect(css).toContain('.hero-inner.is-tool-expanded');
   });
+
+  it('refreshes expired signed result links without reprocessing or replacing the completed view', () => {
+    expect(source).toContain("`/api/jobs/${state.jobId}`");
+    expect(source).toContain('onError={handleResultImageError}');
+    expect(source).toContain('setResultError');
+    expect(source).toContain("state.previewUrl ? null : (");
+    expect(source).not.toContain('href={state.downloadUrl}');
+  });
 });
