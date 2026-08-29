@@ -3,13 +3,20 @@ import { describe, expect, it } from 'vitest';
 
 const landingPageFiles = [
   'background-remover.json',
+  'batch-watermark-remover.json',
+  'capcut-watermark-remover.json',
+  'facebook-watermark-remover.json',
   'gemini-watermark-remover.json',
   'grok-watermark-remover.json',
+  'instagram-watermark-remover.json',
   'kling-watermark-remover.json',
   'notebooklm-watermark-remover.json',
   'pdf-watermark-remover.json',
+  'remove-background.json',
   'remove-logo-from-image.json',
+  'remove-subtitle-from-video.json',
   'remove-text-from-image.json',
+  'shutterstock-watermark-remover.json',
   'sora-watermark-remover.json',
   'tiktok-watermark-remover.json',
   'veo-watermark-remover.json',
@@ -17,7 +24,12 @@ const landingPageFiles = [
 ];
 
 const videoLandingPageFiles = new Set([
+  'batch-watermark-remover.json',
+  'capcut-watermark-remover.json',
+  'facebook-watermark-remover.json',
+  'instagram-watermark-remover.json',
   'kling-watermark-remover.json',
+  'remove-subtitle-from-video.json',
   'sora-watermark-remover.json',
   'tiktok-watermark-remover.json',
   'veo-watermark-remover.json',
@@ -29,11 +41,18 @@ const globalCss = readFileSync(new URL('../../styles/global.css', import.meta.ur
 
 const requestedKeywords = new Map([
   ['background-remover.json', 'background remover'],
+  ['batch-watermark-remover.json', 'batch watermark remover'],
+  ['capcut-watermark-remover.json', 'capcut watermark remover'],
+  ['facebook-watermark-remover.json', 'facebook watermark remover'],
   ['gemini-watermark-remover.json', 'gemini watermark remover'],
   ['grok-watermark-remover.json', 'grok watermark remover'],
+  ['instagram-watermark-remover.json', 'instagram watermark remover'],
   ['kling-watermark-remover.json', 'kling watermark remover'],
   ['notebooklm-watermark-remover.json', 'notebooklm watermark remover'],
   ['pdf-watermark-remover.json', 'pdf watermark remover'],
+  ['remove-background.json', 'remove background'],
+  ['remove-subtitle-from-video.json', 'remove subtitle from video'],
+  ['shutterstock-watermark-remover.json', 'shutterstock watermark remover'],
   ['sora-watermark-remover.json', 'sora watermark remover'],
   ['tiktok-watermark-remover.json', 'tiktok watermark remover'],
   ['veo-watermark-remover.json', 'veo watermark remover'],
@@ -129,6 +148,18 @@ describe('tool landing-page usage steps', () => {
     expect(page.faq.items.length).toBeGreaterThanOrEqual(6);
     expect(landingPageSource).toContain("page.toolKind === 'background-remover'");
     expect(landingPageSource).toContain('<BackgroundRemoverUploader');
+  });
+
+  it('routes the remove-background alias to the dedicated background-removal experience', () => {
+    const page = JSON.parse(
+      readFileSync(new URL('../../content/landing-pages/remove-background.json', import.meta.url), 'utf8'),
+    );
+
+    expect(page.toolKind).toBe('background-remover');
+    expect(page.statusLabel).toBeUndefined();
+    expect(page.uploader.hero.heading).toContain('Background');
+    expect(page.uploader.preview.removeButton).toBe('Remove background');
+    expect(page.uploader.result.downloadButton).toBe('Download PNG');
   });
 
 });

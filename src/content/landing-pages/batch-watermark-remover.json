@@ -1,0 +1,32 @@
+{
+  "slug": "batch-watermark-remover",
+  "toolKind": "watermark-remover",
+  "title": "Batch Watermark Remover Online | WatermarkGemini",
+  "description": "Prepare multiple supported images for a future batch watermark remover workflow in one organized tool page.",
+  "eyebrow": "BATCH WATERMARK REMOVER",
+  "statusLabel": "Coming Soon",
+  "heading": "Batch Watermark Remover",
+  "intro": "A dedicated page for a future workflow that removes watermarks from multiple authorized files in one batch.",
+  "benefits": ["Multi-file workflow planned", "Consistent review steps", "Designed for authorized assets"],
+  "uploader": { "dropzone": { "dropLabel": "Coming Soon" } },
+  "process": {
+    "eyebrow": "HOW IT WORKS",
+    "heading": "How Batch Watermark Removal Will Work",
+    "intro": "The initial three-step structure is ready for operations to expand as the tool evolves.",
+    "steps": [
+      { "number": "01", "title": "Add Your Files", "description": "Choose multiple supported files that you own or have permission to edit." },
+      { "number": "02", "title": "Configure the Batch", "description": "Review watermark areas and processing choices before starting the batch." },
+      { "number": "03", "title": "Review the Results", "description": "Inspect each processed file before downloading the approved outputs." }
+    ]
+  },
+  "faq": {
+    "eyebrow": "FAQ",
+    "heading": "Batch Watermark Remover FAQs",
+    "intro": "Initial answers for the planned batch workflow.",
+    "items": [
+      { "enabled": true, "question": "What is a batch watermark remover?", "answer": "A batch workflow is designed to organize watermark cleanup for multiple supported files in one session." },
+      { "enabled": true, "question": "Is batch processing available now?", "answer": "The page is live for discovery, while multi-file processing is marked Coming Soon." },
+      { "enabled": true, "question": "Which files should I add?", "answer": "Only add files you own or have permission to modify." }
+    ]
+  }
+}

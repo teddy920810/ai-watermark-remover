@@ -1,0 +1,32 @@
+{
+  "slug": "capcut-watermark-remover",
+  "toolKind": "watermark-remover",
+  "title": "CapCut Watermark Remover Online | WatermarkGemini",
+  "description": "Use the CapCut watermark remover page to prepare supported CapCut exports for watermark cleanup online.",
+  "eyebrow": "CAPCUT WATERMARK REMOVER",
+  "statusLabel": "Coming Soon",
+  "heading": "CapCut Watermark Remover",
+  "intro": "A dedicated page for cleaning visible watermarks from CapCut exports you own or have permission to edit.",
+  "benefits": ["Online workflow", "Simple upload steps", "Built for authorized edits"],
+  "uploader": { "dropzone": { "dropLabel": "Coming Soon" } },
+  "process": {
+    "eyebrow": "HOW IT WORKS",
+    "heading": "How to Use the CapCut Watermark Remover",
+    "intro": "The initial workflow is organized into three clear steps for future operations updates.",
+    "steps": [
+      { "number": "01", "title": "Choose Your Export", "description": "Select a CapCut export that you own or are authorized to edit." },
+      { "number": "02", "title": "Mark the Watermark", "description": "Identify the visible watermark area that should be cleaned." },
+      { "number": "03", "title": "Review the Result", "description": "Preview the processed file before downloading the approved result." }
+    ]
+  },
+  "faq": {
+    "eyebrow": "FAQ",
+    "heading": "CapCut Watermark Remover FAQs",
+    "intro": "Initial answers for this tool page can be expanded in Pages CMS.",
+    "items": [
+      { "enabled": true, "question": "What is this CapCut watermark remover page for?", "answer": "It is being prepared for removing visible watermarks from supported CapCut exports through an online workflow." },
+      { "enabled": true, "question": "Is the tool available now?", "answer": "The page is live for discovery, while the dedicated processing workflow is marked Coming Soon." },
+      { "enabled": true, "question": "Can I edit any CapCut export?", "answer": "Only process files you own or have permission to modify." }
+    ]
+  }
+}

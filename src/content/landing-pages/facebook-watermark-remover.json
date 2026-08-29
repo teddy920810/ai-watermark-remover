@@ -1,0 +1,32 @@
+{
+  "slug": "facebook-watermark-remover",
+  "toolKind": "watermark-remover",
+  "title": "Facebook Watermark Remover Online | WatermarkGemini",
+  "description": "Use the Facebook watermark remover page to prepare supported Facebook media for authorized watermark cleanup.",
+  "eyebrow": "FACEBOOK WATERMARK REMOVER",
+  "statusLabel": "Coming Soon",
+  "heading": "Facebook Watermark Remover",
+  "intro": "A dedicated page for cleaning visible watermarks from Facebook media you own or have permission to edit.",
+  "benefits": ["Online workflow", "Simple guided steps", "Built for authorized media"],
+  "uploader": { "dropzone": { "dropLabel": "Coming Soon" } },
+  "process": {
+    "eyebrow": "HOW IT WORKS",
+    "heading": "How to Use the Facebook Watermark Remover",
+    "intro": "The initial page structure is ready for operations to refine.",
+    "steps": [
+      { "number": "01", "title": "Choose Your Media", "description": "Select supported Facebook media that you are authorized to modify." },
+      { "number": "02", "title": "Identify the Watermark", "description": "Mark the visible watermark or overlay that should be cleaned." },
+      { "number": "03", "title": "Review the Output", "description": "Preview the processed file before downloading the result." }
+    ]
+  },
+  "faq": {
+    "eyebrow": "FAQ",
+    "heading": "Facebook Watermark Remover FAQs",
+    "intro": "Initial answers for this tool page can be expanded in Pages CMS.",
+    "items": [
+      { "enabled": true, "question": "What is this Facebook watermark remover page for?", "answer": "It is being prepared for cleaning visible watermarks from supported Facebook media supplied by the user." },
+      { "enabled": true, "question": "Is the dedicated workflow available now?", "answer": "The page is live for discovery, while the processing workflow is marked Coming Soon." },
+      { "enabled": true, "question": "Can I process someone else's media?", "answer": "Only process media you own or have explicit permission to modify." }
+    ]
+  }
+}
