@@ -14,7 +14,8 @@
 | UI 检查 | `npm run check:ui` | 公共布局相关测试和公共页面 Playwright | 否 |
 | 完整验证 | `npm run verify` | 覆盖率、Lint、Build、E2E | 否 |
 | 高风险发布检查 | `npm run release:verify` | 依赖审计、站点配置和完整验证 | 否 |
-| Production Smoke | `npm run test:smoke:production` | 正式域名、Vercel Production、真实 R2 上传/处理/下载 | 是 |
+| Public Production Smoke | `npm run test:smoke:production` | 正式域名、静态入口和匿名保护，不触发 Provider | 是，只读 |
+| Functional Production Smoke | `npm run test:smoke:background-removal` | 登录、真实 R2/Provider、透明 PNG 和额度恰好扣一次 | 是，消耗 1 次额度 |
 
 ## 首次准备
 
@@ -66,12 +67,12 @@ Pages CMS 保存会提交到 `main`，随后触发 GitHub Actions 和 Vercel。�
 
 ### 运维人员
 
-环境变量、域名、R2 或 CORS 变更后，重新部署 Production 并运行 `npm run test:smoke:production`。Smoke 会产生临时对象，因此只在明确的运维检查中运行。
+环境变量或域名变更后先运行无成本的 `npm run test:smoke:production`。R2、CORS、鉴权、Provider 或功能链路变更时，再用专用测试账号设置 `SMOKE_SESSION_COOKIE`，手工且只运行一次 `npm run test:smoke:background-removal`。功能 Smoke 会产生临时对象并消耗 1 次共享额度；缺少 Cookie 时命令必须失败，不能静默跳过。
 
 ## 自动化保护
 
 - `.github/workflows/ci.yml`：每次 PR 和 `main` 推送运行完整 `verify`；这是合并 `main` 的统一全量门禁。
-- `.github/workflows/production-smoke.yml`：每天定时及手工运行生产 Smoke。
+- `.github/workflows/production-smoke.yml`：每天只运行无成本 Public Smoke；手工选择 operation 时才运行会消耗额度的 Functional Smoke。
 - `vercel.json`：Vercel 构建先运行 `verify:deploy`，单元测试、覆盖率、Lint 或 Build 失败时不发布新版本。
 - 覆盖率门槛：核心代码 lines/functions/statements ≥ 80%，branches ≥ 70%。当前结果应高于最低线，不能通过降低阈值掩盖缺失测试。
 
@@ -90,3 +91,4 @@ Pages CMS 保存会提交到 `main`，随后触发 GitHub Actions 和 Vercel。�
 - Production Smoke 只报告状态，不打印对象 Key、结果 URL或下载 URL。
 - 本地 `.env.local` 和 `S3-info.txt` 永远不能提交。
 - 不使用真实用户图片作为夹具，只使用仓库内生成或内嵌的无敏感测试图片。
+- 新功能从 `docs/templates/functional-tool-contract.example.json` 建立合同，并按 `docs/FUNCTIONAL_TOOL_DELIVERY.md` 验收。
