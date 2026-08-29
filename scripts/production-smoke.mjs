@@ -75,7 +75,12 @@ export async function runAuthenticatedSmoke(baseUrl, sessionCookie, fetcher = fe
     throw new Error(`Production job did not complete: ${job?.status ?? 'unknown'}`);
   }
 
-  for (const signedUrl of [job.resultUrl, job.downloadUrl]) await requireOk(signedUrl, fetcher);
+  for (const signedUrl of [job.resultUrl, job.downloadUrl]) {
+    const response = await requireOk(signedUrl, fetcher, { headers: { Origin: baseUrl } });
+    if (response.headers.get('access-control-allow-origin') !== baseUrl) {
+      throw new Error('R2 result download is missing the production CORS origin.');
+    }
+  }
   return { status: 'passed' };
 }
 

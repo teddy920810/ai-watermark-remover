@@ -26,6 +26,7 @@
     "processing:import": "node scripts/import-processing-config.mjs",
     "processing:check": "node --env-file-if-exists=.env.local scripts/check-processing-connections.mjs",
     "db:migrate": "node --env-file-if-exists=.env.local scripts/migrate-database.mjs",
+    "benefits:grant-test": "node --env-file-if-exists=.env.local scripts/grant-test-credits.mjs",
     "blog:import-docx": "node scripts/import-blog-docx.mjs",
     "images:optimize": "node scripts/optimize-images.mjs",
     "verify:responsive-images": "node scripts/verify-responsive-images.mjs",

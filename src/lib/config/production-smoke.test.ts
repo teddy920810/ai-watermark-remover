@@ -8,6 +8,16 @@ function response(body: unknown, status = 200, contentType = 'application/json')
   });
 }
 
+function corsResponse(body: string, origin: string) {
+  return new Response(body, {
+    status: 200,
+    headers: {
+      'Content-Type': 'image/png',
+      'Access-Control-Allow-Origin': origin,
+    },
+  });
+}
+
 describe('production smoke', () => {
   it('keeps public checks non-destructive and confirms upload signing rejects anonymous callers', async () => {
     const fetcher = vi.fn()
@@ -33,5 +43,24 @@ describe('production smoke', () => {
     const fetcher = vi.fn();
     await expect(runAuthenticatedSmoke('https://example.test', '', fetcher)).resolves.toEqual({ status: 'skipped' });
     expect(fetcher).not.toHaveBeenCalled();
+  });
+
+  it('verifies that completed result URLs permit browser GET requests from production', async () => {
+    const origin = 'https://example.test';
+    const fetcher = vi.fn()
+      .mockResolvedValueOnce(response({ url: 'https://uploads.test/input', key: 'uploads/user/input.png' }))
+      .mockResolvedValueOnce(response('', 200, 'image/png'))
+      .mockResolvedValueOnce(response({ id: 'job-1', status: 'processing' }, 201))
+      .mockResolvedValueOnce(response({
+        status: 'completed',
+        resultUrl: 'https://results.test/result.png',
+        downloadUrl: 'https://results.test/download.png',
+      }))
+      .mockResolvedValueOnce(corsResponse('result', origin))
+      .mockResolvedValueOnce(corsResponse('download', origin));
+
+    await expect(runAuthenticatedSmoke(origin, 'session=value', fetcher)).resolves.toEqual({ status: 'passed' });
+    expect(fetcher.mock.calls[4]?.[1]).toMatchObject({ headers: { Origin: origin } });
+    expect(fetcher.mock.calls[5]?.[1]).toMatchObject({ headers: { Origin: origin } });
   });
 });

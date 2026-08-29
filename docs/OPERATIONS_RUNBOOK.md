@@ -18,7 +18,9 @@ Git 页面应保持仓库连接到 `main`；域名页面应确保根域名为 Pr
 
 ## Cloudflare R2
 
-使用 `docs/r2-cors.example.json` 作为允许来源基线。CORS 只解决浏览器直传权限；遇到 `ERR_CONNECTION_CLOSED` 还应检查网络、R2 endpoint、预签名 URL 和 Bucket 凭据。
+使用 `docs/r2-cors.example.json` 作为允许来源基线。`PUT` 用于浏览器直传，`GET`/`HEAD` 用于读取透明结果并在浏览器合成彩色 PNG；缺少 `GET` 时预览仍可能显示，但 Canvas 下载会被 CORS 拦截。遇到 `ERR_CONNECTION_CLOSED` 还应检查网络、R2 endpoint、预签名 URL 和 Bucket 凭据。
+
+测试额度只能通过后台命令补充，不提供公共管理接口。先运行 `npm run db:migrate`，再使用 `npm run benefits:grant-test -- --email "测试账号邮箱" --uses 3 --reference "qa-YYYYMMDD-purpose"` 预览变更；确认无误后在同一命令末尾增加 `--apply`。每次补充受 3 次上限约束，使用独立 `test_grant` 账本原因和幂等 reference，重复执行同一 reference 不会重复发放。不要把邮箱、数据库连接或命令输出粘贴到公开 issue。
 
 配置三个生命周期规则，让 `uploads/`、`results/`、`jobs/` 在 1 天后过期。定期确认规则没有被关闭，并轮换长期访问密钥。
 
