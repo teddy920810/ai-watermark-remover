@@ -58,6 +58,67 @@ test('uploads, processes, and exposes a download through the UI', async ({ page 
   await expect(page.locator('.header-benefits')).toContainText('Free uses 0/3');
 });
 
+test('background remover shares the balance and exposes color choices without an editor', async ({ page }) => {
+  let balance = 1;
+  let operation = '';
+  await page.route('**/api/auth/get-session', (route) => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify({ user: { id: 'google-user-1', name: 'Test User' }, session: { id: 'session-1' } }),
+  }));
+  await page.route('**/api/me/benefits', (route) => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify({ balance, cap: 3, dailyReward: 1, checkedInToday: false }),
+  }));
+  await page.route('**/api/upload-url', (route) => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify({ url: 'https://uploads.test/background', key: uploadKey, expiresIn: 600 }),
+  }));
+  await page.route('https://uploads.test/background', (route) => route.fulfill({ status: 200 }));
+  await page.route('**/api/jobs', async (route) => {
+    operation = (route.request().postDataJSON() as { operation?: string }).operation ?? '';
+    balance = 0;
+    await route.fulfill({
+      status: 201,
+      contentType: 'application/json',
+      body: JSON.stringify({ id: jobId, status: 'completed' }),
+    });
+  });
+  await page.route(`**/api/jobs/${jobId}`, (route) => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify({
+      status: 'completed',
+      resultUrl: 'https://results.test/background.png',
+      downloadUrl: 'https://results.test/background-download.png',
+    }),
+  }));
+  await page.route('https://results.test/background.png', (route) => route.fulfill({
+    status: 200,
+    contentType: 'image/png',
+    body: png,
+  }));
+
+  await page.goto('/background-remover');
+  await expect(page.locator('.header-benefits')).toContainText('Free uses 1/3');
+  await chooseTestImage(page);
+  await page.getByRole('button', { name: 'Remove background' }).click();
+
+  await expect(page.locator('.background-result')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Change background color' })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Download PNG' })).toHaveAttribute(
+    'href',
+    'https://results.test/background-download.png',
+  );
+  await page.getByRole('button', { name: 'White background' }).click();
+  await expect(page.getByRole('button', { name: 'Download PNG' })).toBeVisible();
+  await expect(page.getByText('Go to Editor')).toHaveCount(0);
+  await expect(page.locator('.header-benefits')).toContainText('Free uses 0/3');
+  expect(operation).toBe('background-removal');
+});
+
 test('daily check-in grants one free use and then becomes unavailable for the day', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.route('**/api/auth/get-session', (route) => route.fulfill({

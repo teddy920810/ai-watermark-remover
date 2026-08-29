@@ -50,4 +50,20 @@ describe('getServerEnv', () => {
       DEWATERMARK_PREDICT_MODE: '4.0',
     });
   });
+
+  it('requires the server-only Replicate token only when background removal is enabled', () => {
+    expect(() => getServerEnv({
+      ...completeEnv,
+      BACKGROUND_REMOVAL_PROVIDER: 'replicate',
+    })).toThrow();
+    expect(getServerEnv({
+      ...completeEnv,
+      BACKGROUND_REMOVAL_PROVIDER: 'replicate',
+      REPLICATE_API_TOKEN: 'server-only-token',
+    })).toMatchObject({
+      BACKGROUND_REMOVAL_PROVIDER: 'replicate',
+      REPLICATE_API_TOKEN: 'server-only-token',
+      REPLICATE_BACKGROUND_MODEL_VERSION: 'a029dff38972b5fda4ec5d75d7d1cd25aeff621d2cf4946a41055d7db66b80bc',
+    });
+  });
 });

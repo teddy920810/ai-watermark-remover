@@ -13,9 +13,18 @@ const schema = z.object({
   DEWATERMARK_BASE_URL: z.url().default('https://platform.dewatermark.ai'),
   DEWATERMARK_PREDICT_MODE: z.enum(['3.0', '4.0']).default('4.0'),
   DEWATERMARK_TIMEOUT_MS: z.coerce.number().int().min(1000).max(120_000).default(30_000),
+  BACKGROUND_REMOVAL_PROVIDER: z.enum(['mock', 'replicate']).default('mock'),
+  REPLICATE_API_TOKEN: z.string().min(1).optional(),
+  REPLICATE_BASE_URL: z.url().default('https://api.replicate.com'),
+  REPLICATE_BACKGROUND_MODEL_VERSION: z.string().regex(/^[a-f0-9]{64}$/).default('a029dff38972b5fda4ec5d75d7d1cd25aeff621d2cf4946a41055d7db66b80bc'),
+  REPLICATE_TIMEOUT_MS: z.coerce.number().int().min(5000).max(120_000).default(45_000),
+  REPLICATE_WAIT_SECONDS: z.coerce.number().int().min(1).max(60).default(20),
 }).superRefine((env, context) => {
   if (env.WATERMARK_PROVIDER === 'dewatermark' && !env.DEWATERMARK_API_KEY) {
     context.addIssue({ code: 'custom', path: ['DEWATERMARK_API_KEY'], message: 'Required for Dewatermark provider' });
+  }
+  if (env.BACKGROUND_REMOVAL_PROVIDER === 'replicate' && !env.REPLICATE_API_TOKEN) {
+    context.addIssue({ code: 'custom', path: ['REPLICATE_API_TOKEN'], message: 'Required for Replicate background removal' });
   }
 });
 

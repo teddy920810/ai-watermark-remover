@@ -137,6 +137,31 @@ img { display: block; max-width: 100%; }
 .demo-note { color: var(--muted); font-size: .75rem; }
 .result-actions { display: flex; gap: 10px; }
 
+.background-tool-card { padding: 24px; }
+.background-drop-zone { min-height: 285px; }
+.background-result { display: grid; gap: 20px; }
+.background-result-layout { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(210px, .7fr); gap: 18px; }
+.background-result-stage { min-height: 360px; overflow: hidden; position: relative; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 16px; background: #f4f6fa; }
+.background-result-stage.is-transparent, .background-swatch.is-transparent { background-color: #fff; background-image: url('/uploads/background-remover-transparency-grid.png'); background-repeat: repeat; background-size: 42px 42px; }
+.background-result-stage img { width: 100%; height: 360px; padding: 20px; object-fit: contain; }
+.background-reset, .background-compare { position: absolute; display: inline-flex; align-items: center; justify-content: center; border: 1px solid rgba(220, 228, 241, .95); color: #34415f; background: rgba(255, 255, 255, .94); box-shadow: 0 8px 22px rgba(23, 32, 51, .12); cursor: pointer; }
+.background-reset { width: 38px; height: 38px; top: 12px; right: 12px; border-radius: 50%; }
+.background-compare { min-height: 38px; padding: 0 12px; right: 12px; bottom: 12px; gap: 7px; border-radius: 10px; font-size: .7rem; font-weight: 750; }
+.background-color-panel { overflow: hidden; border: 1px solid var(--line); border-radius: 16px; background: #fff; }
+.background-color-heading { min-height: 58px; padding: 0 16px; display: flex; align-items: center; gap: 9px; border-bottom: 1px solid var(--line); color: var(--brand-navy); }
+.background-color-heading svg { color: var(--brand-blue); }
+.background-color-heading h3 { margin: 0; font: 700 .94rem/1.3 var(--font-display); }
+.custom-color-control, .preset-color-group { padding: 17px 16px 0; display: grid; gap: 10px; color: var(--muted); font-size: .75rem; font-weight: 700; }
+.custom-color-control input { width: 46px; height: 38px; padding: 3px; border: 1px solid var(--line); border-radius: 10px; background: #fff; cursor: pointer; }
+.preset-color-group { padding-bottom: 18px; }
+.background-swatches { display: grid; grid-template-columns: repeat(5, 34px); gap: 10px; }
+.background-swatch { width: 34px; height: 34px; padding: 0; border: 2px solid #fff; border-radius: 50%; box-shadow: 0 0 0 1px #d9e0ec; cursor: pointer; transition: transform .16s ease, box-shadow .16s ease; }
+.background-swatch:hover { transform: translateY(-1px); }
+.background-swatch.is-selected { box-shadow: 0 0 0 3px #fff, 0 0 0 5px var(--brand-blue); }
+.background-swatch.is-transparent { background-size: 12px 12px; }
+.background-result-actions { display: flex; justify-content: center; gap: 10px; }
+.background-result-actions .button { min-width: 170px; }
+
 .auth-modal-backdrop { position: fixed; z-index: 100; inset: 0; padding: 20px; display: grid; place-items: center; background: rgba(11, 21, 51, .68); backdrop-filter: blur(7px); }
 .auth-modal { width: min(100%, 420px); padding: 34px; position: relative; display: grid; justify-items: center; gap: 14px; border: 1px solid var(--line); border-radius: 20px; background: var(--card); box-shadow: 0 30px 90px rgba(5, 16, 46, .35); text-align: center; }
 .auth-modal .brand-logo { width: 48px; height: 48px; }
@@ -428,6 +453,8 @@ img { display: block; max-width: 100%; }
   .step-arrow { display: none; }
   .section { padding: 78px 28px; }
   .standards-section, .feature-item { grid-template-columns: 1fr; gap: 38px; }
+  .background-result-layout { grid-template-columns: 1fr; }
+  .background-color-panel { max-width: none; }
   .feature-item:nth-child(even) { grid-template-columns: 1fr; }
   .feature-item.is-image-left .feature-copy, .feature-item.is-image-left .feature-media { order: initial; }
   .faq-section { grid-template-columns: 1fr; gap: 38px; }
@@ -458,6 +485,11 @@ img { display: block; max-width: 100%; }
   .preview-meta { align-items: stretch; flex-direction: column; }
   .preview-meta > div { margin: 0; }
   .comparison-grid, .steps, .guide-grid { grid-template-columns: 1fr; }
+  .background-tool-card { padding: 14px; }
+  .background-drop-zone { min-height: 235px; }
+  .background-result-stage, .background-result-stage img { min-height: 0; height: 290px; }
+  .background-result-actions { align-items: stretch; flex-direction: column; }
+  .background-result-actions .button { width: 100%; }
   .use-cases { margin-right: 18px; margin-left: 18px; }
   .section { padding: 68px 18px; }
   .section-heading { margin-bottom: 34px; }

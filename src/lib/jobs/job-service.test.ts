@@ -4,6 +4,8 @@ import { JobService } from './job-service';
 
 function createDependencies() {
   const jobs = new Map<string, Job>();
+  const watermarkProvider = { remove: vi.fn().mockResolvedValue({ status: 'completed', resultKey: 'results/job-1.png' }) };
+  const backgroundProvider = { remove: vi.fn().mockResolvedValue({ status: 'completed', resultKey: 'results/background/job-1.png' }) };
   return {
     jobStore: {
       save: vi.fn(async (job: Job) => void jobs.set(job.id, job)),
@@ -13,7 +15,10 @@ function createDependencies() {
       head: vi.fn().mockResolvedValue({ contentLength: 68, contentType: 'image/png' }),
       delete: vi.fn().mockResolvedValue(undefined),
     },
-    provider: { remove: vi.fn().mockResolvedValue({ status: 'completed', resultKey: 'results/job-1.png' }) },
+    providers: {
+      'watermark-removal': watermarkProvider,
+      'background-removal': backgroundProvider,
+    },
     benefits: {
       reserve: vi.fn().mockResolvedValue(undefined),
       consume: vi.fn().mockResolvedValue(undefined),
@@ -67,12 +72,28 @@ describe('JobService', () => {
     expect(deps.benefits.reserve).toHaveBeenCalledWith('job-1', 'google-user-1');
     expect(deps.benefits.consume).toHaveBeenCalledWith('job-1', 'google-user-1');
     expect(deps.benefits.refund).not.toHaveBeenCalled();
-    expect(job).toMatchObject({ id: 'job-1', ownerId: 'google-user-1', status: 'completed', resultKey: 'results/job-1.png' });
+    expect(job).toMatchObject({
+      id: 'job-1', ownerId: 'google-user-1', operation: 'watermark-removal', status: 'completed', resultKey: 'results/job-1.png',
+    });
+  });
+
+  it('routes background removal through its provider while sharing the same credit reservation', async () => {
+    const deps = createDependencies();
+    const service = new JobService(deps, () => 'job-1');
+    const job = await service.create(inputKey, 'google-user-1', 'background-removal');
+
+    expect(deps.providers['background-removal'].remove).toHaveBeenCalledWith({ jobId: 'job-1', inputKey });
+    expect(deps.providers['watermark-removal'].remove).not.toHaveBeenCalled();
+    expect(deps.benefits.reserve).toHaveBeenCalledWith('job-1', 'google-user-1');
+    expect(deps.benefits.consume).toHaveBeenCalledWith('job-1', 'google-user-1');
+    expect(job).toMatchObject({
+      operation: 'background-removal', status: 'completed', resultKey: 'results/background/job-1.png',
+    });
   });
 
   it('persists a safe failure and does not leak provider details', async () => {
     const deps = createDependencies();
-    deps.provider.remove.mockRejectedValue(new Error('secret provider response'));
+    deps.providers['watermark-removal'].remove.mockRejectedValue(new Error('secret provider response'));
     const service = new JobService(deps, () => 'job-1');
     const job = await service.create(inputKey, 'google-user-1');
     expect(job).toMatchObject({ status: 'failed', error: 'Image processing failed. Please try again.' });
@@ -85,13 +106,14 @@ describe('JobService', () => {
     deps.benefits.reserve.mockRejectedValue(new Error('No free uses remaining'));
     const service = new JobService(deps, () => 'job-1');
     await expect(service.create(inputKey, 'google-user-1')).rejects.toThrow('No free uses remaining');
-    expect(deps.provider.remove).not.toHaveBeenCalled();
+    expect(deps.providers['watermark-removal'].remove).not.toHaveBeenCalled();
+    expect(deps.providers['background-removal'].remove).not.toHaveBeenCalled();
     expect(deps.objects.delete).toHaveBeenCalledWith(inputKey);
   });
 
   it('keeps the safe failure even when orphan cleanup also fails', async () => {
     const deps = createDependencies();
-    deps.provider.remove.mockRejectedValue(new Error('secret provider response'));
+    deps.providers['watermark-removal'].remove.mockRejectedValue(new Error('secret provider response'));
     deps.objects.delete.mockRejectedValue(new Error('secret object-store response'));
     const service = new JobService(deps, () => 'job-1');
     await expect(service.create(inputKey, 'google-user-1')).resolves.toMatchObject({

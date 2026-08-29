@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
 const landingPageFiles = [
+  'background-remover.json',
   'gemini-watermark-remover.json',
   'grok-watermark-remover.json',
   'kling-watermark-remover.json',
@@ -27,6 +28,7 @@ const landingPageSource = readFileSync(new URL('../../components/LandingPage.ast
 const globalCss = readFileSync(new URL('../../styles/global.css', import.meta.url), 'utf8');
 
 const requestedKeywords = new Map([
+  ['background-remover.json', 'background remover'],
   ['gemini-watermark-remover.json', 'gemini watermark remover'],
   ['grok-watermark-remover.json', 'grok watermark remover'],
   ['kling-watermark-remover.json', 'kling watermark remover'],
@@ -112,6 +114,21 @@ describe('tool landing-page usage steps', () => {
 
     expect(page.slug).toBe(fileName.replace(/\.json$/, ''));
     expect(searchableCopy).toContain(keyword);
+  });
+
+  it('initializes the background remover with its dedicated tool, steps, features, FAQ, and original visuals', () => {
+    const page = JSON.parse(
+      readFileSync(new URL('../../content/landing-pages/background-remover.json', import.meta.url), 'utf8'),
+    );
+
+    expect(page.toolKind).toBe('background-remover');
+    expect(page.process.steps).toHaveLength(3);
+    expect(page.process.steps.every((step: { image?: string }) => step.image?.startsWith('/uploads/background-remover-'))).toBe(true);
+    expect(page.features.items).toHaveLength(3);
+    expect(page.features.items.every((item: { image?: string }) => item.image?.startsWith('/uploads/background-remover-'))).toBe(true);
+    expect(page.faq.items.length).toBeGreaterThanOrEqual(6);
+    expect(landingPageSource).toContain("page.toolKind === 'background-remover'");
+    expect(landingPageSource).toContain('<BackgroundRemoverUploader');
   });
 
 });

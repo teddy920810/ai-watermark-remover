@@ -4,7 +4,7 @@ ClearMark AI 是部署在 [www.watermarkgemini.com](https://www.watermarkgemini.
 
 本仓库也可作为同类站点框架完整 fork：WatermarkGemini 内容继续保留在当前仓库，新站在自己的仓库中初始化品牌并通过 Pages CMS 重建内容。操作见 [新站模板指南](docs/TEMPLATE_GUIDE.md)。
 
-> 当前状态：匿名用户可以选择和预览图片，创建处理任务时需要通过 Google 登录。首次登录获得 1 次免费处理，每日签到增加 1 次，免费余额上限为 3 次。上传、临时存储和任务流程已经可用；生产环境可通过服务端配置启用已完成样图验收的 Dewatermark v3 Provider，本地和测试环境默认仍使用 Mock Provider。
+> 当前状态：匿名用户可以选择和预览图片，创建处理任务时需要通过 Google 登录。首次登录获得 1 次免费处理，每日签到增加 1 次，免费余额上限为 3 次；去水印和背景移除共用这份余额。上传、临时存储和任务流程已经可用；生产环境可分别通过服务端配置启用 Dewatermark v3 去水印 Provider 和 Replicate 851 Labs 背景移除 Provider，本地和测试环境默认仍使用 Mock Provider。
 
 ## 常用入口
 
@@ -47,7 +47,8 @@ npm run dev
        ├─ Vercel API：生成 R2 预签名上传地址
        ├─ 浏览器直传私有 R2
        └─ Vercel API：创建/查询处理任务
-                         └─ WatermarkProvider（当前为 Mock）
+                         ├─ WatermarkProvider（去水印）
+                         └─ BackgroundRemovalProvider（背景移除）
 
 Pages CMS → GitHub main → Vercel 自动构建 → www.watermarkgemini.com
 ```
@@ -56,7 +57,7 @@ R2 Bucket 为 `watermark`，必须保持私有。`uploads/`、`results/`、`jobs
 
 Google OAuth 回调地址为 `/api/auth/callback/google`。本地 4321 端口与正式域名应分别在 Google Cloud 配置完整回调 URI。认证采用加密会话；Neon 保存 Google 授权提供的基础资料（稳定账号标识、邮箱及验证状态、姓名、头像、语言和 Workspace 域名，缺失的可选字段为空），以及免费余额、签到、扣减/退回账本和活跃时间。Google OAuth access token、refresh token 和 ID token 不写入资料表，供应商密钥和图片也不写入 Neon。账户历史列表和订阅仍属于后续版本。
 
-Dewatermark、Neon 与可选 R2 本地凭据可以通过 `npm run processing:import -- <Dewatermark Key 文件> <Neon URL 文件> [S3-info 文件]` 导入到被 Git 忽略的 `.env.local`。`npm run processing:check` 只检查供应商余额和数据库只读连接，不处理图片或消耗图片 credit。首次部署权益功能前运行一次 `npm run db:migrate`；该命令使用版本化 SQL 和事务锁安全建表。本地默认保持 `WATERMARK_PROVIDER=mock`；生产环境通过 Vercel 的服务端变量显式选择真实 Provider。
+Dewatermark、Neon 与可选 R2 本地凭据可以通过 `npm run processing:import -- <Dewatermark Key 文件> <Neon URL 文件> [S3-info 文件]` 导入到被 Git 忽略的 `.env.local`。`npm run processing:check` 只检查供应商余额和数据库只读连接，不处理图片或消耗图片 credit。首次部署权益功能前运行一次 `npm run db:migrate`；该命令使用版本化 SQL 和事务锁安全建表。本地默认保持 `WATERMARK_PROVIDER=mock` 和 `BACKGROUND_REMOVAL_PROVIDER=mock`；生产环境通过 Vercel 的服务端变量分别选择真实 Provider。Replicate token 只保存在服务端环境变量 `REPLICATE_API_TOKEN` 中。
 
 ## 目录说明
 

@@ -1,48 +1,52 @@
-# Design QA
+# Background Remover Design QA
 
 ## Evidence
 
-- Source visual truth: `C:/Users/ermei/OneDrive/Desktop/index.html` and `C:/Users/ermei/OneDrive/Desktop/style.css`
-- Focused source references: `C:/Users/ermei/AppData/Local/Temp/codex-clipboard-dee94402-01d6-4225-9a2c-e3e4db8f4c6d.png` and `C:/Users/ermei/AppData/Local/Temp/codex-clipboard-3a97826e-f44b-48c7-a1a6-566c0986bb30.png`
-- Implementation captures: `test-results/design-qa/qa-home-desktop.png`, `test-results/design-qa/qa-home-mobile.png`, `test-results/design-qa/qa-tool-mobile.png`, and `test-results/design-qa/qa-standards-guides-desktop.png`
-- Desktop viewport: 1440 x 900 CSS px at density 1; the browser content width was 1425 px and the full-page capture was 1425 x 8662 px.
-- Mobile viewport: 390 x 844 CSS px at density 1; the browser content width was 375 px.
-- State: public, signed-out homepage and representative tool page.
-
-## Full-view comparison
-
-The current homepage was compared in one visual pass with the supplied heading and Guides references. The shared Plus Jakarta Sans heading hierarchy, blue emphasis, 1320 px desktop content rhythm, two-column Guides treatment, CTA, and footer now align with the source direction while the intentionally excluded Hero remains unchanged.
-
-## Focused-region comparison
-
-- Typography: Feature H3 renders at 34.56 px / 700 on desktop and 28 px / 700 on mobile; process and tool-card H3 render at 19 px / 700. CTA and footer headings use the same display family and reference weights.
-- Spacing: feature rows use the 90 px reference gap; CTA uses 86 px desktop and 65 px mobile padding; footer uses 72 px desktop and 65 px mobile top padding.
-- Colors: the existing blue, navy, white, mist, and CTA gradient tokens remain consistent with the supplied design.
-- Images: all existing operational images and crops are unchanged. Lazy-loaded off-screen images can appear as reserved surfaces in a single mobile full-page capture, but load normally when scrolled into view.
-- Content: the existing CMS copy remains intact except for the requested fourth standards card, which reuses the already published statement that processing and downloading are free.
-- Standards: four cards render in a complete 2 x 2 desktop grid and one-column mobile stack.
-- Guides: two bordered lists and the left-aligned highlighted heading retain the reference composition.
-
-## Comparison history
-
-1. The audit found shared H3 text falling back to DM Sans/regular weight, three standards cards, smaller lower-page padding, and a CMS result-showcase entry separated from its heading configuration.
-2. Updated the shared typography and spacing tokens, added the fourth standards card, and grouped the result-showcase controls in Pages CMS.
-3. Re-ran desktop and mobile captures. Computed styles now match the reference values, both tested pages have no horizontal overflow, and no console warnings or errors were recorded.
-4. Compared the supplied focused references and the revised browser capture together. No remaining P0, P1, or P2 mismatch was found within the approved scope.
-
-## Interaction and console checks
-
-- The repository UI suite passed all 89 targeted unit tests and all 9 browser tests.
-- Result-showcase previous/next controls, six Popular tools, two Guide lists, mobile navigation, FAQ schema, and independent tool-page sections remain covered.
-- Homepage desktop, homepage mobile, and `/remove-logo-from-image` mobile had equal client and scroll widths.
-- Browser console check returned no warnings or errors on the representative tool page.
+- Source visual truth: `C:\Users\ermei\AppData\Local\Temp\codex-clipboard-3a53942b-73ae-4567-bb0f-57458a372aae.png` (idle/upload state) and `C:\Users\ermei\AppData\Local\Temp\codex-clipboard-26da0d16-09cb-4840-a59f-710e3e078bbc.png` (result/color state).
+- Browser-rendered implementation: `test-results/design-qa/background-remover-desktop-idle.png` and `test-results/design-qa/background-remover-mobile-idle.png`.
+- Combined comparison: `test-results/design-qa/idle-comparison-normalized.png`.
+- Focused uploader comparison: `test-results/design-qa/uploader-comparison.png`.
+- Desktop browser viewport override: 1633 × 889 CSS px; implementation capture: 1618 × 881 px; device scale factor: 1.
+- Source idle capture: 1633 × 885 px, normalized to 1618 × 881 px for the full-view comparison.
+- Mobile browser viewport override: 390 × 844 CSS px; implementation capture: 375 × 812 px; device scale factor: 1.
+- State: unauthenticated idle/upload state. The result and color-picker state is covered by the automated background-removal flow; a real provider call was intentionally not made during visual QA.
 
 ## Findings
 
-- No actionable P0, P1, or P2 visual differences remain in the requested shared sections.
-- Hero styling and content remain intentionally unchanged.
-- Blog, landing-page, legal copy, operational images, uploader behavior, and provider behavior were not changed.
+- No actionable P0, P1, or P2 findings remain.
+- The reference uses a centered marketing headline and a standalone uploader, while the implementation uses the existing WatermarkGemini two-column tool-page hero. This is an intentional product-system constraint, not accidental drift: the uploader hierarchy, dashed drop target, paste affordance, supported formats, privacy treatment, rounded card, and result color controls carry over from the reference inside the established site shell.
+- P3: The reference includes sample-image shortcuts, while the implementation does not. They are optional discovery aids and would add content and storage behavior outside the requested upload flow.
 
-## Final result
+## Required Fidelity Surfaces
+
+- Fonts and typography: Existing WatermarkGemini display and body typography is retained. Heading, instruction, format, and privacy copy remain legible at desktop and mobile sizes with no truncation.
+- Spacing and layout rhythm: Desktop keeps the established two-column hero; the uploader and hero stack cleanly on mobile. No horizontal overflow was detected at either viewport.
+- Colors and visual tokens: The implementation maps the reference's high-contrast primary CTA and neutral upload surface to the site's blue, navy, mint, border, radius, and shadow tokens.
+- Image quality and asset fidelity: Seven original raster assets were created for the steps and feature sections. The transparency treatment uses a real checkerboard image asset. No placeholder, handcrafted SVG, emoji, or CSS-drawn marketing illustration was substituted.
+- Copy and content: Upload, paste, supported-format, privacy, transparent PNG, background-color, and shared-credit concepts are explicit. There is no “Go to Editor” action.
+
+## Interaction and Runtime Checks
+
+- Primary interactions covered: file selection, drag/drop contract, clipboard paste listener, authenticated processing request with `background-removal`, original/result comparison, preset colors, custom color, PNG download, reset, and shared balance refresh.
+- The desktop and mobile browser captures showed the expected tool and no “Go to Editor” text.
+- Browser console errors/warnings checked after desktop and mobile reload: none.
+- Accessibility and core route coverage passed in the repository E2E gate.
+
+## Focused Comparison
+
+The uploader is the key conversion region and was compared separately at readable scale. Its affordance, format guidance, drop-zone boundary, and privacy note are visually clear. No additional focused crop was needed for the below-the-fold editorial modules because their typography, images, and responsive behavior follow existing shared components already covered by the page and accessibility tests.
+
+## Comparison History
+
+- Pass 1: Full-view and focused uploader comparisons found no actionable P0/P1/P2 mismatch. No visual fix was required, so no recapture iteration was needed.
+
+## Implementation Checklist
+
+- [x] Desktop upload state follows the established WatermarkGemini tool layout.
+- [x] Mobile layout has no horizontal overflow.
+- [x] Uploader supports click, drop, and paste.
+- [x] Transparent, preset, and custom-color result controls are implemented.
+- [x] Editor handoff is omitted.
+- [x] Original visual assets are used for all initialized step and feature modules.
 
 final result: passed

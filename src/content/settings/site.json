@@ -96,6 +96,10 @@
         "label": "AI Watermark Remover",
         "children": [
           {
+            "label": "Background Remover",
+            "href": "/background-remover"
+          },
+          {
             "label": "Remove Text from Image",
             "href": "/remove-text-from-image"
           },
@@ -158,6 +162,7 @@
         "heading": "Product",
         "links": [
           { "label": "Watermark remover", "href": "/" },
+          { "label": "Background remover", "href": "/background-remover" },
           { "label": "Remove logo", "href": "/remove-logo-from-image" },
           { "label": "Remove text", "href": "/remove-text-from-image" }
         ]
