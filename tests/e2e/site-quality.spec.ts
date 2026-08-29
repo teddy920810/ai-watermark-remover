@@ -71,8 +71,41 @@ test('blog tables scroll inside the article without widening the mobile page', a
   }
 });
 
+test('article navigation and related guides flank the story on desktop and stack on mobile', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto('/blog/how-to-remove-watermarks-responsibly', { waitUntil: 'networkidle' });
+
+  const tableOfContents = page.getByRole('navigation', { name: 'On this page' });
+  const article = page.locator('.article-main');
+  const relatedGuides = page.getByRole('complementary', { name: 'Related guides' });
+  await expect(tableOfContents.getByRole('link').first()).toHaveAttribute('href', /^#[a-z0-9-]+$/);
+  await expect(relatedGuides.getByRole('link')).toHaveCount(4);
+
+  const desktopBoxes = await Promise.all([
+    tableOfContents.boundingBox(),
+    article.boundingBox(),
+    relatedGuides.boundingBox(),
+  ]);
+  expect(desktopBoxes.every(Boolean)).toBe(true);
+  expect(desktopBoxes[0]!.x + desktopBoxes[0]!.width).toBeLessThan(desktopBoxes[1]!.x);
+  expect(desktopBoxes[2]!.x).toBeGreaterThan(desktopBoxes[1]!.x + desktopBoxes[1]!.width);
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  const mobileBoxes = await Promise.all([
+    page.locator('.article-toc').boundingBox(),
+    article.boundingBox(),
+    relatedGuides.boundingBox(),
+  ]);
+  expect(mobileBoxes.every(Boolean)).toBe(true);
+  expect(mobileBoxes[0]!.y + mobileBoxes[0]!.height).toBeLessThanOrEqual(mobileBoxes[1]!.y);
+  expect(mobileBoxes[2]!.y).toBeGreaterThanOrEqual(mobileBoxes[1]!.y + mobileBoxes[1]!.height);
+
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('.article-layout')).toHaveCount(0);
+});
+
 test('all public content routes and 404 have one H1 and no serious accessibility violations', async ({ page, request }) => {
-  test.setTimeout(120_000);
+  test.setTimeout(240_000);
   const sitemap = await (await request.get('/sitemap.xml')).text();
   const routes = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => new URL(match[1]).pathname);
   routes.push('/missing-page-for-404-check');

@@ -16,7 +16,11 @@ export async function getStaticPaths() {
 }
 interface Props { post: CollectionEntry<'blog'> }
 const { post } = Astro.props;
-const { Content } = await render(post);
+const { Content, headings } = await render(post);
+const tableOfContents = headings.filter(({ depth }) => depth === 2);
+const relatedPosts = sortBlogEntries(await getCollection('blog'))
+  .filter(({ data }) => data.slug !== post.data.slug)
+  .slice(0, 4);
 const [siteEntry] = await getCollection('siteSettings');
 if (!siteEntry) throw new Error('Site settings CMS content is missing.');
 const metadata = resolveBlogMetadata(post.data, siteEntry.data.contentDefaults, siteEntry.data.name);
@@ -41,8 +45,31 @@ const optimizedBodyHtml = post.data.bodyHtml ? optimizeTrustedHtmlImages(post.da
 ---
 <SiteLayout title={metadata.title} description={post.data.description} image={post.data.coverImage} type="article" schema={schema}>
   <header class="article-header"><div class="article-meta">{metadata.category} · {post.data.publishedAt} · {post.data.readTime} · {metadata.author}</div><h1>{post.data.title}</h1></header>
-  {post.data.coverImage && <ResponsiveImage class="article-cover" src={post.data.coverImage} alt={coverAlt ?? ''} sizes="(max-width: 1000px) calc(100vw - 36px), 960px" loading="eager" fetchpriority="high" />}
-  <article class="article-body">
-    {post.data.contentMode === 'html' ? <div set:html={optimizedBodyHtml} /> : <Content />}
-  </article>
+  <div class="article-layout">
+    <aside class="article-toc">
+      {tableOfContents.length > 0 && <nav class="article-sidebar-card" aria-labelledby="article-toc-heading">
+        <h2 id="article-toc-heading">On this page</h2>
+        <ol>
+          {tableOfContents.map((heading) => <li><a href={`#${heading.slug}`}>{heading.text}</a></li>)}
+        </ol>
+      </nav>}
+    </aside>
+    <div class="article-main">
+      {post.data.coverImage && <ResponsiveImage class="article-cover" src={post.data.coverImage} alt={coverAlt ?? ''} sizes="(max-width: 1100px) calc(100vw - 56px), 900px" loading="eager" fetchpriority="high" />}
+      <article class="article-body">
+        {post.data.contentMode === 'html' ? <div set:html={optimizedBodyHtml} /> : <Content />}
+      </article>
+    </div>
+    <aside class="article-related" aria-labelledby="related-guides-heading">
+      <div class="article-sidebar-card">
+        <h2 id="related-guides-heading">Related guides</h2>
+        <ul>
+          {relatedPosts.map(({ data: relatedPost }) => <li>
+            <a href={`/blog/${relatedPost.slug}`}>{relatedPost.title}</a>
+            <span>{relatedPost.readTime}</span>
+          </li>)}
+        </ul>
+      </div>
+    </aside>
+  </div>
 </SiteLayout>

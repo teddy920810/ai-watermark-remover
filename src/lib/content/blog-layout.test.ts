@@ -23,6 +23,18 @@ describe('blog article reading layout', () => {
     expect(globalCssSource).toContain('.article-header h1 { font-size: clamp(2.25rem, 10vw, 2.75rem);');
   });
 
+  it('adds an accessible article outline and related-guide rail around the reading column', () => {
+    expect(blogPageSource).toContain("const tableOfContents = headings.filter(({ depth }) => depth === 2);");
+    expect(blogPageSource).toContain(".filter(({ data }) => data.slug !== post.data.slug)");
+    expect(blogPageSource).toContain('<div class="article-layout">');
+    expect(blogPageSource).toContain('<nav class="article-sidebar-card" aria-labelledby="article-toc-heading">');
+    expect(blogPageSource).toContain('href={`#${heading.slug}`}');
+    expect(blogPageSource).toContain('<aside class="article-related" aria-labelledby="related-guides-heading">');
+    expect(globalCssSource).toMatch(/\.article-layout\s*\{[^}]*grid-template-columns:\s*minmax\(180px, 220px\) minmax\(0, 900px\) minmax\(220px, 260px\);/s);
+    expect(globalCssSource).toMatch(/\.article-sidebar-card\s*\{[^}]*position:\s*sticky;[^}]*top:\s*96px;/s);
+    expect(globalCssSource).toMatch(/@media \(max-width: 1300px\)[\s\S]*?\.article-layout\s*\{[^}]*grid-template-columns:\s*minmax\(0, 1fr\);/s);
+  });
+
   it('provides a consistent SEO article style system for CMS rich-text elements', () => {
     expect(globalCssSource).toContain('.article-body blockquote {');
     expect(globalCssSource).toContain('.article-body blockquote strong {');
