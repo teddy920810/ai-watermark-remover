@@ -11,6 +11,8 @@
 - Mobile browser viewport override: 390 × 844 CSS px; implementation capture: 375 × 812 px; device scale factor: 1.
 - State: unauthenticated idle/upload state. The result and color-picker state is covered by the automated background-removal flow; a real provider call was intentionally not made during visual QA.
 - Follow-up implementation check: `C:\Users\ermei\AppData\Local\Temp\codex-clipboard-f3ccbb8d-0938-4557-b73e-16deacb7625a.png` (reported narrow selected state) and `C:\Users\ermei\AppData\Local\Temp\codex-clipboard-59b43f7f-04c6-4e61-acba-6a08272ff302.png` (requested full-width result behavior).
+- Production incident check: `C:\Users\ermei\AppData\Local\Temp\codex-clipboard-adb07fbd-5b32-497c-be4d-8ecbd9212995.png` (expired result image) and `C:\Users\ermei\AppData\Local\Temp\codex-clipboard-854e201f-a438-48bb-b2b9-42ad4474ad6b.png` (upload area, stale preview, and fetch error rendered together).
+- The incident state was inspected in the Codex in-app browser on `https://www.watermarkgemini.com/background-remover`. The DOM confirmed a broken result image backed by an expired signed URL and the overlapping error/upload/preview state shown in the screenshots.
 - Follow-up browser viewport: 1582 x 674 CSS px. After selecting `public/uploads/background-remover-product-photo.png`, the marketing copy was hidden, the tool measured 1225 px wide, and no horizontal overflow was present.
 
 ## Findings
@@ -35,6 +37,8 @@
 - Accessibility and core route coverage passed in the repository E2E gate.
 - The follow-up regression contract asserts that selection adds `is-tool-expanded`, hides the hero copy, and produces a desktop tool wider than 1000 px.
 - The completed-state regression contract asserts the API PNG is displayed first on the transparency grid, the bottom-right control switches to the original blob URL, and a second click restores the API result URL.
+- The expired-link regression forces the first result image request to return 403, then verifies that the component refreshes the completed job links, restores the provider PNG, keeps the completed result visible, and creates no second processing job.
+- Download actions now obtain fresh completed-job links immediately before downloading. A refresh failure remains inside the completed result state and falls back to the original preview instead of exposing a broken image or reopening the upload drop zone.
 
 ## Focused Comparison
 
@@ -44,6 +48,7 @@ The uploader is the key conversion region and was compared separately at readabl
 
 - Pass 1: Full-view and focused uploader comparisons found no actionable P0/P1/P2 mismatch. No visual fix was required, so no recapture iteration was needed.
 - Pass 2: The user-reported selected state was reproduced. The hero now expands to the established page container after upload; a local in-app browser check confirmed the large preview and no overflow. The result-state behavior is locked by the focused browser regression without spending a Replicate credit during local QA.
+- Pass 3: The production expired-link state was reproduced in the in-app browser. The fix is locked by a browser regression that simulates the same 403-to-refreshed-URL transition without making a provider call or consuming a shared credit.
 
 ## Implementation Checklist
 
@@ -56,5 +61,7 @@ The uploader is the key conversion region and was compared separately at readabl
 - [x] Selecting an image expands the tool across the page container.
 - [x] A completed job defaults to the transparent provider PNG.
 - [x] The bottom-right comparison control switches to the original and back to the result.
+- [x] An expired result URL refreshes automatically without reprocessing or consuming another credit.
+- [x] Upload and completed-result surfaces are mutually exclusive after a recoverable network failure.
 
 final result: passed

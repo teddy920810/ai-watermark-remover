@@ -8,6 +8,7 @@ import { initialUploadState, uploadReducer } from './upload-machine';
 
 type JsonRecord = Record<string, unknown>;
 type BackgroundChoice = { id: string; label: string; color: string | null };
+type CompletedJobLinks = { status: string; resultUrl?: string; downloadUrl?: string; error?: string };
 
 interface Props {
   logo: string;
@@ -42,6 +43,11 @@ function wait(ms: number) {
 
 function formatCopy(template: string, replacements: Record<string, string>) {
   return Object.entries(replacements).reduce((result, [key, value]) => result.replaceAll(`{${key}}`, value), template);
+}
+
+function userFacingError(error: unknown, fallback: string): string {
+  if (error instanceof TypeError && error.message === 'Failed to fetch') return fallback;
+  return error instanceof Error ? error.message : fallback;
 }
 
 async function downloadWithBackground(resultUrl: string, color: string): Promise<void> {
@@ -79,8 +85,11 @@ export default function BackgroundRemoverUploader({ logo, siteName, copy }: Prop
   const [customColor, setCustomColor] = useState('#f3f6ff');
   const [showOriginal, setShowOriginal] = useState(false);
   const [downloadPending, setDownloadPending] = useState(false);
+  const [refreshingResult, setRefreshingResult] = useState(false);
+  const [resultError, setResultError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const toolRef = useRef<HTMLElement>(null);
+  const automaticResultRefreshAttemptedRef = useRef(false);
 
   const expanded = Boolean(state.previewUrl);
 
@@ -104,6 +113,8 @@ export default function BackgroundRemoverUploader({ logo, siteName, copy }: Prop
     setFile(nextFile);
     setSelectedBackground(TRANSPARENT_BACKGROUND);
     setShowOriginal(false);
+    setResultError(null);
+    automaticResultRefreshAttemptedRef.current = false;
     dispatch({ type: 'select', previewUrl: URL.createObjectURL(nextFile), fileName: nextFile.name });
   }, []);
 
@@ -156,10 +167,11 @@ export default function BackgroundRemoverUploader({ logo, siteName, copy }: Prop
       dispatch({ type: 'process', jobId: created.id });
 
       for (let attempt = 0; attempt < 60; attempt += 1) {
-        const job = await api<{ status: string; resultUrl?: string; downloadUrl?: string; error?: string }>(`/api/jobs/${created.id}`);
+        const job = await api<CompletedJobLinks>(`/api/jobs/${created.id}`);
         if (job.status === 'completed' && job.resultUrl && job.downloadUrl) {
           setSelectedBackground(TRANSPARENT_BACKGROUND);
           setShowOriginal(false);
+          automaticResultRefreshAttemptedRef.current = false;
           dispatch({ type: 'complete', resultUrl: job.resultUrl, downloadUrl: job.downloadUrl });
           return;
         }
@@ -169,9 +181,38 @@ export default function BackgroundRemoverUploader({ logo, siteName, copy }: Prop
       throw new Error('Processing took too long. Please try again.');
     } catch (error) {
       window.dispatchEvent(new Event('benefits:changed'));
-      dispatch({ type: 'error', message: error instanceof Error ? error.message : 'Something went wrong.' });
+      dispatch({ type: 'error', message: userFacingError(error, 'The image service could not be reached. Please check your connection and try again.') });
     }
   }, [file]);
+
+  const refreshResultLinks = useCallback(async () => {
+    if (!state.jobId) throw new Error('This result can no longer be refreshed. Please process the image again.');
+    setRefreshingResult(true);
+    try {
+      const job = await api<CompletedJobLinks>(`/api/jobs/${state.jobId}`);
+      if (job.status !== 'completed' || !job.resultUrl || !job.downloadUrl) {
+        throw new Error(job.error ?? 'The result is not available yet. Please try again.');
+      }
+      dispatch({ type: 'complete', resultUrl: job.resultUrl, downloadUrl: job.downloadUrl });
+      setResultError(null);
+      return { resultUrl: job.resultUrl, downloadUrl: job.downloadUrl };
+    } finally {
+      setRefreshingResult(false);
+    }
+  }, [state.jobId]);
+
+  function handleResultImageError() {
+    if (showOriginal || refreshingResult || !state.jobId) return;
+    setShowOriginal(true);
+    if (automaticResultRefreshAttemptedRef.current) {
+      setResultError('The result image could not be loaded. Please check your connection and try downloading it again.');
+      return;
+    }
+    automaticResultRefreshAttemptedRef.current = true;
+    void refreshResultLinks()
+      .then(() => setShowOriginal(false))
+      .catch((error) => setResultError(userFacingError(error, 'The result link expired and could not be refreshed. Please try again.')));
+  }
 
   useEffect(() => {
     let completing = false;
@@ -241,17 +282,27 @@ export default function BackgroundRemoverUploader({ logo, siteName, copy }: Prop
     setFile(null);
     setSelectedBackground(TRANSPARENT_BACKGROUND);
     setShowOriginal(false);
+    setResultError(null);
+    automaticResultRefreshAttemptedRef.current = false;
     if (inputRef.current) inputRef.current.value = '';
     dispatch({ type: 'reset' });
   }
 
-  async function downloadColoredResult() {
-    if (!state.resultUrl || !selectedBackground.color) return;
+  async function downloadResult() {
+    if (!state.jobId) return;
     try {
       setDownloadPending(true);
-      await downloadWithBackground(state.resultUrl, selectedBackground.color);
+      const links = await refreshResultLinks();
+      if (selectedBackground.color) {
+        await downloadWithBackground(links.resultUrl, selectedBackground.color);
+      } else {
+        const anchor = document.createElement('a');
+        anchor.href = links.downloadUrl;
+        anchor.download = 'background-removed-image.png';
+        anchor.click();
+      }
     } catch (error) {
-      dispatch({ type: 'error', message: error instanceof Error ? error.message : 'The result could not be downloaded.' });
+      setResultError(userFacingError(error, 'The result could not be downloaded. Please check your connection and try again.'));
     } finally {
       setDownloadPending(false);
     }
@@ -266,7 +317,7 @@ export default function BackgroundRemoverUploader({ logo, siteName, copy }: Prop
         <span className="demo-badge" title={copy.hero.demoBadgeTitle}>{copy.hero.demoBadge}</span>
       </div>
 
-      {state.phase === 'idle' || state.phase === 'error' ? (
+      {state.previewUrl ? null : (
         <label
           className={`drop-zone background-drop-zone ${dragging ? 'is-dragging' : ''}`}
           onDragEnter={(event) => { event.preventDefault(); setDragging(true); }}
@@ -279,7 +330,7 @@ export default function BackgroundRemoverUploader({ logo, siteName, copy }: Prop
           <small>{copy.dropzone.formatLabel} · {formatCopy(copy.dropzone.maxSizeLabel, { maxSize: String(MAX_UPLOAD_BYTES / 1024 / 1024) })}</small>
           <input ref={inputRef} className="sr-only" type="file" accept="image/jpeg,image/png,image/webp,.jfif" aria-label={copy.dropzone.fileInputLabel} onChange={onInput} />
         </label>
-      ) : null}
+      )}
 
       {state.message ? <p className="error-message" role="alert">{state.message}</p> : null}
 
@@ -304,7 +355,7 @@ export default function BackgroundRemoverUploader({ logo, siteName, copy }: Prop
               className={`background-result-stage ${!showOriginal && selectedBackground.color === null ? 'is-transparent' : ''}`}
               style={!showOriginal && selectedBackground.color ? { backgroundColor: selectedBackground.color } : undefined}
             >
-              <img src={showOriginal ? state.previewUrl : state.resultUrl} alt={showOriginal ? copy.result.originalAlt : copy.result.resultAlt} />
+              <img src={showOriginal ? state.previewUrl : state.resultUrl} alt={showOriginal ? copy.result.originalAlt : copy.result.resultAlt} onError={handleResultImageError} />
               <button className="background-reset" type="button" onClick={reset} aria-label="Remove image and start over"><Trash2 size={18} /></button>
               <button className="background-compare" type="button" onClick={() => setShowOriginal((value) => !value)} aria-label={showOriginal ? 'Show background-removed result' : 'Show original image'}>
                 <Columns2 size={19} /><span>{showOriginal ? 'Result' : 'Before'}</span>
@@ -342,14 +393,11 @@ export default function BackgroundRemoverUploader({ logo, siteName, copy }: Prop
               </div>
             </aside>
           </div>
+          {resultError ? <p className="error-message" role="alert">{resultError}</p> : null}
           <div className="background-result-actions">
-            {selectedBackground.color === null ? (
-              <a className="button button-primary" href={state.downloadUrl}><Download size={17} />Download PNG</a>
-            ) : (
-              <button className="button button-primary" type="button" onClick={downloadColoredResult} disabled={downloadPending}>
-                <Download size={17} />{downloadPending ? 'Preparing…' : 'Download PNG'}
-              </button>
-            )}
+            <button className="button button-primary" type="button" onClick={downloadResult} disabled={downloadPending || refreshingResult}>
+              <Download size={17} />{downloadPending || refreshingResult ? 'Preparing…' : 'Download PNG'}
+            </button>
             <button className="button button-ghost" type="button" onClick={reset}>{copy.result.processAnotherButton}</button>
           </div>
         </div>
