@@ -89,7 +89,7 @@
   "features": {
     "eyebrow": "BUILT FOR VEO VIDEOS",
     "heading": "A Veo Watermark Remover Built Around Real Video Problems",
-    "intro": "Removing a watermark from video is harder than removing one from a single image. The background changes from frame to frame. Subjects move. Textures shift. A poor removal can create blur, visible patches, or distracting flicker throughout the clip. WatermarkGemini is designed to solve the problems that matter most when you remove Veo watermark from video—cleaner frames, preserved composition, and videos that are easier to reuse.",
+    "intro": "Removing a watermark from video is harder than removing one from a single image. The background changes from frame to frame. Subjects move. Textures shift. WatermarkGemini is designed to solve the problems that matter most when you remove Veo watermark from video—cleaner frames, preserved composition, and videos that are easier to reuse.",
     "items": [
       {
         "enabled": true,
