@@ -56,10 +56,10 @@ export async function grantTestCredits({ pool, email, requestedUses, reference, 
   try {
     if (apply) await client.query('BEGIN');
     const result = await client.query(`
-      SELECT u.id AS user_id, benefits.balance::int AS balance
-      FROM "user" u
-      JOIN user_benefits benefits ON benefits.user_id = u.id
-      WHERE LOWER(u.email) = LOWER($1)
+      SELECT identity.user_id, benefits.balance::int AS balance
+      FROM user_benefit_identities identity
+      JOIN user_benefits benefits ON benefits.user_id = identity.user_id
+      WHERE LOWER(identity.email) = LOWER($1)
       ${apply ? 'FOR UPDATE OF benefits' : ''}
     `, [email]);
     if (result.rows.length !== 1) throw new Error('No initialized benefit account matches that email.');

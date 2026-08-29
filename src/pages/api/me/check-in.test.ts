@@ -12,7 +12,7 @@ describe('POST /api/me/check-in', () => {
   beforeEach(() => {
     getServices.mockReset();
     getSession.mockReset();
-    getSession.mockResolvedValue({ user: { id: 'google-user-1' } });
+    getSession.mockResolvedValue({ user: { id: 'google-user-1', email: 'Person@Example.com' } });
   });
 
   it('returns 401 when signed out', async () => {
@@ -26,6 +26,6 @@ describe('POST /api/me/check-in', () => {
     const response = await POST(context);
     expect(response.status).toBe(200);
     await expect(response.json()).resolves.toMatchObject({ balance: 2, checkedInToday: true, granted: true });
-    expect(checkIn).toHaveBeenCalledWith('google-user-1');
+    expect(checkIn).toHaveBeenCalledWith('google-user-1', 'Person@Example.com');
   });
 });

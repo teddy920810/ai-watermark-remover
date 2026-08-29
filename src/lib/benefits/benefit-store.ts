@@ -14,8 +14,8 @@ export interface CheckInResult extends BenefitSummary {
 }
 
 export interface BenefitStore {
-  getSummary(userId: string): Promise<BenefitSummary>;
-  checkIn(userId: string): Promise<CheckInResult>;
+  getSummary(userId: string, email?: string): Promise<BenefitSummary>;
+  checkIn(userId: string, email?: string): Promise<CheckInResult>;
   reserve(jobId: string, userId: string): Promise<void>;
   consume(jobId: string, userId: string): Promise<void>;
   refund(jobId: string, userId: string): Promise<void>;

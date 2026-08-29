@@ -56,6 +56,16 @@ describe('PostgresBenefitStore', () => {
     expect(fake.release).toHaveBeenCalled();
   });
 
+  it('links the authenticated email to the benefit account without changing the balance', async () => {
+    const fake = createPool({ balance: 2 });
+    const summary = await new PostgresBenefitStore(fake.pool).getSummary('user-1', 'Person@Example.com');
+    expect(summary.balance).toBe(2);
+    expect(fake.query.mock.calls).toContainEqual([
+      expect.stringContaining('INSERT INTO user_benefit_identities'),
+      ['user-1', 'person@example.com'],
+    ]);
+  });
+
   it('grants one daily use and marks the day checked in', async () => {
     const fake = createPool({ balance: 1 });
     const result = await new PostgresBenefitStore(fake.pool).checkIn('user-1');

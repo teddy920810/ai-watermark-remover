@@ -12,7 +12,7 @@ describe('GET /api/me/benefits', () => {
   beforeEach(() => {
     getServices.mockReset();
     getSession.mockReset();
-    getSession.mockResolvedValue({ user: { id: 'google-user-1' } });
+    getSession.mockResolvedValue({ user: { id: 'google-user-1', email: 'Person@Example.com' } });
   });
 
   it('returns 401 when signed out', async () => {
@@ -26,6 +26,6 @@ describe('GET /api/me/benefits', () => {
     const response = await GET(context);
     expect(response.status).toBe(200);
     await expect(response.json()).resolves.toEqual({ balance: 1, cap: 3, dailyReward: 1, checkedInToday: false });
-    expect(getSummary).toHaveBeenCalledWith('google-user-1');
+    expect(getSummary).toHaveBeenCalledWith('google-user-1', 'Person@Example.com');
   });
 });

@@ -16,9 +16,9 @@ interface UserState {
 export class PostgresBenefitStore implements BenefitStore {
   constructor(private readonly pool: Pool) {}
 
-  async getSummary(userId: string): Promise<BenefitSummary> {
+  async getSummary(userId: string, email?: string): Promise<BenefitSummary> {
     return this.transaction(async (client) => {
-      await this.ensureUser(client, userId);
+      await this.ensureUser(client, userId, email);
       const result = await client.query<UserState>(`
         SELECT
           balance::int AS balance,
@@ -34,9 +34,9 @@ export class PostgresBenefitStore implements BenefitStore {
     });
   }
 
-  async checkIn(userId: string): Promise<CheckInResult> {
+  async checkIn(userId: string, email?: string): Promise<CheckInResult> {
     return this.transaction(async (client) => {
-      await this.ensureUser(client, userId);
+      await this.ensureUser(client, userId, email);
       const user = await client.query<{ balance: number }>(`
         SELECT balance::int AS balance
         FROM user_benefits
@@ -166,7 +166,7 @@ export class PostgresBenefitStore implements BenefitStore {
     };
   }
 
-  private async ensureUser(client: PoolClient, userId: string): Promise<void> {
+  private async ensureUser(client: PoolClient, userId: string, email?: string): Promise<void> {
     const inserted = await client.query<{ balance: number }>(`
       INSERT INTO user_benefits (user_id, balance)
       VALUES ($1, 1)
@@ -180,6 +180,15 @@ export class PostgresBenefitStore implements BenefitStore {
       `, [userId]);
     }
     await client.query('UPDATE user_benefits SET last_active_at = NOW() WHERE user_id = $1', [userId]);
+    if (email) {
+      await client.query(`
+        INSERT INTO user_benefit_identities (user_id, email)
+        VALUES ($1, $2)
+        ON CONFLICT (user_id) DO UPDATE SET
+          email = EXCLUDED.email,
+          updated_at = NOW()
+      `, [userId, email.trim().toLowerCase()]);
+    }
   }
 
   private async transaction<T>(work: (client: PoolClient) => Promise<T>): Promise<T> {
