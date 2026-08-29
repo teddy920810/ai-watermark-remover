@@ -1,0 +1,72 @@
+{
+  "slug": "remove-background",
+  "toolKind": "background-remover",
+  "title": "Remove Background Online with AI | WatermarkGemini",
+  "description": "Remove background from an image online and download a transparent PNG using the current AI background-removal workflow.",
+  "eyebrow": "REMOVE BACKGROUND",
+  "heading": "Remove Background from an Image",
+  "intro": "Upload a supported image, let AI isolate the main subject, and download a transparent PNG or a result with your chosen background color.",
+  "benefits": ["AI background removal", "Transparent PNG output", "Private temporary uploads"],
+  "uploader": {
+    "hero": {
+      "eyebrow": "AI Background Remover",
+      "heading": "Upload an Image to Remove Its Background",
+      "demoBadge": "Shared Credits",
+      "demoBadgeTitle": "Background removal uses the same free balance and daily check-in rewards as watermark removal."
+    },
+    "dropzone": {
+      "dropLabel": "Upload image",
+      "browseLabel": "Drag and drop, click to browse",
+      "formatLabel": "JPG, JPEG, PNG, WebP or JFIF",
+      "maxSizeLabel": "up to {maxSize} MB",
+      "fileInputLabel": "Choose an image to remove its background"
+    },
+    "preview": {
+      "altTemplate": "Preview of {fileName}",
+      "processingLabel": "AI is removing the background…",
+      "readyLabel": "Ready to remove the background",
+      "removeButton": "Remove background",
+      "uploadingButton": "Uploading…",
+      "processingButton": "Removing background…",
+      "chooseAnotherButton": "Choose another"
+    },
+    "result": {
+      "originalLabel": "Original",
+      "resultLabel": "Background removed",
+      "originalAlt": "Original uploaded image",
+      "resultAlt": "Image with its background removed",
+      "demoNote": "Choose transparency or a background color, then download your PNG.",
+      "downloadButton": "Download PNG",
+      "processAnotherButton": "Process another"
+    },
+    "auth": {
+      "closeLabel": "Close sign-in dialog",
+      "title": "Sign in to remove the background",
+      "description": "Your selected image stays ready on this page. Processing starts automatically after Google sign-in and uses your shared free balance.",
+      "connectingButton": "Connecting to Google…",
+      "continueButton": "Continue with Google",
+      "dismissButton": "Not now"
+    },
+    "privacyNote": "Private upload · Automatically deleted after 24 hours"
+  },
+  "process": {
+    "eyebrow": "HOW IT WORKS",
+    "heading": "How to Remove a Background",
+    "intro": "Use the current background-removal workflow in three simple steps.",
+    "steps": [
+      { "number": "01", "title": "Upload Your Image", "description": "Choose a supported image from your device." },
+      { "number": "02", "title": "Remove the Background", "description": "Let the AI isolate the main subject and remove the surrounding background." },
+      { "number": "03", "title": "Choose and Download", "description": "Keep transparency or select a background color, then download the PNG." }
+    ]
+  },
+  "faq": {
+    "eyebrow": "FAQ",
+    "heading": "Remove Background FAQs",
+    "intro": "Initial answers about the background-removal workflow.",
+    "items": [
+      { "enabled": true, "question": "How do I remove background from an image?", "answer": "Upload a supported image, sign in when prompted, run background removal, and download the finished PNG." },
+      { "enabled": true, "question": "Can the result stay transparent?", "answer": "Yes. Keep the transparent option selected when preparing the PNG for download." },
+      { "enabled": true, "question": "Can I choose a background color?", "answer": "Yes. The result controls let you select a preset or custom color before downloading." }
+    ]
+  }
+}

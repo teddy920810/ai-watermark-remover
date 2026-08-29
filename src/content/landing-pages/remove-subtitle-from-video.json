@@ -1,0 +1,32 @@
+{
+  "slug": "remove-subtitle-from-video",
+  "toolKind": "watermark-remover",
+  "title": "Remove Subtitle from Video Online | WatermarkGemini",
+  "description": "Use the remove subtitle from video page to prepare supported videos for future AI-assisted subtitle cleanup.",
+  "eyebrow": "REMOVE SUBTITLE FROM VIDEO",
+  "statusLabel": "Coming Soon",
+  "heading": "Remove Subtitle from Video",
+  "intro": "A dedicated page for a future workflow that cleans visible burned-in subtitles from videos you own or have permission to edit.",
+  "benefits": ["Video cleanup workflow planned", "Preserve more of the frame", "Built for authorized edits"],
+  "uploader": { "dropzone": { "dropLabel": "Coming Soon" } },
+  "process": {
+    "eyebrow": "HOW IT WORKS",
+    "heading": "How to Remove Subtitles from Video",
+    "intro": "The initial workflow is ready for operations to refine before full processing launches.",
+    "steps": [
+      { "number": "01", "title": "Upload Your Video", "description": "Choose a supported video that you own or are authorized to edit." },
+      { "number": "02", "title": "Select the Subtitle Area", "description": "Identify the burned-in subtitle region that should be cleaned across frames." },
+      { "number": "03", "title": "Preview and Download", "description": "Review the cleaned frames and download the approved result." }
+    ]
+  },
+  "faq": {
+    "eyebrow": "FAQ",
+    "heading": "Remove Subtitle from Video FAQs",
+    "intro": "Initial answers for the planned video subtitle-removal workflow.",
+    "items": [
+      { "enabled": true, "question": "Can this page remove subtitle from video now?", "answer": "The page is live for discovery, while the dedicated video-processing workflow is marked Coming Soon." },
+      { "enabled": true, "question": "What kind of subtitles is the page intended for?", "answer": "The planned workflow focuses on visible subtitles burned into the video frames rather than separate caption tracks." },
+      { "enabled": true, "question": "What videos can I edit?", "answer": "Only process videos you own or have permission to modify." }
+    ]
+  }
+}

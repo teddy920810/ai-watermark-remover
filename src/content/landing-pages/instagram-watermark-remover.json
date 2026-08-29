@@ -1,0 +1,32 @@
+{
+  "slug": "instagram-watermark-remover",
+  "toolKind": "watermark-remover",
+  "title": "Instagram Watermark Remover Online | WatermarkGemini",
+  "description": "Use the Instagram watermark remover page to prepare supported Instagram media for authorized watermark cleanup.",
+  "eyebrow": "INSTAGRAM WATERMARK REMOVER",
+  "statusLabel": "Coming Soon",
+  "heading": "Instagram Watermark Remover",
+  "intro": "A dedicated page for removing visible watermarks from Instagram media you own or have permission to reuse.",
+  "benefits": ["Browser-based workflow", "Clear three-step process", "Designed for authorized content"],
+  "uploader": { "dropzone": { "dropLabel": "Coming Soon" } },
+  "process": {
+    "eyebrow": "HOW IT WORKS",
+    "heading": "How to Use the Instagram Watermark Remover",
+    "intro": "The initial workflow gives operations a complete structure to refine later.",
+    "steps": [
+      { "number": "01", "title": "Choose Your Media", "description": "Select supported Instagram media that you are allowed to edit." },
+      { "number": "02", "title": "Select the Watermark", "description": "Identify the visible watermark or overlay that should be removed." },
+      { "number": "03", "title": "Preview and Download", "description": "Review the processed result before downloading it." }
+    ]
+  },
+  "faq": {
+    "eyebrow": "FAQ",
+    "heading": "Instagram Watermark Remover FAQs",
+    "intro": "Initial answers for this tool page can be expanded in Pages CMS.",
+    "items": [
+      { "enabled": true, "question": "What does the Instagram watermark remover do?", "answer": "The planned workflow is intended to clean visible watermarks from supported Instagram media supplied by the user." },
+      { "enabled": true, "question": "Is Instagram media processing available now?", "answer": "The page is live for discovery, while the dedicated processing workflow is marked Coming Soon." },
+      { "enabled": true, "question": "What content can I process?", "answer": "Only use content you own or have permission to edit and republish." }
+    ]
+  }
+}
