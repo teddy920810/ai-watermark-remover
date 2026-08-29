@@ -27,7 +27,7 @@ describe('test credit grant planning', () => {
 describe('test credit grant database operation', () => {
   it('keeps dry runs read-only and returns the capped plan', async () => {
     const query = async (sql: string) => {
-      if (sql.includes('SELECT u.id AS user_id')) return { rows: [{ user_id: 'user-1', balance: 2 }] };
+      if (sql.includes('FROM user_benefit_identities identity')) return { rows: [{ user_id: 'user-1', balance: 2 }] };
       throw new Error(`Unexpected write: ${sql}`);
     };
     const client = { query, release: () => undefined };
@@ -52,7 +52,7 @@ describe('test credit grant database operation', () => {
     const statements: string[] = [];
     const query = async (sql: string) => {
       statements.push(sql.replace(/\s+/g, ' ').trim());
-      if (sql.includes('SELECT u.id AS user_id')) return { rows: [{ user_id: 'user-1', balance: 0 }] };
+      if (sql.includes('FROM user_benefit_identities identity')) return { rows: [{ user_id: 'user-1', balance: 0 }] };
       if (sql.includes('INSERT INTO benefit_ledger')) return { rows: [{ id: statements.length }] };
       return { rows: [] };
     };
