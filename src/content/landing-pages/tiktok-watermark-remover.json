@@ -1,62 +1,82 @@
 {
   "slug": "tiktok-watermark-remover",
-  "title": "TikTok Watermark Remover for Authorized Image Frames",
-  "description": "Use this TikTok watermark remover on a still frame or image you own or have permission to edit. The current tool does not download or process videos.",
-  "eyebrow": "TIKTOK WATERMARK REMOVER",
+  "title": "TikTok Watermark Remover – Remove TikTok Watermark Online Free",
+  "description": "Remove TikTok watermark from saved videos online with AI. Clean moving TikTok logos and usernames without cropping or blurry patches. No TikTok link required.",
+  "eyebrow": "AI TIKTOK WATERMARK REMOVER",
   "statusLabel": "Coming Soon",
-  "heading": "TikTok Watermark Remover for Permitted Image Frames",
-  "intro": "Prepare a still frame from your own TikTok content or another asset you are authorized to edit. WatermarkGemini accepts supported images only; it does not download TikTok links, process full videos, or remove audio metadata.",
+  "heading": "TikTok Watermark Remover – Remove Watermark from Saved TikTok Videos",
+  "intro": "Already saved your TikTok video but only have the watermarked version? Upload it directly to WatermarkGemini and remove the moving TikTok logo and username without manually cropping different corners of your video. Our AI-powered TikTok watermark remover cleans visible watermarks across frames while helping you keep the full vertical composition ready for Reels, Shorts, social posts, edits, and your personal archive.",
   "benefits": [
-    "No TikTok URL required",
-    "Still-image workflow",
-    "Review before sharing"
+    "Remove moving TikTok watermarks",
+    "Keep the full 9:16 frame",
+    "No TikTok link required"
   ],
   "process": {
     "eyebrow": "How it works",
-    "heading": "How to Use the TikTok Watermark Remover",
-    "intro": "Start with your own permitted frame rather than a third-party video URL.",
+    "heading": "How to Remove TikTok Watermark from Video",
+    "intro": "Already have the video on your phone or computer? Use our TikTok watermark remover online to clean it in three simple steps.",
     "steps": [
       {
         "number": "01",
-        "title": "Export Your Frame",
-        "description": "Save a frame from content you own or may edit as JPG, PNG, or WEBP."
+        "title": "Upload Your Saved TikTok Video",
+        "description": "Choose the TikTok video you own or have permission to edit directly from your device. No TikTok link is required."
       },
       {
         "number": "02",
-        "title": "Upload the Image",
-        "description": "Upload one image up to 10 MB, sign in with Google, and start processing."
+        "title": "Remove the TikTok Logo and Username",
+        "description": "AI identifies the visible TikTok watermark areas across the video and reconstructs the surrounding content instead of simply cropping the frame."
       },
       {
         "number": "03",
-        "title": "Review Before Reuse",
-        "description": "Inspect the returned image and confirm you still meet the source platform, attribution, and rights requirements."
+        "title": "Preview and Download",
+        "description": "Review the cleaned video and download it for your next authorized edit, archive, presentation, Reel, Short, or social post."
       }
     ]
   },
   "faq": {
-    "eyebrow": "TikTok frame FAQ",
-    "heading": "Questions About the TikTok Watermark Remover",
-    "intro": "Understand URL, video, rights, and image-format limits.",
+    "eyebrow": "FAQ",
+    "heading": "TikTok Watermark Remover FAQs",
+    "intro": "Common questions about removing TikTok logos, usernames, and moving watermarks from saved videos.",
     "items": [
       {
         "enabled": true,
-        "question": "Can I paste a TikTok URL?",
-        "answer": "No. The tool does not download from TikTok. Upload a supported still image that you already own or have permission to edit."
+        "question": "How to remove TikTok watermark from video?",
+        "answer": "Upload a TikTok video you own or have permission to edit, let the tool identify the visible TikTok logo and username areas, process the watermark across the video, and preview the cleaned result before downloading."
       },
       {
         "enabled": true,
-        "question": "Can I upload MP4 or MOV video?",
-        "answer": "No. The current uploader accepts one JPG, PNG, or WEBP image up to 10 MB."
+        "question": "Can I remove TikTok watermark from a saved video?",
+        "answer": "Yes. WatermarkGemini is designed around local video uploads, so you can remove TikTok watermark from a saved video without first finding the original TikTok post."
       },
       {
         "enabled": true,
-        "question": "Is WatermarkGemini affiliated with TikTok?",
-        "answer": "No. WatermarkGemini is an independent image-cleanup tool and is not affiliated with or endorsed by TikTok or ByteDance."
+        "question": "Can I remove TikTok watermark without a link?",
+        "answer": "Yes. If the video is already on your device, upload the supported file directly. You do not need to paste a TikTok URL to start the watermark removal workflow."
       },
       {
         "enabled": true,
-        "question": "May I remove a watermark from another creator's frame?",
-        "answer": "Not without permission. Only edit content you own or are authorized to modify, and preserve required attribution and disclosures."
+        "question": "Can a TikTok watermark remover remove the moving logo?",
+        "answer": "TikTok watermarks can appear in different positions throughout a saved video. A video-based removal workflow can process the visible watermark areas across frames rather than relying on a single fixed crop."
+      },
+      {
+        "enabled": true,
+        "question": "Can I remove TikTok watermark without cropping the video?",
+        "answer": "Yes. AI-assisted removal targets the watermark area itself, helping you keep more of the original 9:16 frame instead of cutting away multiple corners."
+      },
+      {
+        "enabled": true,
+        "question": "Will removing the TikTok watermark make the video blurry?",
+        "answer": "The goal is to reconstruct the affected area rather than simply blur it. Final quality depends on the source resolution, watermark position, movement, and the complexity of the background behind it."
+      },
+      {
+        "enabled": true,
+        "question": "Is there a free TikTok watermark remover online?",
+        "answer": "WatermarkGemini provides an online TikTok watermark removal workflow for supported videos. Any free-use, file-size, processing, or export limits should be shown clearly before processing."
+      },
+      {
+        "enabled": true,
+        "question": "Can I remove a TikTok watermark from someone else's video?",
+        "answer": "Only remove watermarks or attribution from content you own or have permission to modify. If you are working with UGC or creator content, make sure you have the appropriate permission before republishing or adapting it."
       }
     ]
   },
@@ -64,5 +84,39 @@
     "dropzone": {
       "dropLabel": "Coming Soon"
     }
+  },
+  "features": {
+    "eyebrow": "BUILT FOR TIKTOK VIDEOS",
+    "heading": "A TikTok Watermark Remover Built Around the Problems Creators Actually Face",
+    "intro": "TikTok watermark removal is not just about deleting one logo from one corner. WatermarkGemini focuses on these real TikTok-specific problems: cleaning moving watermarks, preserving your full frame, and helping you recover saved videos when the original clean copy is no longer available.",
+    "items": [
+      {
+        "enabled": true,
+        "eyebrow": "FEATURE 1",
+        "heading": "Remove the Moving TikTok Logo and Username Across Your Video",
+        "description": "The TikTok watermark does not always stay in one place. Our TikTok video watermark remover analyzes the visible watermark areas across frames so you don't have to manually repair each position one by one. Clean the distracting TikTok branding while keeping attention on the people, products, scenery, and story inside your video.",
+        "image": "/uploads/remove-gemini-watermark-5.png",
+        "imageAlt": "remove moving tiktok watermark",
+        "imagePosition": "right"
+      },
+      {
+        "enabled": true,
+        "eyebrow": "FEATURE 2",
+        "heading": "Remove TikTok Watermark Without Cropping or Blurry Corners",
+        "description": "Cropping looks like an easy way to hide a TikTok watermark—until it cuts into the content you actually want to keep. WatermarkGemini uses AI-assisted reconstruction to help remove TikTok watermark from video without relying on aggressive cropping or simply smearing the unwanted area. Keep more of the original frame so your video remains flexible for future edits and other platforms.",
+        "image": "/uploads/remove-logo-from-image-4.png",
+        "imageAlt": "remove tiktok watermark without cropping",
+        "imagePosition": "left"
+      },
+      {
+        "enabled": true,
+        "eyebrow": "FEATURE 3",
+        "heading": "Remove TikTok Watermark from Saved or Downloaded Video",
+        "description": "Sometimes the original clean video is gone. WatermarkGemini lets you remove TikTok watermark without a link by uploading the saved video directly. Clean your own downloaded TikTok video and create a more reusable copy without searching for the original post first.",
+        "image": "/uploads/remove-text-from-image-4.png",
+        "imageAlt": "remove tiktok watermark from saved video",
+        "imagePosition": "right"
+      }
+    ]
   }
 }
