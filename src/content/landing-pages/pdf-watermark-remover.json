@@ -1,30 +1,116 @@
 {
   "slug": "pdf-watermark-remover",
-  "title": "PDF Watermark Remover for Exported Page Images",
-  "description": "Use this PDF watermark remover workflow on a page image you are authorized to edit. Export the page as JPG or PNG before uploading.",
+  "title": "PDF Watermark Remover – Remove Watermark from PDF Online Free",
+  "description": "Remove watermarks from PDF online with our PDF watermark remover. Clean DRAFT text, CONFIDENTIAL stamps, logos, and repeated watermarks while keeping your document clear and readab",
   "eyebrow": "PDF WATERMARK REMOVER",
-  "heading": "PDF Watermark Remover for Authorized Page Images",
-  "intro": "The current WatermarkGemini uploader does not accept PDF documents. Export the page you are permitted to edit as an image, process that single page image, and review it before rebuilding or sharing your document.",
-  "benefits": ["Clear PDF-to-image workflow", "Single-page image review", "No direct PDF upload"],
+  "heading": "PDF Watermark Remover – Remove Watermark from PDF Online",
+  "intro": "Remove unwanted watermarks from your PDF without manually editing every page. WatermarkGemini helps clean visible text watermarks, repeated stamps, logos, and background marks while preserving the document content you still need. Upload your PDF, remove the unwanted watermark, review the result, and download a cleaner document.",
+  "benefits": [
+    "Remove repeated PDF watermarks",
+    "Keep your document readable",
+    "Handle difficult PDF watermarks"
+  ],
   "process": {
     "eyebrow": "How it works",
-    "heading": "How to Use the PDF Watermark Remover Workflow",
-    "intro": "Convert one permitted PDF page to an image before using the tool.",
+    "heading": "How to Remove Watermark from PDF Online",
+    "intro": "Wondering how to remove a watermark from a PDF document without manually cleaning every page? Complete the process in three simple steps.",
     "steps": [
-      { "number": "01", "title": "Export the PDF Page", "description": "Save the page you are authorized to edit as JPG, PNG, or WEBP. Password-protected or restricted documents should not be bypassed." },
-      { "number": "02", "title": "Upload the Page Image", "description": "Upload one exported page image up to 10 MB, sign in with Google, and start processing." },
-      { "number": "03", "title": "Review and Rebuild", "description": "Check the returned page image carefully, then use your own document software if you need to place it back into a PDF." }
+      {
+        "number": "01",
+        "title": "Upload Your PDF",
+        "description": "Choose the PDF document containing the watermark you want to remove."
+      },
+      {
+        "number": "02",
+        "title": "Detect and Remove the Watermark",
+        "description": "WatermarkGemini analyzes the document for visible watermark text, stamps, logos, or repeated background marks and cleans the selected watermark."
+      },
+      {
+        "number": "03",
+        "title": "Review and Download the Clean PDF",
+        "description": "Check the processed pages to make sure important document content remains intact, then download your cleaned PDF."
+      }
     ]
   },
   "faq": {
-    "eyebrow": "PDF page FAQ",
-    "heading": "Questions About the PDF Watermark Remover Workflow",
-    "intro": "Understand document limits and how to prepare a page image safely.",
+    "eyebrow": "FAQ",
+    "heading": "PDF Watermark Remover FAQs",
+    "intro": "Answers to common questions about removing text, logo, DRAFT, background, and scanned watermarks from PDF documents.",
     "items": [
-      { "question": "Can I upload a PDF directly?", "answer": "No. The current tool accepts JPG, PNG, or WEBP images only. Export the permitted PDF page as an image first." },
-      { "question": "Does the tool rebuild my PDF?", "answer": "No. It returns an image. Use document software separately if you need to create a new PDF from the processed page." },
-      { "question": "Can I process a protected document?", "answer": "Do not bypass document protections. Only edit a document when you own it or have explicit permission and the change complies with applicable rules." },
-      { "question": "Can I process multiple pages at once?", "answer": "No. The current workflow accepts one image at a time, up to 10 MB." }
+      {
+        "enabled": true,
+        "question": "How to remove watermark from PDF?",
+        "answer": "Upload the PDF you are authorized to edit, let the tool identify the unwanted visible watermark, remove the selected mark, review the processed document, and download the cleaned PDF."
+      },
+      {
+        "enabled": true,
+        "question": "Can I remove watermark from PDF online?",
+        "answer": "Yes. A PDF watermark remover online allows supported PDF files to be processed through a browser without manually editing each page in desktop software."
+      },
+      {
+        "enabled": true,
+        "question": "Is there a free PDF watermark remover?",
+        "answer": "WatermarkGemini provides an online PDF watermark removal workflow for supported files. Available file, page, or processing limits should be displayed clearly in the upload area."
+      },
+      {
+        "enabled": true,
+        "question": "How do I remove a DRAFT watermark from a PDF?",
+        "answer": "If DRAFT is stored as a separate watermark object, it can usually be removed without changing the underlying page content. If it has been flattened into a scanned page, AI-assisted cleanup may be required."
+      },
+      {
+        "enabled": true,
+        "question": "Can a PDF watermark remover keep the original formatting?",
+        "answer": "When the watermark is stored separately from the document content, removing the watermark object can preserve the underlying text, images, links, and layout. More complex scanned or flattened pages may require image-based reconstruction."
+      },
+      {
+        "enabled": true,
+        "question": "Can AI remove watermarks from scanned PDFs?",
+        "answer": "AI can help clean visible watermarks that have been flattened into scanned page images by analyzing and reconstructing the affected area. Results depend on watermark opacity, page quality, text density, and background complexity."
+      },
+      {
+        "enabled": true,
+        "question": "Can I remove a background watermark from PDF files?",
+        "answer": "Supported diagonal, faded, repeating, or background watermarks may be removable. The method depends on whether the watermark is a separate PDF object or has been flattened into the page."
+      },
+      {
+        "enabled": true,
+        "question": "Can I remove a watermark from any PDF?",
+        "answer": "Only modify PDFs you own or have permission to edit. Password protection, document permissions, flattened content, or complex page structures can also affect whether a watermark can be removed cleanly."
+      }
+    ]
+  },
+  "features": {
+    "eyebrow": "BUILT FOR REAL PDF PROBLEMS",
+    "heading": "A PDF Watermark Remover That Does More Than Cover the Mark",
+    "intro": "Not every PDF watermark is created in the same way. A useful PDF watermark remover needs to understand these differences instead of applying the same destructive fix to every document. WatermarkGemini focuses on the problems that matter most: repeated watermarks, preserving useful document content, and cleaning difficult scanned or flattened pages.",
+    "items": [
+      {
+        "enabled": true,
+        "eyebrow": "FEATURE 1",
+        "heading": "Remove Repeated DRAFT, CONFIDENTIAL, and Logo Watermarks Across Your PDF",
+        "description": "The most frustrating PDF watermarks are rarely limited to one page. WatermarkGemini is designed to identify repeated watermark patterns so you can remove PDF watermark elements more efficiently across your document instead of fixing each page manually.",
+        "image": "/uploads/remove-gemini-watermark-4.png",
+        "imageAlt": "remove logo from pdf",
+        "imagePosition": "right"
+      },
+      {
+        "enabled": true,
+        "eyebrow": "FEATURE 2",
+        "heading": "Remove the Watermark — Not Your Text, Tables, or Layout",
+        "description": "A clean PDF is only useful if the document underneath still works. Some watermark-removal methods flatten every page into an image, cover the watermark with a white rectangle, or accidentally disturb nearby text and graphics. A better watermark remover from PDF should target the unwanted mark while preserving the useful content around it whenever the structure of the original file allows.",
+        "image": "/uploads/remove-logo-from-image-3.png",
+        "imageAlt": "remove watermark from pdf",
+        "imagePosition": "left"
+      },
+      {
+        "enabled": true,
+        "eyebrow": "FEATURE 3",
+        "heading": "Clean Scanned and Flattened PDF Watermarks That Simple Delete Tools Miss",
+        "description": "Sometimes a watermark is not a separate PDF object at all. For supported difficult pages, AI-assisted pdf watermark remover analyzes the visible watermark and surrounding page content to reconstruct the affected area while keeping important text and visual details as clear as possible.",
+        "image": "/uploads/remove-text-from-image-3.png",
+        "imageAlt": "cleam pdf watermark",
+        "imagePosition": "right"
+      }
     ]
   }
 }
