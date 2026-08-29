@@ -121,7 +121,10 @@ test('background remover shares the balance and exposes color choices without an
   await expect(page.getByRole('heading', { name: 'Change background color' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Download PNG' })).toBeVisible();
   await page.getByRole('button', { name: 'White background' }).click();
-  await expect(page.getByRole('button', { name: 'Download PNG' })).toBeVisible();
+  const coloredDownload = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Download PNG' }).click();
+  await coloredDownload;
+  await expect(page.getByRole('alert')).toHaveCount(0);
   await expect(page.getByText('Go to Editor')).toHaveCount(0);
   await expect(page.locator('.header-benefits')).toContainText('Free uses 0/3');
   expect(operation).toBe('background-removal');

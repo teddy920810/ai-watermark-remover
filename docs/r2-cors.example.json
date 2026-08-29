@@ -6,7 +6,7 @@
       "https://ai-watermark-remover-peach.vercel.app",
       "http://localhost:4321"
     ],
-    "AllowedMethods": ["PUT"],
+    "AllowedMethods": ["GET", "HEAD", "PUT"],
     "AllowedHeaders": ["Content-Type"],
     "ExposeHeaders": ["ETag"],
     "MaxAgeSeconds": 3600
