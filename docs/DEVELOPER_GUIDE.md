@@ -48,7 +48,7 @@ npm run processing:check
 npm run db:migrate
 ```
 
-迁移脚本读取 `db/migrations`，在 Neon 事务和 advisory lock 内只执行尚未登记的版本。Neon 保存首次 1 次、每日签到 +1、余额上限 3、任务扣减/失败退回账本及最近活跃时间；图片、结果及 MVP 任务状态仍保存在私有 R2。
+迁移脚本读取 `db/migrations`，在 Neon 事务和 advisory lock 内只执行尚未登记的版本。Neon 保存 Google 授权返回的基础资料，以及首次 1 次、每日签到 +1、余额上限 3、任务扣减/失败退回账本及最近活跃时间。Google OAuth token 不写入资料表；图片、结果及 MVP 任务状态仍保存在私有 R2。
 
 ## 内容模型
 

@@ -54,7 +54,7 @@ Pages CMS → GitHub main → Vercel 自动构建 → www.watermarkgemini.com
 
 R2 Bucket 为 `watermark`，必须保持私有。`uploads/`、`results/`、`jobs/` 应配置 1 天自动过期。上传密钥只允许在服务端环境变量中使用。
 
-Google OAuth 回调地址为 `/api/auth/callback/google`。本地 4321 端口与正式域名应分别在 Google Cloud 配置完整回调 URI。认证采用加密会话；Neon 仅保存会话用户 ID 对应的免费余额、签到、扣减/退回账本和活跃时间，不保存供应商密钥或图片。账户历史列表和订阅仍属于后续版本。
+Google OAuth 回调地址为 `/api/auth/callback/google`。本地 4321 端口与正式域名应分别在 Google Cloud 配置完整回调 URI。认证采用加密会话；Neon 保存 Google 授权提供的基础资料（稳定账号标识、邮箱及验证状态、姓名、头像、语言和 Workspace 域名，缺失的可选字段为空），以及免费余额、签到、扣减/退回账本和活跃时间。Google OAuth access token、refresh token 和 ID token 不写入资料表，供应商密钥和图片也不写入 Neon。账户历史列表和订阅仍属于后续版本。
 
 Dewatermark、Neon 与可选 R2 本地凭据可以通过 `npm run processing:import -- <Dewatermark Key 文件> <Neon URL 文件> [S3-info 文件]` 导入到被 Git 忽略的 `.env.local`。`npm run processing:check` 只检查供应商余额和数据库只读连接，不处理图片或消耗图片 credit。首次部署权益功能前运行一次 `npm run db:migrate`；该命令使用版本化 SQL 和事务锁安全建表。本地默认保持 `WATERMARK_PROVIDER=mock`；生产环境通过 Vercel 的服务端变量显式选择真实 Provider。
 

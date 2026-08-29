@@ -15,6 +15,7 @@ describe('Google authentication integration contract', () => {
       BETTER_AUTH_URL: 'http://localhost:3000',
       GOOGLE_CLIENT_ID: 'google-client-id.apps.googleusercontent.com',
       GOOGLE_CLIENT_SECRET: 'google-client-secret',
+      DATABASE_URL: 'postgresql://user:password@example.neon.tech/database?sslmode=require',
     };
   });
 
@@ -38,6 +39,7 @@ describe('Google authentication integration contract', () => {
     const authorizationUrl = new URL(body.url);
     expect(authorizationUrl.origin).toBe('https://accounts.google.com');
     expect(authorizationUrl.searchParams.get('redirect_uri')).toBe('http://localhost:3000/api/auth/callback/google');
-    expect(authorizationUrl.searchParams.get('scope')).toContain('openid');
+    const scopes = new Set(authorizationUrl.searchParams.get('scope')?.split(' '));
+    expect(scopes).toEqual(new Set(['openid', 'profile', 'email']));
   }, 10_000);
 });
