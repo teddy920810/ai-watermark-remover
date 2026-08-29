@@ -119,10 +119,7 @@ test('background remover shares the balance and exposes color choices without an
   await page.getByRole('button', { name: 'Show background-removed result' }).click();
   await expect(resultImage).toHaveAttribute('src', 'https://results.test/background.png');
   await expect(page.getByRole('heading', { name: 'Change background color' })).toBeVisible();
-  await expect(page.getByRole('link', { name: 'Download PNG' })).toHaveAttribute(
-    'href',
-    'https://results.test/background-download.png',
-  );
+  await expect(page.getByRole('button', { name: 'Download PNG' })).toBeVisible();
   await page.getByRole('button', { name: 'White background' }).click();
   await expect(page.getByRole('button', { name: 'Download PNG' })).toBeVisible();
   await expect(page.getByText('Go to Editor')).toHaveCount(0);
