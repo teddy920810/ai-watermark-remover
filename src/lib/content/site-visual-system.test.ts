@@ -69,6 +69,12 @@ describe('site-wide operations visual system', () => {
     expect(globalCss).toMatch(/\.footer-group h2\s*\{[^}]*font:\s*700 13px\/1\.2 var\(--font-display\);/s);
   });
 
+  it('shows feature artwork at its intrinsic ratio without a framed card treatment', () => {
+    expect(globalCss).toMatch(/\.feature-media > \.responsive-picture\s*\{[^}]*width:\s*auto;[^}]*height:\s*auto;[^}]*max-width:\s*100%;/s);
+    expect(globalCss).toMatch(/\.feature-media\s*\{[^}]*background:\s*transparent;[^}]*box-shadow:\s*none;/s);
+    expect(globalCss).toMatch(/\.feature-media img\s*\{[^}]*width:\s*auto;[^}]*height:\s*auto;[^}]*object-fit:\s*contain;[^}]*box-shadow:\s*none;/s);
+  });
+
   it('uses generated imagery for the journey and library icons for controls', () => {
     expect(homePage).toContain("from '@lucide/astro'");
     expect(homePage).toContain('class="process-step-media"');
