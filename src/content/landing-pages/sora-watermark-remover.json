@@ -1,62 +1,82 @@
 {
   "slug": "sora-watermark-remover",
-  "title": "Sora Watermark Remover for Image Frames Online",
-  "description": "Use this Sora watermark remover on a still image or frame you own or have permission to edit. Upload JPG, PNG, or WEBP files online.",
+  "title": "Sora Watermark Remover – Remove Sora Watermark Online Free",
+  "description": "Remove Sora watermarks from videos online with our free AI Sora watermark remover. Clean Sora and Sora 2 videos while keeping the original quality. Fast, easy, and no editing skill",
   "eyebrow": "SORA WATERMARK REMOVER",
   "statusLabel": "Coming Soon",
-  "heading": "Sora Watermark Remover for Authorized Image Frames",
-  "intro": "Clean a visible mark from a Sora still image, thumbnail, or exported frame that you are authorized to edit. The current tool accepts images rather than video files, so export the frame first and review the result before using it.",
+  "heading": "Sora Watermark Remover – Remove Sora Watermark Online",
+  "intro": "Remove Sora watermarks from your AI-generated videos in just a few clicks. Our AI-powered Sora watermark remover automatically cleans unwanted Sora logos while preserving the original video details and visual quality. Whether you're editing a Sora clip for social media, a presentation, a client project, or your creative portfolio, get a cleaner video without complicated editing.",
   "benefits": [
-    "Made for exported image frames",
-    "No video upload required",
-    "Private temporary storage"
+    "Remove Sora watermark online",
+    "Keep original video quality",
+    "No editing skills required"
   ],
   "process": {
     "eyebrow": "How it works",
-    "heading": "How to Use the Sora Watermark Remover",
-    "intro": "Prepare an authorized still image and complete the browser-based workflow in three steps.",
+    "heading": "How to Remove Sora Watermark from Video Online",
+    "intro": "No advanced editing software is required. Use our Sora watermark remover online and clean your Sora video in three simple steps.",
     "steps": [
       {
         "number": "01",
-        "title": "Export an Image Frame",
-        "description": "Save the authorized Sora frame as JPG, PNG, or WEBP. Video files are not accepted by the current tool."
+        "title": "Upload Your Sora Video",
+        "description": "Choose the Sora or Sora 2 video you want to clean and upload it to WatermarkGemini."
       },
       {
         "number": "02",
-        "title": "Upload and Process",
-        "description": "Upload one image up to 10 MB, sign in with Google, and start the current image-processing flow."
+        "title": "Let AI Remove the Sora Watermark",
+        "description": "Our AI detects the watermark area and intelligently reconstructs the surrounding pixels to make the result look natural."
       },
       {
         "number": "03",
-        "title": "Review the Result",
-        "description": "Compare the original and returned image, then download it only when the visible area meets your needs."
+        "title": "Preview and Download",
+        "description": "Check the cleaned result and download your video for use in social media, presentations, portfolios, or other personal and professional projects."
       }
     ]
   },
   "faq": {
-    "eyebrow": "Sora image FAQ",
-    "heading": "Questions About the Sora Watermark Remover",
-    "intro": "Check file support, privacy, and responsible use before processing an image.",
+    "eyebrow": "FAQ",
+    "heading": "Sora Watermark Remover FAQs",
+    "intro": "Find answers to common questions about removing Sora and Sora 2 watermarks from AI-generated videos.",
     "items": [
       {
         "enabled": true,
-        "question": "Can I upload a Sora video?",
-        "answer": "No. The current tool accepts one JPG, PNG, or WEBP image up to 10 MB. Export an authorized still frame before uploading."
+        "question": "How to remove Sora watermark from a video?",
+        "answer": "Upload your Sora-generated video to WatermarkGemini and start the watermark removal process. The AI analyzes the watermark area and reconstructs the surrounding content, allowing you to download a cleaner version without manually editing individual frames."
       },
       {
         "enabled": true,
-        "question": "Does this remove invisible provenance information?",
-        "answer": "No. This workflow only targets a visible area in an image and does not claim to remove metadata, credentials, or invisible provenance signals."
+        "question": "Can I remove Sora watermark online?",
+        "answer": "Yes. WatermarkGemini works as an online Sora watermark remover, so you can process supported Sora content directly through your browser without installing professional editing software."
       },
       {
         "enabled": true,
-        "question": "Is WatermarkGemini affiliated with OpenAI or Sora?",
-        "answer": "No. WatermarkGemini is an independent image-cleanup tool and is not affiliated with or endorsed by OpenAI."
+        "question": "Can I remove Sora 2 watermark?",
+        "answer": "Yes, WatermarkGemini can be used as a Sora 2 watermark remover for supported Sora 2-generated content. Upload your video and use the same AI-assisted removal workflow."
       },
       {
         "enabled": true,
-        "question": "When may I edit a Sora frame?",
-        "answer": "Only edit content you own or have permission to modify, and retain disclosures or attribution required by the platform, license, or applicable law."
+        "question": "Is there a free Sora watermark remover?",
+        "answer": "WatermarkGemini provides an online Sora watermark removal workflow that you can try without complicated desktop editing. Usage limits or processing options may vary depending on the file and service plan."
+      },
+      {
+        "enabled": true,
+        "question": "Will removing the Sora watermark reduce video quality?",
+        "answer": "The tool is designed to reconstruct the watermark area while preserving as much of the surrounding visual detail as possible. Actual results can vary depending on the watermark position, background complexity, movement, and source video quality."
+      },
+      {
+        "enabled": true,
+        "question": "Can I remove Sora watermark without cropping the video?",
+        "answer": "Yes. AI watermark removal can clean the watermark area without requiring you to crop an entire portion of the frame, helping preserve the original composition."
+      },
+      {
+        "enabled": true,
+        "question": "Can I use a Sora watermark remover for social media videos?",
+        "answer": "Yes. You can use WatermarkGemini to clean your own authorized Sora-generated videos before preparing them for platforms such as TikTok, Instagram, YouTube, or other content channels."
+      },
+      {
+        "enabled": true,
+        "question": "Can I remove the Sora watermark from any video?",
+        "answer": "You should only remove watermarks from content you own or have permission to modify. WatermarkGemini is intended for cleaning your own authorized Sora-generated content rather than removing ownership marks from content belonging to others."
       }
     ]
   },
@@ -67,5 +87,39 @@
     "dropzone": {
       "dropLabel": "Coming Soon"
     }
+  },
+  "features": {
+    "eyebrow": "AI Sora Watermark Remover",
+    "heading": "Remove Sora Watermarks Without Ruining Your Video",
+    "intro": "A good Sora video watermark remover should do more than simply hide a logo. It needs to preserve motion, textures, colors, faces, and important visual details around the watermark. WatermarkGemini is designed around the real problems creators face when cleaning Sora-generated videos—helping you get a cleaner result with less manual editing.",
+    "items": [
+      {
+        "enabled": true,
+        "eyebrow": "FEATURE 1",
+        "heading": "Remove Sora Watermarks While Preserving Important Details",
+        "description": "Watermarks often appear over complex backgrounds such as faces, clothing, landscapes, product shots, textures, or moving objects. Simply blurring or covering the area can leave an obvious patch behind. Our AI-powered Sora watermark remover analyzes the surrounding content and reconstructs the watermark area so it blends more naturally with the rest of the frame. That means fewer distracting blur marks, fewer visible edits, and cleaner results for videos where presentation quality matters.",
+        "image": "/uploads/remove-gemini-watermark-3.png",
+        "imageAlt": "remove sora watermark",
+        "imagePosition": "right"
+      },
+      {
+        "enabled": true,
+        "eyebrow": "FEATURE 2",
+        "heading": "Clean Sora Videos Without Cropping the Frame",
+        "description": "Cropping is one of the fastest ways to hide a Sora watermark—but it also removes part of your video. This can change the composition, cut off subtitles or important objects, and make vertical or horizontal videos harder to reuse across platforms. With WatermarkGemini, you can remove Sora watermark from video without sacrificing the original frame just to hide the logo.",
+        "image": "/uploads/remove-logo-from-image-2.png",
+        "imageAlt": "clean sora video",
+        "imagePosition": "left"
+      },
+      {
+        "enabled": true,
+        "eyebrow": "FEATURE 3",
+        "heading": "Turn Sora Clips into Cleaner Content for Sharing and Presentation",
+        "description": "A visible AI watermark may be acceptable during generation and testing, but it can become distracting when you want to present your own authorized content in a portfolio, pitch deck, social post, demo, or client preview. Our Sora AI watermark remover helps you create a cleaner version of your Sora-generated video so viewers can focus on the actual content instead of the watermark.",
+        "image": "/uploads/remove-text-from-image-2.png",
+        "imageAlt": "turn sora clip into cleaner",
+        "imagePosition": "right"
+      }
+    ]
   }
 }
