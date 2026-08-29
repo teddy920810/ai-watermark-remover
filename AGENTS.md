@@ -8,7 +8,9 @@
 - Do not commit `S3-info.txt`, `.env`, or `.env.*` files.
 - Write or update tests before implementing behavior changes.
 - Before handing off changes, select the local verification gate from the risk-based rules below; do not skip the targeted red-to-green test.
-- Run `npm run test:smoke:production` after production environment, domain, R2, CORS, or deployment changes. It writes temporary objects to the real bucket, so do not run it speculatively or in a loop.
+- Run the public `npm run test:smoke:production` after production environment or domain changes. For R2, CORS, authentication, Provider, or processing-flow changes, run the matching authenticated functional smoke once; it writes real temporary objects and consumes a test credit, so do not run it speculatively or in a loop.
+- Treat interactive tools as functional products, not SEO pages: define the operation, state transitions, artifact semantics, and credit invariants before implementation. A required authenticated or provider gate that is skipped is blocking, not passed.
+- For a new or changed processing operation, add an operation-level browser test and run one manually triggered functional production smoke after deployment. Scheduled smoke must remain public-only unless recurring Provider cost is explicitly approved.
 
 ## Project startup
 

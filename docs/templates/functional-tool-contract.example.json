@@ -1,0 +1,29 @@
+{
+  "tool": "example-tool",
+  "route": "/example-tool",
+  "operation": "example-operation",
+  "provider": "provider-interface-name",
+  "input": {
+    "formats": ["image/png", "image/jpeg", "image/webp"],
+    "maxBytes": 10485760
+  },
+  "states": ["initial", "ready", "processing", "completed", "failed"],
+  "artifact": {
+    "format": "png",
+    "requiredSemantics": ["decodes", "expected dimensions or alpha/color behavior"]
+  },
+  "credits": {
+    "successDelta": -1,
+    "previewDelta": 0,
+    "downloadDelta": 0,
+    "refreshSignedUrlDelta": 0,
+    "failurePolicy": "refund or no charge"
+  },
+  "functionalSmoke": {
+    "requiresAuthentication": true,
+    "usesRepositoryFixture": true,
+    "consumesProviderCredit": true,
+    "redactsSensitiveValues": true
+  },
+  "requiredGates": ["targeted-red-green", "browser-e2e", "release-verify", "ci", "production-canary"]
+}

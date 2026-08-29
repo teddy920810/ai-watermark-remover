@@ -1,8 +1,17 @@
 import { expect, test } from '@playwright/test';
+import { inspectPngArtifact } from '../../scripts/lib/png-artifact.mjs';
 
 const uploadKey = 'uploads/00000000-0000-4000-8000-000000000001.png';
 const jobId = '00000000-0000-4000-8000-000000000002';
 const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=', 'base64');
+const transparentPng = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAACXBIWXMAAAPoAAAD6AG1e1JrAAAAC0lEQVQImWNgQAcAABIAAW/6Y7cAAAAASUVORK5CYII=', 'base64');
+
+async function downloadBytes(download: import('@playwright/test').Download) {
+  const stream = await download.createReadStream();
+  const chunks: Buffer[] = [];
+  for await (const chunk of stream) chunks.push(Buffer.from(chunk));
+  return Buffer.concat(chunks);
+}
 
 async function chooseTestImage(page: import('@playwright/test').Page) {
   const uploader = page.locator('#tool');
@@ -98,7 +107,14 @@ test('background remover shares the balance and exposes color choices without an
   await page.route('https://results.test/background.png', (route) => route.fulfill({
     status: 200,
     contentType: 'image/png',
-    body: png,
+    headers: { 'Content-Disposition': 'attachment; filename="background-removed-image.png"' },
+    body: transparentPng,
+  }));
+  await page.route('https://results.test/background-download.png', (route) => route.fulfill({
+    status: 200,
+    contentType: 'image/png',
+    headers: { 'Content-Disposition': 'attachment; filename="background-removed-image.png"' },
+    body: transparentPng,
   }));
 
   await page.goto('/background-remover');
@@ -120,10 +136,15 @@ test('background remover shares the balance and exposes color choices without an
   await expect(resultImage).toHaveAttribute('src', 'https://results.test/background.png');
   await expect(page.getByRole('heading', { name: 'Change background color' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Download PNG' })).toBeVisible();
+  const transparentDownload = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Download PNG' }).click();
+  await expect(inspectPngArtifact(await downloadBytes(await transparentDownload), { requireTransparency: true }))
+    .resolves.toMatchObject({ hasTransparentPixel: true });
   await page.getByRole('button', { name: 'White background' }).click();
   const coloredDownload = page.waitForEvent('download');
   await page.getByRole('button', { name: 'Download PNG' }).click();
-  await coloredDownload;
+  await expect(inspectPngArtifact(await downloadBytes(await coloredDownload), { expectedOpaqueColor: [255, 255, 255] }))
+    .resolves.toMatchObject({ matchesExpectedOpaqueColor: true });
   await expect(page.getByRole('alert')).toHaveCount(0);
   await expect(page.getByText('Go to Editor')).toHaveCount(0);
   await expect(page.locator('.header-benefits')).toContainText('Free uses 0/3');

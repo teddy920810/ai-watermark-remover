@@ -32,13 +32,19 @@ Git 页面应保持仓库连接到 `main`；域名页面应确保根域名为 Pr
 4. 检查上传流程、`/robots.txt`、`/sitemap.xml`。
 5. 在 GA Realtime 确认访问事件；新站点数据可能延迟。
 
-部署后运行：
+部署后先运行无成本检查：
 
 ```sh
 npm run test:smoke:production
 ```
 
-该命令通过正式域名完成预签名、R2 PUT、创建任务、查询结果和下载验证。它不会输出签名 URL 或对象 Key，但会写入一个 1×1 PNG、结果对象和任务记录；这些对象依赖 R2 的 24 小时生命周期自动清理。Smoke 失败时不要连续重试，先检查 Vercel Environment Variables 的 Production 作用域、R2 CORS、凭据和 Function Logs。
+该命令只验证域名、静态入口和匿名接口保护，不消耗 Provider 额度。涉及 R2、CORS、鉴权、Provider 或功能流程时，给专用测试账号准备 1 次额度并设置 `SMOKE_SESSION_COOKIE`，再手工运行一次：
+
+```sh
+npm run test:smoke:background-removal
+```
+
+功能 Smoke 会显式创建 `background-removal` 任务，解码结果和下载 PNG、验证存在透明像素，并要求共享额度恰好减少 1。它不输出 Cookie、签名 URL 或对象 Key。失败时不要连续重试，先检查 Production 变量、R2 CORS、Provider、额度账本和 Function Logs。
 
 ## 常见故障
 
