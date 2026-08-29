@@ -139,11 +139,16 @@ img { display: block; max-width: 100%; }
 
 .background-tool-card { padding: 24px; }
 .background-drop-zone { min-height: 285px; }
+.hero-inner.is-tool-expanded { max-width: 1320px; grid-template-columns: minmax(0, 1fr); gap: 0; }
+.hero-inner.is-tool-expanded .hero-copy { display: none; }
+.hero-inner.is-tool-expanded .hero-tool { width: 100%; }
+.hero-inner.is-tool-expanded .background-tool-card { padding: 30px; }
+.hero-inner.is-tool-expanded .preview-panel > img { height: min(56vh, 560px); }
 .background-result { display: grid; gap: 20px; }
-.background-result-layout { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(210px, .7fr); gap: 18px; }
-.background-result-stage { min-height: 360px; overflow: hidden; position: relative; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 16px; background: #f4f6fa; }
+.background-result-layout { display: grid; grid-template-columns: minmax(0, 1.75fr) minmax(250px, .65fr); gap: 22px; }
+.background-result-stage { min-height: 500px; overflow: hidden; position: relative; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 16px; background: #f4f6fa; }
 .background-result-stage.is-transparent, .background-swatch.is-transparent { background-color: #fff; background-image: url('/uploads/background-remover-transparency-grid.png'); background-repeat: repeat; background-size: 42px 42px; }
-.background-result-stage img { width: 100%; height: 360px; padding: 20px; object-fit: contain; }
+.background-result-stage img { width: 100%; height: 500px; padding: 24px; object-fit: contain; }
 .background-reset, .background-compare { position: absolute; display: inline-flex; align-items: center; justify-content: center; border: 1px solid rgba(220, 228, 241, .95); color: #34415f; background: rgba(255, 255, 255, .94); box-shadow: 0 8px 22px rgba(23, 32, 51, .12); cursor: pointer; }
 .background-reset { width: 38px; height: 38px; top: 12px; right: 12px; border-radius: 50%; }
 .background-compare { min-height: 38px; padding: 0 12px; right: 12px; bottom: 12px; gap: 7px; border-radius: 10px; font-size: .7rem; font-weight: 750; }

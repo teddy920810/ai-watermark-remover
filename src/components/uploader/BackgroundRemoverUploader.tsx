@@ -80,6 +80,16 @@ export default function BackgroundRemoverUploader({ logo, siteName, copy }: Prop
   const [showOriginal, setShowOriginal] = useState(false);
   const [downloadPending, setDownloadPending] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const toolRef = useRef<HTMLElement>(null);
+
+  const expanded = Boolean(state.previewUrl);
+
+  useEffect(() => {
+    const hero = toolRef.current?.closest('.hero-inner');
+    if (!hero) return;
+    hero.classList.toggle('is-tool-expanded', expanded);
+    return () => hero.classList.remove('is-tool-expanded');
+  }, [expanded]);
 
   useEffect(() => () => {
     if (state.previewUrl) URL.revokeObjectURL(state.previewUrl);
@@ -148,6 +158,8 @@ export default function BackgroundRemoverUploader({ logo, siteName, copy }: Prop
       for (let attempt = 0; attempt < 60; attempt += 1) {
         const job = await api<{ status: string; resultUrl?: string; downloadUrl?: string; error?: string }>(`/api/jobs/${created.id}`);
         if (job.status === 'completed' && job.resultUrl && job.downloadUrl) {
+          setSelectedBackground(TRANSPARENT_BACKGROUND);
+          setShowOriginal(false);
           dispatch({ type: 'complete', resultUrl: job.resultUrl, downloadUrl: job.downloadUrl });
           return;
         }
@@ -248,7 +260,7 @@ export default function BackgroundRemoverUploader({ logo, siteName, copy }: Prop
   const busy = state.phase === 'uploading' || state.phase === 'processing';
 
   return (
-    <section className="tool-card background-tool-card" aria-labelledby="background-upload-title">
+    <section ref={toolRef} className="tool-card background-tool-card" aria-labelledby="background-upload-title">
       <div className="tool-heading">
         <div><span className="eyebrow">{copy.hero.eyebrow}</span><h2 id="background-upload-title">{copy.hero.heading}</h2></div>
         <span className="demo-badge" title={copy.hero.demoBadgeTitle}>{copy.hero.demoBadge}</span>

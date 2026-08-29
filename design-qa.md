@@ -10,6 +10,8 @@
 - Source idle capture: 1633 × 885 px, normalized to 1618 × 881 px for the full-view comparison.
 - Mobile browser viewport override: 390 × 844 CSS px; implementation capture: 375 × 812 px; device scale factor: 1.
 - State: unauthenticated idle/upload state. The result and color-picker state is covered by the automated background-removal flow; a real provider call was intentionally not made during visual QA.
+- Follow-up implementation check: `C:\Users\ermei\AppData\Local\Temp\codex-clipboard-f3ccbb8d-0938-4557-b73e-16deacb7625a.png` (reported narrow selected state) and `C:\Users\ermei\AppData\Local\Temp\codex-clipboard-59b43f7f-04c6-4e61-acba-6a08272ff302.png` (requested full-width result behavior).
+- Follow-up browser viewport: 1582 x 674 CSS px. After selecting `public/uploads/background-remover-product-photo.png`, the marketing copy was hidden, the tool measured 1225 px wide, and no horizontal overflow was present.
 
 ## Findings
 
@@ -31,6 +33,8 @@
 - The desktop and mobile browser captures showed the expected tool and no “Go to Editor” text.
 - Browser console errors/warnings checked after desktop and mobile reload: none.
 - Accessibility and core route coverage passed in the repository E2E gate.
+- The follow-up regression contract asserts that selection adds `is-tool-expanded`, hides the hero copy, and produces a desktop tool wider than 1000 px.
+- The completed-state regression contract asserts the API PNG is displayed first on the transparency grid, the bottom-right control switches to the original blob URL, and a second click restores the API result URL.
 
 ## Focused Comparison
 
@@ -39,6 +43,7 @@ The uploader is the key conversion region and was compared separately at readabl
 ## Comparison History
 
 - Pass 1: Full-view and focused uploader comparisons found no actionable P0/P1/P2 mismatch. No visual fix was required, so no recapture iteration was needed.
+- Pass 2: The user-reported selected state was reproduced. The hero now expands to the established page container after upload; a local in-app browser check confirmed the large preview and no overflow. The result-state behavior is locked by the focused browser regression without spending a Replicate credit during local QA.
 
 ## Implementation Checklist
 
@@ -48,5 +53,8 @@ The uploader is the key conversion region and was compared separately at readabl
 - [x] Transparent, preset, and custom-color result controls are implemented.
 - [x] Editor handoff is omitted.
 - [x] Original visual assets are used for all initialized step and feature modules.
+- [x] Selecting an image expands the tool across the page container.
+- [x] A completed job defaults to the transparent provider PNG.
+- [x] The bottom-right comparison control switches to the original and back to the result.
 
 final result: passed

@@ -104,9 +104,20 @@ test('background remover shares the balance and exposes color choices without an
   await page.goto('/background-remover');
   await expect(page.locator('.header-benefits')).toContainText('Free uses 1/3');
   await chooseTestImage(page);
+  await expect(page.locator('.hero-inner')).toHaveClass(/is-tool-expanded/);
+  await expect(page.locator('.hero-copy')).toBeHidden();
+  const expandedTool = await page.locator('.hero-tool').boundingBox();
+  expect(expandedTool?.width).toBeGreaterThan(1000);
   await page.getByRole('button', { name: 'Remove background' }).click();
 
   await expect(page.locator('.background-result')).toBeVisible();
+  const resultImage = page.locator('.background-result-stage img');
+  await expect(resultImage).toHaveAttribute('src', 'https://results.test/background.png');
+  await expect(page.locator('.background-result-stage')).toHaveClass(/is-transparent/);
+  await page.getByRole('button', { name: 'Show original image' }).click();
+  await expect(resultImage).toHaveAttribute('src', /^blob:/);
+  await page.getByRole('button', { name: 'Show background-removed result' }).click();
+  await expect(resultImage).toHaveAttribute('src', 'https://results.test/background.png');
   await expect(page.getByRole('heading', { name: 'Change background color' })).toBeVisible();
   await expect(page.getByRole('link', { name: 'Download PNG' })).toHaveAttribute(
     'href',

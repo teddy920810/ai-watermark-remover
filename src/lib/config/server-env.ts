@@ -13,7 +13,7 @@ const schema = z.object({
   DEWATERMARK_BASE_URL: z.url().default('https://platform.dewatermark.ai'),
   DEWATERMARK_PREDICT_MODE: z.enum(['3.0', '4.0']).default('4.0'),
   DEWATERMARK_TIMEOUT_MS: z.coerce.number().int().min(1000).max(120_000).default(30_000),
-  BACKGROUND_REMOVAL_PROVIDER: z.enum(['mock', 'replicate']).default('mock'),
+  BACKGROUND_REMOVAL_PROVIDER: z.enum(['mock', 'replicate']).optional(),
   REPLICATE_API_TOKEN: z.string().min(1).optional(),
   REPLICATE_BASE_URL: z.url().default('https://api.replicate.com'),
   REPLICATE_BACKGROUND_MODEL_VERSION: z.string().regex(/^[a-f0-9]{64}$/).default('a029dff38972b5fda4ec5d75d7d1cd25aeff621d2cf4946a41055d7db66b80bc'),
@@ -31,6 +31,7 @@ const schema = z.object({
 export function getServerEnv(source: NodeJS.ProcessEnv = process.env) {
   const env = schema.parse(source);
   const endpoint = env.R2_ENDPOINT ?? `https://${env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`;
+  const backgroundRemovalProvider = env.BACKGROUND_REMOVAL_PROVIDER ?? (env.REPLICATE_API_TOKEN ? 'replicate' : 'mock');
   if (!env.R2_ENDPOINT && !env.R2_ACCOUNT_ID) throw new Error('R2_ENDPOINT or R2_ACCOUNT_ID is required');
-  return { ...env, R2_ENDPOINT: endpoint };
+  return { ...env, R2_ENDPOINT: endpoint, BACKGROUND_REMOVAL_PROVIDER: backgroundRemovalProvider };
 }
