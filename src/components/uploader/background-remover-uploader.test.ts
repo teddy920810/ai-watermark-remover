@@ -20,4 +20,11 @@ describe('BackgroundRemoverUploader source contract', () => {
     expect(source).not.toContain('Go to Editor');
     expect(css).toContain('/uploads/background-remover-transparency-grid.png');
   });
+
+  it('expands the tool after selection and defaults the completed view to the provider result', () => {
+    expect(source).toContain("classList.toggle('is-tool-expanded', expanded)");
+    expect(source).toContain('const [showOriginal, setShowOriginal] = useState(false)');
+    expect(source).toContain('showOriginal ? state.previewUrl : state.resultUrl');
+    expect(css).toContain('.hero-inner.is-tool-expanded');
+  });
 });
