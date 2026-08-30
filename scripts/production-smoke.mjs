@@ -56,6 +56,24 @@ async function backgroundRemovalFixture() {
     .toBuffer();
 }
 
+async function objectRemovalFixture() {
+  const source = fileURLToPath(new URL('../public/uploads/object-remover-upload.png', import.meta.url));
+  const image = await sharp(source).resize({ width: 512, height: 320, fit: 'cover' }).png().toBuffer();
+  const width = 512;
+  const height = 320;
+  const pixels = Buffer.alloc(width * height * 3);
+  for (let y = 0; y < height; y += 1) {
+    for (let x = 0; x < width; x += 1) {
+      const selected = ((x - 426) / 38) ** 2 + ((y - 185) / 70) ** 2 <= 1;
+      if (!selected) continue;
+      const offset = (y * width + x) * 3;
+      pixels[offset] = 255; pixels[offset + 1] = 255; pixels[offset + 2] = 255;
+    }
+  }
+  const mask = await sharp(pixels, { raw: { width, height, channels: 3 } }).png().toBuffer();
+  return { image, mask };
+}
+
 function benefitBalance(body) {
   const balance = body.balance ?? body.freeUsesRemaining;
   if (!Number.isInteger(balance)) throw new Error('Benefits response is missing an integer balance.');
@@ -69,7 +87,9 @@ export async function runAuthenticatedSmoke(baseUrl, sessionCookie, fetcher = fe
   }
 
   const operation = options.operation ?? 'watermark-removal';
-  const fixture = options.fixture ?? (operation === 'background-removal' ? await backgroundRemovalFixture() : png);
+  const objectFixture = operation === 'object-removal' ? await objectRemovalFixture() : null;
+  const fixture = options.fixture ?? (operation === 'background-removal' ? await backgroundRemovalFixture() : objectFixture?.image ?? png);
+  const maskFixture = options.maskFixture ?? objectFixture?.mask;
 
   const apiHeaders = { 'Content-Type': 'application/json', Cookie: sessionCookie };
   await json(`${baseUrl}/api/me/benefits`, fetcher, { headers: { Cookie: sessionCookie } });
@@ -89,10 +109,21 @@ export async function runAuthenticatedSmoke(baseUrl, sessionCookie, fetcher = fe
   const upload = await fetcher(signed.url, { method: 'PUT', headers: { 'Content-Type': 'image/png' }, body: fixture });
   if (!upload.ok) throw new Error(`R2 PUT returned ${upload.status}`);
 
+  let signedMask;
+  if (operation === 'object-removal') {
+    if (!maskFixture) throw new Error('Object-removal smoke requires a mask fixture.');
+    signedMask = await json(`${baseUrl}/api/upload-url`, fetcher, {
+      method: 'POST', headers: apiHeaders,
+      body: JSON.stringify({ contentType: 'image/png', size: maskFixture.byteLength }),
+    });
+    const maskUpload = await fetcher(signedMask.url, { method: 'PUT', headers: { 'Content-Type': 'image/png' }, body: maskFixture });
+    if (!maskUpload.ok) throw new Error(`R2 mask PUT returned ${maskUpload.status}`);
+  }
+
   const created = await json(`${baseUrl}/api/jobs`, fetcher, {
     method: 'POST',
     headers: apiHeaders,
-    body: JSON.stringify({ inputKey: signed.key, operation }),
+    body: JSON.stringify({ inputKey: signed.key, ...(signedMask ? { maskKey: signedMask.key } : {}), operation }),
   });
 
   let job;

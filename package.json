@@ -18,6 +18,7 @@
     "test:e2e": "playwright test",
     "test:smoke:production": "node scripts/production-smoke.mjs",
     "test:smoke:background-removal": "node scripts/production-smoke.mjs --require-auth --operation background-removal",
+    "test:smoke:object-removal": "node scripts/production-smoke.mjs --require-auth --operation object-removal",
     "content:validate": "astro sync",
     "check:fast": "npm run content:validate && npm test",
     "check:content": "npm run content:validate && vitest run src/lib/content && npm run build",

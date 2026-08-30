@@ -14,6 +14,7 @@ const landingPageFiles = [
   'pdf-watermark-remover.json',
   'remove-background.json',
   'remove-logo-from-image.json',
+  'remove-object.json',
   'remove-subtitle-from-video.json',
   'remove-text-from-image.json',
   'shutterstock-watermark-remover.json',
@@ -51,6 +52,7 @@ const requestedKeywords = new Map([
   ['notebooklm-watermark-remover.json', 'notebooklm watermark remover'],
   ['pdf-watermark-remover.json', 'pdf watermark remover'],
   ['remove-background.json', 'remove background'],
+  ['remove-object.json', 'object remover'],
   ['remove-subtitle-from-video.json', 'remove subtitle from video'],
   ['shutterstock-watermark-remover.json', 'shutterstock watermark remover'],
   ['sora-watermark-remover.json', 'sora watermark remover'],
@@ -160,6 +162,19 @@ describe('tool landing-page usage steps', () => {
     expect(page.uploader.hero.heading).toContain('Background');
     expect(page.uploader.preview.removeButton).toBe('Remove background');
     expect(page.uploader.result.downloadButton).toBe('Download PNG');
+  });
+
+  it('initializes /remove-object with the dedicated full-width mask editor and complete content', () => {
+    const page = JSON.parse(
+      readFileSync(new URL('../../content/landing-pages/remove-object.json', import.meta.url), 'utf8'),
+    );
+
+    expect(page).toMatchObject({ slug: 'remove-object', toolKind: 'object-remover' });
+    expect(page.process.steps).toHaveLength(3);
+    expect(page.features.items).toHaveLength(3);
+    expect(page.faq.items.length).toBeGreaterThanOrEqual(6);
+    expect(landingPageSource).toContain("page.toolKind === 'object-remover'");
+    expect(landingPageSource).toContain('<ObjectRemoverUploader');
   });
 
 });

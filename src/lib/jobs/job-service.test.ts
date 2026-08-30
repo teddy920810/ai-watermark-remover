@@ -6,6 +6,7 @@ function createDependencies() {
   const jobs = new Map<string, Job>();
   const watermarkProvider = { remove: vi.fn().mockResolvedValue({ status: 'completed', resultKey: 'results/job-1.png' }) };
   const backgroundProvider = { remove: vi.fn().mockResolvedValue({ status: 'completed', resultKey: 'results/background/job-1.png' }) };
+  const objectProvider = { remove: vi.fn().mockResolvedValue({ status: 'completed', resultKey: 'results/object/job-1.png' }) };
   return {
     jobStore: {
       save: vi.fn(async (job: Job) => void jobs.set(job.id, job)),
@@ -18,6 +19,7 @@ function createDependencies() {
     providers: {
       'watermark-removal': watermarkProvider,
       'background-removal': backgroundProvider,
+      'object-removal': objectProvider,
     },
     benefits: {
       reserve: vi.fn().mockResolvedValue(undefined),
@@ -29,6 +31,7 @@ function createDependencies() {
 
 describe('JobService', () => {
   const inputKey = 'uploads/users/5bd39a3d505d21099461dc1b7a3f4d9f/eb8fa168-c11c-4e54-8c63-137d649ed1db.png';
+  const maskKey = 'uploads/users/5bd39a3d505d21099461dc1b7a3f4d9f/8e7756b9-05e5-453a-a477-fca1f0a66846.png';
 
   it('rejects object keys outside uploads', async () => {
     const deps = createDependencies();
@@ -91,6 +94,42 @@ describe('JobService', () => {
     });
   });
 
+  it('validates and routes the source and mask while sharing one credit reservation', async () => {
+    const deps = createDependencies();
+    const service = new JobService(deps, () => 'job-1');
+    const job = await service.create(inputKey, 'google-user-1', 'object-removal', maskKey);
+
+    expect(deps.objects.head).toHaveBeenNthCalledWith(1, inputKey);
+    expect(deps.objects.head).toHaveBeenNthCalledWith(2, maskKey);
+    expect(deps.providers['object-removal'].remove).toHaveBeenCalledWith({ jobId: 'job-1', inputKey, maskKey });
+    expect(deps.providers['watermark-removal'].remove).not.toHaveBeenCalled();
+    expect(deps.providers['background-removal'].remove).not.toHaveBeenCalled();
+    expect(deps.benefits.reserve).toHaveBeenCalledTimes(1);
+    expect(deps.benefits.consume).toHaveBeenCalledTimes(1);
+    expect(job).toMatchObject({ operation: 'object-removal', maskKey, resultKey: 'results/object/job-1.png' });
+  });
+
+  it('rejects an object-removal mask that does not belong to the same user', async () => {
+    const deps = createDependencies();
+    const service = new JobService(deps, () => 'job-1');
+    await expect(service.create(
+      inputKey,
+      'google-user-1',
+      'object-removal',
+      'uploads/users/00000000000000000000000000000000/8e7756b9-05e5-453a-a477-fca1f0a66846.png',
+    )).rejects.toThrow('Mask not found');
+    expect(deps.benefits.reserve).not.toHaveBeenCalled();
+  });
+
+  it('cleans up both object-removal inputs when processing fails', async () => {
+    const deps = createDependencies();
+    deps.providers['object-removal'].remove.mockRejectedValue(new Error('secret provider response'));
+    const service = new JobService(deps, () => 'job-1');
+    await expect(service.create(inputKey, 'google-user-1', 'object-removal', maskKey)).resolves.toMatchObject({ status: 'failed' });
+    expect(deps.objects.delete).toHaveBeenCalledWith(inputKey);
+    expect(deps.objects.delete).toHaveBeenCalledWith(maskKey);
+  });
+
   it('persists a safe failure and does not leak provider details', async () => {
     const deps = createDependencies();
     deps.providers['watermark-removal'].remove.mockRejectedValue(new Error('secret provider response'));
@@ -108,6 +147,7 @@ describe('JobService', () => {
     await expect(service.create(inputKey, 'google-user-1')).rejects.toThrow('No free uses remaining');
     expect(deps.providers['watermark-removal'].remove).not.toHaveBeenCalled();
     expect(deps.providers['background-removal'].remove).not.toHaveBeenCalled();
+    expect(deps.providers['object-removal'].remove).not.toHaveBeenCalled();
     expect(deps.objects.delete).toHaveBeenCalledWith(inputKey);
   });
 

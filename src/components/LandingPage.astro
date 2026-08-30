@@ -1,6 +1,7 @@
 ---
 import ImageUploader from './uploader/ImageUploader';
 import BackgroundRemoverUploader from './uploader/BackgroundRemoverUploader';
+import ObjectRemoverUploader from './uploader/ObjectRemoverUploader';
 import ResponsiveImage from './ResponsiveImage.astro';
 import SiteLayout from '../layouts/SiteLayout.astro';
 import { getCollection, type CollectionEntry } from 'astro:content';
@@ -48,7 +49,9 @@ const faqSchema = visibleFaqItems.length > 0 ? {
       <div id="tool" class="hero-tool">
         {page.toolKind === 'background-remover'
           ? <BackgroundRemoverUploader logo={siteLogo} siteName={site.name} copy={uploaderCopy} client:load />
-          : <ImageUploader logo={siteLogo} siteName={site.name} copy={uploaderCopy} client:load />}
+          : page.toolKind === 'object-remover'
+            ? <ObjectRemoverUploader logo={siteLogo} siteName={site.name} copy={uploaderCopy} client:load />
+            : <ImageUploader logo={siteLogo} siteName={site.name} copy={uploaderCopy} client:load />}
       </div>
     </div>
   </section>

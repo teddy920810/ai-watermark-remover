@@ -73,7 +73,20 @@ describe('getServerEnv', () => {
       REPLICATE_API_TOKEN: 'server-only-token',
     })).toMatchObject({
       BACKGROUND_REMOVAL_PROVIDER: 'replicate',
+      OBJECT_REMOVAL_PROVIDER: 'replicate',
       REPLICATE_API_TOKEN: 'server-only-token',
+    });
+  });
+
+  it('requires Replicate for object removal and pins the LaMa model version', () => {
+    expect(() => getServerEnv({ ...completeEnv, OBJECT_REMOVAL_PROVIDER: 'replicate' })).toThrow();
+    expect(getServerEnv({
+      ...completeEnv,
+      OBJECT_REMOVAL_PROVIDER: 'replicate',
+      REPLICATE_API_TOKEN: 'server-only-token',
+    })).toMatchObject({
+      OBJECT_REMOVAL_PROVIDER: 'replicate',
+      REPLICATE_LAMA_MODEL_VERSION: 'cdac78a1bec5b23c07fd29692fb70baa513ea403a39e643c48ec5edadb15fe72',
     });
   });
 });

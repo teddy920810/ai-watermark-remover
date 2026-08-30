@@ -100,6 +100,10 @@
             "href": "/background-remover"
           },
           {
+            "label": "Object Remover",
+            "href": "/remove-object"
+          },
+          {
             "label": "Remove Text from Image",
             "href": "/remove-text-from-image"
           },
@@ -163,6 +167,7 @@
         "links": [
           { "label": "Watermark remover", "href": "/" },
           { "label": "Background remover", "href": "/background-remover" },
+          { "label": "Object remover", "href": "/remove-object" },
           { "label": "Remove logo", "href": "/remove-logo-from-image" },
           { "label": "Remove text", "href": "/remove-text-from-image" }
         ]

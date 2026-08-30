@@ -27,6 +27,7 @@ describe('R2ObjectStore', () => {
   });
 
   it.each([
+    ['results/object/job.png', 'object-removed-image.png'],
     ['results/job.jpg', 'watermark-removed-image.jpg'],
     ['results/job.jpeg', 'watermark-removed-image.jpg'],
     ['results/job.png', 'watermark-removed-image.png'],

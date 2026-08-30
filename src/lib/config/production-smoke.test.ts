@@ -104,4 +104,27 @@ describe('production smoke', () => {
     expect(fetcher.mock.calls[6]?.[1]).toMatchObject({ headers: { Origin: origin } });
     expect(fetcher.mock.calls[7]?.[1]).toMatchObject({ headers: { Origin: origin } });
   });
+
+  it('uploads both source and mask for object removal and charges exactly once', async () => {
+    const origin = 'https://example.test';
+    const fetcher = vi.fn()
+      .mockResolvedValueOnce(response({ balance: 1, cap: 3, dailyReward: 1, checkedInToday: false }))
+      .mockResolvedValueOnce(response({ balance: 2, cap: 3, dailyReward: 1, checkedInToday: true, granted: true }))
+      .mockResolvedValueOnce(response({ url: 'https://uploads.test/input', key: 'uploads/user/input.png' }))
+      .mockResolvedValueOnce(response('', 200, 'image/png'))
+      .mockResolvedValueOnce(response({ url: 'https://uploads.test/mask', key: 'uploads/user/mask.png' }))
+      .mockResolvedValueOnce(response('', 200, 'image/png'))
+      .mockResolvedValueOnce(response({ id: 'job-1', status: 'processing' }, 201))
+      .mockResolvedValueOnce(response({ status: 'completed', resultUrl: 'https://results.test/result.png', downloadUrl: 'https://results.test/download.png' }))
+      .mockResolvedValueOnce(corsResponse(transparentPng, origin))
+      .mockResolvedValueOnce(corsResponse(transparentPng, origin))
+      .mockResolvedValueOnce(response({ balance: 1, cap: 3, dailyReward: 1, checkedInToday: true }));
+
+    await expect(runAuthenticatedSmoke(origin, 'session=value', fetcher, {
+      operation: 'object-removal', fixture: transparentPng, maskFixture: transparentPng, requireAuthentication: true,
+    })).resolves.toMatchObject({ status: 'passed', operation: 'object-removal', balanceBefore: 2, balanceAfter: 1 });
+    expect(JSON.parse(String(fetcher.mock.calls[6]?.[1]?.body))).toEqual({
+      inputKey: 'uploads/user/input.png', maskKey: 'uploads/user/mask.png', operation: 'object-removal',
+    });
+  });
 });

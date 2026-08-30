@@ -7,6 +7,7 @@ vi.mock('../../../lib/auth', () => ({ getSession }));
 import { POST } from './index';
 
 const inputKey = 'uploads/users/5bd39a3d505d21099461dc1b7a3f4d9f/00000000-0000-4000-8000-000000000001.png';
+const maskKey = 'uploads/users/5bd39a3d505d21099461dc1b7a3f4d9f/00000000-0000-4000-8000-000000000002.png';
 
 function context(body: unknown) {
   return { request: new Request('https://example.test/api/jobs', {
@@ -44,6 +45,14 @@ describe('POST /api/jobs', () => {
     const response = await POST(context({ inputKey, operation: 'background-removal' }));
     expect(response.status).toBe(201);
     expect(create).toHaveBeenCalledWith(inputKey, 'google-user-1', 'background-removal');
+  });
+
+  it('creates an object-removal job with a distinct mask through the same shared-credit endpoint', async () => {
+    const create = vi.fn().mockResolvedValue({ id: 'job-id', status: 'completed' });
+    getServices.mockReturnValue({ jobs: { create } });
+    const response = await POST(context({ inputKey, maskKey, operation: 'object-removal' }));
+    expect(response.status).toBe(201);
+    expect(create).toHaveBeenCalledWith(inputKey, 'google-user-1', 'object-removal', maskKey);
   });
 
   it('returns 400 for an invalid request', async () => {

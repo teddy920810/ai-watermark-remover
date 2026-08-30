@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const processingOperationSchema = z.enum(['watermark-removal', 'background-removal']);
+export const processingOperationSchema = z.enum(['watermark-removal', 'background-removal', 'object-removal']);
 export type ProcessingOperation = z.infer<typeof processingOperationSchema>;
 export type JobStatus = 'processing' | 'completed' | 'failed';
 
@@ -10,6 +10,7 @@ export interface Job {
   operation: ProcessingOperation;
   status: JobStatus;
   inputKey: string;
+  maskKey: string | null;
   resultKey: string | null;
   error: string | null;
   createdAt: string;
@@ -22,8 +23,9 @@ export function createJob(
   ownerId: string,
   now = new Date().toISOString(),
   operation: ProcessingOperation = 'watermark-removal',
+  maskKey: string | null = null,
 ): Job {
-  return { id, ownerId, operation, status: 'processing', inputKey, resultKey: null, error: null, createdAt: now, updatedAt: now };
+  return { id, ownerId, operation, status: 'processing', inputKey, maskKey, resultKey: null, error: null, createdAt: now, updatedAt: now };
 }
 
 export function finishJob(job: Job, resultKey: string, now = new Date().toISOString()): Job {

@@ -1,6 +1,7 @@
 export interface ProviderInput {
   jobId: string;
   inputKey: string;
+  maskKey?: string;
 }
 
 export type ProviderResult =

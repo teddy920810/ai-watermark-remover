@@ -14,19 +14,22 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   let inputKey: string;
-  let operation: 'watermark-removal' | 'background-removal';
+  let maskKey: string | undefined;
+  let operation: 'watermark-removal' | 'background-removal' | 'object-removal';
   try {
-    ({ inputKey, operation } = parseCreateJob(await readJson(request)));
+    ({ inputKey, maskKey, operation } = parseCreateJob(await readJson(request)));
   } catch {
     return json({ error: 'Invalid job request.' }, { status: 400 });
   }
 
   try {
-    const job = await getServices().jobs.create(inputKey, session.user.id, operation);
+    const job = maskKey
+      ? await getServices().jobs.create(inputKey, session.user.id, operation, maskKey)
+      : await getServices().jobs.create(inputKey, session.user.id, operation);
     return json({ id: job.id, status: job.status }, { status: 201 });
   } catch (error) {
-    const message = publicApiError(error, 'Unable to create job', ['Upload not found', 'Invalid uploaded image', 'No free uses remaining']);
-    const status = message === 'Upload not found' ? 404 : message === 'Invalid uploaded image' ? 400 : message === 'No free uses remaining' ? 402 : 503;
+    const message = publicApiError(error, 'Unable to create job', ['Upload not found', 'Mask not found', 'Invalid uploaded image', 'Invalid mask image', 'No free uses remaining']);
+    const status = message === 'Upload not found' || message === 'Mask not found' ? 404 : message === 'Invalid uploaded image' || message === 'Invalid mask image' ? 400 : message === 'No free uses remaining' ? 402 : 503;
     return json({ error: message }, { status });
   }
 };
