@@ -14,6 +14,14 @@ describe('job lifecycle', () => {
       '2026-08-02T00:00:00.000Z',
       'background-removal',
     ).operation).toBe('background-removal');
+    expect(createJob(
+      'job-3',
+      'uploads/input.png',
+      'google-user-1',
+      '2026-08-02T00:00:00.000Z',
+      'object-removal',
+      'uploads/mask.png',
+    )).toMatchObject({ operation: 'object-removal', maskKey: 'uploads/mask.png' });
   });
 
   it('finishes a processing job', () => {

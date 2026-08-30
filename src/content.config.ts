@@ -103,7 +103,7 @@ const landingPages = defineCollection({
   loader: glob({ base: './src/content/landing-pages', pattern: '**/*.json' }),
   schema: z.object({
     slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
-    toolKind: z.enum(['watermark-remover', 'background-remover']).default('watermark-remover'),
+    toolKind: z.enum(['watermark-remover', 'background-remover', 'object-remover']).default('watermark-remover'),
     title: z.string().min(1),
     description: z.string().min(1),
     eyebrow: z.string().min(1),

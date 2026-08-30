@@ -25,6 +25,7 @@ export class JobService {
     inputKey: string,
     ownerId: string,
     operation: ProcessingOperation = 'watermark-removal',
+    maskKey?: string,
   ): Promise<Job> {
     if (!isUploadKey(inputKey)) throw new Error('Invalid upload key');
     if (!isUploadKeyForOwner(inputKey, ownerId)) throw new Error('Upload not found');
@@ -37,18 +38,31 @@ export class JobService {
       throw new Error('Invalid uploaded image');
     }
 
-    let job = createJob(this.createId(), inputKey, ownerId, undefined, operation);
+    if (operation === 'object-removal') {
+      if (!maskKey || maskKey === inputKey || !isUploadKey(maskKey) || !isUploadKeyForOwner(maskKey, ownerId)) {
+        throw new Error('Mask not found');
+      }
+      const maskMetadata = await this.dependencies.objects.head(maskKey);
+      if (!maskMetadata) throw new Error('Mask not found');
+      const maskValidation = validateUploadMetadata({ contentType: maskMetadata.contentType, size: maskMetadata.contentLength });
+      if (!maskValidation.ok || maskMetadata.contentType !== 'image/png' || contentTypeForUploadKey(maskKey) !== 'image/png') {
+        await this.cleanupInputs(inputKey, maskKey);
+        throw new Error('Invalid mask image');
+      }
+    }
+
+    let job = createJob(this.createId(), inputKey, ownerId, undefined, operation, maskKey ?? null);
 
     try {
       await this.dependencies.benefits.reserve(job.id, ownerId);
     } catch (error) {
-      await this.cleanupInput(inputKey);
+      await this.cleanupInputs(inputKey, maskKey);
       throw error;
     }
 
     try {
       await this.dependencies.jobStore.save(job);
-      const result = await this.dependencies.providers[operation].remove({ jobId: job.id, inputKey });
+      const result = await this.dependencies.providers[operation].remove({ jobId: job.id, inputKey, maskKey });
       if (result.status === 'completed') {
         job = finishJob(job, result.resultKey);
         await this.dependencies.jobStore.save(job);
@@ -62,7 +76,7 @@ export class JobService {
         try {
           await this.dependencies.benefits.refund(job.id, ownerId);
         } finally {
-          await this.cleanupInput(inputKey);
+          await this.cleanupInputs(inputKey, maskKey);
         }
       }
     }
@@ -76,6 +90,11 @@ export class JobService {
     } catch {
       // Best-effort cleanup must not replace the safe job failure returned to the client.
     }
+  }
+
+  private async cleanupInputs(inputKey: string, maskKey?: string): Promise<void> {
+    await this.cleanupInput(inputKey);
+    if (maskKey && maskKey !== inputKey) await this.cleanupInput(maskKey);
   }
 
   get(id: string): Promise<Job | null> {

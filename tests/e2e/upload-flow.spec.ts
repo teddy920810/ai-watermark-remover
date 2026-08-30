@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { inspectPngArtifact } from '../../scripts/lib/png-artifact.mjs';
+import sharp from 'sharp';
 
 const uploadKey = 'uploads/00000000-0000-4000-8000-000000000001.png';
 const jobId = '00000000-0000-4000-8000-000000000002';
@@ -149,6 +150,72 @@ test('background remover shares the balance and exposes color choices without an
   await expect(page.getByText('Go to Editor')).toHaveCount(0);
   await expect(page.locator('.header-benefits')).toContainText('Free uses 0/3');
   expect(operation).toBe('background-removal');
+});
+
+test('object remover expands, exports a binary mask, shares one credit, and returns a comparable result', async ({ page }) => {
+  const sourcePng = await sharp({ create: { width: 80, height: 60, channels: 3, background: { r: 210, g: 220, b: 230 } } }).png().toBuffer();
+  let signCount = 0;
+  let maskUpload: Buffer | null = null;
+  let jobPayload: Record<string, unknown> = {};
+  let balance = 1;
+  const sourceKey = 'uploads/users/5bd39a3d505d21099461dc1b7a3f4d9f/00000000-0000-4000-8000-000000000003.png';
+  const maskKey = 'uploads/users/5bd39a3d505d21099461dc1b7a3f4d9f/00000000-0000-4000-8000-000000000004.png';
+
+  await page.route('**/api/auth/get-session', (route) => route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ user: { id: 'google-user-1', name: 'Test User' }, session: { id: 'session-1' } }) }));
+  await page.route('**/api/me/benefits', (route) => route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ balance, cap: 3, dailyReward: 1, checkedInToday: false }) }));
+  await page.route('**/api/upload-url', async (route) => {
+    const body = route.request().postDataJSON() as { contentType: string; size: number };
+    const isMask = body.size !== sourcePng.length;
+    signCount += 1;
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ url: `https://uploads.test/${isMask ? 'mask' : 'source'}`, key: isMask ? maskKey : sourceKey, expiresIn: 600 }) });
+  });
+  await page.route('https://uploads.test/source', (route) => route.fulfill({ status: 200 }));
+  await page.route('https://uploads.test/mask', async (route) => {
+    maskUpload = route.request().postDataBuffer();
+    await route.fulfill({ status: 200 });
+  });
+  await page.route('**/api/jobs', async (route) => {
+    jobPayload = route.request().postDataJSON() as Record<string, unknown>;
+    balance = 0;
+    await route.fulfill({ status: 201, contentType: 'application/json', body: JSON.stringify({ id: jobId, status: 'completed' }) });
+  });
+  await page.route(`**/api/jobs/${jobId}`, (route) => route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'completed', resultUrl: 'https://results.test/object.png', downloadUrl: 'https://results.test/object-download.png' }) }));
+  await page.route('https://results.test/object.png', (route) => route.fulfill({ status: 200, contentType: 'image/png', body: sourcePng }));
+
+  await page.goto('/remove-object');
+  await expect(page.locator('#tool astro-island')).not.toHaveAttribute('ssr', '');
+  await page.locator('#tool input[type="file"]').setInputFiles({ name: 'object.png', mimeType: 'image/png', buffer: sourcePng });
+  await expect(page.locator('.hero-inner')).toHaveClass(/is-tool-expanded/);
+  await expect(page.locator('.hero-copy')).toBeHidden();
+  await expect(page.getByText('Auto Removal')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: /Brush/ })).toHaveClass(/is-selected/);
+
+  const canvas = page.getByLabel('Object removal mask canvas');
+  const box = await canvas.boundingBox();
+  expect(box).toBeTruthy();
+  await page.mouse.move(box!.x + box!.width * .48, box!.y + box!.height * .48);
+  await page.mouse.down();
+  await page.mouse.move(box!.x + box!.width * .62, box!.y + box!.height * .58, { steps: 5 });
+  await page.mouse.up();
+  await page.getByRole('button', { name: 'Remove object' }).click();
+
+  await expect(page.getByRole('heading', { name: 'Object removed' })).toBeVisible();
+  expect(jobPayload).toEqual({ inputKey: sourceKey, maskKey, operation: 'object-removal' });
+  expect(signCount).toBe(2);
+  expect(maskUpload).toBeTruthy();
+  const mask = await sharp(maskUpload!).raw().toBuffer({ resolveWithObject: true });
+  let blackPixels = 0;
+  let whitePixels = 0;
+  for (let index = 0; index < mask.data.length; index += mask.info.channels) {
+    if (mask.data[index] === 0) blackPixels += 1;
+    if (mask.data[index] === 255) whitePixels += 1;
+  }
+  expect(blackPixels).toBeGreaterThan(0);
+  expect(whitePixels).toBeGreaterThan(0);
+  await expect(page.locator('.object-editor-stage img')).toHaveAttribute('src', 'https://results.test/object.png');
+  await page.getByRole('button', { name: /Before/ }).click();
+  await expect(page.locator('.object-editor-stage img')).toHaveAttribute('src', /^blob:/);
+  await expect(page.locator('.header-benefits')).toContainText('Free uses 0/3');
 });
 
 test('background remover refreshes an expired result link without creating another job', async ({ page }) => {

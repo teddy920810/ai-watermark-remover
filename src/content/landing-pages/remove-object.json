@@ -1,0 +1,138 @@
+{
+  "slug": "remove-object",
+  "toolKind": "object-remover",
+  "title": "Free AI Object Remover Online | Clean Up Photos",
+  "description": "Use our free AI object remover to erase unwanted people, text, clutter, and objects from photos with a brush or lasso, then download the clean result.",
+  "eyebrow": "FREE AI OBJECT REMOVER",
+  "heading": "Remove Unwanted Objects from Photos with AI",
+  "intro": "Clean up product photos, travel shots, portraits, and social images without a complicated editor. Upload an image, mark the distraction with a blue brush or lasso, and let AI rebuild the area naturally.",
+  "benefits": [
+    "Free to Try",
+    "Shared Daily Rewards",
+    "Brush & Lasso Selection",
+    "JPG, PNG, WebP & JFIF",
+    "Private Uploads"
+  ],
+  "uploader": {
+    "hero": {
+      "eyebrow": "AI Object Remover",
+      "heading": "Upload an Image to Remove an Object",
+      "demoBadge": "Shared Credits",
+      "demoBadgeTitle": "Object removal uses the same free balance and daily check-in rewards as watermark and background removal."
+    },
+    "dropzone": {
+      "dropLabel": "Upload image",
+      "browseLabel": "Drag and drop, click to browse",
+      "formatLabel": "JPG, JPEG, PNG, WebP or JFIF",
+      "maxSizeLabel": "up to {maxSize} MB",
+      "fileInputLabel": "Choose an image for object removal"
+    },
+    "preview": {
+      "altTemplate": "Object removal preview of {fileName}",
+      "processingLabel": "AI is rebuilding the selected area…",
+      "readyLabel": "Paint over the object to remove",
+      "removeButton": "Remove object",
+      "uploadingButton": "Uploading image and mask…",
+      "processingButton": "Removing object…",
+      "chooseAnotherButton": "Choose another"
+    },
+    "result": {
+      "originalLabel": "Original",
+      "resultLabel": "Object removed",
+      "originalAlt": "Original uploaded image before object removal",
+      "resultAlt": "Photo after the selected object was removed",
+      "demoNote": "Compare the clean result with the original and download the finished PNG.",
+      "downloadButton": "Download PNG",
+      "processAnotherButton": "Process another"
+    },
+    "auth": {
+      "closeLabel": "Close sign-in dialog",
+      "title": "Sign in to remove the object",
+      "description": "Your image and selection stay ready on this page. Processing starts after Google sign-in and uses your shared free balance.",
+      "connectingButton": "Connecting to Google…",
+      "continueButton": "Continue with Google",
+      "dismissButton": "Not now"
+    },
+    "privacyNote": "Private upload · Automatically deleted after 24 hours"
+  },
+  "process": {
+    "eyebrow": "HOW IT WORKS",
+    "heading": "Remove an Object in Three Focused Steps",
+    "intro": "The editor expands as soon as you upload, keeping the full photo and selection tools in one workspace.",
+    "steps": [
+      {
+        "number": "01",
+        "title": "Upload Your Photo",
+        "description": "Drag, browse, or paste a supported image up to 10 MB. The editor opens at full width so you can work precisely.",
+        "image": "/uploads/object-remover-upload.png",
+        "imageAlt": "Desk photo with a red cup ready for object removal"
+      },
+      {
+        "number": "02",
+        "title": "Paint or Lasso the Object",
+        "description": "Cover the complete distraction with the blue brush or trace it with the lasso. Use Eraser or Undo to refine the mask.",
+        "image": "/uploads/object-remover-mask.png",
+        "imageAlt": "Blue semi-transparent mask covering an unwanted red cup"
+      },
+      {
+        "number": "03",
+        "title": "Remove and Download",
+        "description": "AI reconstructs the selected area. Compare the result with the original and download the finished PNG directly.",
+        "image": "/uploads/object-remover-result.png",
+        "imageAlt": "Clean desk photo after the unwanted cup was removed"
+      }
+    ]
+  },
+  "features": {
+    "eyebrow": "PRECISE MANUAL CONTROL",
+    "heading": "An Object Remover Built Around a Clear Mask",
+    "intro": "Choose exactly what should disappear while keeping the rest of the image untouched.",
+    "items": [
+      {
+        "enabled": true,
+        "eyebrow": "FULL-WIDTH EDITOR",
+        "heading": "See More of the Photo While You Select",
+        "description": "After upload, the page shifts into a focused workspace and hides the landing-page copy so the image gets the available space.",
+        "listItems": ["Responsive desktop and mobile workspace", "Original image stays visible beneath the mask", "No separate editor step"],
+        "image": "/uploads/object-remover-upload.png",
+        "imageAlt": "Large clean photo workspace prepared for object selection",
+        "imagePosition": "right"
+      },
+      {
+        "enabled": true,
+        "eyebrow": "BRUSH AND LASSO",
+        "heading": "Mark Irregular or Compact Objects",
+        "description": "Use the adjustable brush for detailed painting or the freehand lasso for larger shapes. The blue overlay makes the selected area easy to inspect.",
+        "listItems": ["Adjustable brush size", "Freehand lasso selection", "Eraser, Undo, and Clear controls"],
+        "image": "/uploads/object-remover-mask.png",
+        "imageAlt": "Blue brush mask demonstrating an object selection",
+        "imagePosition": "left"
+      },
+      {
+        "enabled": true,
+        "eyebrow": "AI INPAINTING",
+        "heading": "Rebuild the Area Behind the Distraction",
+        "description": "The selected mask and original image are processed together so AI can infer nearby texture, color, lighting, and structure.",
+        "listItems": ["Useful for clutter, people, text, and small distractions", "Before and result comparison", "Direct PNG download"],
+        "image": "/uploads/object-remover-result.png",
+        "imageAlt": "Desk surface naturally reconstructed after object removal",
+        "imagePosition": "right"
+      }
+    ]
+  },
+  "faq": {
+    "eyebrow": "OBJECT REMOVAL FAQ",
+    "heading": "Frequently Asked Questions About Removing Objects",
+    "intro": "Learn how selection masks, shared credits, supported files, and private processing work.",
+    "items": [
+      { "enabled": true, "question": "How do I remove an object from a photo?", "answer": "Upload or paste an image, paint over the unwanted object with Brush or trace it with Lasso, then select Remove object. Compare the AI result with the original and download the PNG." },
+      { "enabled": true, "question": "Should the blue mask cover the entire object?", "answer": "Yes. Cover the full object and include a small margin around its edges. A complete mask gives AI enough context to reconstruct the area cleanly." },
+      { "enabled": true, "question": "What can I remove?", "answer": "The tool can help remove people, signs, text, small items, product-photo clutter, and other visible distractions. Results vary with the object's size and the complexity of the background." },
+      { "enabled": true, "question": "Is the AI object remover free?", "answer": "You can try it with your WatermarkGemini free balance. Object removal, watermark removal, and background removal share the same initial free use and daily check-in rewards." },
+      { "enabled": true, "question": "Which image formats are supported?", "answer": "You can upload JPG, JPEG, PNG, WebP, and JFIF images up to 10 MB. The completed result is available as a PNG." },
+      { "enabled": true, "question": "Can I fix a mask before processing?", "answer": "Yes. Switch to Eraser to remove excess paint, use Undo to restore the previous selection, or Clear the whole mask and start again." },
+      { "enabled": true, "question": "What happens to my uploaded image and mask?", "answer": "The original image, generated mask, and result are stored privately and are designed to expire after 24 hours. Provider credentials and private storage keys never reach the browser." },
+      { "enabled": true, "question": "Can I upload any image?", "answer": "Only upload images you own or are authorized to edit. Do not use the tool to violate copyright, privacy, trademark, or other rights, and avoid confidential material." }
+    ]
+  }
+}

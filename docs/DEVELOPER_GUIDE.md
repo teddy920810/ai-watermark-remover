@@ -27,13 +27,15 @@ Google 登录还需要：
 
 ## 应用结构
 
-Astro 负责内容路由和服务端 API；React 只用于上传交互岛。浏览器先请求预签名地址，再直接上传到私有 R2，避免图片经过 Vercel 函数。任务状态保存在 R2；去水印能力通过 `WatermarkProvider` 接口隔离，背景移除通过独立的 `BackgroundRemovalProvider` 接口隔离，两种任务共用账户权益账本。
+Astro 负责内容路由和服务端 API；React 只用于上传交互岛。浏览器先请求预签名地址，再直接上传到私有 R2，避免图片经过 Vercel 函数。任务状态保存在 R2；去水印能力通过 `WatermarkProvider` 接口隔离，背景移除通过独立的 `BackgroundRemovalProvider` 接口隔离，物体移除通过 `ObjectRemovalProvider` 隔离，三种任务共用账户权益账本。
 
 当前 `MockWatermarkProvider` 仅复制对象。接入真实服务时，实现 `src/lib/providers/watermark-provider.ts` 的契约并在 `src/lib/services.ts` 注入，不要改变公开 API 响应格式。选择和预览图片无需登录；创建与查询任务必须有有效会话，并且任务只能由其 `ownerId` 对应的用户读取。
 
 仓库提供 Dewatermark v3 Provider，按官方契约把服务端读取的图片归一化为最大边不超过 6000px 的 JPEG，再把 Base64 结果写回私有 R2。本地和测试环境默认配置仍是 `WATERMARK_PROVIDER=mock`；生产环境只有在 Key 校验、授权样图效果和真实端到端链路通过后，才通过服务端环境变量切换为 `dewatermark`。官方契约见 <https://dewatermark.ai/api-document>。
 
 背景移除使用 Replicate 上的 `851-labs/background-remover` 社区模型，并固定模型版本以避免上游无提示漂移。服务端把私有 R2 输入转换成短期签名链接，按供应商契约请求 RGBA PNG，再校验输出域名、体积和 PNG 文件签名后写回私有 R2。浏览器不会收到 `REPLICATE_API_TOKEN`。配置该 Token 后会自动选择 Replicate；测试或离线开发可显式设置 `BACKGROUND_REMOVAL_PROVIDER=mock` 覆盖。模型契约见 <https://replicate.com/851-labs/background-remover/api>，社区模型版本说明见 <https://replicate.com/docs/topics/models/community-models/>。
+
+物体移除使用 Replicate 上的 `allenhooo/lama` 社区模型并固定版本。浏览器只生成蓝色半透明预览层，提交时导出与原图同尺寸的黑白 PNG mask（黑色保留、白色移除）；服务端再次验证归属、类型、尺寸和非空选择，再把归一化后的原图与 mask 通过短期签名链接交给 Replicate。测试或离线开发可显式设置 `OBJECT_REMOVAL_PROVIDER=mock`。模型契约见 <https://replicate.com/allenhooo/lama/api>。
 
 本地凭据导入和只读检查：
 

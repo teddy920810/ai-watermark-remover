@@ -1225,11 +1225,12 @@ content:
         type: select
         required: true
         default: watermark-remover
-        description: 背景移除页选择 Background remover；现有去水印页面保持 Watermark remover。
+        description: 背景移除页选择 Background remover；物体移除页选择 Object remover；现有去水印页面保持 Watermark remover。
         options:
           values:
             - { name: watermark-remover, label: Watermark remover }
             - { name: background-remover, label: Background remover }
+            - { name: object-remover, label: Object remover }
       - name: title
         label: SEO 标题｜TITLE
         type: string
