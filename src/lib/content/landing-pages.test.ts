@@ -2,7 +2,6 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
 const landingPageFiles = [
-  'background-remover.json',
   'batch-watermark-remover.json',
   'capcut-watermark-remover.json',
   'facebook-watermark-remover.json',
@@ -41,7 +40,6 @@ const landingPageSource = readFileSync(new URL('../../components/LandingPage.ast
 const globalCss = readFileSync(new URL('../../styles/global.css', import.meta.url), 'utf8');
 
 const requestedKeywords = new Map([
-  ['background-remover.json', 'background remover'],
   ['batch-watermark-remover.json', 'batch watermark remover'],
   ['capcut-watermark-remover.json', 'capcut watermark remover'],
   ['facebook-watermark-remover.json', 'facebook watermark remover'],
@@ -137,11 +135,12 @@ describe('tool landing-page usage steps', () => {
     expect(searchableCopy).toContain(keyword);
   });
 
-  it('initializes the background remover with its dedicated tool, steps, features, FAQ, and original visuals', () => {
+  it('initializes /remove-background with its dedicated tool, steps, features, FAQ, and original visuals', () => {
     const page = JSON.parse(
-      readFileSync(new URL('../../content/landing-pages/background-remover.json', import.meta.url), 'utf8'),
+      readFileSync(new URL('../../content/landing-pages/remove-background.json', import.meta.url), 'utf8'),
     );
 
+    expect(page.slug).toBe('remove-background');
     expect(page.toolKind).toBe('background-remover');
     expect(page.process.steps).toHaveLength(3);
     expect(page.process.steps.every((step: { image?: string }) => step.image?.startsWith('/uploads/background-remover-'))).toBe(true);
@@ -150,18 +149,6 @@ describe('tool landing-page usage steps', () => {
     expect(page.faq.items.length).toBeGreaterThanOrEqual(6);
     expect(landingPageSource).toContain("page.toolKind === 'background-remover'");
     expect(landingPageSource).toContain('<BackgroundRemoverUploader');
-  });
-
-  it('routes the remove-background alias to the dedicated background-removal experience', () => {
-    const page = JSON.parse(
-      readFileSync(new URL('../../content/landing-pages/remove-background.json', import.meta.url), 'utf8'),
-    );
-
-    expect(page.toolKind).toBe('background-remover');
-    expect(page.statusLabel).toBeUndefined();
-    expect(page.uploader.hero.heading).toContain('Background');
-    expect(page.uploader.preview.removeButton).toBe('Remove background');
-    expect(page.uploader.result.downloadButton).toBe('Download PNG');
   });
 
   it('initializes /remove-object with the dedicated full-width mask editor and complete content', () => {

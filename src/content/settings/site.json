@@ -97,7 +97,7 @@
         "children": [
           {
             "label": "Background Remover",
-            "href": "/background-remover"
+            "href": "/remove-background"
           },
           {
             "label": "Object Remover",
@@ -166,7 +166,7 @@
         "heading": "Product",
         "links": [
           { "label": "Watermark remover", "href": "/" },
-          { "label": "Background remover", "href": "/background-remover" },
+          { "label": "Background remover", "href": "/remove-background" },
           { "label": "Object remover", "href": "/remove-object" },
           { "label": "Remove logo", "href": "/remove-logo-from-image" },
           { "label": "Remove text", "href": "/remove-text-from-image" }

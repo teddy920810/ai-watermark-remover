@@ -118,7 +118,7 @@ test('background remover shares the balance and exposes color choices without an
     body: transparentPng,
   }));
 
-  await page.goto('/background-remover');
+  await page.goto('/remove-background');
   await expect(page.locator('.header-benefits')).toContainText('Free uses 1/3');
   await chooseTestImage(page);
   await expect(page.locator('.hero-inner')).toHaveClass(/is-tool-expanded/);
@@ -265,7 +265,7 @@ test('background remover refreshes an expired result link without creating anoth
     body: png,
   }));
 
-  await page.goto('/background-remover');
+  await page.goto('/remove-background');
   await chooseTestImage(page);
   await page.getByRole('button', { name: 'Remove background' }).click();
 

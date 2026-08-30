@@ -32,4 +32,12 @@ describe('Vercel canonical URL redirects', () => {
       permanent: true,
     });
   });
+
+  it('permanently redirects the former background-remover path to the only canonical route', () => {
+    expect(config.redirects).toContainEqual({
+      source: '/background-remover',
+      destination: '/remove-background',
+      permanent: true,
+    });
+  });
 });
