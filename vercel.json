@@ -17,6 +17,11 @@
       "source": "/remove-gemini-watermark",
       "destination": "/gemini-watermark-remover",
       "permanent": true
+    },
+    {
+      "source": "/background-remover",
+      "destination": "/remove-background",
+      "permanent": true
     }
   ],
   "headers": [
