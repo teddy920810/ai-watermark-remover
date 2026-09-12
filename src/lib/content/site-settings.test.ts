@@ -61,5 +61,44 @@ describe('site settings CMS content', () => {
     expect(children.length).toBeGreaterThan(0);
     for (const child of children) expect(child).not.toHaveProperty('badge');
   });
+
+  it('groups live tools by intent and keeps coming-soon tools out of the header', () => {
+    const navigation = settings.header.navigation as Array<{
+      label: string;
+      href?: string;
+      children?: Array<{ label: string; href: string }>;
+    }>;
+    const imageTools = navigation.find((item) => item.label === 'Image Tools');
+    const watermarkTools = navigation.find((item) => item.label === 'Watermark Removers');
+    const childHrefs = navigation.flatMap((item) => item.children?.map((child) => child.href) ?? []);
+
+    expect(imageTools?.children?.map((item) => item.href)).toEqual([
+      '/remove-background',
+      '/remove-object',
+      '/remove-text-from-image',
+      '/remove-logo-from-image',
+    ]);
+    expect(watermarkTools?.children?.map((item) => item.href)).toEqual([
+      '/',
+      '/chatgpt-watermark-remover',
+      '/gemini-watermark-remover',
+      '/grok-watermark-remover',
+      '/notebooklm-watermark-remover',
+      '/pdf-watermark-remover',
+      '/shutterstock-watermark-remover',
+    ]);
+    expect(childHrefs).not.toEqual(expect.arrayContaining([
+      '/batch-watermark-remover',
+      '/capcut-watermark-remover',
+      '/facebook-watermark-remover',
+      '/instagram-watermark-remover',
+      '/sora-watermark-remover',
+      '/veo-watermark-remover',
+      '/kling-watermark-remover',
+      '/remove-subtitle-from-video',
+      '/tiktok-watermark-remover',
+      '/video-watermark-remover',
+    ]));
+  });
 });
 
