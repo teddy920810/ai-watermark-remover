@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 const landingPageFiles = [
   'batch-watermark-remover.json',
   'capcut-watermark-remover.json',
+  'chatgpt-watermark-remover.json',
   'facebook-watermark-remover.json',
   'gemini-watermark-remover.json',
   'grok-watermark-remover.json',
@@ -42,6 +43,7 @@ const globalCss = readFileSync(new URL('../../styles/global.css', import.meta.ur
 const requestedKeywords = new Map([
   ['batch-watermark-remover.json', 'batch watermark remover'],
   ['capcut-watermark-remover.json', 'capcut watermark remover'],
+  ['chatgpt-watermark-remover.json', 'chatgpt watermark remover'],
   ['facebook-watermark-remover.json', 'facebook watermark remover'],
   ['gemini-watermark-remover.json', 'gemini watermark remover'],
   ['grok-watermark-remover.json', 'grok watermark remover'],
@@ -162,6 +164,26 @@ describe('tool landing-page usage steps', () => {
     expect(page.faq.items.length).toBeGreaterThanOrEqual(6);
     expect(landingPageSource).toContain("page.toolKind === 'object-remover'");
     expect(landingPageSource).toContain('<ObjectRemoverUploader');
+  });
+
+  it('publishes the ChatGPT image page without claiming to remove provenance signals or text watermarks', () => {
+    const page = JSON.parse(
+      readFileSync(new URL('../../content/landing-pages/chatgpt-watermark-remover.json', import.meta.url), 'utf8'),
+    );
+    const copy = JSON.stringify(page).toLowerCase();
+
+    expect(page).toMatchObject({
+      slug: 'chatgpt-watermark-remover',
+      toolKind: 'watermark-remover',
+    });
+    expect(page.statusLabel).toBeUndefined();
+    expect(page.process.steps).toHaveLength(3);
+    expect(page.faq.items.length).toBeGreaterThanOrEqual(8);
+    expect(copy).toContain('own or have permission');
+    expect(copy).toContain('does not remove c2pa');
+    expect(copy).toContain('does not remove synthid');
+    expect(copy).toContain('does not process chatgpt text');
+    expect(copy).toContain('not affiliated with or endorsed by openai');
   });
 
 });
