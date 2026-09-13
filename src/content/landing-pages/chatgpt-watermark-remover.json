@@ -1,83 +1,146 @@
 {
   "slug": "chatgpt-watermark-remover",
   "toolKind": "watermark-remover",
-  "title": "ChatGPT Watermark Remover for Authorized Images",
-  "description": "Use this ChatGPT watermark remover to clean a visible mark from a supported image you own or have permission to edit. It does not remove C2PA or SynthID provenance signals.",
+  "title": "ChatGPT Watermark Remover for Visible Image Marks",
+  "description": "Use this ChatGPT watermark remover for a visible overlay in a JPG, PNG, or WEBP image you own or may edit. Image-only; not for text or provenance data.",
   "eyebrow": "CHATGPT IMAGE CLEANUP",
-  "heading": "ChatGPT Watermark Remover for Visible Marks in Images",
-  "intro": "Clean a visible mark, label, or text overlay from an image associated with ChatGPT when you own the image or have permission to edit it. Upload one supported image, review the returned result, and download it without cropping the original frame.\n\nThis image-only tool changes visible pixels. It does not process ChatGPT text, verify image origin, or claim to remove invisible provenance signals such as C2PA Content Credentials or SynthID.",
+  "heading": "ChatGPT Watermark Remover for Visible Image Marks",
+  "intro": "Use this chatgpt watermark remover for a visible mark, label, logo, or overlay in an image you own or have permission to edit. This watermark remover chatgpt page is for visible image pixels only: it does not process ChatGPT text or claim to remove C2PA Content Credentials, SynthID, or any hidden provenance signal.",
   "benefits": [
     "Visible image cleanup",
-    "No C2PA or SynthID removal claim",
+    "JPG, PNG, and WEBP image upload",
     "Review before download"
   ],
   "process": {
     "eyebrow": "How it works",
     "heading": "How to Remove a Visible Mark from a ChatGPT Image",
-    "intro": "Process one authorized JPG, PNG, or WEBP image in three clear steps.",
+    "intro": "If you are searching how to remove chatgpt watermark or how to remove chatgpt watermarks, use this image-only workflow only for a visible overlay in an image you may edit.",
     "steps": [
       {
         "number": "01",
-        "title": "Choose an Authorized Image",
-        "description": "Select one JPG, PNG, or WEBP image up to 10 MB that you own or have permission to modify. Do not upload another creator's protected work without authorization."
+        "title": "Choose an authorized image",
+        "description": "Select one JPG, PNG, or WEBP image up to 10 MB that you own or have permission to modify."
       },
       {
         "number": "02",
-        "title": "Sign In and Process the Visible Area",
-        "description": "Upload the image, continue with Google sign-in, and start the existing image-processing flow for the visible mark or overlay."
+        "title": "Sign in and start the visible-image flow",
+        "description": "Upload the file, continue with Google sign-in, and use the existing processing flow for a visible mark or overlay."
       },
       {
         "number": "03",
-        "title": "Inspect and Download the Result",
-        "description": "Compare the original and returned image carefully. Download the result only when the edited area and surrounding details meet your needs."
+        "title": "Inspect before download",
+        "description": "Compare the original and returned image. Download only if the visible area and surrounding details meet your needs."
       }
     ]
   },
   "faq": {
     "eyebrow": "ChatGPT image FAQ",
     "heading": "Questions About the ChatGPT Watermark Remover",
-    "intro": "Understand what the page processes, which provenance signals are outside its scope, and when you may use it.",
+    "intro": "Check supported files, usage limits, and image-only boundaries before you start.",
     "items": [
       {
-        "question": "What does this ChatGPT watermark remover process?",
-        "answer": "It processes a visible mark, label, logo, or text overlay that appears in the pixels of a supported image. Only use it for an image you own or have permission to edit."
+        "question": "What does this chatgpt watermarks remover process?",
+        "answer": "It is limited to a visible mark, label, logo, or overlay that appears in the pixels of one supported image you own or are authorized to edit."
       },
       {
-        "question": "Does this tool remove C2PA Content Credentials?",
-        "answer": "No. This tool does not remove C2PA Content Credentials and is not designed to verify or change an image's provenance record."
+        "question": "Can I use it to remove ChatGPT watermark text?",
+        "answer": "No. If you are looking for how to remove chatgpt watermark in text, how to remove chatgpt watermarks in text, or a chatgpt watermark remover text workflow, this page is not the right tool. It accepts image files only and does not process copied text, prompts, documents, or responses."
       },
       {
-        "question": "Does this tool remove SynthID?",
-        "answer": "No. This tool does not remove SynthID or claim to defeat any invisible watermark or provenance technology."
+        "question": "Can this tool remove a hidden or invisible ChatGPT watermark?",
+        "answer": "No. It does not detect or remove hidden or invisible provenance signals, including C2PA Content Credentials or SynthID."
       },
       {
-        "question": "Can it remove a hidden or invisible ChatGPT watermark?",
-        "answer": "No. The workflow is limited to visible image pixels and does not detect or remove hidden or invisible provenance signals."
+        "question": "Is this a free ChatGPT watermark remover?",
+        "answer": "You can choose and preview an image before signing in. Processing requires Google sign-in and available account credits. Check your current balance before starting."
       },
       {
-        "question": "Can I use it to remove a watermark from ChatGPT text?",
-        "answer": "No. WatermarkGemini does not process ChatGPT text, copied text, documents, prompts, or responses. The uploader accepts image files only."
-      },
-      {
-        "question": "Which image formats are supported?",
-        "answer": "The uploader accepts one JPG, PNG, or WEBP image up to 10 MB at a time. It does not accept video, PDF, URL, or batch uploads on this page."
-      },
-      {
-        "question": "Do I need to sign in before processing?",
-        "answer": "You can choose and preview an image first, but Google sign-in is required before the processing request starts."
-      },
-      {
-        "question": "Will every visible mark be removed perfectly?",
-        "answer": "No result is guaranteed. Background detail, mark size, contrast, and placement can affect the returned image, so compare the original and result before downloading."
-      },
-      {
-        "question": "May I remove a visible mark from any image?",
-        "answer": "No. Only process images you own or are authorized to edit. Do not use the service to misrepresent authorship, evade licensing, or infringe intellectual property rights."
+        "question": "Which files can I upload?",
+        "answer": "You can choose one JPG, PNG, or WEBP image up to 10 MB. The page does not accept video, PDF, URL, text, or batch uploads."
       },
       {
         "question": "Is WatermarkGemini affiliated with OpenAI or ChatGPT?",
         "answer": "No. WatermarkGemini is an independent image-cleanup service and is not affiliated with or endorsed by OpenAI. ChatGPT is a trademark of OpenAI."
       }
     ]
+  },
+  "heroActions": [
+    {
+      "label": "Upload an authorized image",
+      "href": "#tool"
+    },
+    {
+      "label": "Review image requirements",
+      "href": "#image-requirements"
+    }
+  ],
+  "uploader": {
+    "hero": {
+      "eyebrow": "Visible image cleanup",
+      "heading": "Upload an authorized image",
+      "demoBadge": "Image only",
+      "demoBadgeTitle": "One JPG, PNG, or WEBP image up to 10 MB"
+    },
+    "dropzone": {
+      "dropLabel": "Drop your authorized image here",
+      "fileInputLabel": "Upload an authorized image"
+    }
+  },
+  "features": {
+    "eyebrow": "Visible image cleanup",
+    "heading": "Review Your Image from Upload to Download",
+    "intro": "Keep the focus on the visible area, work with authorized image files, and inspect the result before reuse.",
+    "items": [
+      {
+        "eyebrow": "Visible overlays",
+        "heading": "Keep the Focus on the Visible Image Area",
+        "description": "A visible label or overlay may sit over detail you want to keep in view. Use the image workflow to review the affected area and the returned image side by side before deciding whether to download.",
+        "image": "/uploads/chatgpt-feature-01-visible-overlay-review.png",
+        "imageAlt": "Authorized image workflow showing a visible overlay area and result review",
+        "imagePosition": "right"
+      },
+      {
+        "eyebrow": "Authorized visual assets",
+        "heading": "Use an Image-Only Workflow for Authorized Visual Assets",
+        "description": "A photo, product mockup, screenshot, or graphic can include a visible overlay. This flow is limited to image files you own or may edit; it is not a tool for copied ChatGPT text, documents, or prompts.",
+        "image": "/uploads/chatgpt-feature-02-authorized-image-scenarios.png",
+        "imageAlt": "Three authorized image scenarios with visible overlays",
+        "imagePosition": "left"
+      },
+      {
+        "eyebrow": "Review before reuse",
+        "heading": "Inspect the Result Before You Reuse the Image",
+        "description": "No visible-overlay result should be assumed to be perfect. Compare the returned image with the original and assess background detail, contrast, placement, and any remaining artifact before you reuse it.",
+        "image": "/uploads/chatgpt-feature-03-result-review-before-download.png",
+        "imageAlt": "Careful before-download review of a visible overlay area",
+        "imagePosition": "right"
+      }
+    ]
+  },
+  "scope": {
+    "eyebrow": "Scope and boundaries",
+    "heading": "Image Requirements and What This Tool Does Not Process",
+    "intro": "Use this page only for visible image pixels in an image you own or are authorized to edit.",
+    "items": [
+      {
+        "heading": "One supported image",
+        "description": "Choose one JPG, PNG, or WEBP image up to 10 MB. Google sign-in is required before processing starts. This page does not accept video, PDF, URL, or batch uploads."
+      },
+      {
+        "heading": "Not ChatGPT text",
+        "description": "If you want to remove chatgpt watermark from text or remove chatgpt watermarks from text, this is not the right workflow. It does not process copied text, prompts, documents, or responses."
+      },
+      {
+        "heading": "Not hidden provenance data",
+        "description": "This tool does not detect or remove hidden or invisible provenance signals, including C2PA Content Credentials or SynthID."
+      }
+    ]
+  },
+  "cta": {
+    "eyebrow": "Ready when you are",
+    "heading": "Ready to Review an Authorized Image?",
+    "description": "Upload one supported image and review the existing result flow. Use this page only for visible image pixels, not ChatGPT text or provenance data.",
+    "buttonLabel": "Upload an authorized image",
+    "buttonHref": "#tool"
   }
 }

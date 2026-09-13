@@ -117,10 +117,6 @@
         "label": "Watermark Removers",
         "children": [
           {
-            "label": "All Watermark Tools",
-            "href": "/"
-          },
-          {
             "label": "ChatGPT Watermark Remover",
             "href": "/chatgpt-watermark-remover"
           },
@@ -144,6 +140,21 @@
             "label": "Shutterstock Watermark Remover",
             "href": "/shutterstock-watermark-remover"
           }
+        ]
+      },
+      {
+        "label": "Video & Batch Tools",
+        "children": [
+          { "label": "Video Watermark Remover", "href": "/video-watermark-remover", "badge": "Coming Soon" },
+          { "label": "Sora Watermark Remover", "href": "/sora-watermark-remover", "badge": "Coming Soon" },
+          { "label": "Veo Watermark Remover", "href": "/veo-watermark-remover", "badge": "Coming Soon" },
+          { "label": "Kling Watermark Remover", "href": "/kling-watermark-remover", "badge": "Coming Soon" },
+          { "label": "TikTok Watermark Remover", "href": "/tiktok-watermark-remover", "badge": "Coming Soon" },
+          { "label": "CapCut Watermark Remover", "href": "/capcut-watermark-remover", "badge": "Coming Soon" },
+          { "label": "Instagram Watermark Remover", "href": "/instagram-watermark-remover", "badge": "Coming Soon" },
+          { "label": "Facebook Watermark Remover", "href": "/facebook-watermark-remover", "badge": "Coming Soon" },
+          { "label": "Remove Subtitle from Video", "href": "/remove-subtitle-from-video", "badge": "Coming Soon" },
+          { "label": "Batch Watermark Remover", "href": "/batch-watermark-remover", "badge": "Coming Soon" }
         ]
       },
       {

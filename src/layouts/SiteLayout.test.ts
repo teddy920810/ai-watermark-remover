@@ -42,7 +42,7 @@ describe('SiteLayout Google Analytics integration', () => {
     expect(layoutSource).toContain('class="nav-dropdown"');
     expect(layoutSource).toContain('class="nav-dropdown-trigger"');
     expect(layoutSource).toContain('(item.children ?? []).map');
-    expect(layoutSource).not.toContain('child.badge');
+    expect(layoutSource).toContain('child.badge && <span class="nav-status-badge">');
     expect(globalCss).not.toContain('.nav-badge {');
     expect(globalCss).toContain('.nav-dropdown:hover .nav-dropdown-panel');
     expect(globalCss).toContain('.nav-dropdown:has(:focus-visible) .nav-dropdown-panel');
@@ -99,7 +99,8 @@ describe('SiteLayout Google Analytics integration', () => {
 
   it('renders the CMS-managed conversion banner and grouped footer', () => {
     expect(layoutSource).toContain('class="site-cta"');
-    expect(layoutSource).toContain('site.cta.heading');
+    expect(layoutSource).toContain('cta = site.cta');
+    expect(layoutSource).toContain('{cta.heading}');
     expect(layoutSource).toContain('site.footer.groups.map');
     expect(layoutSource).toContain('class="footer-group"');
   });

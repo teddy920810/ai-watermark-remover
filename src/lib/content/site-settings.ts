@@ -23,7 +23,7 @@ const footerGroupSchema = z.object({
 const headerNavigationItemSchema = z.object({
   label: z.string().min(1),
   href: z.string().default(''),
-  children: z.array(navigationLinkSchema).default([]),
+  children: z.array(navigationLinkSchema.extend({ badge: z.string().min(1).optional() })).default([]),
 }).superRefine((item, context) => {
   if (item.children.length === 0 && item.href.length === 0) {
     context.addIssue({ code: 'custom', path: ['href'], message: 'A normal navigation link requires a URL.' });
@@ -74,6 +74,14 @@ export const uploaderCopyOverrideSchema = z.object({
 
 export type UploaderCopyOverride = z.infer<typeof uploaderCopyOverrideSchema>;
 
+export const siteCtaSchema = z.object({
+  eyebrow: z.string().min(1),
+  heading: z.string().min(1),
+  description: z.string().min(1),
+  buttonLabel: z.string().min(1),
+  buttonHref: z.string().min(1),
+});
+
 function resolveCopyGroup<T extends Record<string, string>>(shared: T, override?: Partial<T>): T {
   return Object.fromEntries(Object.entries(shared).map(([key, value]) => {
     const candidate = override?.[key];
@@ -118,13 +126,7 @@ export const siteSettingsSchema = z.object({
   }),
   uploader: uploaderCopySchema,
   processVisuals: z.array(processVisualSchema).length(3),
-  cta: z.object({
-    eyebrow: z.string().min(1),
-    heading: z.string().min(1),
-    description: z.string().min(1),
-    buttonLabel: z.string().min(1),
-    buttonHref: z.string().min(1),
-  }),
+  cta: siteCtaSchema,
   announcement: z.object({
     enabled: z.boolean(),
     text: z.string().min(1),

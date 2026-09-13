@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { siteSettingsSchema } from './site-settings';
 
@@ -56,13 +56,20 @@ describe('site settings CMS content', () => {
     expect(parsed.header.navigation[0].children).toHaveLength(2);
   });
 
-  it('keeps status labels out of header navigation links', () => {
-    const children = settings.header.navigation.flatMap((item: { children?: unknown[] }) => item.children ?? []);
-    expect(children.length).toBeGreaterThan(0);
-    for (const child of children) expect(child).not.toHaveProperty('badge');
+  it('lists every tool exactly once and marks only unopened tools Coming Soon', () => {
+    const children = siteSettingsSchema.parse(settings).header.navigation.flatMap((item) => item.children);
+    const directory = new URL('../../content/landing-pages/', import.meta.url);
+    for (const filename of readdirSync(directory).filter((file) => file.endsWith('.json'))) {
+      const page = JSON.parse(readFileSync(new URL(filename, directory), 'utf8'));
+      const matches = children.filter((link) => link.href === `/${page.slug}`);
+      expect(matches, page.slug).toHaveLength(1);
+      expect(matches[0], page.slug).toMatchObject(page.statusLabel ? { badge: page.statusLabel } : { label: expect.any(String) });
+      if (!page.statusLabel) expect(matches[0]).not.toHaveProperty('badge');
+    }
+    expect(children.some((link) => link.label === 'All Watermark Tools' || link.href === '/')).toBe(false);
   });
 
-  it('groups live tools by intent and keeps coming-soon tools out of the header', () => {
+  it('groups image editing, image watermarks, and video or batch tools by intent', () => {
     const navigation = settings.header.navigation as Array<{
       label: string;
       href?: string;
@@ -79,7 +86,6 @@ describe('site settings CMS content', () => {
       '/remove-logo-from-image',
     ]);
     expect(watermarkTools?.children?.map((item) => item.href)).toEqual([
-      '/',
       '/chatgpt-watermark-remover',
       '/gemini-watermark-remover',
       '/grok-watermark-remover',
@@ -87,7 +93,8 @@ describe('site settings CMS content', () => {
       '/pdf-watermark-remover',
       '/shutterstock-watermark-remover',
     ]);
-    expect(childHrefs).not.toEqual(expect.arrayContaining([
+    expect(navigation.find((item) => item.label === 'Video & Batch Tools')?.children).toHaveLength(10);
+    expect(childHrefs).toEqual(expect.arrayContaining([
       '/batch-watermark-remover',
       '/capcut-watermark-remover',
       '/facebook-watermark-remover',

@@ -260,6 +260,9 @@ describe('Pages CMS maintenance safeguards', () => {
     expect(landingPages?.fields).toEqual(expect.arrayContaining([
       expect.objectContaining({ name: 'statusLabel', type: 'string' }),
       expect.objectContaining({ name: 'uploader', component: 'uploader-copy-override' }),
+      expect.objectContaining({ name: 'heroActions', type: 'object' }),
+      expect.objectContaining({ name: 'scope', type: 'object' }),
+      expect.objectContaining({ name: 'cta', type: 'object' }),
     ]));
   });
 
@@ -286,8 +289,8 @@ describe('Pages CMS maintenance safeguards', () => {
       expect.objectContaining({ name: 'children', type: 'object' }),
     ]));
     const children = navigation?.fields?.find((field) => field.name === 'children');
-    expect(children?.fields).not.toEqual(expect.arrayContaining([
-      expect.objectContaining({ name: 'badge' }),
+    expect(children?.fields).toEqual(expect.arrayContaining([
+      expect.objectContaining({ name: 'badge', type: 'string' }),
     ]));
     const footer = siteSettings?.fields.find((field) => field.name === 'footer');
     expect(footer?.fields).toEqual(expect.arrayContaining([
