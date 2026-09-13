@@ -2,6 +2,47 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 import { readdirSync, readFileSync } from 'node:fs';
 
+test('ChatGPT landing modules keep source visuals and page-local actions without changing other pages', async ({ page }) => {
+  await page.goto('/chatgpt-watermark-remover');
+  await expect(page.locator('.landing-features-section .feature-item')).toHaveCount(3);
+  await expect(page.locator('.faq-list details')).toHaveCount(6);
+  await expect(page.locator('main > section')).toHaveCount(5);
+  await expect(page.locator('main > section').nth(3)).toHaveAttribute('id', 'image-requirements');
+  for (const image of await page.locator('.landing-features-section img').all()) {
+    await image.scrollIntoViewIfNeeded();
+    await expect(image).toHaveAttribute('src', /\/uploads\/chatgpt-feature-/);
+    await expect.poll(() => image.evaluate((element) => (element as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
+  }
+  await page.locator('.hero-actions').getByRole('link', { name: 'Review image requirements' }).click();
+  await expect(page).toHaveURL(/#image-requirements$/);
+  await page.locator('.site-cta a').click();
+  await expect(page).toHaveURL(/\/chatgpt-watermark-remover#tool$/);
+  await expect(page.locator('#tool')).toBeInViewport();
+  await expect(page.locator('.site-cta h2')).toHaveText('Ready to Review an Authorized Image?');
+  await page.goto('/remove-text-from-image');
+  await expect(page.locator('#image-requirements')).toHaveCount(0);
+  await expect(page.locator('.site-cta h2')).toHaveText('Make the distraction disappear.');
+});
+
+test('all tools remain reachable in the desktop and mobile header with honest availability labels', async ({ page }) => {
+  for (const width of [1440, 390]) {
+    await page.setViewportSize({ width, height: 844 });
+    await page.goto('/chatgpt-watermark-remover');
+    if (width === 390) await page.locator('[data-mobile-menu-toggle]').click();
+    const nav = page.getByRole('navigation', { name: 'Main navigation' });
+    await nav.getByRole('button', { name: 'Video & Batch Tools' }).click();
+    await expect(nav.locator('.nav-status-badge')).toHaveCount(10);
+    await expect(nav.getByRole('link', { name: 'All Watermark Tools' })).toHaveCount(0);
+    const lastTool = nav.getByRole('link', { name: 'Batch Watermark Remover Coming Soon', exact: true });
+    await lastTool.scrollIntoViewIfNeeded();
+    await expect(lastTool).toBeInViewport();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+    await lastTool.click();
+    await expect(page).toHaveURL(/\/batch-watermark-remover$/);
+    await expect(page.locator('.hero-status-badge')).toHaveText('Coming Soon');
+  }
+});
+
 test('critical public routes and SEO files are available', async ({ page, request }) => {
   for (const path of ['/', '/blog', '/privacy', '/robots.txt', '/sitemap.xml']) {
     const response = await request.get(path);

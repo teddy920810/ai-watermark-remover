@@ -3,7 +3,7 @@ import { glob } from 'astro/loaders';
 import { z } from 'zod';
 import { publishedAtSchema } from './lib/content/published-date';
 import { homepageSchema } from './lib/content/homepage';
-import { siteSettingsSchema, uploaderCopyOverrideSchema } from './lib/content/site-settings';
+import { siteCtaSchema, siteSettingsSchema, uploaderCopyOverrideSchema } from './lib/content/site-settings';
 import { imageSettingsSchema } from './lib/content/image-metadata';
 import { trustedHtmlSchema } from './lib/content/trusted-html';
 import { sitemapSettingsSchema } from './lib/content/sitemap-settings';
@@ -111,6 +111,7 @@ const landingPages = defineCollection({
     heading: z.string().min(1),
     intro: z.string().min(1),
     benefits: z.array(z.string().min(1)).min(1),
+    heroActions: z.array(z.object({ label: z.string().min(1), href: z.string().min(1) })).min(1).max(2).optional(),
     uploader: uploaderCopyOverrideSchema.optional(),
     process: z.object({
       eyebrow: z.string().min(1),
@@ -125,6 +126,13 @@ const landingPages = defineCollection({
       })).length(3),
     }),
     features: landingFeaturesSchema.optional(),
+    scope: z.object({
+      eyebrow: z.string().min(1),
+      heading: z.string().min(1),
+      intro: z.string().min(1),
+      items: z.array(z.object({ heading: z.string().min(1), description: z.string().min(1) })).min(1),
+    }).optional(),
+    cta: siteCtaSchema.optional(),
     faq: z.object({
       eyebrow: z.string().min(1),
       heading: z.string().min(1),

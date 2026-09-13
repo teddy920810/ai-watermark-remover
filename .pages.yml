@@ -348,6 +348,10 @@ content:
                     type: string
                     required: true
                     description: 下拉菜单中用户可点击的文字。
+                  - name: badge
+                    label: 工具状态标签（可选）
+                    type: string
+                    description: 未开放工具填写 Coming Soon；已开放工具留空。
                   - name: href
                     label: 下拉链接地址｜HREF
                     type: string
@@ -1272,6 +1276,69 @@ content:
         component: uploader-copy-override
         label: 当前工具页上传组件独立文案（可选）
         description: 只填写当前工具页需要自定义的字段；留空时逐项继承公共文案。
+      - name: heroActions
+        label: Hero 按钮（可选）
+        type: object
+        list:
+          min: 1
+          max: 2
+        fields:
+          - name: label
+            label: 按钮文字
+            type: string
+            required: true
+          - name: href
+            label: 按钮目标
+            type: string
+            required: true
+            description: 可使用 #tool 返回当前工具，或 #image-requirements 跳到适用范围。
+      - name: scope
+        label: 适用范围与限制（可选）
+        type: object
+        description: 显示在 Features 后、FAQ 前；不填写时不显示。
+        fields:
+          - name: eyebrow
+            label: 模块小标题
+            type: string
+          - name: heading
+            label: 模块标题｜H2
+            type: string
+          - name: intro
+            label: 模块简介
+            type: text
+          - name: items
+            label: 范围说明
+            type: object
+            list: true
+            fields:
+              - name: heading
+                label: 条目标题｜H3
+                type: string
+                required: true
+              - name: description
+                label: 条目说明
+                type: text
+                required: true
+      - name: cta
+        label: 当前工具页结尾 CTA（可选）
+        type: object
+        description: 不填写时继承站点公共 CTA；当前工具的按钮可指向 #tool。
+        fields:
+          - name: eyebrow
+            label: 小标题
+            type: string
+          - name: heading
+            label: 标题｜H2
+            type: string
+          - name: description
+            label: 说明
+            type: text
+          - name: buttonLabel
+            label: 按钮文字
+            type: string
+          - name: buttonHref
+            label: 按钮目标
+            type: string
       - name: process
         label: 使用步骤
         type: object

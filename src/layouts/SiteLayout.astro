@@ -5,6 +5,7 @@ import AuthControls from '../components/auth/AuthControls';
 import { getCollection } from 'astro:content';
 import { ArrowRight, ChevronDown, Menu, X } from '@lucide/astro';
 import { resolvePublicImageSource } from '../lib/content/image-fallback';
+import type { SiteSettings } from '../lib/content/site-settings';
 
 interface Props {
   title?: string;
@@ -13,6 +14,7 @@ interface Props {
   type?: 'website' | 'article';
   schema?: Record<string, unknown> | Array<Record<string, unknown>>;
   noindex?: boolean;
+  cta?: SiteSettings['cta'];
 }
 
 const [siteEntry] = await getCollection('siteSettings');
@@ -26,6 +28,7 @@ const {
   type = 'website',
   schema,
   noindex = false,
+  cta = site.cta,
 } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const siteLogo = resolvePublicImageSource(site.logo);
@@ -98,7 +101,7 @@ const schemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [defaultS
           <div class="nav-dropdown">
             <button class="nav-dropdown-trigger" type="button" aria-haspopup="true" aria-expanded="false" aria-controls={`nav-dropdown-${index}`} data-nav-dropdown-trigger>{item.label}<ChevronDown class="nav-chevron" size={15} aria-hidden="true" /></button>
             <div class="nav-dropdown-panel" id={`nav-dropdown-${index}`}>
-              {(item.children ?? []).map((child) => <a href={child.href}>{child.label}</a>)}
+              {(item.children ?? []).map((child) => <a href={child.href}><span>{child.label}</span>{child.badge && <span class="nav-status-badge">{child.badge}</span>}</a>)}
             </div>
           </div>
         ) : <a href={item.href}>{item.label}</a>)}
@@ -107,8 +110,8 @@ const schemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [defaultS
     </header>
     <main><slot /></main>
     <section class="site-cta" aria-labelledby="site-cta-heading">
-      <div><span class="eyebrow">{site.cta.eyebrow}</span><h2 id="site-cta-heading">{site.cta.heading}</h2><p>{site.cta.description}</p></div>
-      <a class="cta-button" href={site.cta.buttonHref}>{site.cta.buttonLabel}<ArrowRight size={18} aria-hidden="true" /></a>
+      <div><span class="eyebrow">{cta.eyebrow}</span><h2 id="site-cta-heading">{cta.heading}</h2><p>{cta.description}</p></div>
+      <a class="cta-button" href={cta.buttonHref}>{cta.buttonLabel}<ArrowRight size={18} aria-hidden="true" /></a>
     </section>
     <footer class="site-footer">
       <div class="footer-main"><div class="footer-brand"><a class="brand" href="/"><img class="brand-logo" src={siteLogo} alt="" data-image-fallback={siteLogo === site.logo ? undefined : 'true'} /><span>{site.name}</span></a><p>{site.footer.tagline}</p></div>

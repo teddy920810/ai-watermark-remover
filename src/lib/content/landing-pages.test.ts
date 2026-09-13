@@ -178,12 +178,19 @@ describe('tool landing-page usage steps', () => {
     });
     expect(page.statusLabel).toBeUndefined();
     expect(page.process.steps).toHaveLength(3);
-    expect(page.faq.items.length).toBeGreaterThanOrEqual(8);
+    expect(page.faq.items).toHaveLength(6);
+    expect(page.features.items).toHaveLength(3);
+    expect(page.features.items.map((item: { imagePosition: string }) => item.imagePosition)).toEqual(['right', 'left', 'right']);
+    expect(page.scope.items).toHaveLength(3);
+    expect(page.cta.buttonHref).toBe('#tool');
+    expect(page.heroActions.map((action: { href: string }) => action.href)).toEqual(['#tool', '#image-requirements']);
     expect(copy).toContain('own or have permission');
-    expect(copy).toContain('does not remove c2pa');
-    expect(copy).toContain('does not remove synthid');
+    expect(copy).toContain('c2pa content credentials');
+    expect(copy).toContain('synthid');
+    expect(copy).toContain('does not detect or remove hidden or invisible');
     expect(copy).toContain('does not process chatgpt text');
     expect(copy).toContain('not affiliated with or endorsed by openai');
+    expect(copy).not.toMatch(/hold|serp|release blocker/i);
   });
 
 });

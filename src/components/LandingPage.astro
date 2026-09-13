@@ -34,7 +34,7 @@ const faqSchema = visibleFaqItems.length > 0 ? {
 } : undefined;
 ---
 
-<SiteLayout title={page.title} description={page.description} schema={faqSchema}>
+<SiteLayout title={page.title} description={page.description} schema={faqSchema} cta={page.cta}>
   <section class="hero compact-hero">
     <div class="hero-inner">
       <div class="hero-copy">
@@ -45,6 +45,7 @@ const faqSchema = visibleFaqItems.length > 0 ? {
         <h1>{page.heading}</h1>
         <p>{page.intro}</p>
         <ul class="check-list">{page.benefits.map((benefit) => <li><CircleCheck size={19} stroke-width={2.5} />{benefit}</li>)}</ul>
+        {page.heroActions && <div class="hero-actions">{page.heroActions.map((action, index) => <a class={index === 0 ? 'cta-button' : 'text-link'} href={action.href}>{action.label}</a>)}</div>}
       </div>
       <div id="tool" class="hero-tool">
         {page.toolKind === 'background-remover'
@@ -77,6 +78,11 @@ const faqSchema = visibleFaqItems.length > 0 ? {
       </div>
     </section>
   ) : null}
+
+  {page.scope && <section class="section landing-scope-section" id="image-requirements" aria-labelledby="scope-heading">
+    <div class="section-heading"><span class="eyebrow">{page.scope.eyebrow}</span><h2 id="scope-heading">{page.scope.heading}</h2><p>{page.scope.intro}</p></div>
+    <div class="scope-items">{page.scope.items.map((item) => <article><h3>{item.heading}</h3><p>{item.description}</p></article>)}</div>
+  </section>}
 
   {visibleFaqItems.length > 0 && <section class="section faq-section">
     <div class="section-heading"><span class="eyebrow">{page.faq.eyebrow}</span><h2>{page.faq.heading}</h2><p>{page.faq.intro}</p></div>
