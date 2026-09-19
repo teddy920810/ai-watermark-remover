@@ -2,32 +2,136 @@
   "draft": false,
   "slug": "capcut-watermark-remover",
   "toolKind": "watermark-remover",
-  "title": "CapCut Watermark Remover Online | WatermarkGemini",
-  "description": "Use the CapCut watermark remover page to prepare supported CapCut exports for watermark cleanup online.",
-  "eyebrow": "CAPCUT WATERMARK REMOVER",
+  "title": "CapCut Watermark Remover Online — Coming Soon | WatermarkGemini",
+  "description": "Explore WatermarkGemini’s forthcoming CapCut watermark remover online page. Learn the permission-first steps to prepare image exports while the dedicated workflow is coming soon.",
+  "eyebrow": "COMING SOON",
   "statusLabel": "Coming Soon",
-  "heading": "CapCut Watermark Remover",
-  "intro": "A dedicated page for cleaning visible watermarks from CapCut exports you own or have permission to edit.",
-  "benefits": ["Online workflow", "Simple upload steps", "Built for authorized edits"],
-  "uploader": { "dropzone": { "dropLabel": "Coming Soon" } },
+  "heading": "CapCut Watermark Remover — Coming Soon",
+  "intro": "WatermarkGemini is preparing a dedicated page for visible-watermark cleanup on CapCut image exports you own or are authorized to edit. The CapCut-specific processing workflow is not available yet.\n\nLooking for how to remove capcut watermark from an image you are allowed to modify? Start by confirming ownership, saving the original, and checking the available tools before you upload anything.",
+  "benefits": [
+    "CapCut workflow: Coming Soon"
+  ],
+  "uploader": {
+    "hero": {
+      "eyebrow": "COMING SOON",
+      "heading": "CapCut workflow: Coming Soon",
+      "demoBadge": "Coming Soon",
+      "demoBadgeTitle": "The CapCut-specific processing workflow is not available yet."
+    },
+    "dropzone": {
+      "dropLabel": "Coming Soon"
+    }
+  },
   "process": {
-    "eyebrow": "HOW IT WORKS",
-    "heading": "How to Use the CapCut Watermark Remover",
-    "intro": "The initial workflow is organized into three clear steps for future operations updates.",
+    "eyebrow": "HOW TO",
+    "heading": "How to prepare for a CapCut watermark cleanup",
+    "intro": "The dedicated CapCut workflow is coming soon.",
     "steps": [
-      { "number": "01", "title": "Choose Your Export", "description": "Select a CapCut export that you own or are authorized to edit." },
-      { "number": "02", "title": "Mark the Watermark", "description": "Identify the visible watermark area that should be cleaned." },
-      { "number": "03", "title": "Review the Result", "description": "Preview the processed file before downloading the approved result." }
+      {
+        "number": "01",
+        "title": "Confirm you can edit the export.",
+        "description": "Use an image you own or have permission to modify, and retain the original file.",
+        "image": "/uploads/capcut-operations-feature-1.png",
+        "imageAlt": "Use an export you can edit"
+      },
+      {
+        "number": "02",
+        "title": "Locate the visible mark.",
+        "description": "Note the area you want to evaluate and avoid altering source material you are not authorized to change.",
+        "image": "/uploads/capcut-operations-feature-2.png",
+        "imageAlt": "Identify the visible area"
+      },
+      {
+        "number": "03",
+        "title": "Check the tool status.",
+        "description": "The dedicated CapCut workflow is coming soon. Review the live page for supported-file and processing details before you submit a file.",
+        "image": "/uploads/capcut-operations-feature-3.png",
+        "imageAlt": "Review before you export"
+      }
     ]
   },
   "faq": {
     "eyebrow": "FAQ",
     "heading": "CapCut Watermark Remover FAQs",
-    "intro": "Initial answers for this tool page can be expanded in Pages CMS.",
+    "intro": "The dedicated CapCut workflow is Coming Soon.",
     "items": [
-      { "enabled": true, "question": "What is this CapCut watermark remover page for?", "answer": "It is being prepared for removing visible watermarks from supported CapCut exports through an online workflow." },
-      { "enabled": true, "question": "Is the tool available now?", "answer": "The page is live for discovery, while the dedicated processing workflow is marked Coming Soon." },
-      { "enabled": true, "question": "Can I edit any CapCut export?", "answer": "Only process files you own or have permission to modify." }
+      {
+        "enabled": true,
+        "question": "Is this a capcut watermark remover?",
+        "answer": "This is WatermarkGemini’s discovery page for a forthcoming CapCut-specific workflow. The page currently says Coming Soon, so it must not promise that a file can be processed today."
+      },
+      {
+        "enabled": true,
+        "question": "How to remove capcut watermark?",
+        "answer": "If you are asking how do i remove capcut watermark or how do i remove the capcut watermark, first confirm that you own the export or have permission to edit it. This page does not yet provide a live CapCut-specific processing workflow."
+      },
+      {
+        "enabled": true,
+        "question": "Can I remove capcut watermark from any export?",
+        "answer": "No universal promise should be made. Whether you can change an image depends on ownership, permission, and the available tool’s verified support. This also applies to “how do you remove capcut watermark” searches."
+      },
+      {
+        "enabled": true,
+        "question": "Can you remove capcut watermark online free?",
+        "answer": "Not on the dedicated workflow yet. The page must not claim free processing, output availability, or successful removal until product testing confirms it."
+      },
+      {
+        "enabled": true,
+        "question": "Is there a capcut watermark remover free option?",
+        "answer": "The dedicated CapCut workflow is Coming Soon. Do not equate an existing free image-cleanup offer with this unreleased workflow."
+      },
+      {
+        "enabled": true,
+        "question": "Can you remove capcut watermark?",
+        "answer": "Can you remove the capcut watermark, can i remove the capcut watermark, and can you remove capcut watermark are permission-and-product questions. The accurate current answer for this page is that the dedicated process is not available yet."
+      }
     ]
+  },
+  "heroActions": [
+    {
+      "label": "See available image cleanup tools",
+      "href": "/#tool"
+    }
+  ],
+  "features": {
+    "eyebrow": "CAPCUT IMAGE EXPORTS",
+    "heading": "How to prepare for a CapCut watermark cleanup",
+    "intro": "The CapCut-specific processing workflow is not available yet.",
+    "items": [
+      {
+        "eyebrow": "CAPCUT IMAGE EXPORTS",
+        "heading": "Use an export you can edit",
+        "description": "Start with an image export you own or have permission to change, so the cleanup decision begins with the right file.",
+        "listItems": [],
+        "imagePosition": "right",
+        "image": "/uploads/capcut-operations-feature-1.png",
+        "imageAlt": "Use an export you can edit"
+      },
+      {
+        "eyebrow": "CAPCUT IMAGE EXPORTS",
+        "heading": "Identify the visible area",
+        "description": "Mark only the visible overlay area you intend to address, then review the surrounding image before you continue.",
+        "listItems": [],
+        "imagePosition": "left",
+        "image": "/uploads/capcut-operations-feature-2.png",
+        "imageAlt": "Identify the visible area"
+      },
+      {
+        "eyebrow": "CAPCUT IMAGE EXPORTS",
+        "heading": "Review before you export",
+        "description": "Compare the preview with the source and decide whether the result is appropriate before you export a new copy.",
+        "listItems": [],
+        "imagePosition": "right",
+        "image": "/uploads/capcut-operations-feature-3.png",
+        "imageAlt": "Review before you export"
+      }
+    ]
+  },
+  "cta": {
+    "eyebrow": "COMING SOON",
+    "heading": "CapCut workflow: Coming Soon",
+    "description": "WatermarkGemini is preparing a dedicated page for visible-watermark cleanup on CapCut image exports you own or are authorized to edit. The CapCut-specific processing workflow is not available yet.",
+    "buttonLabel": "See available image cleanup tools",
+    "buttonHref": "/#tool"
   }
 }
