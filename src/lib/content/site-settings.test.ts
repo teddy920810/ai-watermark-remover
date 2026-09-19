@@ -61,6 +61,7 @@ describe('site settings CMS content', () => {
     const directory = new URL('../../content/landing-pages/', import.meta.url);
     for (const filename of readdirSync(directory).filter((file) => file.endsWith('.json'))) {
       const page = JSON.parse(readFileSync(new URL(filename, directory), 'utf8'));
+      if (page.draft) continue;
       const matches = children.filter((link) => link.href === `/${page.slug}`);
       expect(matches, page.slug).toHaveLength(1);
       expect(matches[0], page.slug).toMatchObject(page.statusLabel ? { badge: page.statusLabel } : { label: expect.any(String) });

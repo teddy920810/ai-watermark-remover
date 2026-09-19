@@ -84,6 +84,7 @@ test('blog tables scroll inside the article without widening the mobile page', a
   const contentDirectory = new URL('../../src/content/blog/', import.meta.url);
   const routes = readdirSync(contentDirectory, { encoding: 'utf8' })
     .filter((fileName) => fileName.endsWith('.md'))
+    .filter((fileName) => !/^draft:\s*true\s*$/m.test(readFileSync(new URL(fileName, contentDirectory), 'utf8')))
     .map((fileName) => `/blog/${fileName.replace(/\.md$/, '')}`);
   await page.setViewportSize({ width: 390, height: 844 });
 
@@ -278,8 +279,8 @@ test('tool landing pages render their own usage steps and FAQ sections', async (
     const content = JSON.parse(
       readFileSync(new URL(fileName, contentDirectory), 'utf8'),
     );
-    return { path: `/${content.slug}`, faqHeading: content.faq.heading as string };
-  });
+    return { path: `/${content.slug}`, faqHeading: content.faq.heading as string, draft: content.draft === true };
+  }).filter((content) => !content.draft);
   expect(new Set(pages.map(({ faqHeading }) => faqHeading)).size).toBe(pages.length);
 
   for (const { path, faqHeading } of pages) {

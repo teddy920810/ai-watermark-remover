@@ -1,0 +1,35 @@
+name: Create CMS draft from template
+
+# Official Pages CMS action contract: https://pagescms.org/docs/configuration/actions/
+on:
+  workflow_dispatch:
+    inputs:
+      payload:
+        description: Pages CMS payload as JSON
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: cms-create-draft
+  cancel-in-progress: false
+
+jobs:
+  create:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Initialize a new draft without overwriting existing content
+        run: node scripts/create-cms-draft.mjs
+        env:
+          CMS_ACTION_PAYLOAD: ${{ inputs.payload }}

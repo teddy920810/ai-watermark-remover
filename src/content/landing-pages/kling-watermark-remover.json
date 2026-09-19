@@ -1,4 +1,5 @@
 {
+  "draft": false,
   "slug": "kling-watermark-remover",
   "title": "Kling Watermark Remover for Exported Image Frames",
   "description": "Use this Kling watermark remover for an authorized still frame saved as JPG, PNG, or WEBP. The current online tool processes images only.",

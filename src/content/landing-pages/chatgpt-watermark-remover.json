@@ -1,4 +1,5 @@
 {
+  "draft": false,
   "slug": "chatgpt-watermark-remover",
   "toolKind": "watermark-remover",
   "title": "ChatGPT Watermark Remover for Visible Image Marks",

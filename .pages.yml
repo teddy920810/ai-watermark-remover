@@ -1093,6 +1093,20 @@ content:
     path: src/content/blog
     format: yaml-frontmatter
     filename: "{fields.slug}.md"
+    actions:
+      - name: create-blog-draft
+        label: 从模板新建文章 / New article from template
+        scope: collection
+        workflow: cms-create-draft.yml
+        ref: main
+        cancelable: false
+        confirm:
+          title: 从标准模板创建文章草稿
+          message: 填写标题和唯一网址；创建成功后刷新列表继续编辑。草稿不会公开。请在 main 分支使用。
+          button: 创建草稿
+        fields:
+          - { name: title, label: 文章标题, type: text, required: true }
+          - { name: slug, label: 'URL 路径（小写字母、数字和连字符，例如 image-cleanup-guide）', type: text, required: true }
     operations:
       create: true
       rename: false
@@ -1171,7 +1185,8 @@ content:
       - name: draft
         label: 草稿（不发布）/ Draft
         type: boolean
-        default: false
+        default: true
+        description: 新文章默认不公开。替换模板文字与占位图、核对内容后关闭并保存；发布检查不通过时线上保留上一版。
       - name: contentMode
         label: 正文格式 / Content mode
         type: select
@@ -1207,12 +1222,26 @@ content:
     path: src/content/landing-pages
     format: json
     filename: "{fields.slug}.json"
+    actions:
+      - name: create-landing-draft
+        label: 从模板新建工具页 / New tool page from template
+        scope: collection
+        workflow: cms-create-draft.yml
+        ref: main
+        cancelable: false
+        confirm:
+          title: 从标准模板创建工具页草稿
+          message: 填写标题和唯一网址；创建成功后刷新列表继续编辑。仅复用已有工具能力，不自动加入导航。请在 main 分支使用。
+          button: 创建草稿
+        fields:
+          - { name: title, label: 工具页标题, type: text, required: true }
+          - { name: slug, label: 'URL 路径（小写字母、数字和连字符，例如 image-cleanup-tool）', type: text, required: true }
     operations:
       create: true
       rename: false
       delete: true
     view:
-      fields: [title, slug]
+      fields: [title, slug, draft]
       primary: title
       sort: [title]
       search: [title, slug, description]
@@ -1224,6 +1253,11 @@ content:
         pattern:
           regex: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
           message: 只能使用小写字母、数字和连字符，例如 remove-logo-from-image。
+      - name: draft
+        label: 草稿（不发布）/ Draft
+        type: boolean
+        default: true
+        description: 草稿不生成公开页面，也不进入导航、首页工具列表或站点地图。Coming Soon 是公开标签，不是草稿。完成后关闭并保存；检查通过、部署成功才会上线。
       - name: toolKind
         label: 工具交互类型 / Tool experience
         type: select

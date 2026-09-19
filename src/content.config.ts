@@ -1,6 +1,8 @@
 import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'zod';
+import { fileURLToPath } from 'node:url';
+import { assertCmsPublication } from '../scripts/cms-publication.mjs';
 import { publishedAtSchema } from './lib/content/published-date';
 import { homepageSchema } from './lib/content/homepage';
 import { siteCtaSchema, siteSettingsSchema, uploaderCopyOverrideSchema } from './lib/content/site-settings';
@@ -12,6 +14,9 @@ import {
   legalPageSchema,
   notFoundSettingsSchema,
 } from './lib/content/marketing-settings';
+
+// Applies to astro sync, CMS validation, CI and every deployment build.
+assertCmsPublication(fileURLToPath(new URL('..', import.meta.url)));
 
 const siteSettings = defineCollection({
   loader: glob({ base: './src/content/settings', pattern: 'site.json' }),
@@ -49,6 +54,7 @@ const homepage = defineCollection({
 });
 
 const blogEntrySchema = z.object({
+    templateVersion: z.literal(1).optional(),
     slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
     title: z.string().min(1),
     seoTitle: z.string().min(1).optional(),
@@ -102,7 +108,9 @@ const landingFeaturesSchema = z.object({
 const landingPages = defineCollection({
   loader: glob({ base: './src/content/landing-pages', pattern: '**/*.json' }),
   schema: z.object({
+    templateVersion: z.literal(1).optional(),
     slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
+    draft: z.boolean().default(false),
     toolKind: z.enum(['watermark-remover', 'background-remover', 'object-remover']).default('watermark-remover'),
     title: z.string().min(1),
     description: z.string().min(1),
