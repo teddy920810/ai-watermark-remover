@@ -1,5 +1,5 @@
 ---
-slug: how-to-remove-tiktok-watermark
+slug: how-to-remove-watermark-tiktok
 title: How to Remove a TikTok Watermark From a Video You Own
 seoTitle: How to Remove TikTok Watermarks From Your Own Videos
 description: Remove a TikTok watermark from your own saved video. Compare

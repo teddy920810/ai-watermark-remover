@@ -4,6 +4,11 @@
   "buildCommand": "npm run verify:deploy",
   "redirects": [
     {
+      "source": "/blog/how-to-remove-tiktok-watermark",
+      "destination": "/blog/how-to-remove-watermark-tiktok",
+      "permanent": true
+    },
+    {
       "source": "/index.html",
       "destination": "/",
       "permanent": true
