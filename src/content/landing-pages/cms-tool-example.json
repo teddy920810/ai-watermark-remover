@@ -1,0 +1,98 @@
+{
+  "slug": "cms-tool-example",
+  "draft": true,
+  "templateVersion": 1,
+  "toolKind": "watermark-remover",
+  "title": "工具页写作示例（草稿，请修改后发布）",
+  "description": "【待替换】概括工具用途、适用对象与实际能力。",
+  "eyebrow": "【待替换】工具类别",
+  "heading": "工具页写作示例（草稿，请修改后发布）",
+  "intro": "【待替换】说明用户可以完成什么操作，不承诺尚未具备的能力。",
+  "benefits": [
+    "【待替换】优点一",
+    "【待替换】优点二",
+    "【待替换】优点三"
+  ],
+  "heroActions": [
+    {
+      "label": "【待替换】开始使用",
+      "href": "#tool"
+    }
+  ],
+  "process": {
+    "eyebrow": "【待替换】使用方法",
+    "heading": "【待替换】三步完成操作",
+    "intro": "【待替换】描述操作前需要准备什么。",
+    "steps": [
+      {
+        "number": "01",
+        "title": "【待替换】准备图片",
+        "description": "【待替换】填写支持的图片格式与授权要求。"
+      },
+      {
+        "number": "02",
+        "title": "【待替换】进行处理",
+        "description": "【待替换】按真实交互说明操作步骤。"
+      },
+      {
+        "number": "03",
+        "title": "【待替换】检查并下载",
+        "description": "【待替换】说明检查效果及下载结果的方法。"
+      }
+    ]
+  },
+  "features": {
+    "eyebrow": "【待替换】功能介绍",
+    "heading": "【待替换】功能与使用场景",
+    "intro": "【待替换】用具体场景介绍能力。",
+    "items": [
+      {
+        "enabled": true,
+        "eyebrow": "【待替换】场景类别",
+        "heading": "【待替换】场景标题",
+        "description": "【待替换】描述场景、用途和限制。",
+        "listItems": [
+          "【待替换】功能要点"
+        ],
+        "image": "/images/image-placeholder.svg",
+        "imageAlt": "【待替换】准确描述配图内容",
+        "imagePosition": "right"
+      }
+    ]
+  },
+  "scope": {
+    "eyebrow": "【待替换】适用范围",
+    "heading": "【待替换】使用前须知",
+    "intro": "【待替换】说明授权要求和能力边界。",
+    "items": [
+      {
+        "heading": "【待替换】限制",
+        "description": "【待替换】仅处理拥有权利或获得授权的内容；补充具体限制。"
+      }
+    ]
+  },
+  "faq": {
+    "eyebrow": "【待替换】常见问题",
+    "heading": "【待替换】用户关心的问题",
+    "intro": "【待替换】简要介绍。",
+    "items": [
+      {
+        "enabled": true,
+        "question": "【待替换】支持哪些图片？",
+        "answer": "【待替换】按真实能力回答。"
+      },
+      {
+        "enabled": true,
+        "question": "【待替换】如何收费？",
+        "answer": "【待替换】核对当前权益规则再填写。"
+      }
+    ]
+  },
+  "cta": {
+    "eyebrow": "【待替换】行动提示",
+    "heading": "【待替换】开始使用工具",
+    "description": "【待替换】用一句话总结用途。",
+    "buttonLabel": "【待替换】开始使用",
+    "buttonHref": "#tool"
+  }
+}
