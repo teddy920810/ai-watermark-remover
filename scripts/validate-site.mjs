@@ -2,8 +2,11 @@ import { readFile, readdir } from 'node:fs/promises';
 import path from 'node:path';
 import process from 'node:process';
 import { collectSiteValidationIssues, collectSiteValidationWarnings } from './site-validator.mjs';
+import { assertCmsPublication, readCmsDocuments } from './cms-publication.mjs';
 
 const root = process.cwd();
+assertCmsPublication(root);
+const draftPaths = new Set(readCmsDocuments(root).filter(({ data }) => data.draft === true).map(({ path }) => path));
 
 async function walkFiles(relativeDirectory) {
   const directory = path.join(root, relativeDirectory);
@@ -15,7 +18,7 @@ async function walkFiles(relativeDirectory) {
   return nested.flat();
 }
 
-const contentPaths = (await walkFiles('src/content')).filter((file) => /\.(?:json|md|mdx)$/.test(file));
+const contentPaths = (await walkFiles('src/content')).filter((file) => /\.(?:json|md|mdx)$/.test(file) && !draftPaths.has(file));
 const contentDocuments = await Promise.all(contentPaths.map(async (file) => {
   const source = await readFile(path.join(root, file), 'utf8');
   return { path: file, value: file.endsWith('.json') ? JSON.parse(source) : source };

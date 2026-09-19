@@ -1,4 +1,5 @@
 {
+  "draft": false,
   "slug": "notebooklm-watermark-remover",
   "title": "NotebookLM Watermark Remover for Image Exports",
   "description": "Use this NotebookLM watermark remover for an authorized screenshot or image export. Process one JPG, PNG, or WEBP image online.",

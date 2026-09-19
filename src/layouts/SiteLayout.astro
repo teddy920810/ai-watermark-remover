@@ -6,6 +6,7 @@ import { getCollection } from 'astro:content';
 import { ArrowRight, ChevronDown, Menu, X } from '@lucide/astro';
 import { resolvePublicImageSource } from '../lib/content/image-fallback';
 import type { SiteSettings } from '../lib/content/site-settings';
+import { publicNavigation } from '../lib/content/entries';
 
 interface Props {
   title?: string;
@@ -20,6 +21,8 @@ interface Props {
 const [siteEntry] = await getCollection('siteSettings');
 if (!siteEntry) throw new Error('Site settings CMS content is missing.');
 const site = siteEntry.data;
+const hiddenToolPaths = new Set((await getCollection('landingPages')).filter(({ data }) => data.draft).map(({ data }) => `/${data.slug}`));
+const navigation = publicNavigation(site.header.navigation, hiddenToolPaths);
 
 const {
   title = site.defaultTitle,
@@ -97,7 +100,7 @@ const schemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [defaultS
         <Menu class="menu-open-icon" size={21} aria-hidden="true" /><X class="menu-close-icon" size={21} aria-hidden="true" />
       </button>
       <nav id="site-navigation" aria-label="Main navigation">
-        {site.header.navigation.map((item, index) => (item.children?.length ?? 0) > 0 ? (
+        {navigation.map((item, index) => (item.children?.length ?? 0) > 0 ? (
           <div class="nav-dropdown">
             <button class="nav-dropdown-trigger" type="button" aria-haspopup="true" aria-expanded="false" aria-controls={`nav-dropdown-${index}`} data-nav-dropdown-trigger>{item.label}<ChevronDown class="nav-chevron" size={15} aria-hidden="true" /></button>
             <div class="nav-dropdown-panel" id={`nav-dropdown-${index}`}>

@@ -1,4 +1,5 @@
 {
+  "draft": false,
   "slug": "grok-watermark-remover",
   "title": "Grok Watermark Remover for Authorized Images",
   "description": "Use this Grok watermark remover for a supported image you own or have permission to edit. Upload JPG, PNG, or WEBP files online.",

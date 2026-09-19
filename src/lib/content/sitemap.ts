@@ -8,6 +8,7 @@ interface BlogSitemapSource {
 
 interface LandingSitemapSource {
   slug: string;
+  draft?: boolean;
 }
 
 export interface SitemapEntry {
@@ -38,7 +39,7 @@ export function buildSitemapEntries({
     ...posts
       .filter((post) => !post.draft)
       .map((post) => withRule(`/blog/${post.slug}`, post.publishedAt, settings.groups.blogPosts)),
-    ...landingPages.map((page) => withRule(`/${page.slug}`, settings.lastmod, settings.groups.landingPages)),
+    ...landingPages.filter((page) => !page.draft).map((page) => withRule(`/${page.slug}`, settings.lastmod, settings.groups.landingPages)),
   ];
 
   const overrides = new Map(settings.overrides.map((override) => [override.path, override]));

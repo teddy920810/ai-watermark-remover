@@ -24,7 +24,7 @@ const blogPosts = sortBlogEntries(await getCollection('blog')).slice(0, 6);
 const landingPages = await getCollection('landingPages');
 const activeLandingPages = new Map(
   landingPages
-    .filter(({ data }) => !data.statusLabel)
+    .filter(({ data }) => !data.draft && !data.statusLabel)
     .map(({ data }) => [`/${data.slug}`, data]),
 );
 const configuredToolLinks = site.header.navigation.flatMap((item) => item.children ?? []);
