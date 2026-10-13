@@ -30,10 +30,10 @@ jobs:
       - name: Run public production smoke
         run: npm run test:smoke:production
         env:
-          SMOKE_BASE_URL: https://watermarkgemini.com
+          SMOKE_BASE_URL: https://www.watermarkgemini.com
       - name: Run background-removal functional smoke
         if: github.event_name == 'workflow_dispatch' && inputs.functional_operation == 'background-removal'
         run: npm run test:smoke:background-removal
         env:
-          SMOKE_BASE_URL: https://watermarkgemini.com
+          SMOKE_BASE_URL: https://www.watermarkgemini.com
           SMOKE_SESSION_COOKIE: ${{ secrets.PRODUCTION_SMOKE_SESSION_COOKIE }}
