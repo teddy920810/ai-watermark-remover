@@ -6,44 +6,100 @@
     "eyebrow": "100% Free · Online · Private",
     "heading": "Free Watermark Remover",
     "highlightedHeading": " from Images",
-    "intro": "Remove watermark from image online for free. Our AI watermark remover for photo to clean up visible watermarks, logos, text, and stamps while preserving the surrounding image details. WatermarkGemni is the best picture watermark remover free online for you with no-signup.",
+    "intro": "Remove watermark from image online for free with WatermarkGemini. Our AI watermark remover detects visible watermarks, logos, text, stamps, and other overlays while working to keep surrounding image details clear and natural.",
     "trustItems": [
       "✓ 100% Free",
       "✓ Up to 10 MB",
       "✓ Deleted After 24 Hours"
-    ]
+    ],
+    "samples": [
+      {
+        "id": "serum",
+        "label": "Serum",
+        "watermark": "watermark",
+        "image": "/uploads/home-blueprint/features/hero-sample-01-serum.png"
+      },
+      {
+        "id": "sunset",
+        "label": "Sunset",
+        "watermark": "2025.06.18 19:42",
+        "image": "/uploads/home-blueprint/features/hero-sample-02-sunset.png"
+      },
+      {
+        "id": "tote",
+        "label": "Tote bag",
+        "watermark": "VG",
+        "image": "/uploads/home-blueprint/features/hero-sample-03-tote.png"
+      },
+      {
+        "id": "contract",
+        "label": "Contract",
+        "watermark": "Please review",
+        "image": "/uploads/home-blueprint/features/hero-sample-04-contract.png"
+      }
+    ],
+    "previewNote": "Interactive illustrations — actual results depend on your image.",
+    "privacyNote": "Private upload · Automatically deleted after 24 hours"
   },
   "useCases": [
     {
       "icon": "◎",
-      "title": "Remove logo from image",
-      "description": "Remove unwanted logos and brand marks from images you own.",
+      "title": "Remove Logo from Image",
+      "description": "Remove unwanted logos and brand marks from images you own or are authorized to edit. Compare the original and cleaned result side by side to check edges, textures, colors, and surrounding details before downloading.",
       "href": "/remove-logo-from-image",
-      "image": "/uploads/3d27e83e99a8d4cdc9262deb422aef8c.jpg",
-      "imageAlt": "Product image prepared for logo removal"
+      "image": "/uploads/home-blueprint/results/result-01-logo-hiker.png",
+      "imageAlt": "Hiker in a mountain landscape for a branded logo removal comparison",
+      "watermark": "watermark",
+      "cta": "Remove Logo Now →"
     },
     {
       "icon": "T",
-      "title": "Remove text from image",
-      "description": "Erase unwanted text, captions, labels, and stamps from images.",
+      "title": "Remove Text from Image",
+      "description": "Remove unwanted text from image files, including captions, labels, text overlays, and visible stamps. AI reconstructs the cleared area using surrounding image information for a cleaner result.",
       "href": "/remove-text-from-image",
-      "image": "/uploads/be2f700681bc0dd8ce9c07313ff02e2c.jpg",
-      "imageAlt": "Examples of text removal from images"
+      "image": "/uploads/home-blueprint/results/result-02-magazine-model.png",
+      "imageAlt": "Fashion model for a magazine-cover text removal comparison",
+      "watermark": "watermark",
+      "cta": "Remove Text Now →"
     },
     {
       "icon": "✦",
-      "title": "Remove Gemini watermark",
-      "description": "Remove visible Gemini watermarks from images you own or have permission to edit.",
+      "title": "Remove Gemini Watermark",
+      "description": "Remove a visible Gemini watermark from an image you own or have permission to edit. Keep the original crop and review the cleaned area before downloading the result.",
       "href": "/gemini-watermark-remover",
-      "image": "/uploads/46c8369aeb8e7a161c2cd485ee3becfa.jpg",
-      "imageAlt": "Before and after Gemini watermark cleanup example"
+      "image": "/uploads/home-blueprint/results/result-03-gemini-water.png",
+      "imageAlt": "Portrait in water for an AI-generated mark removal comparison",
+      "watermark": "watermark",
+      "cta": "Remove Gemini Watermark →"
+    },
+    {
+      "icon": "◷",
+      "title": "Remove Date Stamp",
+      "description": "Remove date stamps and visible timestamps from travel photos, camera images, old photos, and other files you are allowed to edit while keeping nearby image details intact.",
+      "href": "/#tool",
+      "image": "/uploads/home-blueprint/results/result-04-date-pyramids.png",
+      "imageAlt": "Tourist in front of pyramids for a date stamp removal comparison",
+      "watermark": "2025.06.18 14:32",
+      "cta": "Remove Date Stamp →",
+      "comparisonStyle": "date"
+    },
+    {
+      "icon": "✎",
+      "title": "Remove Signature",
+      "description": "Remove a visible signature from an authorized image or document screenshot and compare the repaired area with the original before you download.",
+      "href": "/#tool",
+      "image": "/uploads/home-blueprint/results/result-05-signature-invoice.png",
+      "imageAlt": "Invoice document for a handwritten signature removal comparison",
+      "watermark": "Avery Collins, Authorized",
+      "cta": "Remove Signature →",
+      "comparisonStyle": "signature"
     }
   ],
   "useCaseSection": {
     "eyebrow": "Real-world results",
-    "heading": "Clean images for everyday moments",
-    "headingHighlight": "everyday moments",
-    "intro": "Choose a cleanup scenario to preview the kind of image you can prepare."
+    "heading": "See What Our Image Watermark Remover Can Clean",
+    "headingHighlight": "Image Watermark Remover",
+    "intro": "Explore common watermark removal examples and drag the slider to compare the original image with the cleaned result."
   },
   "process": {
     "eyebrow": "How it works",
@@ -109,51 +165,70 @@
   },
   "features": {
     "eyebrow": "Why choose WatermarkGemini",
-    "heading": "A Free Online Watermark Remover for Supported Image Files",
-    "headingHighlight": "Supported Image Files",
-    "intro": "Use WatermarkGemini online watermark remover in your browser to upload one supported image, start the current processing flow, compare the original and returned result, and download the file when it is ready.",
+    "heading": "Remove Watermarks Cleanly with AI",
+    "headingHighlight": "Cleanly with AI",
+    "intro": "From small corner logos to text overlays, transparent marks, signatures, and date stamps, WatermarkGemini uses AI to detect unwanted elements and rebuild the surrounding area for a cleaner, more natural-looking image.",
     "items": [
       {
         "enabled": true,
         "eyebrow": "FEATURE 1",
-        "heading": "Simple Online Watermark Remover Workflow",
-        "description": "Upload one supported image to a simple online ai watermark remover, sign in with Google to start processing, review the original and returned result side by side, and download the file when it is ready.",
+        "heading": "Automatically Detect Watermarks, Logos & Text",
+        "description": "Skip complicated layers, brushes, and manual retouching. Upload your photo and let our AI watermark remover detect visible watermarks, logos, text overlays, signatures, and stamps automatically.",
         "listItems": [
-          "Browser-based workflow—no desktop editor required",
-          "Side-by-side original and returned-result view",
-          "One image per processing flow"
+          "Logo",
+          "Text",
+          "Stamp"
         ],
-        "image": "/uploads/d4a74ddfba30c43dc30fde572e79111b.jpg",
-        "imageAlt": "Before and after watermark removal",
-        "imagePosition": "right"
+        "image": "/uploads/home-blueprint/features/feature-01-cream-branded-base.png",
+        "imageAlt": "Branded cream jar product photo for transparent watermark removal comparison",
+        "imagePosition": "right",
+        "watermark": "watermark"
       },
       {
         "enabled": true,
         "eyebrow": "FEATURE 2",
-        "heading": "Image Watermark Remover File Support",
-        "description": "The WatermarkGemini image watermark remover currently accepts one JPG/JPEG, PNG, or WEBP image up to 10 MB. Video, PDF, batch upload, URL upload, and other image formats are not supported by the homepage tool.",
-        "listItems": [
-          "JPG/JPEG, PNG, and WEBP input",
-          "One image up to 10 MB",
-          "Clear validation for unsupported file types or sizes"
-        ],
-        "image": "/uploads/c9ecd59ae9458928c659abade76d0d20.jpg",
-        "imageAlt": "JPG, PNG and WEBP image support",
-        "imagePosition": "left"
+        "heading": "Keep Details Clear on Complex Backgrounds",
+        "description": "Watermarks often overlap fabric, hair, buildings, landscapes, shadows, and other detailed areas. WatermarkGemini analyzes the surrounding image to reconstruct the removed region and reduce obvious blur, smudges, and distracting patches.",
+        "listItems": [],
+        "image": "/uploads/home-blueprint/features/feature-02-date-base.png",
+        "imageAlt": "Portrait in front of a detailed stone building for date watermark removal comparison",
+        "imagePosition": "left",
+        "watermark": "2025.06.18"
       },
       {
         "enabled": true,
         "eyebrow": "FEATURE 3",
-        "heading": "A Free Watermark Remover with No Credits or Paid Plans",
-        "description": "WatermarkGemini online free watermark remover is completely free to use. The current workflow does not require credits or a paid package, although Google sign-in is required before processing.",
+        "heading": "Remove Different Types of Image Watermarks",
+        "description": "Use the image watermark remover for corner logos, transparent watermarks, text overlays, date stamps, signatures, labels, and visible AI-generated image marks. Review each cleaned area to make sure important details still look natural.",
         "listItems": [
-          "No credits or paid packages",
-          "Google sign-in required before processing",
-          "No desktop app required"
+          "Logo",
+          "Text",
+          "Date Stamp",
+          "Signature",
+          "Transparent Mark",
+          "AI Watermark"
         ],
-        "image": "/uploads/8a44227a85b1c7873ea88b222ead75d6.jpg",
-        "imageAlt": "Free watermark remover with no paid plans",
-        "imagePosition": "right"
+        "image": "/uploads/home-blueprint/features/feature-03-travel-clean-base.png",
+        "imageAlt": "Clean travel portrait with a dog in Santorini for multi-element watermark removal comparison",
+        "imagePosition": "right",
+        "watermark": "watermark"
+      },
+      {
+        "enabled": true,
+        "eyebrow": "FEATURE 4",
+        "heading": "Free Online Watermark Removal with Private Processing",
+        "description": "Use WatermarkGemini as a free online watermark remover directly in your browser—no desktop software and no credits to purchase. Uploaded images and processed results stay in private storage and are scheduled for automatic deletion after 24 hours.",
+        "listItems": [
+          "100% Free",
+          "No Credits",
+          "Private Storage",
+          "24-Hour Deletion"
+        ],
+        "image": "/uploads/home-blueprint/features/feature-04-laptop-clean-base.png",
+        "imageAlt": "Laptop showing a clean travel image ready for watermark removal comparison",
+        "imagePosition": "left",
+        "watermark": "watermark",
+        "comparisonStyle": "laptop"
       }
     ]
   },
@@ -207,6 +282,173 @@
         "enabled": true,
         "question": "When is it appropriate to remove a watermark?",
         "answer": "Only process content you own or have permission to edit. Do not use the tool to misrepresent ownership or bypass another creator’s rights."
+      }
+    ]
+  },
+  "audiences": {
+    "heading": "Who Uses an Online Image Watermark Remover?",
+    "intro": "WatermarkGemini helps people prepare cleaner images for content, campaigns, presentations, lessons, and everyday creative work.",
+    "cards": [
+      {
+        "title": "Content Creators",
+        "copy": "Clean visible logos, text, dates, and distracting marks from images you own before using them in social posts, videos, portfolios, or creative projects.",
+        "cta": "Clean Your Image →",
+        "tone": "blue",
+        "image": "/uploads/home-blueprint/audiences/creator-photo-studio.png",
+        "alt": "Creator reviewing original photography in a home studio",
+        "href": "/#tool"
+      },
+      {
+        "title": "Marketers",
+        "copy": "Prepare cleaner product photos, campaign visuals, presentation assets, and content drafts without opening a complex desktop editor for every small cleanup.",
+        "cta": "Prepare Marketing Images →",
+        "tone": "purple",
+        "image": "/uploads/home-blueprint/audiences/marketer-office-meeting.png",
+        "alt": "Marketing team reviewing campaign visuals together in a bright office meeting",
+        "href": "/#tool"
+      },
+      {
+        "title": "Educators",
+        "copy": "Remove distracting labels, timestamps, or visible marks from authorized visual materials to create clearer slides, lessons, handouts, and presentations.",
+        "cta": "Clean Visual Materials →",
+        "tone": "mint",
+        "image": "/uploads/home-blueprint/audiences/educator-classroom-lesson.png",
+        "alt": "Teacher leading an engaged classroom lesson with students",
+        "href": "/#tool"
+      }
+    ]
+  },
+  "testimonials": {
+    "heading": "Loved by people who need cleaner images",
+    "intro": "Feedback from people who work with images.",
+    "pausedLabel": "Pause reviews",
+    "playLabel": "Play reviews",
+    "cards": [
+      {
+        "quote": "“WatermarkGemini makes it much easier to clean product images before we use them in presentations and internal catalogs. The results usually look natural, even around detailed product edges and textured backgrounds.”",
+        "name": "Emily Carter",
+        "role": "E-commerce Manager",
+        "avatar": "/uploads/home-blueprint/testimonials/emily-carter.png",
+        "rating": 5
+      },
+      {
+        "quote": "“I often work with client proofs, reference images, and older photo assets. WatermarkGemini gives me a quick browser-based option for removing visible marks without opening a full editing workflow.”",
+        "name": "Daniel Brooks",
+        "role": "Freelance Photographer",
+        "avatar": "/uploads/home-blueprint/testimonials/daniel-brooks.png",
+        "rating": 5
+      },
+      {
+        "quote": "“I handle a large volume of visual content every week, so speed matters. WatermarkGemini is useful when I need to clean a logo, text overlay, or date stamp from an image before preparing social posts.”",
+        "name": "Sophia Martinez",
+        "role": "Social Media Manager",
+        "avatar": "/uploads/home-blueprint/testimonials/sophia-martinez.png",
+        "rating": 4
+      },
+      {
+        "quote": "“What I like most is how well it handles areas with texture and color variation. Instead of leaving an obvious blurred patch, the cleaned area often blends much more naturally with the surrounding image.”",
+        "name": "Michael Chen",
+        "role": "Graphic Designer",
+        "avatar": "/uploads/home-blueprint/testimonials/michael-chen.png",
+        "rating": 5
+      },
+      {
+        "quote": "“I use WatermarkGemini for travel photos and visual drafts where unwanted text or small logos get in the way. The workflow is simple, and I can preview the cleaned image before deciding whether to use it.”",
+        "name": "Olivia Bennett",
+        "role": "Travel Content Creator",
+        "avatar": "/uploads/home-blueprint/testimonials/olivia-bennett.png",
+        "rating": 4
+      },
+      {
+        "quote": "“Property images often include timestamps, labels, or old agency marks. WatermarkGemini helps clean those distractions quickly while keeping building lines, windows, and background details looking consistent.”",
+        "name": "Ethan Walker",
+        "role": "Real Estate Marketing Specialist",
+        "avatar": "/uploads/home-blueprint/testimonials/ethan-walker.png",
+        "rating": 5
+      },
+      {
+        "quote": "“I regularly prepare screenshots, lesson graphics, and reference images for training materials. WatermarkGemini saves time when I need to remove small visible marks without manually retouching every image.”",
+        "name": "Rachel Kim",
+        "role": "Online Course Creator",
+        "avatar": "/uploads/home-blueprint/testimonials/rachel-kim.png",
+        "rating": 4
+      },
+      {
+        "quote": "“I’m not a professional designer, so I wanted something straightforward. I can upload an image, process it online, and get a clean result without learning complicated photo-editing software.”",
+        "name": "James Wilson",
+        "role": "Small Business Owner",
+        "avatar": "/uploads/home-blueprint/testimonials/james-wilson.png",
+        "rating": 5
+      }
+    ]
+  },
+  "removalTools": {
+    "heading": "Choose what you want to remove",
+    "intro": "Start with the cleanup workflow that best matches your image.",
+    "cards": [
+      {
+        "id": "background",
+        "title": "Background Remover",
+        "copy": "Remove an image background with a focused cleanup workflow.",
+        "image": "/uploads/home-blueprint/tool-cards/card-01-background-lamp.png",
+        "alt": "Before-and-after lamp image showing a removed studio background",
+        "href": "/remove-background"
+      },
+      {
+        "id": "object",
+        "title": "Object Remover",
+        "copy": "Erase unwanted objects and visual clutter from approved images.",
+        "image": "/uploads/home-blueprint/tool-cards/card-02-object-living-room.png",
+        "alt": "Before-and-after living-room table showing a small red ball removed",
+        "href": "/remove-object"
+      },
+      {
+        "id": "text",
+        "title": "Remove Text from Image",
+        "copy": "Clean captions, labels, and unwanted text overlays.",
+        "image": "/uploads/home-blueprint/tool-cards/card-03-text-coastal-car.png",
+        "alt": "Before-and-after coastal road image showing decorative text overlay removal",
+        "href": "/remove-text-from-image"
+      },
+      {
+        "id": "logo",
+        "title": "Remove Logo from Image",
+        "copy": "Review visible logos and brand marks on approved images.",
+        "image": "/uploads/home-blueprint/tool-cards/card-04-logo-hiking-bottle.png",
+        "alt": "Before-and-after hiking bottle image showing an embossed logo removed",
+        "href": "/remove-logo-from-image"
+      },
+      {
+        "id": "chatgpt",
+        "title": "ChatGPT Watermark Remover",
+        "copy": "Compare an approved image with a visible ChatGPT-style mark.",
+        "image": "/uploads/home-blueprint/tool-cards/card-05-ai-watermark-tablet.png",
+        "alt": "Tablet image showing a fictional AI-style watermark removal comparison",
+        "href": "/chatgpt-watermark-remover"
+      },
+      {
+        "id": "gemini",
+        "title": "Gemini Watermark Remover",
+        "copy": "Clean a visible Gemini watermark without changing the image crop.",
+        "image": "/uploads/home-blueprint/tool-cards/card-06-gemini-watermark-greenhouse.png",
+        "alt": "Before-and-after greenhouse portrait showing a colorful generated-image mark removed",
+        "href": "/gemini-watermark-remover"
+      },
+      {
+        "id": "date",
+        "title": "Remove Date Stamp",
+        "copy": "Clear date and timestamp overlays from images you can edit.",
+        "image": "/uploads/home-blueprint/tool-cards/card-07-date-stamp-picnic.png",
+        "alt": "Before-and-after vintage picnic photo showing a date stamp removed",
+        "href": "/#tool"
+      },
+      {
+        "id": "signature",
+        "title": "Remove Signature",
+        "copy": "Review a visible signature cleanup before you download.",
+        "image": "/uploads/home-blueprint/tool-cards/card-08-signature-architecture.png",
+        "alt": "Before-and-after architecture sketch showing a handwritten signature removed",
+        "href": "/#tool"
       }
     ]
   }

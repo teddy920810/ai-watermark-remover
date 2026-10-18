@@ -1,0 +1,20 @@
+---
+import ResponsiveImage from './ResponsiveImage.astro';
+interface Props { image: string; alt: string; watermark?: string; sizes?: string; eager?: boolean; sampleId?: string; comparisonStyle?: 'watermark' | 'date' | 'signature' | 'laptop'; }
+const { image, alt, watermark = 'watermark', sizes = '(max-width: 760px) calc(100vw - 40px), 640px', eager = false, sampleId, comparisonStyle = 'watermark' } = Astro.props;
+const tiled = sampleId === 'serum' || sampleId === 'sunset';
+const grid = sampleId === 'sunset' ? 4 : 6;
+---
+<div class:list={['home-compare', sampleId && `sample-${sampleId}`, { 'feature-four': comparisonStyle === 'laptop' }]} data-home-compare style={`--compare-position:50%;--hero-watermark-grid:${grid}`}>
+  <ResponsiveImage src={image} alt={alt} sizes={sizes} loading={eager ? 'eager' : 'lazy'} fetchpriority={eager ? 'high' : undefined} />
+  {tiled ? <div class="fixed-watermark hero-watermark-pattern" aria-hidden="true">{Array.from({length:grid ** 2},()=> <span>{watermark}</span>)}</div>
+    : sampleId === 'tote' ? <div class="fixed-watermark hero-tote-pattern" aria-hidden="true"><span class="hero-tote-upper-pattern"><span class="tote-pattern-zone tote-pattern-left">{Array.from({length:4},()=> <i>{watermark}</i>)}</span><span class="tote-pattern-zone tote-pattern-right">{Array.from({length:4},()=> <i>{watermark}</i>)}</span><span class="hero-tote-brand"><i class="hero-tote-emblem"></i><b>VÉRÉLLE</b><small>LEATHER GOODS</small></span></span><span class="hero-tote-logo-grid">{Array.from({length:20},()=> <i>{watermark}</i>)}</span></div>
+    : sampleId === 'contract' ? <div class="fixed-watermark hero-contract-annotation" aria-hidden="true"><span class="contract-note contract-note-scope">clarify deliverables &amp; timeline</span><span class="contract-note contract-note-sign">sign before sending final copy ↗</span></div>
+    : comparisonStyle === 'laptop' ? <div class="fixed-watermark" aria-hidden="true"><span class="feature-screen-watermark">{Array.from({length:12},()=> <span>{watermark.toUpperCase()}</span>)}</span></div>
+    : comparisonStyle === 'date' ? <div class="fixed-watermark" aria-hidden="true"><span class="result-date-pattern">{Array.from({length:16},()=> <span>{watermark}</span>)}</span></div>
+    : comparisonStyle === 'signature' ? <div class="fixed-watermark" aria-hidden="true"><span class="result-signature-mark">{watermark}</span><span class="result-signature-caption">Authorized signature</span></div>
+    : <div class="home-demo-watermark" aria-hidden="true">{Array.from({ length: 24 }, () => <span>{watermark}</span>)}</div>}
+  <b class="home-compare-tag home-before">Before</b><b class="home-compare-tag home-after">After</b>
+  <span class="home-splitter" aria-hidden="true"><span>↔</span></span>
+  <input type="range" min="0" max="100" value="50" aria-label={`Compare illustration: ${alt}`} />
+</div>

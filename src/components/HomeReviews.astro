@@ -1,0 +1,22 @@
+---
+import ResponsiveImage from './ResponsiveImage.astro';
+import type { Homepage } from '../lib/content/homepage';
+interface Props { reviews: Homepage['testimonials']; }
+const { reviews } = Astro.props;
+const splitAt = Math.ceil(reviews.cards.length / 2);
+const rows = [reviews.cards.slice(0, splitAt), reviews.cards.slice(splitAt)].filter(row => row.length);
+---
+<section class="section testimonial-section" aria-labelledby="reviews-heading">
+  <div class="section-heading"><h2 id="reviews-heading">{reviews.heading}</h2><p>{reviews.intro}</p></div>
+  <button class="reviews-toggle" type="button" data-reviews-toggle data-play-label={reviews.playLabel} data-pause-label={reviews.pausedLabel} aria-pressed="false">{reviews.pausedLabel}</button>
+  <div class="testimonial-marquee" data-reviews-marquee aria-label="Customer reviews">
+    {rows.map((row, index) => <div class:list={['testimonial-track', { 'testimonial-track-reverse': index === 1 }]}>
+      {[false, true].map(duplicate => <div class="testimonial-card-set" aria-hidden={duplicate ? 'true' : undefined}>
+        {row.map(card => <article class="testimonial-card">
+          <div class="reviewer-block"><div class="reviewer"><span class="avatar"><ResponsiveImage src={card.avatar} alt="" sizes="42px" /></span><span><b>{card.name}</b><small>{card.role}</small></span></div><span class="review-stars" role="img" aria-label={`Rating: ${card.rating} out of 5`}>{Array.from({length:5}, (_,i) => <i class={i<card.rating ? 'is-full' : 'is-empty'} aria-hidden="true">★</i>)}</span></div>
+          <p>{card.quote}</p>
+        </article>)}
+      </div>)}
+    </div>)}
+  </div>
+</section>

@@ -184,18 +184,124 @@ test('Google tag emits a page_view collection request', async ({ page }) => {
 test('homepage exposes the features and FAQ sections in CMS-managed order', async ({ page }) => {
   await page.goto('/');
 
-  const featuresHeading = page.getByRole('heading', { name: /A Free Online Watermark Remover/i, level: 2 });
+  const featuresHeading = page.getByRole('heading', { name: /Remove Watermarks Cleanly with AI/i, level: 2 });
   await expect(featuresHeading).toBeVisible();
   await expect(featuresHeading.locator('xpath=ancestor::section')).toHaveAttribute('aria-labelledby', 'features-heading');
 
   const featureItems = featuresHeading.locator('xpath=ancestor::section').locator('.feature-item');
-  await expect(featureItems).toHaveCount(3);
+  await expect(featureItems).toHaveCount(4);
 
   const faqHeading = page.getByRole('heading', { name: /Image Watermark Remover FAQs/i, level: 2 });
   await expect(faqHeading).toBeVisible();
   await expect(faqHeading.locator('xpath=ancestor::section')).toHaveAttribute('aria-labelledby', 'faq-heading');
   const faqEntries = faqHeading.locator('xpath=ancestor::section').locator('details');
   await expect(faqEntries.first()).toContainText('WatermarkGemini');
+});
+
+test('homepage blueprint previews, CTA routes and motion controls work on desktop and mobile', async ({ page }) => {
+  let processingRequests = 0;
+  await page.route('**/api/jobs', route => { processingRequests++; return route.abort(); });
+  for (const width of [1920, 390]) {
+    await page.setViewportSize({width, height:900});
+    await page.goto('/');
+    await expect(page.locator('[data-hero-preview]:visible')).toHaveCount(1);
+    await page.locator('[data-hero-sample]').nth(1).click();
+    await expect(page.locator('[data-hero-sample]').nth(1)).toHaveAttribute('aria-pressed','true');
+    const compare = page.locator('[data-hero-preview]:visible input[type=range]');
+    await compare.focus();
+    await compare.press('ArrowRight');
+    await expect(compare).toHaveValue('51');
+    const bounds=await compare.boundingBox();
+    await page.mouse.move(bounds!.x+bounds!.width*.25,bounds!.y+bounds!.height*.5);
+    await page.mouse.down();
+    await page.mouse.move(bounds!.x+bounds!.width*.75,bounds!.y+bounds!.height*.5);
+    await page.mouse.up();
+    expect(Number(await compare.inputValue())).toBeGreaterThan(70);
+    const tabs=page.locator('[data-scenario-tab]');
+    await tabs.first().focus();
+    await tabs.first().press('End');
+    await expect(tabs.last()).toHaveAttribute('aria-selected','true');
+    await expect(page.locator('[data-scenario-panel]:visible a')).toHaveAttribute('href','/#tool');
+    await page.locator('[data-scenario-panel]:visible a').click();
+    await expect(page.locator('#tool')).toBeInViewport();
+    await page.locator('[data-reviews-toggle]').click();
+    await expect(page.locator('[data-reviews-marquee]')).toHaveClass(/is-paused/);
+    await expect(page.locator('.audience-grid article')).toHaveCount(3);
+    await expect(page.locator('.live-removal-grid a')).toHaveCount(8);
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+    await page.locator('.live-removal-grid a').first().click();
+    await expect(page).toHaveURL(/\/remove-background$/);
+    await expect(page.locator('.home-blueprint')).toHaveCount(0);
+  }
+  expect(processingRequests).toBe(0);
+});
+
+test('homepage matches blueprint geometry and keeps mobile comparisons and active tabs in view', async ({ page }) => {
+  await page.setViewportSize({ width:1920, height:1080 });
+  await page.goto('/');
+  const layout = await page.evaluate(() => {
+    const rect = (selector: string) => {
+      const element = document.querySelector<HTMLElement>(selector)!;
+      const { x,y,width,height } = element.getBoundingClientRect();
+      return { x,y,width,height };
+    };
+    return {
+      tabs:rect('.result-tabs'),
+      stepGrid:rect('.steps'),
+      feature:rect('.feature-media .home-compare'),
+      audiences:rect('.audience-grid'),
+      tools:rect('.live-removal-grid'),
+      headingSize:getComputedStyle(document.querySelector('.features-section h2')!).fontSize,
+      note:rect('.illustration-note'),
+      trust:rect('.trust-list'),
+    };
+  });
+  expect(layout.tabs.width).toBeCloseTo(1200,0);
+  expect(layout.stepGrid.width).toBeCloseTo(1200,0);
+  expect(layout.feature.width).toBeCloseTo(540,0);
+  expect(layout.feature.height).toBeCloseTo(438,0);
+  expect(layout.audiences.width).toBeCloseTo(1280,0);
+  expect(layout.tools.x).toBeCloseTo((1920-1200)/2,0);
+  expect(layout.headingSize).toBe('40px');
+  expect(layout.note.y+layout.note.height).toBeLessThanOrEqual(layout.trust.y);
+
+  await page.setViewportSize({ width:390,height:844 });
+  const tabs=page.locator('[data-scenario-tab]');
+  await tabs.first().focus();
+  await tabs.first().press('End');
+  const mobile=await page.evaluate(()=>{
+    const rect=(selector:string)=>document.querySelector(selector)!.getBoundingClientRect();
+    const stage=rect('[data-scenario-panel]:not([hidden]) .home-compare');
+    const section=rect('.results-section');
+    const tab=rect('[data-scenario-tab][aria-selected=true]');
+    const tablist=rect('.result-tabs');
+    const evenRow=document.querySelectorAll('.feature-item')[1];
+    const note=rect('.illustration-note');
+    return {noteBottom:note.bottom,uploadTop:rect('.upload-panel').top,toolWidth:rect('.live-removal-grid .tool-card').width,stage:{left:stage.left,right:stage.right,width:stage.width},section:{left:section.left,right:section.right},tab:{left:tab.left,right:tab.right},tablist:{left:tablist.left,right:tablist.right},mediaY:evenRow.querySelector('.feature-media')!.getBoundingClientRect().y,copyY:evenRow.querySelector('.feature-copy')!.getBoundingClientRect().y};
+  });
+  expect(mobile.stage.left).toBeGreaterThanOrEqual(mobile.section.left+19);
+  expect(mobile.stage.right).toBeLessThanOrEqual(mobile.section.right-19);
+  expect(mobile.tab.left).toBeGreaterThanOrEqual(mobile.tablist.left-1);
+  expect(mobile.tab.right).toBeLessThanOrEqual(mobile.tablist.right+1);
+  expect(mobile.mediaY).toBeLessThan(mobile.copyY);
+  expect(mobile.toolWidth).toBeLessThanOrEqual(350);
+  expect(mobile.noteBottom).toBeLessThanOrEqual(mobile.uploadTop);
+});
+
+test('homepage sample switching preserves the comparison position as in the blueprint', async ({page})=>{
+  await page.goto('/');
+  const heroRange=page.locator('[data-hero-preview]:visible input');
+  await heroRange.focus();
+  await heroRange.press('Home');
+  await heroRange.press('ArrowRight');
+  await page.locator('[data-hero-sample]').nth(1).click();
+  await expect(page.locator('[data-hero-preview]:visible input')).toHaveValue('1');
+  const range=page.locator('[data-scenario-panel]:visible input');
+  await range.focus();
+  await range.press('End');
+  await range.press('ArrowLeft');
+  await page.locator('[data-scenario-direction=next]:visible').click();
+  await expect(page.locator('[data-scenario-panel]:visible input')).toHaveValue('99');
 });
 
 test('homepage reference controls, tools, highlighted headings, and guide lists work together', async ({ page }) => {
@@ -210,9 +316,9 @@ test('homepage reference controls, tools, highlighted headings, and guide lists 
   await expect(tabs.first()).toHaveAttribute('aria-selected', 'true');
 
   const toolCards = page.locator('.removal-grid .removal-card');
-  await expect(toolCards).toHaveCount(6);
+  await expect(toolCards).toHaveCount(8);
   for (const card of await toolCards.all()) {
-    await expect(card).toHaveAttribute('href', /^\/[a-z0-9-]+$/);
+    await expect(card).toHaveAttribute('href', /^\/(?:[a-z0-9-]+|#tool)$/);
   }
 
   await expect(page.locator('.section-heading h2 em')).toHaveCount(6);
@@ -227,7 +333,7 @@ test('homepage CMS PNG and JPEG images load generated responsive WebP variants',
 
   const results = page.locator('[data-scenario-section]');
   const panels = results.locator('[data-scenario-panel]');
-  await expect(panels).toHaveCount(3);
+  await expect(panels).toHaveCount(5);
 
   for (let index = 0; index < await panels.count(); index += 1) {
     await results.getByRole('tab').nth(index).click();

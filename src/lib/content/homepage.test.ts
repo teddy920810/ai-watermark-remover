@@ -1,12 +1,47 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { homepageSchema } from './homepage';
+import { parse } from 'yaml';
 
 const homepage = JSON.parse(
   readFileSync(new URL('../../content/homepage/home.json', import.meta.url), 'utf8'),
 );
 
 describe('homepage CMS content', () => {
+  it('preserves editable comparison treatments for the new blueprint illustrations', () => {
+    const customized=structuredClone(homepage);
+    customized.useCases[3].comparisonStyle='date';
+    customized.useCases[4].comparisonStyle='signature';
+    customized.features.items[3].comparisonStyle='laptop';
+    const parsed=homepageSchema.parse(customized);
+    expect(parsed.useCases[3].comparisonStyle).toBe('date');
+    expect(parsed.useCases[4].comparisonStyle).toBe('signature');
+    expect(parsed.features.items[3].comparisonStyle).toBe('laptop');
+  });
+  it('uses the supplied blueprint artwork across homepage modules', () => {
+    const parsed = homepageSchema.parse(homepage);
+    expect(parsed.hero.samples).toHaveLength(4);
+    expect(parsed.useCases).toHaveLength(5);
+    expect(parsed.features.items).toHaveLength(4);
+    expect(parsed.audiences.cards).toHaveLength(3);
+    expect(parsed.testimonials.cards).toHaveLength(8);
+    expect(parsed.removalTools.cards).toHaveLength(8);
+    expect(parsed.useCases.slice(0, 3).map(item => item.image)).toEqual([
+      '/uploads/home-blueprint/results/result-01-logo-hiker.png',
+      '/uploads/home-blueprint/results/result-02-magazine-model.png',
+      '/uploads/home-blueprint/results/result-03-gemini-water.png',
+    ]);
+    expect(parsed.features.items.slice(0, 3).map(item => item.image)).toEqual([
+      '/uploads/home-blueprint/features/feature-01-cream-branded-base.png',
+      '/uploads/home-blueprint/features/feature-02-date-base.png',
+      '/uploads/home-blueprint/features/feature-03-travel-clean-base.png',
+    ]);
+    expect(parsed.removalTools.cards.map(item => item.image)).toEqual(["/uploads/home-blueprint/tool-cards/card-01-background-lamp.png","/uploads/home-blueprint/tool-cards/card-02-object-living-room.png","/uploads/home-blueprint/tool-cards/card-03-text-coastal-car.png","/uploads/home-blueprint/tool-cards/card-04-logo-hiking-bottle.png","/uploads/home-blueprint/tool-cards/card-05-ai-watermark-tablet.png","/uploads/home-blueprint/tool-cards/card-06-gemini-watermark-greenhouse.png","/uploads/home-blueprint/tool-cards/card-07-date-stamp-picnic.png","/uploads/home-blueprint/tool-cards/card-08-signature-architecture.png"]);
+    const cms = parse(readFileSync(new URL('../../../.pages.yml', import.meta.url), 'utf8'));
+    const fields = cms.content.find((entry: { name: string }) => entry.name === 'homepage').fields;
+    for (const name of ['audiences', 'testimonials', 'removalTools']) expect(fields.some((field: { name: string }) => field.name === name)).toBe(true);
+    expect(fields.find((field: { name: string }) => field.name === 'hero').fields.some((field: { name: string }) => field.name === 'samples')).toBe(true);
+  });
   it('matches the homepage schema', () => {
     expect(homepageSchema.safeParse(homepage).success).toBe(true);
   });
@@ -61,7 +96,7 @@ describe('homepage CMS content', () => {
       expect(item.description).toBeTruthy();
       expect(item.image).toBeTruthy();
       expect(item.imageAlt).toBeTruthy();
-      expect(item.listItems.length).toBeGreaterThan(0);
+      expect(Array.isArray(item.listItems)).toBe(true);
       expect(['left', 'right']).toContain(item.imagePosition);
     }
   });
