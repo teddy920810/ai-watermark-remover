@@ -1,4 +1,8 @@
 ---
+import '../styles/home-blueprint.css';
+import '../styles/home-integration.css';
+import HomeComparison from '../components/HomeComparison.astro';
+import HomeReviews from '../components/HomeReviews.astro';
 import ImageUploader from '../components/uploader/ImageUploader';
 import HighlightedHeading from '../components/HighlightedHeading.astro';
 import ResponsiveImage from '../components/ResponsiveImage.astro';
@@ -22,26 +26,8 @@ const siteLogo = resolvePublicImageSource(site.logo);
 const uploaderCopy = resolveUploaderCopy(site.uploader, home.uploader);
 const blogPosts = sortBlogEntries(await getCollection('blog')).slice(0, 6);
 const landingPages = await getCollection('landingPages');
-const activeLandingPages = new Map(
-  landingPages
-    .filter(({ data }) => !data.draft && !data.statusLabel)
-    .map(({ data }) => [`/${data.slug}`, data]),
-);
-const configuredToolLinks = site.header.navigation.flatMap((item) => item.children ?? []);
-const popularTools = configuredToolLinks.flatMap((link, index) => {
-  const page = activeLandingPages.get(link.href);
-  if (!page) return [];
-  const feature = page.features ? visibleItems(page.features.items)[0] : undefined;
-  const matchingUseCase = home.useCases.find((item) => item.href === link.href);
-  const fallbackVisual = site.processVisuals[index % site.processVisuals.length];
-  return [{
-    title: link.label,
-    description: page.description,
-    href: link.href,
-    image: feature?.image ?? matchingUseCase?.image ?? fallbackVisual.image,
-    imageAlt: feature?.imageAlt ?? matchingUseCase?.imageAlt ?? `${link.label} tool preview`,
-  }];
-}).slice(0, 6);
+const publishedToolPaths = new Set(landingPages.filter(({ data }) => !data.draft && !data.statusLabel).map(({ data }) => '/' + data.slug));
+const popularTools = home.removalTools.cards.filter(item => item.href === '/#tool' || publishedToolPaths.has(item.href));
 const guideColumns = [blogPosts.slice(0, 3), blogPosts.slice(3, 6)];
 const featureItems = visibleItems(home.features.items).map((item) => ({
   ...item,
@@ -60,15 +46,23 @@ const faqSchema = visibleFaqItems.length > 0 ? {
 ---
 
 <SiteLayout title={home.title} description={home.description} image={home.shareImage} schema={faqSchema}>
+  <div class="home-blueprint">
   <section class="hero home-hero">
     <div class="hero-inner">
       <div class="hero-copy">
         <span class="eyebrow">{home.hero.eyebrow}</span>
-        <h1>{home.hero.heading}<br /><em>{home.hero.highlightedHeading}</em></h1>
-        <p>{home.hero.intro}</p>
-        <div class="trust-row">{home.hero.trustItems.map((item) => <span><CircleCheck size={18} stroke-width={2.5} />{item.replace(/^✓\s*/, '')}</span>)}</div>
+        <h1>{home.hero.heading} <em>{home.hero.highlightedHeading}</em></h1>
+        <p class="intro">{home.hero.intro}</p>
       </div>
-      <div id="tool" class="hero-tool"><ImageUploader logo={siteLogo} siteName={site.name} copy={uploaderCopy} client:load /></div>
+      <div class="hero-workbench">
+        <div class="compare-panel">
+          {home.hero.samples.map((sample,index) => <div data-hero-preview={index} hidden={index!==0}><HomeComparison image={sample.image} alt={sample.label} watermark={sample.watermark} sampleId={sample.id} eager={index===0} /></div>)}
+          <div class="preview-samples" aria-label="Choose a preview sample">{home.hero.samples.map((sample,index) => <button class="sample-thumb" type="button" data-hero-sample={index} aria-pressed={index===0?'true':'false'} aria-label={sample.label}><span class="sample-art"><ResponsiveImage src={sample.image} alt="" sizes="64px" /></span><span>{sample.label}</span></button>)}</div>
+          <p class="illustration-note">{home.hero.previewNote}</p>
+        </div>
+        <div id="tool" class="hero-tool upload-panel"><ImageUploader logo={siteLogo} siteName={site.name} copy={uploaderCopy} client:load /><p class="privacy-line">{home.hero.privacyNote}</p></div>
+      </div>
+      <div class="trust-row trust-list">{home.hero.trustItems.map(item => <span><CircleCheck size={16} />{item.replace(/^✓\s*/, '')}</span>)}</div>
     </div>
   </section>
 
@@ -82,32 +76,36 @@ const faqSchema = visibleFaqItems.length > 0 ? {
     </div>
   </section>
 
-  <section class="section results-section" aria-labelledby="results-heading" data-scenario-section>
+  <section class="section results-section" id="results" aria-labelledby="results-heading" data-scenario-section>
     <div class="section-heading"><span class="eyebrow">{home.useCaseSection.eyebrow}</span><HighlightedHeading id="results-heading" text={home.useCaseSection.heading} highlight={home.useCaseSection.headingHighlight} /><p>{home.useCaseSection.intro}</p></div>
-    <div class="scenario-tabs" role="tablist" aria-label="Image cleanup scenarios">
-      {home.useCases.map((item, index) => <button type="button" role="tab" aria-selected={index === 0 ? 'true' : 'false'} data-scenario-tab={index}><strong>{item.title}</strong><small>{item.description}</small></button>)}
-    </div>
+    <div class="scenario-tabs result-tabs" role="tablist" aria-label="Image cleanup scenarios">{home.useCases.map((item,index) => <button id={'scenario-tab-'+index} type="button" role="tab" aria-selected={index===0?'true':'false'} aria-controls={'scenario-panel-'+index} tabindex={index===0?0:-1} data-scenario-tab={index}><strong>{item.title}</strong></button>)}</div>
     <div class="scenario-showcase">
-      {home.useCases.map((item, index) => <article class:list={{ 'scenario-panel': true, 'is-active': index === 0 }} data-scenario-panel={index}><div class="scenario-stage"><div class="scenario-image"><ResponsiveImage src={item.image} alt={item.imageAlt} sizes="(max-width: 900px) calc(100vw - 40px), 940px" /><span class="scenario-label scenario-before">Before</span><span class="scenario-label scenario-after">After</span></div><div class="scenario-stage-controls" aria-label="Scenario carousel controls"><button type="button" data-scenario-direction="previous" aria-label="Previous scenario"><ArrowLeft size={18} aria-hidden="true" /></button><button type="button" data-scenario-direction="next" aria-label="Next scenario"><ArrowRight size={18} aria-hidden="true" /></button></div></div><div class="scenario-caption"><span>{item.title}</span><p>{item.description}</p><a class="text-link" href={item.href}>Explore tool <ArrowRight size={16} aria-hidden="true" /></a></div></article>)}
+      {home.useCases.map((item,index) => <article id={'scenario-panel-'+index} role="tabpanel" aria-labelledby={'scenario-tab-'+index} class:list={['scenario-panel',{'is-active':index===0}]} data-scenario-panel={index} hidden={index!==0}>
+        <div class="scenario-stage"><HomeComparison image={item.image} alt={item.imageAlt} watermark={item.watermark} comparisonStyle={item.comparisonStyle} sizes="(max-width:760px) calc(100vw - 40px), 940px" />
+          <div class="scenario-stage-controls"><button type="button" data-scenario-direction="previous" aria-label="Previous scenario"><ArrowLeft size={18} /></button><button type="button" data-scenario-direction="next" aria-label="Next scenario"><ArrowRight size={18} /></button></div>
+        </div><div class="scenario-caption result-copy"><p>{item.description}</p><a class="try-result-button" href={item.href}>{item.cta}</a></div>
+      </article>)}
     </div>
   </section>
 
-
   {featureItems.length > 0 && <section class="section features-section" aria-labelledby="features-heading">
     <div class="section-heading"><span class="eyebrow">{home.features.eyebrow}</span><HighlightedHeading id="features-heading" text={home.features.heading} highlight={home.features.headingHighlight} /><p>{home.features.intro}</p></div>
-    <div class="feature-list">
+    <div class="feature-list live-features">
       {featureItems.map((item) => <article class:list={{ 'feature-item': true, 'is-image-left': item.imagePosition === 'left' }}>
-        <div class="feature-copy"><span class="eyebrow">{item.eyebrow}</span><h3>{item.heading}</h3><p>{item.copy.description}</p>{item.copy.listItems.length > 0 && <ul class="feature-list-items">{item.copy.listItems.map((listItem) => <li>{listItem}</li>)}</ul>}</div>
-        <div class="feature-media"><ResponsiveImage src={item.image} alt={item.imageAlt} sizes="(max-width: 900px) calc(100vw - 40px), 520px" /></div>
+        <div class="feature-copy"><span class="eyebrow">{item.eyebrow}</span><h3>{item.heading}</h3><p>{item.copy.description}</p>{item.copy.listItems.length > 0 && <ul class="feature-list-items feature-labels">{item.copy.listItems.map((listItem) => <li>{listItem}</li>)}</ul>}</div>
+        <div class="feature-media"><HomeComparison image={item.image} alt={item.imageAlt} watermark={item.watermark} comparisonStyle={item.comparisonStyle} /></div>
       </article>)}
     </div>
   </section>}
 
-  <section class="section removal-section" aria-labelledby="removal-heading">
-    <div class="section-heading"><span class="eyebrow">Popular tools</span><HighlightedHeading id="removal-heading" text="Choose what you want to remove" highlight="you want to remove" /><p>Start with the cleanup workflow that best matches your image.</p></div>
-    <div class="removal-grid">
-      {popularTools.map((item) => <a class="removal-card" href={item.href}><div class="removal-media"><ResponsiveImage src={item.image} alt={item.imageAlt} sizes="(max-width: 700px) calc(100vw - 36px), 420px" /></div><div><h3>{item.title}</h3><p>{item.description}</p><span class="text-link">Explore tool <ArrowRight size={16} aria-hidden="true" /></span></div></a>)}
-    </div>
+  <section class="section use-cases" aria-labelledby="audiences-heading">
+    <div class="section-heading"><h2 id="audiences-heading">{home.audiences.heading}</h2><p>{home.audiences.intro}</p></div>
+    <div class="use-case-grid audience-grid">{home.audiences.cards.map(card => <article class:list={['use-case-card',card.tone]}><div class="case-media"><ResponsiveImage src={card.image} alt={card.alt} sizes="(max-width:760px) calc(100vw - 40px), 400px" /></div><div class="case-copy"><h3>{card.title}</h3><p>{card.copy}</p><a href={card.href}>{card.cta}</a></div></article>)}</div>
+  </section>
+  <HomeReviews reviews={home.testimonials} />
+  <section class="section removal-section" id="tools" aria-labelledby="removal-heading">
+    <div class="section-heading"><span class="eyebrow">Popular tools</span><HighlightedHeading id="removal-heading" text={home.removalTools.heading} highlight="you want to remove" /><p>{home.removalTools.intro}</p></div>
+    <div class="removal-grid"><div class="live-removal-grid">{popularTools.map(item => <a class="removal-card tool-card" href={item.href}><div class="tool-media"><ResponsiveImage src={item.image} alt={item.alt} sizes="(max-width:760px) calc(100vw - 40px), 300px" /></div><div class="tool-card-copy"><h3>{item.title}</h3><p>{item.copy}</p></div></a>)}</div></div>
   </section>
 
   <section class="section standards-section">
@@ -127,21 +125,10 @@ const faqSchema = visibleFaqItems.length > 0 ? {
     <div class="section-heading"><span class="eyebrow">{home.faq.eyebrow}</span><HighlightedHeading id="faq-heading" text={home.faq.heading} highlight={home.faq.headingHighlight} /><p>{home.faq.intro}</p></div>
     <div class="faq-list">{visibleFaqItems.map((item) => <details><summary>{item.question}<span aria-hidden="true"><Plus size={20} /></span></summary><p>{item.answer}</p></details>)}</div>
   </section>}
+  </div>
 </SiteLayout>
 
 <script>
-  document.querySelectorAll<HTMLElement>('[data-scenario-section]').forEach((section) => {
-    const tabs = Array.from(section.querySelectorAll<HTMLButtonElement>('[data-scenario-tab]'));
-    const panels = Array.from(section.querySelectorAll<HTMLElement>('[data-scenario-panel]'));
-    const selectScenario = (index: number) => {
-      const normalizedIndex = (index + tabs.length) % tabs.length;
-      tabs.forEach((item, itemIndex) => item.setAttribute('aria-selected', String(itemIndex === normalizedIndex)));
-      panels.forEach((panel, panelIndex) => panel.classList.toggle('is-active', panelIndex === normalizedIndex));
-    };
-    tabs.forEach((tab, index) => tab.addEventListener('click', () => selectScenario(index)));
-    section.querySelectorAll<HTMLButtonElement>('[data-scenario-direction]').forEach((button) => button.addEventListener('click', () => {
-      const activeIndex = tabs.findIndex((tab) => tab.getAttribute('aria-selected') === 'true');
-      selectScenario(activeIndex + (button.dataset.scenarioDirection === 'next' ? 1 : -1));
-    }));
-  });
+  import { initializeHomeInteractions } from '../lib/home-interactions';
+  document.querySelectorAll<HTMLElement>('.home-blueprint').forEach(initializeHomeInteractions);
 </script>
