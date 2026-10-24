@@ -42,8 +42,38 @@ export interface CloudRunTriggerOptions {
   monitorDelayMs?: number;
   requestTimeoutMs?: number;
 }
+const failurePhases = ['oidc_unavailable', 'oidc_exchange', 'google_sts', 'google_impersonation', 'google_token_unknown', 'cloud_run_http'] as const;
+const failureReasons = ['invalid_grant', 'invalid_target', 'invalid_request', 'invalid_scope', 'unauthorized_client', 'access_denied', 'PERMISSION_DENIED', 'UNAUTHENTICATED', 'INVALID_ARGUMENT', 'NOT_FOUND', 'UNAVAILABLE', 'RESOURCE_EXHAUSTED', 'Error', 'TypeError'] as const;
+type FailurePhase = typeof failurePhases[number];
+type FailureReason = typeof failureReasons[number];
 export class CloudRunTriggerError extends Error {
-  constructor(message: string, readonly kind: 'authorization' | 'other' = 'other') { super(message); this.name = 'CloudRunTriggerError'; }
+  constructor(message: string, readonly kind: 'authorization' | 'other' = 'other', readonly phase?: FailurePhase, readonly status?: number, readonly reason?: FailureReason) { super(message); this.name = 'CloudRunTriggerError'; }
+}
+const numericHttpStatus = (value: unknown): number | undefined => typeof value === 'number' && Number.isInteger(value) && value >= 100 && value <= 599 ? value : undefined;
+const errorRecord = (value: unknown): Record<string, unknown> => value && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : {};
+
+/** Persist only fixed diagnostic vocabulary, never upstream messages or config. */
+export function cloudRunDispatchDiagnostic(error: unknown): string {
+  if (!(error instanceof CloudRunTriggerError) || !failurePhases.includes(error.phase!)) return 'dispatch_unavailable';
+  const status = numericHttpStatus(error.status);
+  const reason = failureReasons.includes(error.reason!) ? error.reason : undefined;
+  return `dispatch_${error.phase}${status ? `_${status}` : ''}${reason ? `_${reason}` : ''}`;
+}
+function tokenFailure(error: unknown, serviceAccountEmail?: string): CloudRunTriggerError {
+  const failure = errorRecord(error); const response = errorRecord(failure.response); const data = errorRecord(response.data);
+  const endpoint = errorRecord(failure.config).url ?? errorRecord(response.config).url;
+  const url = endpoint instanceof URL ? endpoint.href : endpoint;
+  let phase: FailurePhase = 'google_token_unknown';
+  // Match exact SDK endpoints; arbitrary URLs and error codes never become diagnostics.
+  if (url === 'https://sts.googleapis.com/v1/token') phase = 'google_sts';
+  else if (serviceAccountEmail && url === `https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/${serviceAccountEmail}:generateAccessToken`) phase = 'google_impersonation';
+  // Fixed signatures from @vercel/oidc 3.8.5; no message contents are retained.
+  // https://vercel.com/docs/oidc/gcp#custom-audience
+  else if (error instanceof Error && error.message.startsWith('Failed to exchange token:')) phase = 'oidc_exchange';
+  else if (error instanceof Error && (['VercelOidcTokenError', 'AccessTokenMissingError', 'RefreshAccessTokenFailedError'].includes(error.name) || error.message === "The 'x-vercel-oidc-token' header is missing from the request.")) phase = 'oidc_unavailable';
+  const code = typeof data.error === 'string' ? data.error : errorRecord(data.error).status;
+  const reason = failureReasons.includes(code as FailureReason) ? code as FailureReason : error instanceof Error && ['Error', 'TypeError'].includes(error.name) ? error.name as FailureReason : undefined;
+  return new CloudRunTriggerError('Cloud execution credentials are unavailable', 'authorization', phase, numericHttpStatus(response.status), reason);
 }
 
 export function createVercelGoogleTokenProvider(options: VercelGoogleFederation): () => Promise<string> {
@@ -78,7 +108,7 @@ export function createVercelGoogleTokenProvider(options: VercelGoogleFederation)
       const result = await authClient.getAccessToken();
       if (!result.token) throw new Error();
       return result.token;
-    } catch { throw new CloudRunTriggerError('Cloud execution credentials are unavailable', 'authorization'); }
+    } catch (error) { throw tokenFailure(error, GCP_SERVICE_ACCOUNT_EMAIL); }
   };
 }
 
@@ -90,7 +120,7 @@ function googleTokenProvider(credentials?: GoogleCredentials): () => Promise<str
       const token = await (await active).getAccessToken();
       if (!token) throw new Error();
       return token;
-    } catch { throw new CloudRunTriggerError('Cloud execution credentials are unavailable'); }
+    } catch (error) { throw tokenFailure(error); }
   };
 }
 function object(value: unknown): CloudState {
@@ -98,7 +128,7 @@ function object(value: unknown): CloudState {
   return value as CloudState;
 }
 async function responseJson(response: Response): Promise<CloudState> {
-  if (!response.ok) { await response.body?.cancel().catch(() => undefined); throw new CloudRunTriggerError('Cloud execution status is unavailable'); }
+  if (!response.ok) { await response.body?.cancel().catch(() => undefined); throw new CloudRunTriggerError('Cloud execution status is unavailable', 'other', 'cloud_run_http', response.status); }
   const reader = response.body?.getReader();
   if (!reader) throw new CloudRunTriggerError('Cloud execution status is unavailable');
   const chunks: Uint8Array[] = []; let size = 0;
@@ -134,13 +164,13 @@ export function createCloudRunTrigger(options: CloudRunTriggerOptions): Executio
   async function call(path: string, body?: unknown): Promise<Response> {
     let token: string;
     try { token = await getToken(); if (!token || /[\r\n]/.test(token)) throw new Error(); }
-    catch { throw new CloudRunTriggerError('Cloud execution credentials are unavailable', 'authorization'); }
+    catch (error) { if (error instanceof CloudRunTriggerError) throw new CloudRunTriggerError('Cloud execution credentials are unavailable', 'authorization', error.phase, error.status, error.reason); throw tokenFailure(error); }
     try {
       return await request(`https://run.googleapis.com/v2/${path}`, {
         method: body === undefined ? 'GET' : 'POST', headers: { Authorization: `Bearer ${token}`, ...(body !== undefined ? { 'Content-Type': 'application/json' } : {}) },
         ...(body !== undefined ? { body: JSON.stringify(body) } : {}), redirect: 'error', signal: AbortSignal.timeout(options.requestTimeoutMs ?? 30_000),
       });
-    } catch { throw new CloudRunTriggerError('Cloud execution status is unavailable'); }
+    } catch { throw new CloudRunTriggerError('Cloud execution status is unavailable', 'other', 'cloud_run_http'); }
   }
   async function monitor(ref: string): Promise<{ ref: string; terminal: boolean }> {
     const kind = validateRef(ref);
@@ -184,7 +214,7 @@ export function createCloudRunTrigger(options: CloudRunTriggerOptions): Executio
     if (!response.ok) {
       await response.body?.cancel().catch(() => undefined);
       if (response.status >= 500 || response.status === 408) return next(uncertain, 60_000);
-      throw new CloudRunTriggerError('Cloud execution request was not accepted');
+      throw new CloudRunTriggerError('Cloud execution request was not accepted', 'other', 'cloud_run_http', response.status);
     }
     let ref: string;
     try {
