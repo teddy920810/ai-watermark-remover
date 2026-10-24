@@ -10,6 +10,12 @@
     "dev": "astro dev",
     "prebuild": "npm run images:optimize",
     "build": "astro check && astro build && npm run verify:responsive-images",
+    "build:site": "node scripts/build-target.mjs site",
+    "build:app": "node scripts/build-target.mjs app",
+    "build:worker": "node scripts/build-worker.mjs",
+    "processing:grant": "node --env-file-if-exists=.env.local scripts/grant-processing-credits.mjs",
+    "processing:revoke": "node --env-file-if-exists=.env.local scripts/revoke-processing-credits.mjs",
+    "test:smoke:processing": "node scripts/processing-acceptance.mjs",
     "preview": "astro preview",
     "lint": "astro check && eslint .",
     "test": "vitest run",
@@ -45,15 +51,17 @@
     "@aws-sdk/s3-request-presigner": "^3.864.0",
     "@lucide/astro": "^1.33.0",
     "@tailwindcss/vite": "^4.3.3",
+    "@vercel/oidc": "3.8.5",
     "astro": "^7.3.2",
     "better-auth": "^1.6.26",
+    "google-auth-library": "11.3.1",
     "lucide-react": "^1.33.0",
     "pg": "^8.23.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "sharp": "^0.35.4",
     "tailwindcss": "^4.3.3",
-    "zod": "^4.0.14"
+    "zod": "4.6.7"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.4",
@@ -66,6 +74,7 @@
     "@types/react": "^19.1.10",
     "@types/react-dom": "^19.1.7",
     "@vitest/coverage-v8": "^4.1.11",
+    "esbuild": "0.28.2",
     "eslint": "^10.12.0",
     "eslint-plugin-astro": "~2.1.1",
     "mammoth": "^1.12.1",
@@ -78,6 +87,12 @@
   },
   "overrides": {
     "path-to-regexp": "6.3.0",
-    "nanoid": "3.3.18"
+    "nanoid": "3.3.18",
+    "@vercel/cli-config": {
+      "zod": "4.6.7"
+    },
+    "undici@^7": "7.30.1",
+    "undici@^8": "8.12.3",
+    "vite": "8.2.4"
   }
 }

@@ -33,6 +33,9 @@ export class R2ObjectStore {
       region: 'auto',
       endpoint: config.endpoint,
       forcePathStyle: true,
+      // Browser PUT bodies arrive after signing; never bind the empty-body CRC32.
+      // https://docs.aws.amazon.com/sdkref/latest/guide/feature-dataintegrity.html
+      requestChecksumCalculation: 'WHEN_REQUIRED',
       credentials: {
         accessKeyId: config.accessKeyId,
         secretAccessKey: config.secretAccessKey,

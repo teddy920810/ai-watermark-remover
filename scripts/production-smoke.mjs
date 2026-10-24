@@ -80,6 +80,17 @@ function benefitBalance(body) {
   return balance;
 }
 
+async function inspectWatermarkArtifact(bytes) {
+  const input = Buffer.from(bytes);
+  const image = sharp(input, { failOn: 'warning', limitInputPixels: 40_000_000 });
+  const metadata = await image.metadata();
+  if (metadata.format === 'png') return inspectPngArtifact(input);
+  if (metadata.format !== 'jpeg' || !metadata.width || !metadata.height) throw new Error('Result artifact is not a valid JPEG or PNG image.');
+  // Header metadata alone can accept truncated JPEGs. Decode the actual pixels.
+  await image.stats();
+  return { format: metadata.format, width: metadata.width, height: metadata.height, hasAlpha: metadata.hasAlpha, hasTransparentPixel: false };
+}
+
 export async function runAuthenticatedSmoke(baseUrl, sessionCookie, fetcher = fetch, options = {}) {
   if (!sessionCookie) {
     if (options.requireAuthentication) throw new Error('A production smoke session cookie is required.');
@@ -143,9 +154,12 @@ export async function runAuthenticatedSmoke(baseUrl, sessionCookie, fetcher = fe
     if (response.headers.get('access-control-allow-origin') !== baseUrl) {
       throw new Error('R2 result download is missing the production CORS origin.');
     }
-    const inspected = await inspectPngArtifact(await response.arrayBuffer(), {
-      requireTransparency: operation === 'background-removal',
-    });
+    const bytes = await response.arrayBuffer();
+    const inspected = operation === 'watermark-removal'
+      ? await inspectWatermarkArtifact(bytes)
+      : await inspectPngArtifact(bytes, { requireTransparency: operation === 'background-removal' });
+    const expectedType = inspected.format === 'jpeg' ? 'image/jpeg' : 'image/png';
+    if (response.headers.get('content-type')?.split(';')[0].trim().toLowerCase() !== expectedType) throw new Error('Result Content-Type does not match the decoded image format.');
     if (index === 0) result = inspected;
   }
 

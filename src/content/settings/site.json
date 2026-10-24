@@ -145,7 +145,7 @@
       {
         "label": "Video & Batch Tools",
         "children": [
-          { "label": "Video Watermark Remover", "href": "/video-watermark-remover", "badge": "Coming Soon" },
+          { "label": "Video Watermark Remover", "href": "/video-watermark-remover" },
           { "label": "Sora Watermark Remover", "href": "/sora-watermark-remover", "badge": "Coming Soon" },
           { "label": "Veo Watermark Remover", "href": "/veo-watermark-remover", "badge": "Coming Soon" },
           { "label": "Kling Watermark Remover", "href": "/kling-watermark-remover", "badge": "Coming Soon" },

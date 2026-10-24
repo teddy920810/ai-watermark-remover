@@ -13,6 +13,11 @@ const schema = z.object({
   DEWATERMARK_BASE_URL: z.url().default('https://platform.dewatermark.ai'),
   DEWATERMARK_PREDICT_MODE: z.enum(['3.0', '4.0']).default('4.0'),
   DEWATERMARK_TIMEOUT_MS: z.coerce.number().int().min(1000).max(120_000).default(30_000),
+  PROCESSING_ENABLED: z.enum(['true', 'false']).default('false').transform((value) => value === 'true'),
+  PROCESSING_PROVIDER: z.enum(['mock', 'dewatermark']).default('mock'),
+  PROCESSING_PRICE_VERSION: z.string().regex(/^[a-zA-Z0-9:_-]{1,100}$/).default('processing-v1'),
+  FFPROBE_PATH: z.string().min(1).optional(),
+  BETTER_AUTH_URL: z.url().optional(),
   BACKGROUND_REMOVAL_PROVIDER: z.enum(['mock', 'replicate']).optional(),
   OBJECT_REMOVAL_PROVIDER: z.enum(['mock', 'replicate']).optional(),
   REPLICATE_API_TOKEN: z.string().min(1).optional(),
@@ -24,6 +29,9 @@ const schema = z.object({
 }).superRefine((env, context) => {
   if (env.WATERMARK_PROVIDER === 'dewatermark' && !env.DEWATERMARK_API_KEY) {
     context.addIssue({ code: 'custom', path: ['DEWATERMARK_API_KEY'], message: 'Required for Dewatermark provider' });
+  }
+  if (env.PROCESSING_ENABLED && env.PROCESSING_PROVIDER === 'dewatermark' && !env.DEWATERMARK_API_KEY) {
+    context.addIssue({ code: 'custom', path: ['DEWATERMARK_API_KEY'], message: 'Required for enabled processing provider' });
   }
   if (env.BACKGROUND_REMOVAL_PROVIDER === 'replicate' && !env.REPLICATE_API_TOKEN) {
     context.addIssue({ code: 'custom', path: ['REPLICATE_API_TOKEN'], message: 'Required for Replicate background removal' });

@@ -2,7 +2,7 @@ import { readdirSync, readFileSync, existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import YAML from 'yaml';
 
-export const reservedToolSlugs = new Set(['api', 'auth', 'blog', 'privacy', 'terms', '404', 'robots', 'sitemap', 'robots.txt', 'sitemap.xml']);
+export const reservedToolSlugs = new Set(['api', 'app', 'auth', 'blog', 'privacy', 'terms', '404', 'robots', 'sitemap', 'robots.txt', 'sitemap.xml']);
 export function parseCmsDocument(path, source) {
   if (path.endsWith('.json')) return { path, data: JSON.parse(source), body: '' };
   const match = source.match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)([\s\S]*)$/);

@@ -1492,10 +1492,11 @@ content:
         type: select
         required: true
         default: watermark-remover
-        description: 背景移除页选择 Background remover；物体移除页选择 Object remover；现有去水印页面保持 Watermark remover。
+        description: 视频去水印选择 Video watermark remover；背景移除选择 Background remover；物体移除选择 Object remover；图片去水印保持 Watermark remover。
         options:
           values:
             - { name: watermark-remover, label: Watermark remover }
+            - { name: video-watermark-remover, label: Video watermark remover }
             - { name: background-remover, label: Background remover }
             - { name: object-remover, label: Object remover }
       - name: title

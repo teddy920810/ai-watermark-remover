@@ -11,6 +11,13 @@ const completeEnv = {
 };
 
 describe('getServerEnv', () => {
+  it('keeps the new processing pipeline disabled independently of legacy image processing', () => {
+    expect(getServerEnv(completeEnv)).toMatchObject({ PROCESSING_ENABLED: false, PROCESSING_PROVIDER: 'mock', PROCESSING_PRICE_VERSION: 'processing-v1' });
+    expect(getServerEnv({ ...completeEnv, PROCESSING_ENABLED: 'true', PROCESSING_PROVIDER: 'mock' })).toMatchObject({ PROCESSING_ENABLED: true });
+    expect(() => getServerEnv({ ...completeEnv, PROCESSING_ENABLED: 'yes' })).toThrow();
+    expect(() => getServerEnv({ ...completeEnv, PROCESSING_ENABLED: 'true', PROCESSING_PROVIDER: 'dewatermark' })).toThrow();
+    expect(getServerEnv({ ...completeEnv, PROCESSING_ENABLED: 'true', PROCESSING_PROVIDER: 'dewatermark', DEWATERMARK_API_KEY: 'private-key', BETTER_AUTH_URL: 'https://www.example.test', FFPROBE_PATH: '/usr/bin/ffprobe' })).toMatchObject({ PROCESSING_ENABLED: true, BETTER_AUTH_URL: 'https://www.example.test', FFPROBE_PATH: '/usr/bin/ffprobe' });
+  });
   it('parses a complete explicit environment without reading process globals', () => {
     expect(getServerEnv(completeEnv)).toMatchObject({
       R2_ACCESS_KEY_ID: 'access-key',

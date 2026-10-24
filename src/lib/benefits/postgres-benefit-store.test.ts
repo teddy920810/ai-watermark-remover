@@ -47,6 +47,15 @@ function createPool(state: FakeState) {
 }
 
 describe('PostgresBenefitStore', () => {
+  it('returns an already reserved free use even when the available balance has reached the reward cap', async () => {
+    const state = { balance: 3, reservation: { user_id: 'user-1', status: 'reserved' } };
+    const fake = createPool(state);
+    await new PostgresBenefitStore(fake.pool).refund('job-1', 'user-1');
+    expect(state.balance).toBe(4);
+    expect(fake.query).toHaveBeenLastCalledWith('COMMIT');
+    expect(fake.query.mock.calls.some(([sql]) => sql.includes("'job_refund'"))).toBe(true);
+  });
+
   it('initializes a user with one free use and records first-use activity', async () => {
     const fake = createPool({ balance: 1, insertedUser: true });
     const summary = await new PostgresBenefitStore(fake.pool).getSummary('user-1');

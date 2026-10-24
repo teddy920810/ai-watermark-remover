@@ -6,6 +6,10 @@ ClearMark AI 是部署在 [www.watermarkgemini.com](https://www.watermarkgemini.
 
 > 当前状态：匿名用户可以选择和预览图片，创建处理任务时需要通过 Google 登录。首次登录获得 1 次免费处理，每日签到增加 1 次，免费余额上限为 3 次；去水印、背景移除和物体移除共用这份余额。上传、临时存储和任务流程已经可用；生产环境可分别通过服务端配置启用 Dewatermark v3 去水印 Provider、Replicate 851 Labs 背景移除 Provider 和 Replicate LaMa 物体移除 Provider，本地和测试环境默认仍使用 Mock Provider。
 
+新图片工作区提供普通、PRO 和画笔精修；视频工作区支持 MP4、24 fps、最长 9 分钟、100 MB，以及整段生效的固定选区。普通图片保留免费次数规则，PRO、精修和视频使用管理员分配的处理额度。选择文件先保留本机草稿，登录上传检查后展示费用，确认才处理。新处理链路默认关闭，配置完整耐久执行服务后启用。
+
+SEO 静态站、App/API 和容器 Worker 使用独立构建与发布目标。开发决策与发布进度见 [实施清单](docs/product/IMPLEMENTATION_TODO.md)、[产品与初始状态设计](docs/product/PROCESSING_PRODUCT_DESIGN.md)、[架构方案](docs/product/PROCESSING_ARCHITECTURE.md)、[配置说明](docs/product/PROCESSING_CONFIGURATION.md) 和 [Worker 部署](docs/product/WORKER_DEPLOYMENT.md)。账户与管理员额度操作见 [身份说明](docs/ACCOUNT_IDENTITY.md) 和 [额度说明](docs/PROCESSING_CREDITS.md)。
+
 ## 常用入口
 
 - 正式站点：[www.watermarkgemini.com](https://www.watermarkgemini.com)
@@ -21,13 +25,13 @@ ClearMark AI 是部署在 [www.watermarkgemini.com](https://www.watermarkgemini.
 
 ### 开发者
 
-需要 Node.js 22 和 npm。首次运行：
+使用受支持且已修复安全问题的 Node.js 22/24 与 npm；Worker 使用 Node.js 24，当前镜像固定为 24.22.1。首次运行：
 
 ```sh
 git clone https://github.com/teddy920810/ai-watermark-remover.git
 cd ai-watermark-remover
 npm ci
-copy .env.example .env.local
+node -e "require('node:fs').copyFileSync('.env.example','.env.local',require('node:fs').constants.COPYFILE_EXCL)"
 npm run dev
 ```
 

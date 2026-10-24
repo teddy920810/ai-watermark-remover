@@ -14,6 +14,16 @@ function createStore() {
 afterEach(() => vi.restoreAllMocks());
 
 describe('R2ObjectStore', () => {
+  it('presigns a browser upload without binding an empty-body CRC32 and without sending a request', async () => {
+    const send = vi.spyOn(S3Client.prototype, 'send').mockRejectedValue(new Error('Signing must stay offline'));
+    const upload = new URL(await createStore().createUploadUrl('uploads/users/owner/input.png', 'image/png'));
+    expect(upload.pathname).toBe('/watermark/uploads/users/owner/input.png');
+    expect(upload.searchParams.get('X-Amz-Content-Sha256')).toBe('UNSIGNED-PAYLOAD');
+    expect(upload.searchParams.get('X-Amz-Expires')).toBe('600');
+    expect(upload.searchParams.has('x-amz-checksum-crc32')).toBe(false);
+    expect(upload.searchParams.has('x-amz-sdk-checksum-algorithm')).toBe(false);
+    expect(send).not.toHaveBeenCalled();
+  });
   it('generates path-style presigned upload and read URLs for R2', async () => {
     const store = createStore();
     const upload = new URL(await store.createUploadUrl('uploads/test.png', 'image/png'));

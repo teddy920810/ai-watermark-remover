@@ -1,5 +1,5 @@
 ---
-import ImageUploader from './uploader/ImageUploader';
+import MediaLauncher from './launcher/MediaLauncher';
 import BackgroundRemoverUploader from './uploader/BackgroundRemoverUploader';
 import ObjectRemoverUploader from './uploader/ObjectRemoverUploader';
 import ResponsiveImage from './ResponsiveImage.astro';
@@ -52,7 +52,7 @@ const faqSchema = visibleFaqItems.length > 0 ? {
           ? <BackgroundRemoverUploader logo={siteLogo} siteName={site.name} copy={uploaderCopy} client:load />
           : page.toolKind === 'object-remover'
             ? <ObjectRemoverUploader logo={siteLogo} siteName={site.name} copy={uploaderCopy} client:load />
-            : <ImageUploader logo={siteLogo} siteName={site.name} copy={uploaderCopy} client:load />}
+            : <MediaLauncher kind={page.toolKind === 'video-watermark-remover' ? 'video' : 'image'} source={page.slug} copy={uploaderCopy} client:load />}
       </div>
     </div>
   </section>

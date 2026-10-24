@@ -256,7 +256,7 @@
       {
         "enabled": true,
         "question": "How do I remove watermark from image files on the homepage?",
-        "answer": "Upload a supported image, sign in with Google, start processing, compare the original and returned result, and download the file when it is ready. The current interface does not include a manual selection brush."
+        "answer": "Choose an image, continue to the image workspace, sign in, and upload it for file checks. Review the cost before starting. Compare the returned JPG and download it; eligible standard results can be refined with a brush using administrator-allocated processing credits."
       },
       {
         "enabled": true,
@@ -271,7 +271,7 @@
       {
         "enabled": true,
         "question": "Does WatermarkGemini support video watermark removal?",
-        "answer": "No. The homepage tool is for supported image files only. It does not accept video or PDF files."
+        "answer": "Yes. Open the dedicated video workspace from the Video tab. It accepts MP4 at 24 fps, up to 9 minutes and 100 MB. Video processing uses credits allocated by an administrator; standard image removal keeps its free-use rules."
       },
       {
         "enabled": true,
