@@ -132,7 +132,7 @@ export class PostgresBenefitStore implements BenefitStore {
 
   async refund(jobId: string, userId: string): Promise<void> {
     await this.transaction(async (client) => {
-      const user = await client.query<{ balance: number }>(`
+      await client.query<{ balance: number }>(`
         SELECT balance::int AS balance FROM user_benefits WHERE user_id = $1 FOR UPDATE
       `, [userId]);
       const reservation = await client.query<{ user_id: string; status: string }>(`
@@ -141,7 +141,8 @@ export class PostgresBenefitStore implements BenefitStore {
       const state = reservation.rows[0];
       if (!state || state.user_id !== userId) throw new Error('Invalid credit reservation');
       if (state.status !== 'reserved') return;
-      if (user.rows[0].balance >= FREE_USE_CAP) throw new Error('Invalid benefit balance');
+      // A reward cap limits new grants, not returning an already reserved use.
+      // Migration 005 permits this restoration without discarding user entitlement.
 
       const updated = await client.query<{ balance: number }>(`
         UPDATE user_benefits SET balance = balance + 1, last_active_at = NOW()

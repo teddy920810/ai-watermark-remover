@@ -1,0 +1,11 @@
+# Dockerfile-specific context rules: https://docs.docker.com/build/concepts/context/
+# Private local configuration and samples must not reach a remote Docker builder.
+*
+!package.json
+!package-lock.json
+!output
+output/*
+!output/worker
+output/worker/*
+!output/worker/entry.mjs
+!output/worker/build-manifest.json

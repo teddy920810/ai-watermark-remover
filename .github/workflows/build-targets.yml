@@ -1,0 +1,48 @@
+name: Independent build artifacts
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  targets:
+    runs-on: ubuntu-latest
+    outputs:
+      targets: ${{ steps.plan.outputs.targets }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - id: plan
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+          HEAD_SHA: ${{ github.sha }}
+        run: echo "targets=$(node scripts/build-target.mjs changes "$BASE_SHA" "$HEAD_SHA")" >> "$GITHUB_OUTPUT"
+  build:
+    needs: targets
+    if: needs.targets.outputs.targets != '[]'
+    strategy:
+      matrix:
+        target: ${{ fromJSON(needs.targets.outputs.targets) }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: node scripts/build-target.mjs ${{ matrix.target }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.target }}-${{ github.sha }}
+          path: dist-target/${{ matrix.target }}
+          include-hidden-files: true
+          retention-days: 3
+# Vercel Git projects deploy independently using their target-specific ignoreCommand.
+# Required CI / verify remains unchanged. This workflow never receives deployment secrets.

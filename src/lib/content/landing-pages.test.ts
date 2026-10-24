@@ -24,7 +24,7 @@ const landingPageFiles = [
   'video-watermark-remover.json',
 ];
 
-const videoLandingPageFiles = new Set([
+const unopenedToolFiles = new Set([
   'batch-watermark-remover.json',
   'capcut-watermark-remover.json',
   'facebook-watermark-remover.json',
@@ -34,7 +34,6 @@ const videoLandingPageFiles = new Set([
   'sora-watermark-remover.json',
   'tiktok-watermark-remover.json',
   'veo-watermark-remover.json',
-  'video-watermark-remover.json',
 ]);
 
 const landingPageSource = readFileSync(new URL('../../components/LandingPage.astro', import.meta.url), 'utf8');
@@ -62,12 +61,12 @@ const requestedKeywords = new Map([
 ]);
 
 describe('tool landing-page usage steps', () => {
-  it.each(landingPageFiles)('shows Coming Soon only on video-oriented tool page %s', (fileName) => {
+  it.each(landingPageFiles)('shows Coming Soon only on unopened tool page %s', (fileName) => {
     const page = JSON.parse(
       readFileSync(new URL(`../../content/landing-pages/${fileName}`, import.meta.url), 'utf8'),
     );
 
-    expect(page.statusLabel).toBe(videoLandingPageFiles.has(fileName) ? 'Coming Soon' : undefined);
+    expect(page.statusLabel).toBe(unopenedToolFiles.has(fileName) ? 'Coming Soon' : undefined);
   });
 
   it('renders the optional status next to the landing-page eyebrow', () => {

@@ -40,9 +40,11 @@ export function normalizeGoogleProfile(claims: GoogleIdentityClaims): GoogleUser
   };
 }
 
-export function createGoogleProfileMapper(store: GoogleProfileStore) {
+export function createGoogleProfileMapper(store: GoogleProfileStore, identities?: { resolveGoogleUser(user: { email: string; emailVerified: boolean }): Promise<string> }) {
   return async (claims: GoogleIdentityClaims) => {
-    await store.save(normalizeGoogleProfile(claims));
+    const profile = normalizeGoogleProfile(claims);
+    await store.save(profile);
+    if (identities) await identities.resolveGoogleUser({ email: profile.email, emailVerified: profile.emailVerified });
     return {};
   };
 }

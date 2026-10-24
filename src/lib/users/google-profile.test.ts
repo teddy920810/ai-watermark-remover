@@ -2,6 +2,13 @@ import { describe, expect, it, vi } from 'vitest';
 import { createGoogleProfileMapper, normalizeGoogleProfile } from './google-profile';
 
 describe('Google profile persistence mapping', () => {
+  it('refreshes the canonical subject association on verified OAuth callbacks while preserving the core mapping shape', async () => {
+    const save = vi.fn().mockResolvedValue(undefined); const resolveGoogleUser = vi.fn().mockResolvedValue('stable-owner');
+    const mapper = createGoogleProfileMapper({ save }, { resolveGoogleUser });
+    expect(await mapper({ sub: 'stable-google-subject', email: 'New@Example.com', email_verified: true })).toEqual({});
+    expect(resolveGoogleUser).toHaveBeenCalledWith({ email: 'new@example.com', emailVerified: true });
+    expect(save.mock.invocationCallOrder[0]).toBeLessThan(resolveGoogleUser.mock.invocationCallOrder[0]);
+  });
   it('normalizes every standard identity claim without retaining token claims', () => {
     const claims = {
       sub: 'google-user-123',

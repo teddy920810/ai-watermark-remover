@@ -1,6 +1,17 @@
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 import { readdirSync, readFileSync } from 'node:fs';
+
+async function openPublicPage(page: Page, path: string) {
+  // Public readiness is visible HTML plus the usable launcher, not dev-audit/analytics silence.
+  const response = await page.goto(path, { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('main')).toBeVisible();
+  await expect(page.locator('.site-header')).toBeVisible();
+  const launcher = page.getByTestId('media-launcher-file');
+  if (await launcher.count()) await expect(launcher).toBeEnabled();
+  await page.evaluate(() => document.fonts.ready);
+  return response;
+}
 
 test('ChatGPT landing modules keep source visuals and page-local actions without changing other pages', async ({ page }) => {
   await page.goto('/chatgpt-watermark-remover');
@@ -31,7 +42,8 @@ test('all tools remain reachable in the desktop and mobile header with honest av
     if (width === 390) await page.locator('[data-mobile-menu-toggle]').click();
     const nav = page.getByRole('navigation', { name: 'Main navigation' });
     await nav.getByRole('button', { name: 'Video & Batch Tools' }).click();
-    await expect(nav.locator('.nav-status-badge')).toHaveCount(10);
+    await expect(nav.locator('.nav-status-badge')).toHaveCount(9);
+    await expect(nav.getByRole('link', { name: 'Video Watermark Remover', exact: true })).toBeVisible();
     await expect(nav.getByRole('link', { name: 'All Watermark Tools' })).toHaveCount(0);
     const lastTool = nav.getByRole('link', { name: 'Batch Watermark Remover Coming Soon', exact: true });
     await lastTool.scrollIntoViewIfNeeded();
@@ -68,7 +80,7 @@ test('critical public routes and SEO files are available', async ({ page, reques
 
 test('mobile visitors can open navigation and a dropdown', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto('/', { waitUntil: 'networkidle' });
+  await openPublicPage(page, '/');
 
   const menuButton = page.locator('[data-mobile-menu-toggle]');
   await menuButton.click();
@@ -89,7 +101,7 @@ test('blog tables scroll inside the article without widening the mobile page', a
   await page.setViewportSize({ width: 390, height: 844 });
 
   for (const route of routes) {
-    await page.goto(route, { waitUntil: 'networkidle' });
+    await openPublicPage(page, route);
     await expect(page.locator('article')).toBeVisible();
     const dimensions = await page.evaluate(() => ({
       clientWidth: document.documentElement.clientWidth,
@@ -115,7 +127,7 @@ test('blog tables scroll inside the article without widening the mobile page', a
 
 test('article navigation and related guides flank the story on desktop and stack on mobile', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
-  await page.goto('/blog/how-to-remove-watermarks-responsibly', { waitUntil: 'networkidle' });
+  await openPublicPage(page, '/blog/how-to-remove-watermarks-responsibly');
 
   const tableOfContents = page.getByRole('navigation', { name: 'On this page' });
   const article = page.locator('.article-main');
@@ -153,7 +165,7 @@ test('all public content routes and 404 have one H1 and no serious accessibility
   routes.push('/missing-page-for-404-check');
 
   for (const route of routes) {
-    const response = await page.goto(route, { waitUntil: 'networkidle' });
+    const response = await openPublicPage(page, route);
     expect(response?.status(), `${route} should return its expected status`).toBe(route.includes('missing-page') ? 404 : 200);
     await expect(page.locator('main')).toBeVisible();
     await expect(page.locator('main h1'), `${route} should have exactly one content H1`).toHaveCount(1);
@@ -238,7 +250,7 @@ test('homepage blueprint previews, CTA routes and motion controls work on deskto
 
 test('homepage matches blueprint geometry and keeps mobile comparisons and active tabs in view', async ({ page }) => {
   await page.setViewportSize({ width:1920, height:1080 });
-  await page.goto('/');
+  await openPublicPage(page, '/');
   const layout = await page.evaluate(() => {
     const rect = (selector: string) => {
       const element = document.querySelector<HTMLElement>(selector)!;
@@ -277,7 +289,7 @@ test('homepage matches blueprint geometry and keeps mobile comparisons and activ
     const tablist=rect('.result-tabs');
     const evenRow=document.querySelectorAll('.feature-item')[1];
     const note=rect('.illustration-note');
-    return {noteBottom:note.bottom,uploadTop:rect('.upload-panel').top,toolWidth:rect('.live-removal-grid .tool-card').width,stage:{left:stage.left,right:stage.right,width:stage.width},section:{left:section.left,right:section.right},tab:{left:tab.left,right:tab.right},tablist:{left:tablist.left,right:tablist.right},mediaY:evenRow.querySelector('.feature-media')!.getBoundingClientRect().y,copyY:evenRow.querySelector('.feature-copy')!.getBoundingClientRect().y};
+    return {noteBottom:note.bottom,uploadBottom:rect('.upload-panel').bottom,compareTop:rect('.compare-panel').top,trustTop:rect('.trust-list').top,toolWidth:rect('.live-removal-grid .tool-card').width,stage:{left:stage.left,right:stage.right,width:stage.width},section:{left:section.left,right:section.right},tab:{left:tab.left,right:tab.right},tablist:{left:tablist.left,right:tablist.right},mediaY:evenRow.querySelector('.feature-media')!.getBoundingClientRect().y,copyY:evenRow.querySelector('.feature-copy')!.getBoundingClientRect().y};
   });
   expect(mobile.stage.left).toBeGreaterThanOrEqual(mobile.section.left+19);
   expect(mobile.stage.right).toBeLessThanOrEqual(mobile.section.right-19);
@@ -285,7 +297,8 @@ test('homepage matches blueprint geometry and keeps mobile comparisons and activ
   expect(mobile.tab.right).toBeLessThanOrEqual(mobile.tablist.right+1);
   expect(mobile.mediaY).toBeLessThan(mobile.copyY);
   expect(mobile.toolWidth).toBeLessThanOrEqual(350);
-  expect(mobile.noteBottom).toBeLessThanOrEqual(mobile.uploadTop);
+  expect(mobile.uploadBottom).toBeLessThanOrEqual(mobile.compareTop);
+  expect(mobile.noteBottom).toBeLessThanOrEqual(mobile.trustTop);
 });
 
 test('homepage sample switching preserves the comparison position as in the blueprint', async ({page})=>{

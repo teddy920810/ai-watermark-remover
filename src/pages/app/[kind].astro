@@ -1,0 +1,15 @@
+---
+import WatermarkWorkspace from '../../components/workspace/WatermarkWorkspace';
+import site from '../../content/settings/site.json';
+import '../../styles/global.css';
+import '../../styles/workspace.css';
+export const prerender = true;
+export function getStaticPaths() { return [{ params: { kind: 'image' } }, { params: { kind: 'video' } }]; }
+const kind = Astro.params.kind === 'video' ? 'video' : 'image';
+const appAsset = (path: string) => process.env.BUILD_TARGET === 'app' ? `/_app-assets/public${path}` : path;
+---
+<!doctype html>
+<html lang={site.locale}>
+  <head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width" /><meta name="robots" content="noindex, follow" /><title>{kind === 'video' ? 'Video' : 'Image'} workspace | {site.name}</title><meta name="description" content="Prepare your media, review the processing cost, and compare your watermark removal result." /><link rel="icon" href={appAsset(site.favicon)} /></head>
+  <body><WatermarkWorkspace kind={kind} logo={appAsset(site.logo)} siteName={site.name} client:only="react" /></body>
+</html>

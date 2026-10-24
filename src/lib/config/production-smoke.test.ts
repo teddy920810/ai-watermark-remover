@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+import sharp from 'sharp';
 import { runAuthenticatedSmoke, runProductionSmoke, runPublicSmoke } from '../../../scripts/production-smoke.mjs';
 
 const transparentPng = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAACXBIWXMAAAPoAAAD6AG1e1JrAAAAC0lEQVQImWNgQAcAABIAAW/6Y7cAAAAASUVORK5CYII=', 'base64');
@@ -10,17 +11,58 @@ function response(body: unknown, status = 200, contentType = 'application/json')
   });
 }
 
-function corsResponse(body: BodyInit, origin: string) {
+function corsResponse(body: BodyInit, origin: string, contentType = 'image/png') {
   return new Response(body, {
     status: 200,
     headers: {
-      'Content-Type': 'image/png',
+      'Content-Type': contentType,
       'Access-Control-Allow-Origin': origin,
     },
   });
 }
 
 describe('production smoke', () => {
+  function watermarkFetcher(bytes: Buffer, contentType: string, withMask = false) {
+    const origin = 'https://example.test';
+    const fetcher = vi.fn()
+      .mockResolvedValueOnce(response({ balance: 2 }))
+      .mockResolvedValueOnce(response({ balance: 2, checkedInToday: true }))
+      .mockResolvedValueOnce(response({ url: 'https://uploads.test/input', key: 'uploads/user/input.png' }))
+      .mockResolvedValueOnce(response('', 200, 'image/png'));
+    if (withMask) fetcher.mockResolvedValueOnce(response({ url: 'https://uploads.test/mask', key: 'uploads/user/mask.png' })).mockResolvedValueOnce(response('', 200, 'image/png'));
+    return fetcher
+      .mockResolvedValueOnce(response({ id: 'job-1', status: 'processing' }, 201))
+      .mockResolvedValueOnce(response({ status: 'completed', resultUrl: 'https://results.test/result', downloadUrl: 'https://results.test/download' }))
+      .mockResolvedValueOnce(corsResponse(new Uint8Array(bytes), origin, contentType))
+      .mockResolvedValueOnce(corsResponse(new Uint8Array(bytes), origin, contentType))
+      .mockResolvedValueOnce(response({ balance: 1 }));
+  }
+  it.each(['jpeg', 'png'] as const)('accepts an actually decoded %s watermark result with matching response type', async (format) => {
+    const fixture = await sharp({ create: { width: 512, height: 320, channels: 3, background: '#5070a0' } }).png().toBuffer();
+    const bytes = await sharp(fixture).toFormat(format).toBuffer();
+    const fetcher = watermarkFetcher(bytes, format === 'jpeg' ? 'image/jpeg' : 'image/png');
+    await expect(runAuthenticatedSmoke('https://example.test', 'session=value', fetcher, { operation: 'watermark-removal', fixture, requireAuthentication: true })).resolves.toMatchObject({ status: 'passed', balanceBefore: 2, balanceAfter: 1, result: { format, width: 512, height: 320 } });
+    expect(fetcher.mock.calls.filter(([url]) => url === 'https://example.test/api/jobs')).toHaveLength(1);
+    expect(fetcher.mock.calls[3][1].body).toEqual(fixture);
+  });
+  it.each([['png', 'image/jpeg'], ['jpeg', 'image/png'], ['jpeg', 'application/octet-stream']] as const)('rejects %s watermark bytes declared as %s', async (format, contentType) => {
+    const bytes = await sharp({ create: { width: 4, height: 2, channels: 3, background: '#5070a0' } }).toFormat(format).toBuffer();
+    await expect(runAuthenticatedSmoke('https://example.test', 'session=value', watermarkFetcher(bytes, contentType), { operation: 'watermark-removal', fixture: transparentPng, requireAuthentication: true })).rejects.toThrow('Content-Type');
+  });
+  it('rejects a truncated JPEG even when its header still describes a valid image', async () => {
+    const jpeg = await sharp({ create: { width: 512, height: 320, channels: 3, background: '#5070a0' } }).jpeg().toBuffer();
+    const truncated = jpeg.subarray(0, Math.floor(jpeg.byteLength * 0.8));
+    expect(await sharp(truncated).metadata()).toMatchObject({ format: 'jpeg', width: 512, height: 320 });
+    await expect(runAuthenticatedSmoke('https://example.test', 'session=value', watermarkFetcher(truncated, 'image/jpeg'), { operation: 'watermark-removal', fixture: transparentPng, requireAuthentication: true })).rejects.toThrow();
+  });
+  it.each(['background-removal', 'object-removal'])('keeps %s output strictly PNG instead of accepting the watermark JPEG contract', async (operation) => {
+    const jpeg = await sharp(transparentPng).flatten({ background: '#ffffff' }).jpeg().toBuffer();
+    await expect(runAuthenticatedSmoke('https://example.test', 'session=value', watermarkFetcher(jpeg, 'image/jpeg', operation === 'object-removal'), { operation, fixture: transparentPng, maskFixture: transparentPng, requireAuthentication: true })).rejects.toThrow('PNG');
+  });
+  it('still rejects an opaque background-removal PNG', async () => {
+    const opaque = await sharp(transparentPng).flatten({ background: '#ffffff' }).png().toBuffer();
+    await expect(runAuthenticatedSmoke('https://example.test', 'session=value', watermarkFetcher(opaque, 'image/png'), { operation: 'background-removal', fixture: transparentPng, requireAuthentication: true })).rejects.toThrow('transparent pixels');
+  });
   it('keeps public checks non-destructive and confirms upload signing rejects anonymous callers', async () => {
     const fetcher = vi.fn()
       .mockResolvedValueOnce(response('<html></html>', 200, 'text/html'))

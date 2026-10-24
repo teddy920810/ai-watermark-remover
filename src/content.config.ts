@@ -111,7 +111,7 @@ const landingPages = defineCollection({
     templateVersion: z.literal(1).optional(),
     slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
     draft: z.boolean().default(false),
-    toolKind: z.enum(['watermark-remover', 'background-remover', 'object-remover']).default('watermark-remover'),
+    toolKind: z.enum(['watermark-remover', 'video-watermark-remover', 'background-remover', 'object-remover']).default('watermark-remover'),
     title: z.string().min(1),
     description: z.string().min(1),
     eyebrow: z.string().min(1),

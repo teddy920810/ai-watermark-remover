@@ -3,7 +3,7 @@ import '../styles/home-blueprint.css';
 import '../styles/home-integration.css';
 import HomeComparison from '../components/HomeComparison.astro';
 import HomeReviews from '../components/HomeReviews.astro';
-import ImageUploader from '../components/uploader/ImageUploader';
+import MediaLauncher from '../components/launcher/MediaLauncher';
 import HighlightedHeading from '../components/HighlightedHeading.astro';
 import ResponsiveImage from '../components/ResponsiveImage.astro';
 import SiteLayout from '../layouts/SiteLayout.astro';
@@ -11,7 +11,6 @@ import { getCollection } from 'astro:content';
 import { sortBlogEntries } from '../lib/content/entries';
 import { splitFeatureCopy } from '../lib/content/feature-copy';
 import { visibleItems } from '../lib/content/item-visibility';
-import { resolvePublicImageSource } from '../lib/content/image-fallback';
 import { resolveUploaderCopy } from '../lib/content/site-settings';
 import { ArrowLeft, ArrowRight, BadgeDollarSign, CircleCheck, Clock3, Link2, Plus, ShieldCheck } from '@lucide/astro';
 
@@ -22,7 +21,6 @@ const [siteEntry] = await getCollection('siteSettings');
 if (!siteEntry) throw new Error('Site settings CMS content is missing.');
 const home = homepage.data;
 const site = siteEntry.data;
-const siteLogo = resolvePublicImageSource(site.logo);
 const uploaderCopy = resolveUploaderCopy(site.uploader, home.uploader);
 const blogPosts = sortBlogEntries(await getCollection('blog')).slice(0, 6);
 const landingPages = await getCollection('landingPages');
@@ -60,7 +58,7 @@ const faqSchema = visibleFaqItems.length > 0 ? {
           <div class="preview-samples" aria-label="Choose a preview sample">{home.hero.samples.map((sample,index) => <button class="sample-thumb" type="button" data-hero-sample={index} aria-pressed={index===0?'true':'false'} aria-label={sample.label}><span class="sample-art"><ResponsiveImage src={sample.image} alt="" sizes="64px" /></span><span>{sample.label}</span></button>)}</div>
           <p class="illustration-note">{home.hero.previewNote}</p>
         </div>
-        <div id="tool" class="hero-tool upload-panel"><ImageUploader logo={siteLogo} siteName={site.name} copy={uploaderCopy} client:load /><p class="privacy-line">{home.hero.privacyNote}</p></div>
+        <div id="tool" class="hero-tool upload-panel"><MediaLauncher kind="image" source="homepage" copy={uploaderCopy} client:load /><p class="privacy-line">{home.hero.privacyNote}</p></div>
       </div>
       <div class="trust-row trust-list">{home.hero.trustItems.map(item => <span><CircleCheck size={16} />{item.replace(/^✓\s*/, '')}</span>)}</div>
     </div>
