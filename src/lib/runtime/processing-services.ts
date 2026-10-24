@@ -13,6 +13,7 @@ import { ProcessingService } from '../processing/processing-service';
 import { ProcessingWorker } from '../processing/processing-worker';
 import { R2ProcessingJobStore, R2ProcessingQuoteStore, S3ConditionalJsonStore } from '../processing/r2-processing-store';
 import { DewatermarkClient } from '../providers/dewatermark-client';
+import { cloudRunDispatchDiagnostic } from './cloud-run-trigger';
 import { MediaPreflight } from './media-preflight';
 import type { UploadRecord } from './media-preflight';
 import { mediaKey, PrivateMediaStore, SITE_MAX_IMAGE_BYTES, SITE_MAX_VIDEO_BYTES } from './private-media-store';
@@ -205,9 +206,9 @@ export function createProcessingRuntime(config: ProcessingRuntimeConfig): Proces
           const result = await config.trigger(message.action, message.jobId, owner, message.executionRef);
           if (!Number.isFinite(Date.parse(result.nextCheckAt))) throw new Error('Execution monitor deadline is invalid');
           await finance.recordDispatch(message.id, dispatcherId, result.nextCheckAt, result.executionRef);
-        } catch {
+        } catch (error) {
           const delay = Math.min(15 * 60_000, 60_000 * 2 ** Math.min(4, Math.max(0, message.attempts - 1)));
-          await finance.retryDispatch(message.id, dispatcherId, new Date(now().getTime() + delay).toISOString(), 'dispatch_unavailable');
+          await finance.retryDispatch(message.id, dispatcherId, new Date(now().getTime() + delay).toISOString(), cloudRunDispatchDiagnostic(error));
         }
       }
     },

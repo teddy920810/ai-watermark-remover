@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { ExternalAccountClient } from 'google-auth-library';
 import { getVercelOidcToken } from '@vercel/oidc';
-import { cloudRunTriggerFromEnvironment, createCloudRunTrigger, createVercelGoogleTokenProvider } from './cloud-run-trigger';
+import { CloudRunTriggerError, cloudRunTriggerFromEnvironment, createCloudRunTrigger, createVercelGoogleTokenProvider } from './cloud-run-trigger';
 
 vi.mock('@vercel/oidc', () => ({ getVercelOidcToken: vi.fn().mockResolvedValue('short-vercel-subject') }));
 afterEach(() => { vi.restoreAllMocks(); vi.clearAllMocks(); });
@@ -80,6 +80,34 @@ describe('Cloud Run execution trigger and recovery', () => {
     const dispatch = createCloudRunTrigger({ projectId: 'demo-project', region: 'asia-east1', jobName: 'watermark-worker', fetchImpl: request as typeof fetch, getAccessToken: vi.fn().mockRejectedValue(new Error('private credential detail')) });
     await expect(dispatch('process', 'job-1', 'owner-1')).rejects.toThrow('Cloud execution credentials are unavailable');
     expect(request).not.toHaveBeenCalled();
+  });
+  it('preserves a safe supplier failure phase through dispatch without sending a run', async () => {
+    const request = vi.fn();
+    const dispatch = createCloudRunTrigger({ projectId: 'demo-project', region: 'asia-east1', jobName: 'watermark-worker', fetchImpl: request as typeof fetch, getAccessToken: vi.fn().mockRejectedValue(new CloudRunTriggerError('private detail', 'authorization', 'oidc_exchange', 401)) });
+    await expect(dispatch('preflight', 'upload-1', 'owner-1')).rejects.toMatchObject({ kind: 'authorization', phase: 'oidc_exchange', status: 401 });
+    expect(request).not.toHaveBeenCalled();
+  });
+  it('keeps unclassified credential failures retryable even when their original kind is other', async () => {
+    const request = vi.fn();
+    const dispatch = createCloudRunTrigger({ projectId: 'demo-project', region: 'asia-east1', jobName: 'watermark-worker', fetchImpl: request as typeof fetch, getAccessToken: vi.fn().mockRejectedValue(new CloudRunTriggerError('private detail')) });
+    await expect(dispatch('preflight', 'upload-1', 'owner-1')).rejects.toMatchObject({ kind: 'authorization', message: 'Cloud execution credentials are unavailable' });
+    expect(request).not.toHaveBeenCalled();
+  });
+  it('labels a rejected Cloud Run request with only its phase and HTTP status', async () => {
+    const request = vi.fn().mockResolvedValue(new Response('private upstream data', { status: 403 }));
+    await expect(trigger(request)('preflight', 'upload-1', 'owner-1')).rejects.toMatchObject({ phase: 'cloud_run_http', status: 403 });
+  });
+  it.each([
+    [new Error('Failed to exchange token: private upstream body'), 'oidc_exchange', undefined, 'Error'],
+    [Object.assign(new Error('private refresh detail'), { name: 'VercelOidcTokenError' }), 'oidc_unavailable', undefined, undefined],
+    [{ config: { url: 'https://sts.googleapis.com/v1/token' }, response: { status: 400, data: { error: 'invalid_grant', error_description: 'private token' } } }, 'google_sts', 400, 'invalid_grant'],
+    [{ response: { config: { url: 'https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/vercel@demo-project.iam.gserviceaccount.com:generateAccessToken' }, status: 403, data: { error: { status: 'PERMISSION_DENIED', message: 'private policy' } } } }, 'google_impersonation', 403, 'PERMISSION_DENIED'],
+    [{ config: { url: 'https://sts.googleapis.com.attacker.test/v1/token' }, response: { status: 'private URL', data: { error: 'private token' } } }, 'google_token_unknown', undefined, undefined],
+    [new TypeError('private runtime detail'), 'google_token_unknown', undefined, 'TypeError'],
+  ])('classifies token failures into fixed safe diagnostic fields', async (failure, phase, status, reason) => {
+    vi.spyOn(ExternalAccountClient, 'fromJSON').mockReturnValue({ getAccessToken: vi.fn().mockRejectedValue(failure) } as unknown as ReturnType<typeof ExternalAccountClient.fromJSON>);
+    const provider = createVercelGoogleTokenProvider({ projectNumber: '1234567890', serviceAccountEmail: 'vercel@demo-project.iam.gserviceaccount.com', poolId: 'vercel', providerId: 'vercel' });
+    await expect(provider()).rejects.toMatchObject({ phase, status, reason });
   });
   it('preserves the official custom-audience federation object and only obtains short-lived tokens on demand', async () => {
     const access = vi.fn().mockResolvedValue({ token: 'short-google-access' });

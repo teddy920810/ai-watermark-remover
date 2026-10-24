@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import sharp from 'sharp';
 import { S3Client } from '@aws-sdk/client-s3';
 import { createProcessingRuntime } from './processing-services';
+import { CloudRunTriggerError } from './cloud-run-trigger';
 import type { ProcessingRuntimeConfig } from './processing-services';
 import { memoryMediaStore } from './test-fixtures';
 import { MemoryFinance, NOW } from '../processing/test-fixtures';
@@ -107,6 +108,38 @@ describe('processing runtime assembly', () => {
     vi.spyOn(s.finance as ProcessingFinancialStore, 'claimDue').mockResolvedValue([{ id: 'outbox-1', jobId: s.upload.id, ownerId: 'user-1', action: 'preflight', attempts: 1 }]);
     const retry = vi.spyOn(s.finance, 'retryDispatch'); await s.runtime.dispatch();
     expect(retry).toHaveBeenCalledWith('outbox-1', expect.any(String), expect.any(String), 'dispatch_unavailable');
+  });
+  it.each([
+    ['oidc_exchange', 401, 'dispatch_oidc_exchange_401'],
+    ['google_sts', 403, 'dispatch_google_sts_403'],
+    ['google_impersonation', 403, 'dispatch_google_impersonation_403'],
+    ['cloud_run_http', 403, 'dispatch_cloud_run_http_403'],
+    ['oidc_unavailable', 'private signed URL', 'dispatch_oidc_unavailable'],
+    ['private signed URL', 401, 'dispatch_unavailable'],
+    ['google_token_unknown', 999, 'dispatch_google_token_unknown'],
+  ] as const)('stores only allowlisted dispatch phase %s and numeric status', async (phase, status, diagnostic) => {
+    const error = new CloudRunTriggerError('private token and upstream URL', 'authorization', phase as 'oidc_exchange', status as number);
+    const s = await setup({ trigger: vi.fn().mockRejectedValue(error) });
+    vi.spyOn(s.finance as ProcessingFinancialStore, 'claimDue').mockResolvedValue([{ id: 'outbox-1', jobId: s.upload.id, ownerId: 'user-1', action: 'preflight', attempts: 1 }]);
+    const retry = vi.spyOn(s.finance, 'retryDispatch'); await s.runtime.dispatch();
+    expect(retry).toHaveBeenCalledWith('outbox-1', expect.any(String), new Date(Date.parse(NOW) + 60_000).toISOString(), diagnostic);
+    expect(s.finance.admissions.size).toBe(0);
+  });
+  it('does not trust phase-shaped arbitrary thrown data', async () => {
+    const s = await setup({ trigger: vi.fn().mockRejectedValue({ phase: 'oidc_exchange', status: 401, message: 'private token URL' }) });
+    vi.spyOn(s.finance as ProcessingFinancialStore, 'claimDue').mockResolvedValue([{ id: 'outbox-1', jobId: s.upload.id, ownerId: 'user-1', action: 'preflight', attempts: 1 }]);
+    const retry = vi.spyOn(s.finance, 'retryDispatch'); await s.runtime.dispatch();
+    expect(retry).toHaveBeenCalledWith('outbox-1', expect.any(String), expect.any(String), 'dispatch_unavailable');
+  });
+  it.each([
+    ['invalid_grant', 'dispatch_google_sts_400_invalid_grant'],
+    ['private signed URL', 'dispatch_google_sts_400'],
+  ] as const)('persists only allowlisted token reason %s', async (reason, diagnostic) => {
+    const error = new CloudRunTriggerError('private token and upstream URL', 'authorization', 'google_sts', 400, reason as 'invalid_grant');
+    const s = await setup({ trigger: vi.fn().mockRejectedValue(error) });
+    vi.spyOn(s.finance as ProcessingFinancialStore, 'claimDue').mockResolvedValue([{ id: 'outbox-1', jobId: s.upload.id, ownerId: 'user-1', action: 'preflight', attempts: 1 }]);
+    const retry = vi.spyOn(s.finance, 'retryDispatch'); await s.runtime.dispatch();
+    expect(retry).toHaveBeenCalledWith('outbox-1', expect.any(String), expect.any(String), diagnostic);
   });
   it.each([[1, 60], [2, 120], [10, 900], [1000, 900]])('backs off dispatch attempt %s by %s seconds without losing its execution reference', async (attempts, seconds) => {
     const trigger = vi.fn().mockRejectedValue(new Error('temporary execution outage')); const s = await setup({ trigger });
