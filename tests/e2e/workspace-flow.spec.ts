@@ -105,6 +105,45 @@ test('unknown provider status never offers a fresh paid replay or a false refund
   await expect(page.getByText('credits returned', { exact: false })).toHaveCount(0);
 });
 
+test('an unstarted task timeout returns the allowance and requires a new cost review before retrying', async ({ page }) => {
+  await account(page); await page.clock.install();
+  const image = await sharp({ create: { width: 60, height: 40, channels: 3, background: '#c9b07b' } }).jpeg().toBuffer();
+  const input = { id: 'timeout-input', role: 'input', metadata: { kind: 'image', contentType: 'image/jpeg', byteSize: image.length, width: 60, height: 40 }, previewUrl: `${origin}/fixture/timeout.jpg`, expiresAt: expiration() };
+  const message = 'The task did not start before the deadline. The reserved allowance was returned. Review the cost to try again.';
+  let reads = 0; let submissions = 0; let quotes = 0;
+  const job = { id: 'timeout-job', operation: 'image-watermark', input, createdAt: new Date(Date.now() - 16 * 60 * 1000).toISOString() };
+  await page.route('**/fixture/timeout.jpg', route => route.fulfill({ status: 200, contentType: 'image/jpeg', body: image }));
+  await page.route('**/api/v1/me', route => json(route, { freeUses: reads > 1 ? 1 : 0, processingCredits: 0 }));
+  await page.route('**/api/v1/jobs/timeout-job', route => {
+    reads += 1;
+    return json(route, { ...job, status: reads === 1 ? 'QUEUED' : 'REFUNDED', chargeStatus: reads === 1 ? 'reserved' : 'refunded', charge: { status: reads === 1 ? 'reserved' : 'refunded', amount: 1, unit: 'freeUses' }, ...(reads > 1 ? { errorCode: 'dispatch_timeout', error: message } : {}) });
+  });
+  await page.route('**/api/v1/jobs', route => {
+    if (route.request().method() === 'GET') return json(route, { jobs: [] });
+    submissions += 1; return json(route, { error: 'A retry requires explicit confirmation.' }, 409);
+  });
+  await page.route('**/api/v1/quotes', route => {
+    quotes += 1; expect(route.request().postDataJSON()).toEqual({ operation: 'image-watermark', inputArtifactId: input.id });
+    return json(route, { id: 'timeout-retry-quote', operation: 'image-watermark', amount: 1, unit: 'freeUses', expiresAt: quoteExpiration(), expectedOutput: { contentType: 'image/jpeg', format: 'JPG', width: 60, height: 40 } });
+  });
+  await page.goto('/app/image?job=timeout-job');
+  await expect(page.getByRole('heading', { name: 'Waiting to start' })).toBeVisible();
+  await expect(page.getByText('0 free image uses', { exact: true })).toBeVisible();
+  await page.clock.fastForward(3100);
+  await expect(page.getByText(message, { exact: true })).toBeVisible();
+  await expect(page.getByText('Your reserved credits were returned.', { exact: true })).toBeVisible();
+  await expect(page.getByText('1 free image uses', { exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Review processing cost', exact: true })).toBeEnabled();
+  expect(submissions).toBe(0); expect(quotes).toBe(0);
+  await page.getByRole('button', { name: 'Review processing cost', exact: true }).click();
+  await expect(page.getByRole('dialog')).toContainText('1 free image use');
+  await expect(page.getByRole('button', { name: 'Confirm & process · 1' })).toBeEnabled();
+  expect(submissions).toBe(0); expect(quotes).toBe(1);
+  await page.getByRole('button', { name: 'Close cost review' }).click(); await page.reload();
+  await expect(page.getByText(message, { exact: true })).toBeVisible();
+  await expect(page.getByRole('dialog')).toHaveCount(0); expect(submissions).toBe(0); expect(quotes).toBe(1);
+});
+
 test('refinement sends an opaque binary mask and keeps the previous result when the new attempt fails', async ({ page }) => {
   await account(page);
   const image = await sharp({ create: { width: 160, height: 120, channels: 3, background: '#e8c991' } }).jpeg().toBuffer();

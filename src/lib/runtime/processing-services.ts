@@ -7,13 +7,19 @@ import { PostgresBenefitStore } from '../benefits/postgres-benefit-store';
 import type { BenefitStore } from '../benefits/benefit-store';
 import { prepareImageForProvider } from '../media/image';
 import { ProcessingError, DefinitiveProviderError } from '../processing/contracts';
-import type { OperationCapability, ProcessingArtifact, ProcessingFinancialStore, ProcessingJob, ProcessingProviderContext, ProcessingProviderPort, ProviderOutcome } from '../processing/contracts';
+import type { OperationCapability, ProcessingArtifact, ProcessingFinancialStore, ProcessingJob } from '../processing/contracts';
+import { ProcessingDispatchRecovery } from '../processing/dispatch-recovery';
 import { PostgresProcessingStore } from '../processing/postgres-processing-store';
 import { ProcessingService } from '../processing/processing-service';
 import { ProcessingWorker } from '../processing/processing-worker';
 import { R2ProcessingJobStore, R2ProcessingQuoteStore, S3ConditionalJsonStore } from '../processing/r2-processing-store';
 import { DewatermarkClient } from '../providers/dewatermark-client';
-import { cloudRunDispatchDiagnostic } from './cloud-run-trigger';
+import { DewatermarkProvider } from '../providers/dewatermark-provider';
+import { MockWatermarkProvider } from '../providers/mock-provider';
+import { createWatermarkProvider } from '../providers/watermark-provider-factory';
+import type { LegacyWatermarkProvider, ProcessingProviderContext, ProcessingWatermarkProvider, ProviderOutcome, WatermarkProvider } from '../providers/watermark-provider';
+import { R2ObjectStore } from '../r2/r2-object-store';
+import { CloudRunTriggerError, cloudRunDispatchDiagnostic } from './cloud-run-trigger';
 import { MediaPreflight } from './media-preflight';
 import type { UploadRecord } from './media-preflight';
 import { mediaKey, PrivateMediaStore, SITE_MAX_IMAGE_BYTES, SITE_MAX_VIDEO_BYTES } from './private-media-store';
@@ -21,13 +27,15 @@ import { ProcessingProvider } from './processing-provider';
 import { PublicProcessingProjection } from './public-projection';
 import type { PublicArtifact } from './public-projection';
 
-export type ExecutionTrigger = (action: 'process' | 'reconcile' | 'preflight', id: string, ownerId: string, existingExecutionRef?: string) => Promise<{ executionRef?: string; nextCheckAt: string }>;
+export type ExecutionTrigger = (action: 'process' | 'reconcile' | 'preflight', id: string, ownerId: string, existingExecutionRef?: string, dispatchId?: string) => Promise<{ executionRef?: string; nextCheckAt: string; terminal?: boolean }>;
 export interface ProcessingRuntimeConfig {
   r2: { endpoint: string; accessKeyId: string; secretAccessKey: string; bucket: string };
   databaseUrl: string;
   apiKey?: string;
   ffprobePath?: string;
   providerMode: 'mock' | 'dewatermark';
+  /** Legacy remove settings remain independent from the durable provider mode. */
+  legacyProvider?: { mode: 'mock' | 'dewatermark'; baseUrl?: string; predictMode?: '3.0' | '4.0'; timeoutMs?: number; mockDelayMs?: number };
   enabled?: boolean;
   priceVersion?: string;
   trigger?: ExecutionTrigger;
@@ -37,7 +45,7 @@ export interface ProcessingRuntimeConfig {
     pool?: Pool;
     finance?: ProcessingFinancialStore;
     benefits?: Pick<BenefitStore, 'getSummary'>;
-    provider?: ProcessingProviderPort;
+    provider?: ProcessingWatermarkProvider;
     signUrl?: typeof getSignedUrl;
     now?: () => Date;
     id?: () => string;
@@ -63,13 +71,13 @@ export interface ProcessingRuntime extends ProcessingApiRuntime {
   projectJob: PublicProcessingProjection['job'];
   projectQuote: PublicProcessingProjection['quote'];
   download(ownerId: string, id: string): ReturnType<PublicProcessingProjection['download']>;
-  runJob(jobId: string, workerId?: string): Promise<ProcessingJob>;
+  runJob(jobId: string, workerId?: string, dispatchId?: string): Promise<ProcessingJob>;
   runPreflight(ownerId: string, id: string): Promise<PublicUpload>;
   close(): Promise<void>;
 }
 
 /** Local simulation writes real private result bytes; it never claims AI removal. */
-class MockPrivateProcessingProvider implements ProcessingProviderPort {
+class MockPrivateProcessingProvider implements ProcessingWatermarkProvider {
   constructor(private readonly media: PrivateMediaStore, private readonly now: () => Date, private readonly id: () => string) {}
   private receipt(context: ProcessingProviderContext) { return `processing/mock-attempts/${context.job.id}/${context.job.attempt!.id}.json`; }
   async submit(context: ProcessingProviderContext): Promise<ProviderOutcome> {
@@ -112,6 +120,7 @@ export function createProcessingRuntime(config: ProcessingRuntimeConfig): Proces
   const media = new PrivateMediaStore({ client, bucket: config.r2.bucket, ffprobePath: config.ffprobePath, signUrl: deps.signUrl, now });
   const json = new S3ConditionalJsonStore(client, config.r2.bucket);
   const jobs = new R2ProcessingJobStore(json); const quotes = new R2ProcessingQuoteStore(json);
+  const recovery = new ProcessingDispatchRecovery({ jobs, finance, now, id });
   const preflight = new MediaPreflight({ media, ffprobePath: config.ffprobePath, now, id });
   const available = config.enabled !== false && (config.providerMode === 'mock' || Boolean(config.apiKey?.trim()));
   const reason = 'Processing is not configured. Your existing files and account allowance are retained.';
@@ -129,11 +138,19 @@ export function createProcessingRuntime(config: ProcessingRuntimeConfig): Proces
     quote: async (request) => { await benefits.getSummary(request.ownerId); return core.quote(request); },
     submit: (request) => core.submit(request), get: (owner, jobId) => core.get(owner, jobId), list: (owner, limit) => core.list(owner, limit),
   };
-  const unavailableProvider: ProcessingProviderPort = {
+  const unavailableProvider: ProcessingWatermarkProvider = {
     submit: async () => { throw new DefinitiveProviderError('Provider configuration is unavailable before processing'); },
     poll: async () => { throw new Error('Provider configuration is required to reconcile the existing operation'); },
   };
-  const provider = deps.provider ?? (config.providerMode === 'mock' ? new MockPrivateProcessingProvider(media, now, id) : config.apiKey?.trim() ? new ProcessingProvider({ client: new DewatermarkClient({ apiKey: config.apiKey }), media, ffprobePath: config.ffprobePath, now, id }) : unavailableProvider);
+  const processing = deps.provider ?? (config.providerMode === 'mock' ? new MockPrivateProcessingProvider(media, now, id) : config.apiKey?.trim() ? new ProcessingProvider({ client: new DewatermarkClient({ apiKey: config.apiKey }), media, ffprobePath: config.ffprobePath, now, id }) : unavailableProvider);
+  const legacyConfig = config.legacyProvider;
+  const legacy: LegacyWatermarkProvider = legacyConfig?.mode === 'dewatermark'
+    ? config.apiKey?.trim() ? new DewatermarkProvider(new R2ObjectStore(config.r2), {
+        apiKey: config.apiKey, baseUrl: legacyConfig.baseUrl ?? 'https://platform.dewatermark.ai',
+        predictMode: legacyConfig.predictMode ?? '4.0', timeoutMs: legacyConfig.timeoutMs ?? 30_000,
+      }) : { remove: async () => { throw new Error('Legacy provider configuration is unavailable before processing'); } }
+    : new MockWatermarkProvider(new R2ObjectStore(config.r2), legacyConfig?.mockDelayMs ?? 0);
+  const provider: WatermarkProvider = createWatermarkProvider(legacy, processing);
   const worker = new ProcessingWorker({ jobs, artifacts: media, finance, provider, now, id });
   const projection = new PublicProcessingProjection({ media, now, isDemo: config.providerMode === 'mock', refinementEnabled: available,
     signPreview: (artifact, seconds) => (deps.signUrl ?? getSignedUrl)(client, new GetObjectCommand({ Bucket: config.r2.bucket, Key: artifact.key, ResponseContentDisposition: 'inline', ResponseCacheControl: 'private, no-store' }), { expiresIn: seconds }) });
@@ -167,7 +184,7 @@ export function createProcessingRuntime(config: ProcessingRuntimeConfig): Proces
     projectJob: (owner, job) => projection.job(owner, job), projectQuote: (owner, quote) => projection.quote(owner, quote),
     async balances(owner) { const legacy = await benefits.getSummary(owner); return { freeUses: legacy.balance, processingCredits: await finance.getBalance(owner) }; },
     async download(owner, jobId) { return projection.download(owner, await core.get(owner, jobId)); },
-    async runJob(jobId, workerId = `worker-${id()}`) { return worker.run(jobId, workerId); },
+    async runJob(jobId, workerId = `worker-${id()}`, dispatchId) { return worker.run(jobId, workerId, dispatchId); },
     async runPreflight(owner, uploadId) {
       const record = await preflight.getUploadForWorker(owner, uploadId);
       if (record.status === 'expired') { await finance.completeOutbox(uploadId); return projectUpload(owner, record); }
@@ -194,16 +211,32 @@ export function createProcessingRuntime(config: ProcessingRuntimeConfig): Proces
         try {
           const owner = message.ownerId ?? (await jobs.get(message.jobId))?.job.ownerId;
           if (!owner) throw new Error('Outbox ownership is unavailable');
+          let result: Awaited<ReturnType<ExecutionTrigger>>;
           if (message.action === 'preflight') {
             const upload = await preflight.getUploadForWorker(owner, message.jobId);
             // Permanent failures are acknowledged by runPreflight. A failed
             // record alone may have come from a retryable storage outage.
             if (upload.status === 'ready' || upload.status === 'expired') { await finance.completeOutbox(message.jobId); continue; }
+            result = await config.trigger(message.action, message.jobId, owner, message.executionRef);
           } else {
-            const job = await core.get(owner, message.jobId);
+            await core.get(owner, message.jobId);
+            // Resume fenced refunds before considering any terminal status.
+            const job = await recovery.recover(message.jobId);
+            if (job.refundIntent && job.chargeStatus !== 'refunded') throw new Error('Refund intent is awaiting recovery');
             if (['READY', 'FAILED', 'REFUNDED', 'EXPIRED'].includes(job.status)) { await finance.completeOutbox(message.jobId); continue; }
+            // Persist uncertainty before POST; a lost acknowledgement must only
+            // monitor this dispatch rather than silently starting another one.
+            const prepared = await recovery.prepare(message.jobId, message.executionRef);
+            try {
+              result = await config.trigger(message.action, message.jobId, owner, prepared.start ? undefined : prepared.executionRef, prepared.dispatchId);
+            } catch (error) {
+              // A known refusal may retry with a fresh durable nonce. Lookup,
+              // monitoring and acknowledgement failures keep their current one.
+              if (prepared.start && error instanceof CloudRunTriggerError && error.acceptance === 'not-accepted') await recovery.accepted(message.jobId, prepared.dispatchId, undefined, true);
+              throw error;
+            }
+            await recovery.accepted(message.jobId, prepared.dispatchId, result.executionRef, result.terminal);
           }
-          const result = await config.trigger(message.action, message.jobId, owner, message.executionRef);
           if (!Number.isFinite(Date.parse(result.nextCheckAt))) throw new Error('Execution monitor deadline is invalid');
           await finance.recordDispatch(message.id, dispatcherId, result.nextCheckAt, result.executionRef);
         } catch (error) {

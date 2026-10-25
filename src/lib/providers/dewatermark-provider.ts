@@ -1,6 +1,6 @@
 import sharp from 'sharp';
 import { z } from 'zod';
-import type { ProviderInput, ProviderResult, WatermarkProvider } from './watermark-provider';
+import type { ProviderInput, ProviderResult, LegacyWatermarkProvider } from './watermark-provider';
 
 interface BinaryObjects {
   getBytes(key: string): Promise<Uint8Array>;
@@ -28,7 +28,7 @@ function decodeImage(value: string): Uint8Array {
   return bytes;
 }
 
-export class DewatermarkProvider implements WatermarkProvider {
+export class DewatermarkProvider implements LegacyWatermarkProvider {
   constructor(
     private readonly objects: BinaryObjects,
     private readonly config: DewatermarkConfig,

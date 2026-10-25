@@ -2,11 +2,19 @@ import { randomUUID } from 'node:crypto';
 import { resolve } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 import { pathToFileURL } from 'node:url';
+import { z } from 'zod';
 import { cloudRunTriggerFromEnvironment } from '../../src/lib/runtime/cloud-run-trigger';
 import { createProcessingRuntime, type ProcessingRuntime, type ProcessingRuntimeConfig } from '../../src/lib/runtime/processing-services';
 
 type Environment = Record<string, string | undefined>;
 type Mode = 'preflight' | 'process' | 'reconcile' | 'dispatch';
+const legacyProviderEnvironment = z.object({
+  WATERMARK_PROVIDER: z.enum(['mock', 'dewatermark']).default('mock'),
+  DEWATERMARK_BASE_URL: z.url().default('https://platform.dewatermark.ai'),
+  DEWATERMARK_PREDICT_MODE: z.enum(['3.0', '4.0']).default('4.0'),
+  DEWATERMARK_TIMEOUT_MS: z.coerce.number().int().min(1000).max(120_000).default(30_000),
+  MOCK_PROCESSING_DELAY_MS: z.coerce.number().int().min(0).max(5000).default(0),
+});
 function required(source: Environment, name: string): string {
   const value = source[name];
   if (!value?.trim()) throw new Error(`Missing worker configuration: ${name}`);
@@ -23,6 +31,8 @@ function positive(source: Environment, name: string, fallback: number): number {
   return value;
 }
 export function workerConfigFromEnvironment(source: Environment): ProcessingRuntimeConfig {
+  const legacy = legacyProviderEnvironment.safeParse(source);
+  if (!legacy.success) throw new Error('Invalid worker configuration: legacy provider');
   const mode = modeFrom(source);
   const databaseUrl = required(source, 'DATABASE_URL');
   const endpoint = source.R2_ENDPOINT ?? (source.R2_ACCOUNT_ID ? `https://${source.R2_ACCOUNT_ID}.r2.cloudflarestorage.com` : required(source, 'R2_ENDPOINT'));
@@ -37,6 +47,7 @@ export function workerConfigFromEnvironment(source: Environment): ProcessingRunt
   return {
     r2: { endpoint, accessKeyId: required(source, 'R2_ACCESS_KEY_ID'), secretAccessKey: required(source, 'R2_SECRET_ACCESS_KEY'), bucket: source.R2_BUCKET ?? 'watermark' },
     databaseUrl, providerMode: providerMode as 'mock' | 'dewatermark', apiKey: source.DEWATERMARK_API_KEY,
+    legacyProvider: { mode: legacy.data.WATERMARK_PROVIDER, baseUrl: legacy.data.DEWATERMARK_BASE_URL, predictMode: legacy.data.DEWATERMARK_PREDICT_MODE, timeoutMs: legacy.data.DEWATERMARK_TIMEOUT_MS, mockDelayMs: legacy.data.MOCK_PROCESSING_DELAY_MS },
     ffprobePath: source.FFPROBE_PATH, enabled, priceVersion: source.PROCESSING_PRICE_VERSION ?? 'processing-v1', trigger,
   };
 }
@@ -52,7 +63,9 @@ export async function runWorker(source: Environment = process.env, dependencies:
   const pollMs = positive(source, 'WORKER_POLL_MS', 5_000);
   const jobId = source.JOB_ID;
   const ownerId = source.OWNER_ID;
+  const dispatchId = source.DISPATCH_ID;
   if (mode !== 'dispatch' && (!jobId || !/^[A-Za-z0-9_-]{1,160}$/.test(jobId) || !ownerId || ownerId.length > 512 || /[\r\n\0]/.test(ownerId))) throw new Error('Worker task and owner identifiers are required');
+  if (dispatchId && !/^[A-Za-z0-9_-]{1,160}$/.test(dispatchId)) throw new Error('Worker dispatch identifier is invalid');
   const runtime = (dependencies.createRuntime ?? createProcessingRuntime)(config);
   const now = dependencies.now ?? Date.now;
   const sleep = dependencies.sleep ?? (async (milliseconds: number) => { await delay(milliseconds); });
@@ -66,10 +79,11 @@ export async function runWorker(source: Environment = process.env, dependencies:
     for (let step = 0; step < maxSteps && now() < deadline; step++) {
       const current = await runtime.service.get(ownerId!, jobId!);
       if (current.id !== jobId || current.ownerId !== ownerId) throw new Error('Worker task ownership does not match');
+      if (dispatchId && current.dispatch && current.dispatch.id !== dispatchId) return { mode, status: 'superseded', id: jobId };
       if (['READY', 'FAILED', 'REFUNDED', 'EXPIRED'].includes(current.status)) return { mode, status: current.status, id: jobId };
       // Corrupt/incomplete UNKNOWN must never become a new charged submission.
       if (current.status === 'UNKNOWN' && !current.attempt) return { mode, status: 'UNKNOWN', id: jobId, continuationRequired: true };
-      const result = await runtime.runJob(jobId!, workerId);
+      const result = await runtime.runJob(jobId!, workerId, dispatchId);
       lastStatus = result.status;
       if (['READY', 'FAILED', 'REFUNDED', 'EXPIRED'].includes(result.status)) return { mode, status: result.status, id: jobId };
       if (result.status === 'UNKNOWN') return { mode, status: result.status, id: jobId, continuationRequired: true };

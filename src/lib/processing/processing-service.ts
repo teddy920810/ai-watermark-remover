@@ -1,6 +1,6 @@
 import { createHash, randomUUID } from 'node:crypto';
 import { amountSchema, metadataSchema, operationSchema, ProcessingError } from './contracts';
-import type { OperationCapability, ProcessingArtifact, ProcessingArtifactStore, ProcessingFinancialStore, ProcessingInspector, ProcessingJob, ProcessingJobStore, ProcessingOperation, ProcessingPriceBook, ProcessingQuote, ProcessingQuoteStore } from './contracts';
+import type { AdmissionHistoryCursor, OperationCapability, ProcessingArtifact, ProcessingArtifactStore, ProcessingFinancialStore, ProcessingInspector, ProcessingJob, ProcessingJobStore, ProcessingOperation, ProcessingPriceBook, ProcessingQuote, ProcessingQuoteStore } from './contracts';
 
 export interface QuoteRequest { ownerId: string; operation: ProcessingOperation; inputArtifactId: string; maskArtifactId?: string; parentJobId?: string }
 export interface SubmitRequest { ownerId: string; quoteId: string; idempotencyKey: string }
@@ -87,9 +87,21 @@ export class ProcessingService {
   }
 
   async list(ownerId: string, limit = 20): Promise<ProcessingJob[]> {
-    const jobs = await this.options.jobs.listForOwner(ownerId, Math.max(1, Math.min(100, limit)));
-    const admitted = await Promise.all(jobs.map(async (job) => (await this.options.finance.getAdmission(job.id))?.ownerId === ownerId ? job : null));
-    return admitted.filter((job): job is ProcessingJob => job !== null);
+    const pageSize = Number.isFinite(limit) ? Math.max(1, Math.min(100, Math.trunc(limit))) : 20;
+    const jobs: ProcessingJob[] = []; let before: AdmissionHistoryCursor | undefined;
+    // Financial admission defines history membership. The R2 owner index also
+    // contains abandoned PREPARED manifests and cannot be limited before filtering.
+    do {
+      const page = await this.options.finance.listAdmissionsForOwner(ownerId, pageSize, before);
+      const records = await Promise.all(page.admissions.map(async (entry) => {
+        if (entry.ownerId !== ownerId) return null;
+        const stored = await this.options.jobs.get(entry.jobId);
+        return stored?.job.id === entry.jobId && stored.job.ownerId === ownerId ? stored.job : null;
+      }));
+      jobs.push(...records.filter((job): job is ProcessingJob => job !== null));
+      before = page.nextCursor;
+    } while (jobs.length < pageSize && before);
+    return jobs.slice(0, pageSize);
   }
 
   private async owned(ownerId: string, id: string): Promise<ProcessingArtifact> {

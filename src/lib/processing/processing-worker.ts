@@ -1,12 +1,14 @@
 import { randomUUID } from 'node:crypto';
 import { DefinitiveProviderError, metadataSchema, ProcessingError } from './contracts';
-import type { ProcessingArtifact, ProcessingArtifactStore, ProcessingFinancialStore, ProcessingJob, ProcessingJobStore, ProcessingProviderContext, ProcessingProviderPort, ProviderCheckpoint, ProviderOutcome } from './contracts';
+import type { ProcessingArtifact, ProcessingArtifactStore, ProcessingFinancialStore, ProcessingJob, ProcessingJobStore } from './contracts';
+import type { ProcessingProviderContext, ProcessingWatermarkProvider, ProviderCheckpoint, ProviderOutcome } from '../providers/watermark-provider';
+import { ProcessingDispatchRecovery } from './dispatch-recovery';
 
 export interface ProcessingWorkerOptions {
   jobs: ProcessingJobStore;
   artifacts: ProcessingArtifactStore;
   finance: ProcessingFinancialStore;
-  provider: ProcessingProviderPort;
+  provider: ProcessingWatermarkProvider;
   now?: () => Date;
   id?: () => string;
   leaseMs?: number;
@@ -20,24 +22,30 @@ export class ProcessingWorker {
   private readonly id: () => string;
   constructor(private readonly options: ProcessingWorkerOptions) { this.now = options.now ?? (() => new Date()); this.id = options.id ?? randomUUID; }
 
-  async run(jobId: string, workerId: string): Promise<ProcessingJob> {
+  async run(jobId: string, workerId: string, dispatchId?: string): Promise<ProcessingJob> {
     const { jobs, artifacts, finance, provider } = this.options;
+    await new ProcessingDispatchRecovery({ jobs, finance, now: this.now, id: this.id }).recover(jobId);
     let record = await jobs.get(jobId);
     if (!record) throw new ProcessingError('not_found', 'Task not found', 404);
-    const admission = await finance.getAdmission(jobId);
+    if (dispatchId && record.job.dispatch && record.job.dispatch.id !== dispatchId) return record.job;
+    let admission = await finance.getAdmission(jobId);
     if (!admission || admission.ownerId !== record.job.ownerId || admission.amount !== record.job.quote.amount || admission.unit !== record.job.quote.unit) throw new ProcessingError('admission_missing', 'Task has no valid financial admission', 409);
     const currentTime = this.now().getTime();
     if (record.job.lease && Date.parse(record.job.lease.expiresAt) > currentTime) return record.job;
     const epoch = (record.job.lease?.epoch ?? 0) + 1;
     const lease = { owner: workerId, epoch, expiresAt: new Date(currentTime + (this.options.leaseMs ?? 60_000)).toISOString() };
     if (!await jobs.compareAndSwap(jobId, record.version, { ...record.job, chargeStatus: admission.status, lease })) return (await jobs.get(jobId))!.job;
+    // Re-read after fencing: another coordinator may have committed a refund
+    // between the first financial read and lease acquisition.
+    admission = await finance.getAdmission(jobId);
+    if (!admission || admission.ownerId !== record.job.ownerId) throw new ProcessingError('admission_missing', 'Task has no valid financial admission', 409);
 
     const read = async () => (await jobs.get(jobId))!.job;
     let updates: Promise<void> = Promise.resolve();
     const update = (patch: Partial<ProcessingJob> | ((current: ProcessingJob) => Partial<ProcessingJob>)): Promise<ProcessingJob> => {
       const pending = updates.then(async () => {
         record = await jobs.get(jobId);
-        if (!record || record.job.lease?.owner !== workerId || record.job.lease.epoch !== epoch || Date.parse(record.job.lease.expiresAt) < this.now().getTime()) throw new LeaseLost();
+        if (!record || record.job.lease?.owner !== workerId || record.job.lease.epoch !== epoch || Date.parse(record.job.lease.expiresAt) < this.now().getTime() || dispatchId && record.job.dispatch && record.job.dispatch.id !== dispatchId) throw new LeaseLost();
         const next = { ...record.job, ...(typeof patch === 'function' ? patch(record.job) : patch), updatedAt: this.now().toISOString() };
         if (!await jobs.compareAndSwap(jobId, record.version, next)) throw new LeaseLost();
         return next;
@@ -99,10 +107,8 @@ export class ProcessingWorker {
 
     try {
       let job = await read();
-      if (job.status === 'UNKNOWN' && job.unknownUntil && Date.parse(job.unknownUntil) <= this.now().getTime()) {
-        await finance.refund(jobId, job.ownerId, 'unknown_timeout');
-        job = await update({ status: 'REFUNDED', chargeStatus: 'refunded', error: 'unknown_timeout' });
-      }
+      if (dispatchId && job.dispatch && job.dispatch.id !== dispatchId) return release();
+      if (job.refundIntent && admission.status === 'reserved') return release();
       const late = job.attempt ? await jobs.getAttemptResult(jobId, job.attempt.id) : null;
       if (late && job.status !== 'READY') { await save(late.artifact); return release(); }
       if (job.status === 'REFUNDED' && job.attempt && job.operation !== 'video-watermark') {

@@ -4,6 +4,7 @@ import { ProcessingService } from './processing-service';
 import { DefinitiveProviderError, ProcessingError } from './contracts';
 import type { ProcessingProviderContext, ProviderOutcome } from './contracts';
 import { MemoryArtifacts, MemoryFinance, MemoryJobs, MemoryQuotes, NOW, source } from './test-fixtures';
+import { ProcessingDispatchRecovery } from './dispatch-recovery';
 
 async function setup() {
   const jobs = new MemoryJobs(); const artifacts = new MemoryArtifacts(); const quotes = new MemoryQuotes(); const finance = new MemoryFinance();
@@ -20,6 +21,42 @@ async function setup() {
 }
 
 describe('ProcessingWorker', () => {
+  it('refunds an unstarted expired dispatch before a late worker can submit', async () => {
+    const s = await setup(); s.setNow('2026-10-24T00:16:00.000Z');
+    expect(await s.worker.run(s.job.id, 'late-worker')).toMatchObject({ status: 'REFUNDED', chargeStatus: 'refunded' });
+    expect(s.provider.submit).not.toHaveBeenCalled(); expect(s.finance.refunds).toBe(1);
+  });
+  it('fences a worker paused before SUBMITTING when dispatch recovery returns the reservation', async () => {
+    const s = await setup(); let resume!: () => void; const wait = new Promise<void>((resolve) => { resume = resolve; });
+    vi.spyOn(s.artifacts, 'get').mockImplementationOnce(async () => { await wait; return source(); });
+    const running = s.worker.run(s.job.id, 'delayed');
+    await vi.waitFor(() => expect(s.artifacts.get).toHaveBeenCalled()); s.setNow('2026-10-24T00:16:00.000Z');
+    const recovery = new ProcessingDispatchRecovery({ jobs: s.jobs, finance: s.finance, now: () => new Date('2026-10-24T00:16:00.000Z') });
+    expect((await recovery.recover(s.job.id)).status).toBe('REFUNDED'); resume();
+    expect((await running).status).toBe('REFUNDED'); expect(s.provider.submit).not.toHaveBeenCalled(); expect(s.finance.refunds).toBe(1);
+  });
+  it('ignores a superseded dispatch generation before any provider operation', async () => {
+    const s = await setup(); const current = (await s.jobs.get(s.job.id))!;
+    await s.jobs.compareAndSwap(s.job.id, current.version, { ...current.job, dispatch: { id: 'new-generation', startedAt: NOW, executionRef: 'uncertain:new-generation' } });
+    expect((await s.worker.run(s.job.id, 'late-generation', 'old-generation')).status).toBe('QUEUED');
+    expect(s.provider.submit).not.toHaveBeenCalled(); expect(s.provider.poll).not.toHaveBeenCalled();
+  });
+  it('fences a dispatch generation replaced while its worker is preparing input', async () => {
+    const s = await setup(); let resume!: () => void; const wait = new Promise<void>((resolve) => { resume = resolve; });
+    const initial = (await s.jobs.get(s.job.id))!;
+    await s.jobs.compareAndSwap(s.job.id, initial.version, { ...initial.job, dispatch: { id: 'old', startedAt: NOW, executionRef: 'old-execution' } });
+    vi.spyOn(s.artifacts, 'get').mockImplementationOnce(async () => { await wait; return source(); });
+    const running = s.worker.run(s.job.id, 'paused', 'old'); await vi.waitFor(() => expect(s.artifacts.get).toHaveBeenCalled());
+    const current = (await s.jobs.get(s.job.id))!;
+    await s.jobs.compareAndSwap(s.job.id, current.version, { ...current.job, dispatch: { id: 'new', startedAt: NOW, executionRef: 'uncertain:new' } });
+    resume(); await running; expect(s.provider.submit).not.toHaveBeenCalled();
+  });
+  it('resumes an interrupted refund intent instead of opening a fresh provider attempt', async () => {
+    const s = await setup(); const current = (await s.jobs.get(s.job.id))!;
+    await s.jobs.compareAndSwap(s.job.id, current.version, { ...current.job, refundIntent: { reason: 'dispatch_timeout', requestedAt: NOW } });
+    expect(await s.worker.run(s.job.id, 'refund-recovery')).toMatchObject({ status: 'REFUNDED', chargeStatus: 'refunded' });
+    expect(s.provider.submit).not.toHaveBeenCalled(); expect(s.finance.refunds).toBe(1);
+  });
   it.each(['verify', 'create', 'settle'] as const)('renews the saving lease through a slow %s phase and settles exactly once', async (phase) => {
     vi.useFakeTimers(); const s = await setup(); let resume!: () => void; const wait = new Promise<void>((resolve) => { resume = resolve; });
     const originalSettle = s.finance.settle.bind(s.finance); const originalCreate = s.artifacts.create.bind(s.artifacts);

@@ -25,6 +25,7 @@ export interface PublicProjectionOptions {
 const errors: Record<string, string> = {
   provider_request_uncertain: 'The request status is being confirmed. Do not start another operation.',
   unknown_timeout: 'The confirmation deadline passed and the reserved allowance was returned.',
+  dispatch_timeout: 'The task did not start before the deadline. The reserved allowance was returned. Review the cost to try again.',
   processing_failed: 'Processing failed. The reserved allowance was returned.',
   result_recovery_pending: 'Processing finished. The result is being recovered without processing again.',
 };

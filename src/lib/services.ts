@@ -7,7 +7,7 @@ import { MockBackgroundProvider } from './providers/mock-background-provider';
 import { ReplicateBackgroundProvider } from './providers/replicate-background-provider';
 import { MockObjectProvider } from './providers/mock-object-provider';
 import { ReplicateObjectProvider } from './providers/replicate-object-provider';
-import type { WatermarkProvider } from './providers/watermark-provider';
+import type { LegacyWatermarkProvider } from './providers/watermark-provider';
 import { R2ObjectStore } from './r2/r2-object-store';
 
 let cached: ReturnType<typeof createServices> | undefined;
@@ -27,7 +27,7 @@ function createServices() {
     idleTimeoutMillis: 10_000,
     connectionTimeoutMillis: 5_000,
   }));
-  const provider: WatermarkProvider = env.WATERMARK_PROVIDER === 'dewatermark'
+  const provider: LegacyWatermarkProvider = env.WATERMARK_PROVIDER === 'dewatermark'
     ? new DewatermarkProvider(objects, {
         apiKey: env.DEWATERMARK_API_KEY as string,
         baseUrl: env.DEWATERMARK_BASE_URL,

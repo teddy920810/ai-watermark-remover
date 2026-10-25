@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import type { Pool, PoolClient } from 'pg';
 import { amountSchema, ProcessingError } from './contracts';
-import type { Admission, ChargeStatus, CreditUnit, OutboxMessage, ProcessingFinancialStore, ReserveRequest } from './contracts';
+import type { Admission, AdmissionHistoryCursor, AdmissionHistoryPage, ChargeStatus, CreditUnit, OutboxMessage, ProcessingFinancialStore, ReserveRequest } from './contracts';
 
 interface AdmissionRow { job_id: string; owner_id: string; operation_key: string; request_hash: string; amount: number | string; unit: CreditUnit; status: ChargeStatus }
 const integer = (value: number | string) => { const n = Number(value); if (!Number.isSafeInteger(n) || n < 0) throw new Error('Invalid credit amount'); return n; };
@@ -23,6 +23,19 @@ export class PostgresProcessingStore implements ProcessingFinancialStore {
   async getAdmission(jobId: string): Promise<Admission | null> {
     const result = await this.pool.query<AdmissionRow>('SELECT * FROM processing_admissions WHERE job_id = $1', [jobId]);
     return result.rows[0] ? admission(result.rows[0]) : null;
+  }
+  async listAdmissionsForOwner(ownerId: string, limit = 20, before?: AdmissionHistoryCursor): Promise<AdmissionHistoryPage> {
+    const pageSize = Number.isFinite(limit) ? Math.max(1, Math.min(100, Math.trunc(limit))) : 20;
+    // Keep PostgreSQL's timestamp precision: converting created_at to a JS Date
+    // could skip admissions within the same millisecond on the next page.
+    const result = await this.pool.query<AdmissionRow & { cursor_created_at: string }>(`
+      SELECT *, created_at::text AS cursor_created_at FROM processing_admissions
+      WHERE owner_id = $1
+        AND ($2::timestamptz IS NULL OR (created_at, job_id) < ($2::timestamptz, $3::text))
+      ORDER BY created_at DESC, job_id DESC LIMIT $4
+    `, [ownerId, before?.createdAt ?? null, before?.jobId ?? null, pageSize + 1]);
+    const rows = result.rows.slice(0, pageSize); const last = rows.at(-1);
+    return { admissions: rows.map(admission), ...(result.rows.length > pageSize && last ? { nextCursor: { createdAt: last.cursor_created_at, jobId: last.job_id } } : {}) };
   }
 
   async reserveAndEnqueue(request: ReserveRequest): Promise<{ admission: Admission; created: boolean }> {

@@ -4,7 +4,7 @@ import type { ProcessingRuntime } from '../runtime/processing-services';
 
 const environment = { MODE: 'process', JOB_ID: 'job-1', OWNER_ID: 'owner-1', R2_ENDPOINT: 'https://r2.example.test', R2_ACCESS_KEY_ID: 'private-access', R2_SECRET_ACCESS_KEY: 'private-secret', R2_BUCKET: 'private', DATABASE_URL: 'postgres://unused.test/database', WATERMARK_PROVIDER: 'mock', WORKER_POLL_MS: '1000', WORKER_MAX_RUN_MS: '3000' };
 function runtimeFixture() {
-  let job = { id: 'job-1', ownerId: 'owner-1', status: 'QUEUED', operation: 'video-watermark' };
+  let job: { id: string; ownerId: string; status: string; operation: string; dispatch?: { id: string } } = { id: 'job-1', ownerId: 'owner-1', status: 'QUEUED', operation: 'video-watermark' };
   const runtime = {
     service: { get: vi.fn(async () => job) },
     runJob: vi.fn(async () => { job = { ...job, status: 'READY' }; return job; }),
@@ -15,6 +15,19 @@ function runtimeFixture() {
 }
 
 describe('standalone processing worker entry', () => {
+  it('passes the durable dispatch identity to the worker lease fence', async () => {
+    const s = runtimeFixture(); s.setJob({ dispatch: { id: 'dispatch-current' } });
+    await runWorker({ ...environment, DISPATCH_ID: 'dispatch-current' }, { createRuntime: s.factory });
+    expect(s.runtime.runJob).toHaveBeenCalledWith('job-1', expect.stringMatching(/^worker-/), 'dispatch-current');
+  });
+  it('finishes superseded executions without polling or submitting', async () => {
+    const s = runtimeFixture(); s.setJob({ dispatch: { id: 'dispatch-current' } });
+    expect(await runWorker({ ...environment, DISPATCH_ID: 'dispatch-old' }, { createRuntime: s.factory })).toMatchObject({ status: 'superseded' });
+    expect(s.runtime.runJob).not.toHaveBeenCalled(); expect(s.runtime.close).toHaveBeenCalled();
+  });
+  it('carries the independent legacy provider configuration to the canonical runtime', () => {
+    expect(workerConfigFromEnvironment({ ...environment, WATERMARK_PROVIDER: 'dewatermark', DEWATERMARK_BASE_URL: 'https://legacy.test', DEWATERMARK_PREDICT_MODE: '3.0', DEWATERMARK_TIMEOUT_MS: '12000', MOCK_PROCESSING_DELAY_MS: '25' })).toMatchObject({ providerMode: 'mock', legacyProvider: { mode: 'dewatermark', baseUrl: 'https://legacy.test', predictMode: '3.0', timeoutMs: 12000, mockDelayMs: 25 } });
+  });
   it('validates environment before opening services and never embeds private values in configuration errors', async () => {
     const factory = vi.fn();
     await expect(runWorker({ ...environment, DATABASE_URL: undefined }, { createRuntime: factory })).rejects.toThrow('Missing worker configuration: DATABASE_URL');

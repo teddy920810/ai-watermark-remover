@@ -16,6 +16,11 @@ function setup() {
 }
 
 describe('public processing projection', () => {
+  it('explains an unstarted dispatch timeout and the refunded allowance without suggesting an automatic replay', async () => {
+    const s = setup(); const projected = await s.projection.job('user-1', { ...job, status: 'REFUNDED', chargeStatus: 'refunded', resultArtifactId: undefined, error: 'dispatch_timeout' });
+    expect(projected).toMatchObject({ status: 'REFUNDED', chargeStatus: 'refunded', charge: { status: 'refunded', amount: 1, unit: 'freeUses' }, errorCode: 'dispatch_timeout', error: 'The task did not start before the deadline. The reserved allowance was returned. Review the cost to try again.' });
+    expect(projected.result).toBeUndefined();
+  });
   it('whitelists job/artifact/quote fields instead of leaking keys, hashes, sessions or execution state', async () => {
     const s = setup(); const projected = await s.projection.job('user-1', job);
     expect(projected).toMatchObject({ id: 'j-1', status: 'READY', charge: { status: 'settled', amount: 1, unit: 'freeUses' }, result: { role: 'result', previewUrl: 'https://r2.test/preview', canRefine: true } });
