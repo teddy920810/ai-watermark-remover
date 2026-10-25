@@ -5,7 +5,7 @@ import * as providerFactory from '../providers/watermark-provider-factory';
 import { R2ObjectStore } from '../r2/r2-object-store';
 import type { WatermarkProvider } from '../providers/watermark-provider';
 import { createProcessingRuntime } from './processing-services';
-import { CloudRunTriggerError } from './cloud-run-trigger';
+import { CloudRunTriggerError, createCloudRunTrigger } from './cloud-run-trigger';
 import type { ProcessingRuntimeConfig } from './processing-services';
 import { memoryMediaStore } from './test-fixtures';
 import { MemoryFinance, NOW } from '../processing/test-fixtures';
@@ -153,6 +153,54 @@ describe('processing runtime assembly', () => {
     const s = await setup(); const claim = vi.spyOn(s.finance, 'claimDue'); await s.runtime.dispatch();
     expect(claim).not.toHaveBeenCalled();
     expect(await s.runtime.balances('user-1')).toEqual({ processingCredits: 100, freeUses: 1 }); expect(s.benefits.getSummary).toHaveBeenCalledWith('user-1');
+  });
+  it.each(['authorization', 'http-403'] as const)('retries a definitely unaccepted %s dispatch with a fresh durable nonce and one reservation', async (failure) => {
+    const execution = 'projects/demo-project/locations/asia-east1/jobs/watermark-worker/executions/accepted';
+    const getAccessToken = vi.fn(async () => 'private-test-token');
+    if (failure === 'authorization') getAccessToken.mockRejectedValueOnce(new CloudRunTriggerError('private credential failure', 'authorization', 'google_sts', 403));
+    const request = vi.fn(async (_url: string, init?: RequestInit) => {
+      if (init?.method === 'POST') return Response.json({ metadata: { name: execution } });
+      return Response.json({ name: execution, runningCount: 1 });
+    });
+    if (failure === 'http-403') request.mockResolvedValueOnce(new Response('private refusal', { status: 403 }));
+    const trigger = createCloudRunTrigger({ projectId: 'demo-project', region: 'asia-east1', jobName: 'watermark-worker', fetchImpl: request as typeof fetch, getAccessToken, now: () => new Date(NOW) });
+    const s = await setup({ trigger }); const reserve = vi.spyOn(s.finance, 'reserveAndEnqueue'); const job = await queueProcessing(s);
+    await s.runtime.dispatch(); const refused = (await s.runtime.service.get('user-1', job.id)).dispatch!;
+    expect(refused.terminal).toBe(true);
+    expect(request.mock.calls.filter(([, init]) => init?.method === 'POST')).toHaveLength(failure === 'authorization' ? 0 : 1);
+    await s.runtime.dispatch(); const accepted = (await s.runtime.service.get('user-1', job.id)).dispatch!;
+    expect(accepted.id).not.toBe(refused.id); expect(accepted.executionRef).toBe(execution); expect(accepted.terminal).not.toBe(true);
+    expect(request.mock.calls.filter(([, init]) => init?.method === 'POST')).toHaveLength(failure === 'authorization' ? 1 : 2);
+    expect(reserve).toHaveBeenCalledTimes(1); expect(s.finance.refunds).toBe(0); expect(s.finance.settlements).toBe(0);
+    await s.runtime.close();
+  });
+  it('retains the current generation when authorization fails while monitoring an accepted execution', async () => {
+    const execution = 'projects/demo-project/locations/asia-east1/jobs/watermark-worker/executions/accepted';
+    const getAccessToken = vi.fn(async () => 'private-test-token');
+    const request = vi.fn(async (_url: string, init?: RequestInit) => init?.method === 'POST' ? Response.json({ metadata: { name: execution } }) : Response.json({ name: execution, runningCount: 1 }));
+    const trigger = createCloudRunTrigger({ projectId: 'demo-project', region: 'asia-east1', jobName: 'watermark-worker', fetchImpl: request as typeof fetch, getAccessToken, now: () => new Date(NOW) });
+    const s = await setup({ trigger }); const job = await queueProcessing(s); await s.runtime.dispatch();
+    const accepted = (await s.runtime.service.get('user-1', job.id)).dispatch!;
+    getAccessToken.mockRejectedValue(new CloudRunTriggerError('private credential failure', 'authorization', 'google_sts', 403));
+    await s.runtime.dispatch(); await s.runtime.dispatch();
+    expect((await s.runtime.service.get('user-1', job.id)).dispatch).toEqual(accepted);
+    expect(request.mock.calls.filter(([, init]) => init?.method === 'POST')).toHaveLength(1); expect(s.finance.refunds).toBe(0);
+    await s.runtime.close();
+  });
+  it.each(['network', '408', '503', 'malformed'] as const)('keeps an ambiguous %s run on the same nonce with GET-only recovery', async (failure) => {
+    const request = vi.fn(async (_url: string, init?: RequestInit) => {
+      if (init?.method !== 'POST') return Response.json({ executions: [] });
+      if (failure === 'network') throw new Error('run acknowledgement lost');
+      if (failure === 'malformed') return Response.json({});
+      return new Response('private uncertain response', { status: Number(failure) });
+    });
+    const trigger = createCloudRunTrigger({ projectId: 'demo-project', region: 'asia-east1', jobName: 'watermark-worker', fetchImpl: request as typeof fetch, getAccessToken: async () => 'private-test-token', now: () => new Date(NOW) });
+    const s = await setup({ trigger }); const job = await queueProcessing(s); await s.runtime.dispatch();
+    const uncertain = (await s.runtime.service.get('user-1', job.id)).dispatch!;
+    expect(uncertain.executionRef).toBe(`uncertain:${uncertain.id}`); expect(uncertain.terminal).not.toBe(true);
+    await s.runtime.dispatch(); expect((await s.runtime.service.get('user-1', job.id)).dispatch).toEqual(uncertain);
+    expect(request.mock.calls.map(([, init]) => init?.method)).toEqual(['POST', 'GET']); expect(s.finance.refunds).toBe(0);
+    await s.runtime.close();
   });
   it('journals an accepted execution before acknowledging the outbox and monitors it after an acknowledgement crash', async () => {
     let starts = 0;

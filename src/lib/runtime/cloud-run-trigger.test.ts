@@ -117,7 +117,15 @@ describe('Cloud Run execution trigger and recovery', () => {
     const request = vi.fn();
     const dispatch = createCloudRunTrigger({ projectId: 'demo-project', region: 'asia-east1', jobName: 'watermark-worker', fetchImpl: request as typeof fetch, getAccessToken: vi.fn().mockRejectedValue(new Error('private credential detail')) });
     await expect(dispatch('process', 'job-1', 'owner-1')).rejects.toThrow('Cloud execution credentials are unavailable');
+    await expect(dispatch('process', 'job-1', 'owner-1')).rejects.toMatchObject({ acceptance: 'not-accepted' });
     expect(request).not.toHaveBeenCalled();
+  });
+  it('does not label monitoring authorization failures as a rejected new run', async () => {
+    const request = vi.fn();
+    const dispatch = createCloudRunTrigger({ projectId: 'demo-project', region: 'asia-east1', jobName: 'watermark-worker', fetchImpl: request as typeof fetch, getAccessToken: vi.fn().mockRejectedValue(new Error('private credential detail')) });
+    const error = await dispatch('process', 'job-1', 'owner-1', execution, 'durable-dispatch').catch((failure: unknown) => failure);
+    expect(error).toMatchObject({ kind: 'authorization' });
+    expect((error as CloudRunTriggerError).acceptance).toBeUndefined(); expect(request).not.toHaveBeenCalled();
   });
   it('preserves a safe supplier failure phase through dispatch without sending a run', async () => {
     const request = vi.fn();
@@ -133,7 +141,7 @@ describe('Cloud Run execution trigger and recovery', () => {
   });
   it('labels a rejected Cloud Run request with only its phase and HTTP status', async () => {
     const request = vi.fn().mockResolvedValue(new Response('private upstream data', { status: 403 }));
-    await expect(trigger(request)('preflight', 'upload-1', 'owner-1')).rejects.toMatchObject({ phase: 'cloud_run_http', status: 403 });
+    await expect(trigger(request)('preflight', 'upload-1', 'owner-1')).rejects.toMatchObject({ phase: 'cloud_run_http', status: 403, acceptance: 'not-accepted' });
   });
   it.each([
     [new Error('Failed to exchange token: private upstream body'), 'oidc_exchange', undefined, 'Error'],

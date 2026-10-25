@@ -47,7 +47,7 @@ const failureReasons = ['invalid_grant', 'invalid_target', 'invalid_request', 'i
 type FailurePhase = typeof failurePhases[number];
 type FailureReason = typeof failureReasons[number];
 export class CloudRunTriggerError extends Error {
-  constructor(message: string, readonly kind: 'authorization' | 'other' = 'other', readonly phase?: FailurePhase, readonly status?: number, readonly reason?: FailureReason) { super(message); this.name = 'CloudRunTriggerError'; }
+  constructor(message: string, readonly kind: 'authorization' | 'other' = 'other', readonly phase?: FailurePhase, readonly status?: number, readonly reason?: FailureReason, readonly acceptance?: 'not-accepted') { super(message); this.name = 'CloudRunTriggerError'; }
 }
 const numericHttpStatus = (value: unknown): number | undefined => typeof value === 'number' && Number.isInteger(value) && value >= 100 && value <= 599 ? value : undefined;
 const errorRecord = (value: unknown): Record<string, unknown> => value && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : {};
@@ -214,11 +214,16 @@ export function createCloudRunTrigger(options: CloudRunTriggerOptions): Executio
     let response: Response;
     try {
       response = await call(`${parent}:run`, { overrides: { taskCount: 1, containerOverrides: [{ name: options.containerName ?? 'worker', env: [{ name: 'MODE', value: action }, { name: 'JOB_ID', value: id }, { name: 'OWNER_ID', value: ownerId }, { name: 'DISPATCH_ID', value: nonce }] }] } });
-    } catch (error) { if (error instanceof CloudRunTriggerError && error.kind === 'authorization') throw error; return next(uncertain, 60_000); }
+    } catch (error) {
+      // Only this new-run call proves a credential error happened before POST.
+      // The same error during monitoring says nothing about prior acceptance.
+      if (error instanceof CloudRunTriggerError && error.kind === 'authorization') throw new CloudRunTriggerError(error.message, error.kind, error.phase, error.status, error.reason, 'not-accepted');
+      return next(uncertain, 60_000);
+    }
     if (!response.ok) {
       await response.body?.cancel().catch(() => undefined);
       if (response.status >= 500 || response.status === 408) return next(uncertain, 60_000);
-      throw new CloudRunTriggerError('Cloud execution request was not accepted', 'other', 'cloud_run_http', response.status);
+      throw new CloudRunTriggerError('Cloud execution request was not accepted', 'other', 'cloud_run_http', response.status, undefined, response.status >= 400 && response.status < 500 ? 'not-accepted' : undefined);
     }
     let ref: string;
     try {

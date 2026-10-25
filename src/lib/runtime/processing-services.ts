@@ -19,7 +19,7 @@ import { MockWatermarkProvider } from '../providers/mock-provider';
 import { createWatermarkProvider } from '../providers/watermark-provider-factory';
 import type { LegacyWatermarkProvider, ProcessingProviderContext, ProcessingWatermarkProvider, ProviderOutcome, WatermarkProvider } from '../providers/watermark-provider';
 import { R2ObjectStore } from '../r2/r2-object-store';
-import { cloudRunDispatchDiagnostic } from './cloud-run-trigger';
+import { CloudRunTriggerError, cloudRunDispatchDiagnostic } from './cloud-run-trigger';
 import { MediaPreflight } from './media-preflight';
 import type { UploadRecord } from './media-preflight';
 import { mediaKey, PrivateMediaStore, SITE_MAX_IMAGE_BYTES, SITE_MAX_VIDEO_BYTES } from './private-media-store';
@@ -227,7 +227,14 @@ export function createProcessingRuntime(config: ProcessingRuntimeConfig): Proces
             // Persist uncertainty before POST; a lost acknowledgement must only
             // monitor this dispatch rather than silently starting another one.
             const prepared = await recovery.prepare(message.jobId, message.executionRef);
-            result = await config.trigger(message.action, message.jobId, owner, prepared.start ? undefined : prepared.executionRef, prepared.dispatchId);
+            try {
+              result = await config.trigger(message.action, message.jobId, owner, prepared.start ? undefined : prepared.executionRef, prepared.dispatchId);
+            } catch (error) {
+              // A known refusal may retry with a fresh durable nonce. Lookup,
+              // monitoring and acknowledgement failures keep their current one.
+              if (prepared.start && error instanceof CloudRunTriggerError && error.acceptance === 'not-accepted') await recovery.accepted(message.jobId, prepared.dispatchId, undefined, true);
+              throw error;
+            }
             await recovery.accepted(message.jobId, prepared.dispatchId, result.executionRef, result.terminal);
           }
           if (!Number.isFinite(Date.parse(result.nextCheckAt))) throw new Error('Execution monitor deadline is invalid');
