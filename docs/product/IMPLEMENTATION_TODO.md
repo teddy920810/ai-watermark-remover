@@ -5,7 +5,7 @@
 - [x] 获取最新远端 main `b2e981b`，在干净的隔离工作区建立 `codex/content-origin-cleanup` 分支，保留其他工作区的开发改动。
 - [x] 核实生产 App/Site 均为上述 main 的 READY 部署，`APP_SITE_ORIGIN` 使用 `https://ai-watermark-site.vercel.app`。
 - [x] 删除 Site 项目未使用的 `content.watermarkgemini.com` 绑定；公共 DNS 查询为 NXDOMAIN，不需要修改 GoDaddy。保留实际承载静态 SEO 的 Site 项目、固定 alias 及旧页面依赖的不可变静态资源部署。
-- [x] 审查独立路由、静态/服务端依赖边界、产物与发布选择；现有构建及资源保留测试共 27 项通过。CMS 内容变更只发布 Site，业务变更只发布 App，共享依赖变更按规则发布受影响目标。
+- [x] 审查独立路由、静态/服务端依赖边界、产物与发布选择；现有构建及资源保留测试共 27 项通过。博客、落地页内容变更只触发 Site，处理 API、工作区变更只触发 App；全站身份、公共鉴权控件、共享依赖等按规则触发受影响目标。
 - [x] 绑定删除后公开生产 smoke 通过；图片/视频工作区、隐私页、未知 SEO 路径的真实 404 以及固定 SEO 来源 HTTP 检查通过。未修改产品行为，不新增收费 Provider 调用。
 
 当前明确采用固定 Vercel SEO 来源地址，不配置 content 子域名，也不创建额外网关项目。功能与 SEO 的独立开发、独立发布沿用现有方案。域名绑定清理不需要重新部署产品；本轮仓库修改仅记录该决定。
