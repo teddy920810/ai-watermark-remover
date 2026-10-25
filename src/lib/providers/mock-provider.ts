@@ -1,4 +1,4 @@
-import type { ProviderInput, ProviderResult, WatermarkProvider } from './watermark-provider';
+import type { ProviderInput, ProviderResult, LegacyWatermarkProvider } from './watermark-provider';
 
 interface ObjectCopier {
   copyObject(sourceKey: string, destinationKey: string): Promise<void>;
@@ -10,7 +10,7 @@ function extensionOf(key: string): string {
   return match[1].toLowerCase();
 }
 
-export class MockWatermarkProvider implements WatermarkProvider {
+export class MockWatermarkProvider implements LegacyWatermarkProvider {
   constructor(
     private readonly objects: ObjectCopier,
     private readonly delayMs = 0,

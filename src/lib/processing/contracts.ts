@@ -1,4 +1,6 @@
 import { z } from 'zod';
+import type { ProviderCheckpoint, ProcessingWatermarkProvider } from '../providers/watermark-provider';
+export type { ProviderCheckpoint, ProviderOutcome, ProcessingProviderContext } from '../providers/watermark-provider';
 
 export const operationSchema = z.enum(['image-watermark', 'image-watermark-pro', 'image-refine', 'video-watermark']);
 export type ProcessingOperation = z.infer<typeof operationSchema>;
@@ -59,12 +61,6 @@ export interface ProcessingQuote {
   expiresAt: string;
 }
 
-export interface ProviderCheckpoint {
-  providerJobId?: string;
-  sessionId?: string;
-  stage?: string;
-}
-
 export interface ProcessingJob {
   id: string;
   ownerId: string;
@@ -81,6 +77,10 @@ export interface ProcessingJob {
   lease?: { owner: string; epoch: number; expiresAt: string };
   attempt?: { id: string; startedAt: string; checkpoint?: ProviderCheckpoint };
   unknownUntil?: string;
+  /** Written before Cloud Run POST; a lost response must reuse this lookup nonce. */
+  dispatch?: { id: string; startedAt: string; executionRef: string; terminal?: boolean };
+  /** Monotonic submission fence, persisted before an idempotent financial refund. */
+  refundIntent?: { reason: 'dispatch_timeout' | 'unknown_timeout'; requestedAt: string };
   error?: string;
   createdAt: string;
   updatedAt: string;
@@ -118,6 +118,8 @@ export interface Admission {
   status: ChargeStatus;
 }
 export interface ReserveRequest extends Omit<Admission, 'status'> { now: string }
+export interface AdmissionHistoryCursor { createdAt: string; jobId: string }
+export interface AdmissionHistoryPage { admissions: Admission[]; nextCursor?: AdmissionHistoryCursor }
 export interface OutboxMessage {
   id: string;
   jobId: string;
@@ -130,6 +132,7 @@ export interface ProcessingFinancialStore {
   getBalance(ownerId: string, unit?: CreditUnit): Promise<number>;
   findAdmission(ownerId: string, idempotencyKey: string): Promise<Admission | null>;
   getAdmission(jobId: string): Promise<Admission | null>;
+  listAdmissionsForOwner(ownerId: string, limit?: number, before?: AdmissionHistoryCursor): Promise<AdmissionHistoryPage>;
   reserveAndEnqueue(request: ReserveRequest): Promise<{ admission: Admission; created: boolean }>;
   enqueuePreflight(ownerId: string, artifactId: string, now: string): Promise<void>;
   settle(jobId: string, ownerId: string): Promise<ChargeStatus>;
@@ -140,21 +143,8 @@ export interface ProcessingFinancialStore {
   completeOutbox(jobId: string): Promise<void>;
 }
 
-export type ProviderOutcome =
-  | { status: 'completed'; artifact: ProcessingArtifact }
-  | { status: 'processing'; checkpoint: ProviderCheckpoint; progress?: number }
-  | { status: 'failed'; message: string };
-export interface ProcessingProviderContext {
-  job: ProcessingJob;
-  input: ProcessingArtifact;
-  mask?: ProcessingArtifact;
-  checkpoint(value: ProviderCheckpoint): Promise<void>;
-  heartbeat(): Promise<void>;
-}
-export interface ProcessingProviderPort {
-  submit(context: ProcessingProviderContext): Promise<ProviderOutcome>;
-  poll(context: ProcessingProviderContext): Promise<ProviderOutcome>;
-}
+/** Backwards-compatible name derived from the canonical WatermarkProvider. */
+export type ProcessingProviderPort = ProcessingWatermarkProvider;
 
 export interface ProcessingInspector {
   /** Non-billable: seals and inspects input. Must never invoke a paid Provider. */

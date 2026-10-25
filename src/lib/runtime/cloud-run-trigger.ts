@@ -83,15 +83,19 @@ export function createVercelGoogleTokenProvider(options: VercelGoogleFederation)
   const GCP_WORKLOAD_IDENTITY_POOL_PROVIDER_ID = options.providerId;
   if (!/^\d{1,30}$/.test(GCP_PROJECT_NUMBER) || !/^[A-Za-z0-9_.-]+@[A-Za-z0-9.-]+\.iam\.gserviceaccount\.com$/.test(GCP_SERVICE_ACCOUNT_EMAIL) || ![GCP_WORKLOAD_IDENTITY_POOL_ID, GCP_WORKLOAD_IDENTITY_POOL_PROVIDER_ID].every((value) => /^[a-z0-9][a-z0-9_-]{0,127}$/.test(value))) throw new CloudRunTriggerError('Workload identity federation configuration is invalid');
 
-  // Preserve Vercel's official custom-audience ExternalAccountClient contract.
+  // Preserve Vercel's custom-audience supplier and ExternalAccountClient shape.
   // https://vercel.com/docs/oidc/gcp (updated 2026-09-01)
   // The supplier runs inside the request, never at module load, and receives a
   // fresh short-lived Vercel subject token when Google's client needs one.
   const GCP_AUDIENCE = `https://iam.googleapis.com/projects/${GCP_PROJECT_NUMBER}/locations/global/workloadIdentityPools/${GCP_WORKLOAD_IDENTITY_POOL_ID}/providers/${GCP_WORKLOAD_IDENTITY_POOL_PROVIDER_ID}`;
+  // Approved deviation from Vercel's example: STS requires a full resource name,
+  // while the Vercel subject token's custom audience remains the HTTPS URL.
+  // https://docs.cloud.google.com/iam/docs/reference/sts/rest/v1/TopLevel/token
+  const GCP_STS_AUDIENCE = `//iam.googleapis.com/projects/${GCP_PROJECT_NUMBER}/locations/global/workloadIdentityPools/${GCP_WORKLOAD_IDENTITY_POOL_ID}/providers/${GCP_WORKLOAD_IDENTITY_POOL_PROVIDER_ID}`;
   if (options.audience && options.audience !== GCP_AUDIENCE) throw new CloudRunTriggerError('Workload identity federation audience does not match its provider');
   const authClient = ExternalAccountClient.fromJSON({
     type: 'external_account',
-    audience: GCP_AUDIENCE,
+    audience: GCP_STS_AUDIENCE,
     subject_token_type: 'urn:ietf:params:oauth:token-type:jwt',
     token_url: 'https://sts.googleapis.com/v1/token',
     service_account_impersonation_url: `https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/${GCP_SERVICE_ACCOUNT_EMAIL}:generateAccessToken`,
@@ -203,8 +207,8 @@ export function createCloudRunTrigger(options: CloudRunTriggerOptions): Executio
     // Absence from a bounded listing is not proof that a timed-out run failed.
     return null;
   }
-  async function start(action: 'process' | 'reconcile' | 'preflight', id: string, ownerId: string): Promise<{ executionRef?: string; nextCheckAt: string }> {
-    const nonce = (options.id ?? randomUUID)();
+  async function start(action: 'process' | 'reconcile' | 'preflight', id: string, ownerId: string, dispatchId?: string): Promise<{ executionRef?: string; nextCheckAt: string }> {
+    const nonce = dispatchId ?? (options.id ?? randomUUID)();
     if (!/^[A-Za-z0-9_-]{1,160}$/.test(nonce)) throw new CloudRunTriggerError('Cloud dispatch identifier is invalid');
     const uncertain = `uncertain:${nonce}`;
     let response: Response;
@@ -225,14 +229,18 @@ export function createCloudRunTrigger(options: CloudRunTriggerOptions): Executio
     try { return next((await monitor(ref)).ref); }
     catch { return next(ref); } // Preserve acceptance even if immediate monitoring failed.
   }
-  return async (action, id, ownerId, existingExecutionRef) => {
+  return async (action, id, ownerId, existingExecutionRef, dispatchId) => {
     if (!['process', 'reconcile', 'preflight'].includes(action) || !/^[A-Za-z0-9_-]{1,160}$/.test(id) || !ownerId || ownerId.length > 512 || /[\r\n\0]/.test(ownerId)) throw new CloudRunTriggerError('Cloud dispatch request is invalid');
-    if (!existingExecutionRef) return start(action, id, ownerId);
+    if (dispatchId !== undefined && !/^[A-Za-z0-9_-]{1,160}$/.test(dispatchId)) throw new CloudRunTriggerError('Cloud dispatch identifier is invalid');
+    if (!existingExecutionRef) return start(action, id, ownerId, dispatchId);
     const kind = validateRef(existingExecutionRef);
     const ref = kind === 'uncertain' ? await lookupUncertain(existingExecutionRef, id, ownerId) : existingExecutionRef;
     if (!ref) return next(existingExecutionRef, 60_000);
     const status = await monitor(ref);
     if (!status.terminal) return next(status.ref);
+    // The caller journals a fresh nonce before each subsequent run. Monitoring
+    // must not open a crash window by starting an unjournaled reconciliation.
+    if (dispatchId !== undefined) return { ...next(status.ref), terminal: true };
     return start(action === 'preflight' ? 'preflight' : 'reconcile', id, ownerId);
   };
 }

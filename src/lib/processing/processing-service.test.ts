@@ -115,6 +115,53 @@ describe('ProcessingService', () => {
     await expect(s.service.submit({ ownerId: 'user-1', quoteId: q.id, idempotencyKey: 'k' })).rejects.toMatchObject({ code: 'insufficient_balance' });
     expect(await s.service.list('user-1')).toEqual([]);
   });
+  it('keeps an older admitted task visible after more than twenty abandoned preparations', async () => {
+    const s = setup(); const q = await s.service.quote({ ownerId: 'user-1', operation: 'image-watermark', inputArtifactId: 'input-1' });
+    const accepted = await s.service.submit({ ownerId: 'user-1', quoteId: q.id, idempotencyKey: 'accepted' });
+    s.finance.balances.set('user-1', 0); s.setNow('2026-10-24T00:01:00.000Z');
+    for (let index = 0; index < 25; index++) await expect(s.service.submit({ ownerId: 'user-1', quoteId: q.id, idempotencyKey: `abandoned-${index}` })).rejects.toMatchObject({ code: 'insufficient_balance' });
+    expect(s.jobs.data.size).toBe(26); expect(s.finance.admissions.size).toBe(1);
+    expect((await s.service.list('user-1')).map((job) => job.id)).toEqual([accepted.id]);
+  });
+  it('lists an admitted task once when concurrent idempotent retries leave newer prepared manifests', async () => {
+    const s = setup(); const q = await s.service.quote({ ownerId: 'user-1', operation: 'image-watermark', inputArtifactId: 'input-1' });
+    const request = { ownerId: 'user-1', quoteId: q.id, idempotencyKey: 'concurrent-key' };
+    const accepted = await s.service.submit(request); s.setNow('2026-10-24T00:01:00.000Z');
+    vi.spyOn(s.finance, 'findAdmission').mockResolvedValue(null);
+    const reserve = s.finance.reserveAndEnqueue.bind(s.finance);
+    vi.spyOn(s.finance, 'reserveAndEnqueue').mockImplementation(async (value) => {
+      const existing = s.finance.admissions.get(accepted.id)!;
+      return existing ? { admission: existing, created: false } : reserve(value);
+    });
+    for (let index = 0; index < 25; index++) expect((await s.service.submit(request)).id).toBe(accepted.id);
+    expect(s.jobs.data.size).toBe(26); expect(s.finance.admissions.size).toBe(1); expect(await s.finance.getBalance('user-1')).toBe(99);
+    expect((await s.service.list('user-1')).map((job) => job.id)).toEqual([accepted.id]);
+  });
+  it('fills the requested history limit across missing R2 manifests without scanning the owner index', async () => {
+    const s = setup(); const admitted: string[] = [];
+    for (let index = 0; index < 25; index++) {
+      s.setNow(new Date(Date.parse(NOW) + index * 1000).toISOString());
+      const q = await s.service.quote({ ownerId: 'user-1', operation: 'image-watermark', inputArtifactId: 'input-1' });
+      admitted.push((await s.service.submit({ ownerId: 'user-1', quoteId: q.id, idempotencyKey: `history-${index}` })).id);
+    }
+    for (const id of admitted.slice(3)) s.jobs.data.delete(id);
+    const ownerIndex = vi.spyOn(s.jobs, 'listForOwner'); const pages = vi.spyOn(s.finance, 'listAdmissionsForOwner');
+    expect((await s.service.list('user-1', 3)).map((job) => job.id)).toEqual(admitted.slice(0, 3).reverse());
+    expect(ownerIndex).not.toHaveBeenCalled(); expect(pages.mock.calls.length).toBeGreaterThan(1);
+    expect(pages.mock.calls.every(([ownerId, limit]) => ownerId === 'user-1' && limit! <= 100)).toBe(true);
+  });
+  it('orders same-time admissions deterministically, limits valid tasks and checks manifest ownership', async () => {
+    const s = setup(); const admitted: string[] = [];
+    for (let index = 0; index < 5; index++) {
+      const q = await s.service.quote({ ownerId: 'user-1', operation: 'image-watermark', inputArtifactId: 'input-1' });
+      admitted.push((await s.service.submit({ ownerId: 'user-1', quoteId: q.id, idempotencyKey: `order-${index}` })).id);
+    }
+    const ordered = [...admitted].sort().reverse(); const corrupted = s.jobs.data.get(ordered[0])!; corrupted.job.ownerId = 'other';
+    const foreign = s.finance.admissions.get(ordered[1])!; foreign.ownerId = 'other';
+    const listed = await s.service.list('user-1', 2);
+    expect(listed.map((job) => job.id)).toEqual(ordered.slice(2, 4)); expect(listed.every((job) => job.ownerId === 'user-1')).toBe(true);
+    expect(await s.service.list('unknown')).toEqual([]);
+  });
   it('rejects an unnormalized source larger than the automatic API limit before quoting', async () => {
     const s = setup(); s.artifacts.data.set('input-1', source({ metadata: { ...source().metadata, width: 6001 } }));
     await expect(s.service.quote({ ownerId: 'user-1', operation: 'image-watermark-pro', inputArtifactId: 'input-1' })).rejects.toMatchObject({ code: 'image_resolution_limit' });

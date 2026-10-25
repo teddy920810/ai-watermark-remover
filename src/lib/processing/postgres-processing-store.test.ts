@@ -26,6 +26,31 @@ function fakePool(options: { balance?: number; freeBalance?: number; existing?: 
 const admission = { job_id: 'job-1', owner_id: 'user-1', operation_key: 'click-1', request_hash: 'hash', amount: '3', unit: 'processingCredits', status: 'reserved' };
 
 describe('PostgresProcessingStore', () => {
+  it('pages admitted history by owner and stable newest-first keys while preserving cursor timestamp precision', async () => {
+    const f = fakePool(); const store = new PostgresProcessingStore(f.pool);
+    const rows = [
+      { ...admission, job_id: 'job-c', cursor_created_at: '2026-10-24 00:00:00.123456+00' },
+      { ...admission, job_id: 'job-b', cursor_created_at: '2026-10-24 00:00:00.123455+00' },
+      { ...admission, job_id: 'job-a', cursor_created_at: '2026-10-24 00:00:00.123455+00' },
+    ];
+    f.query.mockResolvedValueOnce({ rows });
+    const page = await store.listAdmissionsForOwner('user-1', 2);
+    expect(page.admissions.map((entry) => entry.jobId)).toEqual(['job-c', 'job-b']);
+    expect(page.nextCursor).toEqual({ createdAt: '2026-10-24 00:00:00.123455+00', jobId: 'job-b' });
+    const [sql, values] = f.query.mock.calls[0];
+    expect(sql).toContain('created_at::text AS cursor_created_at'); expect(sql).toMatch(/WHERE owner_id = \$1/);
+    expect(sql).toMatch(/ORDER BY created_at DESC, job_id DESC/); expect(values).toEqual(['user-1', null, null, 3]);
+    f.query.mockResolvedValueOnce({ rows: [rows[2]] });
+    expect(await store.listAdmissionsForOwner('user-1', 2, page.nextCursor)).toEqual({ admissions: [expect.objectContaining({ jobId: 'job-a', ownerId: 'user-1' })] });
+    expect(f.query.mock.calls[1][0]).toMatch(/\(created_at, job_id\) < \(\$2::timestamptz, \$3::text\)/);
+    expect(f.query.mock.calls[1][1]).toEqual(['user-1', '2026-10-24 00:00:00.123455+00', 'job-b', 3]);
+  });
+  it('bounds each admitted history query and reports exhaustion without an extra cursor', async () => {
+    const f = fakePool(); const store = new PostgresProcessingStore(f.pool);
+    expect(await store.listAdmissionsForOwner('other', 10_000)).toEqual({ admissions: [] });
+    expect(f.query.mock.calls[0][1]).toEqual(['other', null, null, 101]);
+    expect(f.query.mock.calls[0][0]).toMatch(/LIMIT \$4/); expect(f.pool.connect).not.toHaveBeenCalled();
+  });
   it('revokes unused allocated processing credits atomically with a negative auditable ledger row', async () => {
     const f = fakePool({ balance: 30 }); const store = new PostgresProcessingStore(f.pool);
     expect(await store.revokeCredits('user-1', 30, 'revoke-wrong-owner-2026', 'admin-1')).toEqual({ revoked: true, balance: 0 });

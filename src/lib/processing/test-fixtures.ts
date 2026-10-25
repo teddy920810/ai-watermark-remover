@@ -11,7 +11,7 @@ export class MemoryJobs implements ProcessingJobStore {
   async create(job: ProcessingJob) { if (this.data.has(job.id)) return false; this.data.set(job.id, { job: structuredClone(job), version: '1' }); return true; }
   async get(id: string) { return structuredClone(this.data.get(id) ?? null); }
   async compareAndSwap(id: string, version: string, job: ProcessingJob) { const current = this.data.get(id); if (!current || current.version !== version) return false; this.data.set(id, { job: structuredClone(job), version: String(Number(version) + 1) }); return true; }
-  async listForOwner(ownerId: string) { return [...this.data.values()].filter(({ job }) => job.ownerId === ownerId).map(({ job }) => structuredClone(job)); }
+  async listForOwner(ownerId: string, limit = 20) { return [...this.data.values()].filter(({ job }) => job.ownerId === ownerId).map(({ job }) => structuredClone(job)).sort((a, b) => b.createdAt.localeCompare(a.createdAt) || a.id.localeCompare(b.id)).slice(0, limit); }
   async recordAttemptResult(result: AttemptResult) { const key = `${result.jobId}/${result.attemptId}`; if (!this.attempts.has(key)) this.attempts.set(key, structuredClone(result)); }
   async getAttemptResult(jobId: string, attemptId: string) { return structuredClone(this.attempts.get(`${jobId}/${attemptId}`) ?? null); }
 }
@@ -31,12 +31,21 @@ export class MemoryFinance implements ProcessingFinancialStore {
   balances = new Map([['user-1', 100]]);
   freeBalances = new Map<string, number>();
   admissions = new Map<string, Admission>();
+  admissionTimes = new Map<string, string>();
   outbox = new Set<string>();
   settlements = 0;
   refunds = 0;
   async getBalance(ownerId: string, unit: CreditUnit = 'processingCredits') { return (unit === 'freeUses' ? this.freeBalances : this.balances).get(ownerId) ?? 0; }
   async findAdmission(ownerId: string, key: string) { return [...this.admissions.values()].find((a) => a.ownerId === ownerId && a.idempotencyKey === key) ?? null; }
   async getAdmission(jobId: string) { return this.admissions.get(jobId) ?? null; }
+  async listAdmissionsForOwner(ownerId: string, limit = 20, before?: { createdAt: string; jobId: string }) {
+    const records = [...this.admissions.values()].filter((entry) => entry.ownerId === ownerId)
+      .map((entry) => ({ admission: entry, createdAt: this.admissionTimes.get(entry.jobId) ?? NOW }))
+      .sort((a, b) => b.createdAt.localeCompare(a.createdAt) || b.admission.jobId.localeCompare(a.admission.jobId))
+      .filter((entry) => !before || entry.createdAt < before.createdAt || entry.createdAt === before.createdAt && entry.admission.jobId < before.jobId);
+    const page = records.slice(0, limit); const last = page.at(-1);
+    return { admissions: page.map((entry) => structuredClone(entry.admission)), ...(records.length > limit && last ? { nextCursor: { createdAt: last.createdAt, jobId: last.admission.jobId } } : {}) };
+  }
   async reserveAndEnqueue(request: ReserveRequest) {
     const existing = await this.findAdmission(request.ownerId, request.idempotencyKey);
     if (existing) { if (existing.requestHash !== request.requestHash) throw new ProcessingError('idempotency_conflict', 'Operation key already used', 409); return { admission: existing, created: false }; }
@@ -44,7 +53,7 @@ export class MemoryFinance implements ProcessingFinancialStore {
     if (balance < request.amount) throw new ProcessingError('insufficient_balance', 'Not enough processing credits', 402);
     (request.unit === 'freeUses' ? this.freeBalances : this.balances).set(request.ownerId, balance - request.amount);
     const admission: Admission = { ...request, status: 'reserved' };
-    this.admissions.set(request.jobId, admission); this.outbox.add(request.jobId);
+    this.admissions.set(request.jobId, admission); this.admissionTimes.set(request.jobId, request.now); this.outbox.add(request.jobId);
     return { admission, created: true };
   }
   async settle(jobId: string, ownerId: string) { const a = this.admissions.get(jobId); if (!a || a.ownerId !== ownerId) throw new Error('Invalid admission'); if (a.status === 'reserved') { a.status = 'settled'; this.settlements++; } return a.status; }

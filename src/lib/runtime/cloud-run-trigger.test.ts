@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { ExternalAccountClient } from 'google-auth-library';
+import { ExternalAccountClient, gaxios } from 'google-auth-library';
 import { getVercelOidcToken } from '@vercel/oidc';
 import { CloudRunTriggerError, cloudRunTriggerFromEnvironment, createCloudRunTrigger, createVercelGoogleTokenProvider } from './cloud-run-trigger';
 
@@ -60,6 +60,44 @@ describe('Cloud Run execution trigger and recovery', () => {
     await expect(trigger(request)('process', 'job-1', 'owner-1', 'uncertain:dispatch-1')).resolves.toMatchObject({ executionRef: 'uncertain:dispatch-1' });
     expect(request.mock.calls.every(([, init]) => init.method === 'GET')).toBe(true);
   });
+  it('uses the caller journaled nonce for a new execution instead of generating another identifier', async () => {
+    const request = vi.fn().mockResolvedValueOnce(Response.json({ name: operation, metadata: { name: execution } })).mockResolvedValueOnce(Response.json({ name: execution, runningCount: 1 }));
+    await expect(trigger(request)('process', 'job-1', 'owner-1', undefined, 'durable-dispatch')).resolves.toMatchObject({ executionRef: execution });
+    expect(JSON.parse(request.mock.calls[0][1].body).overrides.containerOverrides[0].env).toContainEqual({ name: 'DISPATCH_ID', value: 'durable-dispatch' });
+  });
+  it('preserves the caller journaled nonce after a lost response and only searches during recovery', async () => {
+    const request = vi.fn().mockRejectedValueOnce(new Error('run response lost'));
+    const dispatch = trigger(request);
+    const accepted = await dispatch('process', 'job-1', 'owner-1', undefined, 'durable-dispatch');
+    expect(accepted.executionRef).toBe('uncertain:durable-dispatch');
+    expect(request).toHaveBeenCalledTimes(1); expect(request.mock.calls[0][1].method).toBe('POST');
+    request.mockReset().mockImplementation(async () => Response.json({ executions: [] }));
+    await expect(dispatch('process', 'job-1', 'owner-1', accepted.executionRef, 'durable-dispatch')).resolves.toMatchObject({ executionRef: 'uncertain:durable-dispatch' });
+    expect(request).toHaveBeenCalledTimes(1); expect(request.mock.calls[0][1].method).toBe('GET');
+  });
+  it('reports a terminal caller managed execution without automatically posting another run', async () => {
+    const request = vi.fn().mockImplementation(async () => Response.json({ name: execution, completionTime: now().toISOString() }));
+    await expect(trigger(request)('reconcile', 'job-1', 'owner-1', execution, 'durable-dispatch')).resolves.toMatchObject({ executionRef: execution, terminal: true });
+    expect(request).toHaveBeenCalledTimes(1); expect(request.mock.calls[0][1].method).toBe('GET');
+  });
+  it('reports a terminal caller managed operation without posting another run', async () => {
+    const request = vi.fn().mockImplementation(async () => Response.json({ name: operation, done: true, error: { code: 13 } }));
+    await expect(trigger(request)('process', 'job-1', 'owner-1', operation, 'durable-dispatch')).resolves.toMatchObject({ executionRef: operation, terminal: true });
+    expect(request).toHaveBeenCalledTimes(1); expect(request.mock.calls[0][1].method).toBe('GET');
+  });
+  it('keeps absence from five execution pages uncertain without posting another run', async () => {
+    const request = vi.fn().mockImplementation(async () => Response.json({ executions: Array.from({ length: 100 }, () => ({ name: nextExecution })), nextPageToken: 'more-executions' }));
+    await expect(trigger(request)('process', 'job-1', 'owner-1', 'uncertain:durable-dispatch', 'durable-dispatch')).resolves.toMatchObject({ executionRef: 'uncertain:durable-dispatch' });
+    expect(request).toHaveBeenCalledTimes(5);
+    expect(request.mock.calls.every(([, init]) => init.method === 'GET')).toBe(true);
+    expect(request.mock.calls[0][0]).toBe(`https://run.googleapis.com/v2/${job}/executions?pageSize=100`);
+    expect(request.mock.calls[1][0]).toBe(`https://run.googleapis.com/v2/${job}/executions?pageSize=100&pageToken=more-executions`);
+  });
+  it('rejects an invalid caller dispatch nonce before making a cloud request', async () => {
+    const request = vi.fn();
+    await expect(trigger(request)('process', 'job-1', 'owner-1', undefined, 'invalid:dispatch')).rejects.toThrow('Cloud dispatch identifier is invalid');
+    expect(request).not.toHaveBeenCalled();
+  });
   it('finds an uncertain execution by nonce plus owner and task binding', async () => {
     const request = vi.fn().mockResolvedValueOnce(Response.json({ executions: [{ name: execution, template: { containers: [{ env: [{ name: 'DISPATCH_ID', value: 'dispatch-1' }, { name: 'JOB_ID', value: 'job-1' }, { name: 'OWNER_ID', value: 'owner-1' }] }] } }] })).mockResolvedValueOnce(Response.json({ name: execution, runningCount: 1 }));
     await expect(trigger(request)('process', 'job-1', 'owner-1', 'uncertain:dispatch-1')).resolves.toMatchObject({ executionRef: execution });
@@ -109,17 +147,45 @@ describe('Cloud Run execution trigger and recovery', () => {
     const provider = createVercelGoogleTokenProvider({ projectNumber: '1234567890', serviceAccountEmail: 'vercel@demo-project.iam.gserviceaccount.com', poolId: 'vercel', providerId: 'vercel' });
     await expect(provider()).rejects.toMatchObject({ phase, status, reason });
   });
-  it('preserves the official custom-audience federation object and only obtains short-lived tokens on demand', async () => {
+  it('preserves the custom-audience supplier contract with a separate Google STS resource audience', async () => {
     const access = vi.fn().mockResolvedValue({ token: 'short-google-access' });
     const factory = vi.spyOn(ExternalAccountClient, 'fromJSON').mockReturnValue({ getAccessToken: access } as unknown as ReturnType<typeof ExternalAccountClient.fromJSON>);
     const provider = createVercelGoogleTokenProvider({ projectNumber: '1234567890', serviceAccountEmail: 'vercel@demo-project.iam.gserviceaccount.com', poolId: 'vercel', providerId: 'vercel' });
     const audience = 'https://iam.googleapis.com/projects/1234567890/locations/global/workloadIdentityPools/vercel/providers/vercel';
-    expect(factory).toHaveBeenCalledWith({ type: 'external_account', audience, subject_token_type: 'urn:ietf:params:oauth:token-type:jwt', token_url: 'https://sts.googleapis.com/v1/token', service_account_impersonation_url: 'https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/vercel@demo-project.iam.gserviceaccount.com:generateAccessToken', subject_token_supplier: { getSubjectToken: expect.any(Function) } });
+    expect(factory).toHaveBeenCalledWith({ type: 'external_account', audience: '//iam.googleapis.com/projects/1234567890/locations/global/workloadIdentityPools/vercel/providers/vercel', subject_token_type: 'urn:ietf:params:oauth:token-type:jwt', token_url: 'https://sts.googleapis.com/v1/token', service_account_impersonation_url: 'https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/vercel@demo-project.iam.gserviceaccount.com:generateAccessToken', subject_token_supplier: { getSubjectToken: expect.any(Function) } });
     expect(access).not.toHaveBeenCalled(); expect(getVercelOidcToken).not.toHaveBeenCalled();
     const configuration = factory.mock.calls[0][0] as { subject_token_supplier: { getSubjectToken: (context?: unknown) => Promise<string> } };
     await configuration.subject_token_supplier.getSubjectToken({ audience: 'incorrect-supplier-context' });
     expect(getVercelOidcToken).toHaveBeenCalledWith({ audience });
     await expect(provider()).resolves.toBe('short-google-access');
+  });
+  it('uses the installed Google client to encode the STS resource audience separately from the HTTPS subject audience', async () => {
+    // Exercise the real SDK serialization; replace only its HTTP transport.
+    // https://docs.cloud.google.com/iam/docs/reference/sts/rest/v1/TopLevel/token
+    const request = vi.spyOn(gaxios.Gaxios.prototype, 'request')
+      .mockResolvedValueOnce({ data: { access_token: 'short-federated-access', expires_in: 3600, token_type: 'Bearer' } } as gaxios.GaxiosResponse)
+      .mockResolvedValueOnce({ data: { accessToken: 'short-impersonated-access', expireTime: new Date(Date.now() + 3_600_000).toISOString() } } as gaxios.GaxiosResponse);
+    const audience = 'https://iam.googleapis.com/projects/1234567890/locations/global/workloadIdentityPools/vercel/providers/vercel';
+    const provider = createVercelGoogleTokenProvider({ projectNumber: '1234567890', serviceAccountEmail: 'vercel@demo-project.iam.gserviceaccount.com', poolId: 'vercel', providerId: 'vercel', audience });
+    expect(request).not.toHaveBeenCalled(); expect(getVercelOidcToken).not.toHaveBeenCalled();
+    await expect(provider()).resolves.toBe('short-impersonated-access');
+    expect(getVercelOidcToken).toHaveBeenCalledExactlyOnceWith({ audience });
+    expect(request).toHaveBeenCalledTimes(2);
+    const sts = request.mock.calls[0][0]!;
+    expect(sts).toMatchObject({ url: 'https://sts.googleapis.com/v1/token', method: 'POST' });
+    expect(sts.data).toBeInstanceOf(URLSearchParams);
+    expect(Object.fromEntries(sts.data as URLSearchParams)).toEqual({
+      grant_type: 'urn:ietf:params:oauth:grant-type:token-exchange',
+      audience: '//iam.googleapis.com/projects/1234567890/locations/global/workloadIdentityPools/vercel/providers/vercel',
+      scope: 'https://www.googleapis.com/auth/cloud-platform',
+      requested_token_type: 'urn:ietf:params:oauth:token-type:access_token',
+      subject_token: 'short-vercel-subject',
+      subject_token_type: 'urn:ietf:params:oauth:token-type:jwt',
+    });
+    expect(new Headers(sts.headers).has('authorization')).toBe(false);
+    expect(request.mock.calls[1][0]).toMatchObject({ url: 'https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/vercel@demo-project.iam.gserviceaccount.com:generateAccessToken', method: 'POST', headers: { authorization: 'Bearer short-federated-access' } });
+    await expect(provider()).resolves.toBe('short-impersonated-access');
+    expect(request).toHaveBeenCalledTimes(2); expect(getVercelOidcToken).toHaveBeenCalledTimes(1);
   });
   it('uses complete Vercel federation settings ahead of a legacy private-key configuration', () => {
     const factory = vi.spyOn(ExternalAccountClient, 'fromJSON').mockReturnValue({ getAccessToken: vi.fn() } as unknown as ReturnType<typeof ExternalAccountClient.fromJSON>);
