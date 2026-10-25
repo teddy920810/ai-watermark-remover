@@ -1,5 +1,6 @@
 import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, rmSync, existsSync } from 'node:fs';
 import { createHash } from 'node:crypto';
+import { gzipSync } from 'node:zlib';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -27,6 +28,22 @@ describe('previous public App asset retention', () => {
     const directory = fixture(); const file = path.join(directory, asset.path.slice(1)); mkdirSync(path.dirname(file), { recursive: true }); writeFileSync(file, 'current build');
     const fetcher = vi.fn(); await retainAppAssets(directory, manifest(), fetcher);
     expect(readFileSync(file, 'utf8')).toBe('current build'); expect(fetcher).not.toHaveBeenCalled();
+  });
+  it('retains the decoded gzip body when Node fetch preserves its compressed Content-Length header', async () => {
+    const directory = fixture(); const wireBytes = gzipSync(body);
+    expect(wireBytes.length).not.toBe(asset.byteSize);
+    // Node fetch exposes decoded bytes while retaining upstream encoding headers.
+    const fetcher = async () => new Response(body, { headers: { 'Content-Type': asset.contentType, 'Content-Encoding': 'gzip', 'Content-Length': String(wireBytes.length) } });
+    await expect(retainAppAssets(directory, manifest(), fetcher)).resolves.toEqual({ retained: 1, kept: 0 });
+    expect(readFileSync(path.join(directory, asset.path.slice(1)))).toEqual(body);
+  });
+  it('still validates decoded gzip size and hash instead of trusting compressed response headers', async () => {
+    for (const decoded of [body.subarray(1), Buffer.alloc(body.length + 1), Buffer.alloc(body.length, 120)]) {
+      const directory = fixture();
+      const fetcher = async () => new Response(decoded, { headers: { 'Content-Type': asset.contentType, 'Content-Encoding': 'gzip', 'Content-Length': String(gzipSync(decoded).length) } });
+      await expect(retainAppAssets(directory, manifest(), fetcher)).rejects.toThrow(/exceeds its pinned size|bytes differ/);
+      expect(existsSync(path.join(directory, asset.path.slice(1)))).toBe(false);
+    }
   });
   it('validates the entire allowlist before any fetch or write', async () => {
     for (const unsafe of ['/api/v1/jobs.js', '/_app-assets/../private.js', '/_app-assets/%2e%2e/private.js', '/_app-assets/file.js?token=secret', '/_app-assets/index.html', '//outside/file.js', '/_app-assets/.env.js']) {

@@ -46,7 +46,9 @@ export async function retainAppAssets(staticDirectory, manifest, fetcher = fetch
     if (!response.ok || response.redirected || response.url && response.url !== requested || !response.body) throw new Error('Retained App asset download failed');
     if (response.headers.get('content-type')?.split(';')[0].trim().toLowerCase() !== asset.contentType) throw new Error('Retained App asset type differs');
     const declared = response.headers.get('content-length');
-    if (declared !== null && Number(declared) !== asset.byteSize) throw new Error('Retained App asset declared size differs');
+    // Node fetch decodes compressed bodies, but Content-Length still describes wire bytes.
+    const encoding = response.headers.get('content-encoding')?.trim().toLowerCase();
+    if ((!encoding || encoding === 'identity') && declared !== null && Number(declared) !== asset.byteSize) throw new Error('Retained App asset declared size differs');
     const reader = response.body.getReader(); const chunks = []; let length = 0;
     try {
       for (;;) {
