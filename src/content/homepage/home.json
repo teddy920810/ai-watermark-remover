@@ -271,7 +271,7 @@
       {
         "enabled": true,
         "question": "Does WatermarkGemini support video watermark removal?",
-        "answer": "Yes. Choose an MP4 from the same Upload file button and we automatically open the video workspace. It accepts MP4 at 24 fps, up to 9 minutes and 100 MB. Video processing uses administrator-allocated processing credits; standard image removal keeps its free-use rules. You review the cost before starting."
+        "answer": "Yes. Choose an MP4 from the same Upload file button and we automatically open the dedicated video workspace. It accepts MP4 at 24 fps, up to 9 minutes and 100 MB. Video processing uses administrator-allocated processing credits; standard image removal keeps its free-use rules. You review the cost before starting."
       },
       {
         "enabled": true,
