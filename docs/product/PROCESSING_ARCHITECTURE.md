@@ -70,7 +70,7 @@ flowchart TD
 - SEO：独立 Vercel 项目，最终生成纯静态内容，不持有 R2、供应商或数据库密钥。
 - App/API：复用原 `ai-watermark-remover` Vercel 项目及其生产域名和既有密钥，改为构建 App 产物；Astro 页面壳 + React 工作区岛，服务端处理认证、上传授权、报价和任务查询。它与 SEO 项目分别发布，不迁移现有登录会话密钥。新 `ai-watermark-app` 项目仅作验证环境，不放生产密钥。
 - Worker：Node/TypeScript 跨平台代码，使用固定版本媒体工具的容器，建议部署 Cloud Run Jobs。图片、视频、媒体探测先共用代码和镜像，使用不同执行配置与并发预算。
-- 路由：首发由原 App 项目的 Build Output 静态路由承担轻量网关。`APP_SITE_ORIGIN` 指向独立 SEO 项目部署后已确认的固定生产 `vercel.app` alias；新 Site 项目采用官方 Standard Protection，使生产固定来源提供公开静态内容，preview 和唯一部署地址继续受保护。不为自动化关闭保护、不改变原 App 项目的保护设置。首发不依赖 DNS 操作，内容自定义子域可日后选用。公开页面和 SEO 资源外部转发，应用、API、认证与业务资源留在本地。剥离发往 SEO 的 Cookie/Authorization 和来自 SEO 的 Set-Cookie；私有 noindex 不施加到公开代理响应。单独的第三网关项目保留为可选演进，模板必须先渲染为真实来源地址。
+- 路由：原 App 项目的 Build Output 静态路由承担轻量网关。`APP_SITE_ORIGIN` 使用独立 SEO 项目的固定生产地址 `https://ai-watermark-site.vercel.app`；Site 项目采用官方 Standard Protection，使生产固定来源提供公开静态内容，preview 和唯一部署地址继续受保护。不为自动化关闭保护、不改变原 App 项目的保护设置。当前方案不配置 `content.watermarkgemini.com`，不增加 DNS 记录；该闲置域名绑定已清理，功能和 SEO 依靠独立构建目标及各自发布规则分离。公开页面和 SEO 资源外部转发，应用、API、认证与业务资源留在本地。剥离发往 SEO 的 Cookie/Authorization 和来自 SEO 的 Set-Cookie；私有 noindex 不施加到公开代理响应。单独的第三网关项目保留为可选演进，模板必须先渲染为真实来源地址。
 - 投递：首期使用 Neon 金融事务 outbox 加投递器；API 成功写事务后尝试快速触发 Worker，周期调度补偿漏投递。周期调度与 Worker 分别鉴权，不开放公共任意任务执行。
 
 Vercel 支持通过外部 rewrites 在同一个公共域名组合多个来源。[Vercel 路由文档](https://vercel.com/docs/routing/rewrites) Cloud Run Jobs 适合运行容器任务并在完成后退出；具体内存、磁盘、任务时间和启动延迟应按样本测试配置。[Cloud Run Jobs](https://docs.cloud.google.com/run/docs/create-jobs)

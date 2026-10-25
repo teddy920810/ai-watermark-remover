@@ -1,5 +1,15 @@
 # 图片、视频去水印实施与验收 TODO
 
+## T11 · 2026-10-25 固定 SEO 来源与闲置配置清理
+
+- [x] 获取最新远端 main `b2e981b`，在干净的隔离工作区建立 `codex/content-origin-cleanup` 分支，保留其他工作区的开发改动。
+- [x] 核实生产 App/Site 均为上述 main 的 READY 部署，`APP_SITE_ORIGIN` 使用 `https://ai-watermark-site.vercel.app`。
+- [x] 删除 Site 项目未使用的 `content.watermarkgemini.com` 绑定；公共 DNS 查询为 NXDOMAIN，不需要修改 GoDaddy。保留实际承载静态 SEO 的 Site 项目、固定 alias 及旧页面依赖的不可变静态资源部署。
+- [x] 审查独立路由、静态/服务端依赖边界、产物与发布选择；现有构建及资源保留测试共 27 项通过。博客、落地页内容变更只触发 Site，处理 API、工作区变更只触发 App；全站身份、公共鉴权控件、共享依赖等按规则触发受影响目标。
+- [x] 绑定删除后公开生产 smoke 通过；图片/视频工作区、隐私页、未知 SEO 路径的真实 404 以及固定 SEO 来源 HTTP 检查通过。未修改产品行为，不新增收费 Provider 调用。
+
+当前明确采用固定 Vercel SEO 来源地址，不配置 content 子域名，也不创建额外网关项目。功能与 SEO 的独立开发、独立发布沿用现有方案。域名绑定清理不需要重新部署产品；本轮仓库修改仅记录该决定。
+
 ## T10 · 2026-10-25 交互精简
 
 交付目标：合并 main、部署上线与生产验收。设计及证据索引见 [交互精简与验收](INTERACTION_SIMPLIFICATION.md)。
@@ -57,7 +67,7 @@
 | SEO发布内容 | 视频仍标Coming Soon/Free、首页仍称无视频→同步真实限制、管理员额度与入口 | 2项红测→3文件12项绿；其他未发布工具保留原Coming Soon |
 | 原账户恢复 | 真实会话原余额503，唯一邮箱与新随机ID冲突→稳定Google subject映射及旧verified Gmail会话兼容 | 52项绿，含真实已安装SDK冷启动；007已应用，真实个人账号原余额2恢复 |
 
-数据库005、006、007已在授权项目执行。GCP已配置独立服务身份、短期联邦、四项最小Secret和镜像仓库，Worker及分钟级恢复调度已真实执行成功；最终代码镜像与Vercel发布已完成，绑定和验收见下方门禁表。正式域名/DNS与已有登录Secret保留。无需新增DNS记录，SEO使用核实后的Vercel固定生产域名；自定义content子域留待以后配置。
+数据库005、006、007已在授权项目执行。GCP已配置独立服务身份、短期联邦、四项最小Secret和镜像仓库，Worker及分钟级恢复调度已真实执行成功；最终代码镜像与Vercel发布已完成，绑定和验收见下方门禁表。正式域名/DNS与已有登录Secret保留。无需新增DNS记录，SEO使用核实后的Vercel固定生产域名；当前决定不配置content子域，闲置绑定清理见T11。
 
 用户明确授权后的R2生命周期已单次写入并回读核实：processing/staging、inputs、masks、results创建一天到期；原全桶multipart七天清理规则保留；jobs/quotes/attempts等恢复与费用记录未加此TTL。R2物理删除由后台执行，通常可能另延后约24小时。当前新Provider不再存储无用的base64衍生遮罩；session仍为私有恢复数据。
 
