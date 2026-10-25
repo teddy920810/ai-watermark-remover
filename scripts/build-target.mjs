@@ -95,7 +95,8 @@ export function classifyTargetChanges(files) {
   const targets = new Set();
   for (const raw of files) {
     const file = slash(raw);
-    if (/^(?:docs\/|README\.md$|AGENTS\.md$|apps\/worker\/|scripts\/build-worker)/.test(file)) continue;
+    if (/^(?:docs\/|README\.md$|AGENTS\.md$|apps\/worker\/|scripts\/build-worker|scripts\/processing-acceptance\.mjs$|scripts\/lib\/acceptance-budget\.mjs$)/.test(file)) continue;
+    if (file === 'scripts/retain-app-assets.mjs') { targets.add('app'); continue; }
     if (/^(?:src\/styles\/workspace\.css$|src\/layouts\/App)/.test(file)) { targets.add('app'); continue; }
     if (/^(?:package(?:-lock)?\.json$|astro\.config\.mjs$|src\/styles\/|src\/components\/auth\/|src\/lib\/auth-client|src\/content\/settings\/site\.json$|public\/uploads\/watermarkgemini-logo\.svg$|scripts\/build-target|\.github\/workflows\/build-targets)/.test(file)) { targets.add('site'); targets.add('app'); continue; }
     if (/^(?:apps\/gateway\/)/.test(file)) continue;
@@ -210,6 +211,7 @@ export function buildTarget(target) {
   if (target === 'app') {
     const source = path.join(projectRoot, '.vercel/output');
     if (!existsSync(path.join(source, 'config.json'))) throw new Error('Vercel adapter did not produce app output');
+    runNode(path.join(projectRoot, 'scripts/retain-app-assets.mjs'), [], env);
     configureAppSiteProxy(projectRoot, process.env);
     cpSync(source, path.join(plan.outDir, '.vercel/output'), { recursive: true });
   }
