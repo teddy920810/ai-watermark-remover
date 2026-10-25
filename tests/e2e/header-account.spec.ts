@@ -53,6 +53,7 @@ test('signed-in headers keep readable navigation or a menu with visible brand an
     await expect(header.locator('.brand-logo')).toBeVisible();
     if (width > 340) await expect(header.locator('.brand span')).toBeVisible();
     await expect(header.locator('.header-benefits')).toContainText('1/3');
+    expect((await header.boundingBox())!.height, `public header height at ${width}px`).toBeLessThanOrEqual(80);
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
     const brand = (await header.locator('.brand').boundingBox())!;
     const account = (await header.locator('.header-auth').boundingBox())!;
@@ -100,6 +101,9 @@ test('mobile account controls stay usable above an open navigation menu', async 
   await page.getByRole('button', { name: 'Open navigation' }).click();
   const navigation = page.getByRole('navigation', { name: 'Main navigation' });
   await expect(navigation).toBeVisible();
+  const navigationBox = (await navigation.boundingBox())!;
+  expect(navigationBox.x).toBeGreaterThanOrEqual(0);
+  expect(navigationBox.x + navigationBox.width).toBeLessThanOrEqual(390);
   await page.getByRole('button', { name: 'Account menu', exact: true }).click();
   const menu = page.getByRole('dialog', { name: 'Account menu', exact: true });
   await expect(menu).toBeVisible();
@@ -111,4 +115,26 @@ test('mobile account controls stay usable above an open navigation menu', async 
   await menu.getByRole('button', { name: 'Daily check-in +1' }).click({ trial: true, timeout: 3000 });
   await menu.getByRole('button', { name: 'Sign out', exact: true }).click({ trial: true, timeout: 3000 });
   expect(writes).toBe(0);
+});
+
+test('public navigation folding leaves image and video workspace headers on one row', async ({ page }) => {
+  await page.route('**/api/auth/get-session', route => route.fulfill({ json: null }));
+  await page.route('**/api/v1/capabilities', route => route.fulfill({ json: { operations: [] } }));
+  for (const width of [1280, 1024]) {
+    await page.setViewportSize({ width, height: 900 });
+    for (const kind of ['image', 'video']) {
+      await page.goto(`/app/${kind}`);
+      const header = page.locator('.workspace-header');
+      await expect(header.getByRole('button', { name: 'Sign in with Google', exact: true })).toBeEnabled();
+      const box = (await header.boundingBox())!;
+      const brand = (await header.locator('.brand').boundingBox())!;
+      const navigation = (await header.getByRole('navigation', { name: 'Media workspace' }).boundingBox())!;
+      const actions = (await header.locator('.workspace-header-actions').boundingBox())!;
+      expect(box.height, `${kind} header height at ${width}px`).toBeLessThanOrEqual(80);
+      expect(navigation.width, `${kind} media navigation at ${width}px`).toBeLessThan(box.width / 2);
+      expect(brand.x + brand.width).toBeLessThanOrEqual(navigation.x);
+      expect(navigation.x + navigation.width).toBeLessThanOrEqual(actions.x);
+      expect(Math.abs(brand.y + brand.height / 2 - navigation.y - navigation.height / 2)).toBeLessThanOrEqual(2);
+    }
+  }
 });
