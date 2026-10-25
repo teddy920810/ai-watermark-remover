@@ -87,3 +87,52 @@ passed
 ## 发布准备
 
 预发布覆盖率门禁发现首页交互仅有浏览器测试，覆盖率不足。补充滑块边界、指针捕获、样例位置继承、场景键盘切换、窄屏标签可见和评价暂停/恢复的状态测试。408 项单元检查通过，语句 82.30%、分支 76.61%、函数 87.50%、行 86.14%，达到原有门槛，未降低标准。
+
+
+## 2026-10-25 登录头部与首页统一上传复核
+
+本轮源视觉为用户截图及重新捕获的正式首页；在既有视觉系统内修复头部宽度分配、账户操作和首页上传入口，未重新设计素材、字体或页面主体。
+
+- source visual truth path: output/ui-unified-upload/01-production-before.png
+- implementation screenshot path: output/ui-unified-upload/02-desktop-after-mocked.png
+- viewport: desktop 1864 × 957 CSS px; mobile 390 × 844 CSS px
+- source and implementation pixels: desktop both 1864 × 957; mobile final 390 × 844; deviceScaleFactor 1, no resampling in the comparison inputs
+- state: source is an existing signed-in production account; implementation is a synthetic signed-in Test Account with a mocked 1/3 balance. Account identity/balance differences are intentional fixtures, not production changes.
+- full-view comparison evidence: output/ui-unified-upload/07-desktop-comparison.png (source left, implementation right)
+- focused region comparison evidence: output/ui-unified-upload/08-header-comparison.png (source top, implementation bottom), 09-workbench-comparison.png (source left, implementation right)
+
+### Findings and comparison history
+
+1. [P1, fixed] Production navigation, check-in and sign-out wrap. The final desktop capture keeps navigation/check-in on one line; the account button opens a panel with a separate sign-out operation. Narrow screens proactively collapse navigation. Long account names wrap within the panel, not the header.
+2. [P2, fixed] The upload rectangle starts 58.390625px below the example. Removing the homepage media selector makes both top edges exactly 401.40625px at the measured viewport (difference 0px). Original examples and comparison interactions remain.
+3. [P2, fixed] A unified entry must not force users to choose the media type or imply all operations are free. The final entry accepts supported images/MP4, inspects file contents and MIME, and restores the correct local workspace. Limits, explicit cost action, free-image allowance and video credits are explained separately.
+4. [P2, fixed during independent review] Client MP4 identification initially omitted existing supported container brands. Added failing regression cases, aligned admission with the existing server contract, and passed 20 focused tests without changing server validation.
+
+### Required fidelity surfaces
+
+- Fonts/typography: retained Plus Jakarta Sans/DM Sans, existing heading hierarchy and brand assets. Header no longer splits navigation labels; mobile instructions wrap within the card. No actionable P0/P1/P2 typography issue in the final captures.
+- Spacing/layout: retained hero art, grid widths and surrounding sections; corrected top-edge alignment. 1920–320px header tests and desktop/mobile homepage tests show no horizontal overflow. Phone upload remains first for discoverability.
+- Colors/tokens: retained existing blue/ink surfaces and dashed upload border. Account expanded/focus states use existing tokens. No new color system.
+- Image quality/assets: retained the real supplied product illustration, thumbnails and original logo. Generated existing responsive WebP derivatives locally before visual verification; no placeholder accepted as final evidence.
+- Copy/content: separate supported image/video requirements and actual cost units. Updated existing CMS fields without schema changes. Image-focused SEO title and example sections remain intentional.
+
+### Verification and remaining limits
+
+Browser-rendered desktop and mobile screenshots were opened and inspected; the full source/implementation pair and both focused comparisons were inspected together. Primary interactions cover account open/dismiss/keyboard, automatic image/MP4 routing, drag/drop, local draft restore, malformed/unsupported/oversize errors and an unaffected background-removal page. The mocked homepage browser error log is empty. Real OAuth/Provider/billing and production export were not exercised; the changes are local only.
+
+14 targeted browser scenarios, 20 focused media unit tests, 144 UI unit checks, and public-page checks are covered. The original public suite had one 30-second all-tool traversal timeout; its first failure was preserved and the single case passed with a one-run 90-second allowance (20.3 seconds). The original check:ui process is not represented as a clean pass. See docs/product/HEADER_UNIFIED_UPLOAD.md for the exact evidence boundaries.
+
+No actionable P0/P1/P2 findings remain in the scoped local UI. Full accessibility compliance is outside this result.
+
+final result: passed
+
+
+### 发布前补充（2026-10-25）
+
+手机导航与账户面板同时展开时的点击命中红测确认层级遮挡；账户面板增加 z-index:40 后，导航展开时签到/退出均可命中，面板不超出 390px 边界且写请求为 0。头部组合用例与原 3 项共 4/4 通过，验收范围由 13 增至 14 项浏览器场景。发布资产保留和生产部署门禁另见 docs/product/HEADER_UNIFIED_UPLOAD.md。
+
+final result: passed
+
+### CI 回归修复（2026-10-25）
+
+完整 CI 揭示公共导航扩大断点后误伤 App 头部，在 1280px 形成 199px 三行并使画布操作落在视口外。新增负向红测后，以低优先级 `:where(:not(.workspace-header))` 限定公共折叠规则；图片/视频工作区在 1280/1024px 保持单行，公共手机菜单不超出右边界，头部 5/5 通过。既有手机签到测试改走账户面板，继续验证一次点击仅增加一次余额。原画布测试不修改、不通过滚动掩盖回归。上述定向浏览器场景增至 15 项；最终发布状态另行记录。

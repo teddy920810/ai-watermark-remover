@@ -8,6 +8,24 @@ const homepage = JSON.parse(
 );
 
 describe('homepage CMS content', () => {
+  it('explains the unified upload formats and separates free image uses from video credits', () => {
+    const parsed = homepageSchema.parse(homepage);
+    const formatAnswer = parsed.faq.items.find(item => item.question.includes('file types'))?.answer ?? '';
+    const videoAnswer = parsed.faq.items.find(item => item.question.includes('video watermark'))?.answer ?? '';
+    const priceAnswer = parsed.faq.items.find(item => item.question.includes('free watermark'))?.answer ?? '';
+    expect(formatAnswer).toMatch(/JPG.*PNG.*WebP/i);
+    expect(formatAnswer).toContain('10 MB');
+    expect(formatAnswer).toContain('MP4');
+    expect(formatAnswer).toContain('100 MB');
+    expect(videoAnswer).toMatch(/automatically/i);
+    expect(videoAnswer).toContain('24 fps');
+    expect(videoAnswer).toContain('9 minutes');
+    expect(videoAnswer).not.toMatch(/Video tab/);
+    expect(priceAnswer).toMatch(/free.*image/i);
+    expect(priceAnswer).toContain('processing credits');
+    expect(parsed.hero.trustItems.join(' ')).toMatch(/image.*video/i);
+    expect(parsed.hero.eyebrow).not.toMatch(/100% Free/i);
+  });
   it('preserves editable comparison treatments for the new blueprint illustrations', () => {
     const customized=structuredClone(homepage);
     customized.useCases[3].comparisonStyle='date';

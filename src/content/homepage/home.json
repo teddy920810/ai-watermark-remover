@@ -3,14 +3,14 @@
   "description": "Remove watermark, logo, and text from images with a free AI watermark remover. Upload JPG, PNG, or WEBP files online and download clean images for free.",
   "shareImage": "/uploads/og-card.svg",
   "hero": {
-    "eyebrow": "100% Free · Online · Private",
+    "eyebrow": "Free image uses · Online · Private",
     "heading": "Free Watermark Remover",
     "highlightedHeading": " from Images",
     "intro": "Remove watermark from image online for free with WatermarkGemini. Our AI watermark remover detects visible watermarks, logos, text, stamps, and other overlays while working to keep surrounding image details clear and natural.",
     "trustItems": [
-      "✓ 100% Free",
-      "✓ Up to 10 MB",
-      "✓ Deleted After 24 Hours"
+      "Free image uses available",
+      "Images 10 MB · Videos 100 MB",
+      "Deleted After 24 Hours"
     ],
     "samples": [
       {
@@ -103,24 +103,24 @@
   },
   "process": {
     "eyebrow": "How it works",
-    "heading": "How to Remove Watermark for Free Online",
-    "headingHighlight": "for Free Online",
-    "intro": "Remove watermarks free online in three simple steps—no downloads, brushes, layers, or complicated editing tools.",
+    "heading": "How to Remove Watermarks Online",
+    "headingHighlight": "Remove Watermarks",
+    "intro": "Choose your file, review its processing cost, and download the result in three steps.",
     "steps": [
       {
         "number": "01",
-        "title": "Upload Your Image",
-        "description": "Choose a JPG, PNG, or WEBP image up to 10 MB and upload to WatermarkGemini image watermark remover. Your image is uploaded to private storage for secure processing."
+        "title": "Choose Your File",
+        "description": "Choose a JPG, PNG or WebP image up to 10 MB, or an MP4 video up to 100 MB. We automatically open the right workspace with your local preview."
       },
       {
         "number": "02",
-        "title": "Remove Watermark from Image",
-        "description": "Our photo watermark remover detects visible watermarks, logos, text, and stamps while working to preserve the surrounding image details."
+        "title": "Review & Process",
+        "description": "Sign in to prepare your file. Review the cost on the processing button, then start when you are ready. Standard images can use free image uses; video and advanced modes use processing credits."
       },
       {
         "number": "03",
-        "title": "Download Your Image",
-        "description": "Review the before-and-after result after remove image watermrk, then download your cleaned image online for free."
+        "title": "Download Your Result",
+        "description": "Preview the returned image or video, compare it with your original, and download your result. Each new processing task shows its cost before you start."
       }
     ]
   },
@@ -128,7 +128,7 @@
     "eyebrow": "Private by Design",
     "heading": "Your Images Stay Private",
     "headingHighlight": "Stay Private",
-    "description": "Your uploads are stored privately, access links expire, and images are scheduled for automatic deletion after 24 hours. Processing and downloading are completely free.",
+    "description": "Your uploads are stored privately, access links expire, and uploaded media and results are scheduled for automatic deletion after 24 hours. Choosing and previewing a file does not use processing credits.",
     "linkLabel": "Learn About Our Privacy Approach →",
     "linkHref": "/privacy",
     "features": [
@@ -149,8 +149,8 @@
       },
       {
         "icon": "$",
-        "title": "Free Processing",
-        "description": "Processing and downloading are completely free."
+        "title": "Clear Processing Cost",
+        "description": "Review the full cost on the processing button before you start."
       }
     ]
   },
@@ -216,11 +216,11 @@
       {
         "enabled": true,
         "eyebrow": "FEATURE 4",
-        "heading": "Free Online Watermark Removal with Private Processing",
-        "description": "Use WatermarkGemini as a free online watermark remover directly in your browser—no desktop software and no credits to purchase. Uploaded images and processed results stay in private storage and are scheduled for automatic deletion after 24 hours.",
+        "heading": "Online Watermark Removal with Private Processing",
+        "description": "Use WatermarkGemini directly in your browser. Standard images can use free image uses; PRO, brush refinement and videos use processing credits. Uploaded media and results stay in private storage and are scheduled for automatic deletion after 24 hours.",
         "listItems": [
-          "100% Free",
-          "No Credits",
+          "Free Image Uses",
+          "Cost Before Processing",
           "Private Storage",
           "24-Hour Deletion"
         ],
@@ -241,12 +241,12 @@
       {
         "enabled": true,
         "question": "Is WatermarkGemini a free watermark remover?",
-        "answer": "Yes. WatermarkGemini is completely free to use. There are no credits or paid packages. Google sign-in is required before processing."
+        "answer": "Standard image removal can use your free image uses: 1 on first sign-in and 1 from daily check-in, up to a balance of 3. PRO, brush refinement and video processing use administrator-allocated processing credits. The processing button shows the full cost before you start."
       },
       {
         "enabled": true,
         "question": "What file types does the image watermark remover support?",
-        "answer": "The homepage upload tool accepts one JPG/JPEG, PNG, or WEBP image up to 10 MB. Video, PDF, URL upload, batch processing, and other file types are not supported."
+        "answer": "The homepage accepts one JPG/JPEG, PNG or WebP image up to 10 MB, or one MP4 video up to 100 MB. Videos must be 24 fps and no longer than 9 minutes. We automatically open the right workspace. PDF, URL upload, batch processing and other formats are not supported."
       },
       {
         "enabled": true,
@@ -256,7 +256,7 @@
       {
         "enabled": true,
         "question": "How do I remove watermark from image files on the homepage?",
-        "answer": "Choose an image, continue to the image workspace, sign in, and upload it for file checks. Review the cost before starting. Compare the returned JPG and download it; eligible standard results can be refined with a brush using administrator-allocated processing credits."
+        "answer": "Choose an image and we automatically open the image workspace with your local preview. Sign in to prepare the file and calculate its cost. Click the processing button to start, then compare and download the returned JPG. Eligible standard results can be refined with a brush using processing credits."
       },
       {
         "enabled": true,
@@ -266,12 +266,12 @@
       {
         "enabled": true,
         "question": "Does the photo watermark remover support batch processing?",
-        "answer": "No. The current homepage supports one image per processing flow."
+        "answer": "No. Choose one image or video at a time. Each file has its own preview, processing cost and result."
       },
       {
         "enabled": true,
         "question": "Does WatermarkGemini support video watermark removal?",
-        "answer": "Yes. Open the dedicated video workspace from the Video tab. It accepts MP4 at 24 fps, up to 9 minutes and 100 MB. Video processing uses credits allocated by an administrator; standard image removal keeps its free-use rules."
+        "answer": "Yes. Choose an MP4 from the same Upload file button and we automatically open the dedicated video workspace. It accepts MP4 at 24 fps, up to 9 minutes and 100 MB. Video processing uses administrator-allocated processing credits; standard image removal keeps its free-use rules. You review the cost before starting."
       },
       {
         "enabled": true,
@@ -451,5 +451,12 @@
         "href": "/#tool"
       }
     ]
+  },
+  "uploader": {
+    "dropzone": {
+      "dropLabel": "Drop an image or MP4 video here",
+      "browseLabel": "or click to browse",
+      "fileInputLabel": "Choose an image or MP4 video"
+    }
   }
 }

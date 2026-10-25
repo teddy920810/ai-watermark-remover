@@ -65,7 +65,7 @@ describe('SiteLayout Google Analytics integration', () => {
     expect(layoutSource).toContain('aria-expanded="false"');
     expect(layoutSource).toContain('data-nav-dropdown-trigger');
     expect(layoutSource).toContain("event.key === 'Escape'");
-    expect(globalCss).toContain('.site-header.is-menu-open nav');
+    expect(globalCss).toContain('.site-header:where(:not(.workspace-header)).is-menu-open nav');
     expect(globalCss).toContain('.nav-dropdown.is-open .nav-dropdown-panel');
   });
 
