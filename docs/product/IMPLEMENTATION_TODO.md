@@ -39,12 +39,12 @@
 | API | 无认证/跨origin/伪造归属/重复提交/私有错误泄露均先失败；无长度头的大请求未及时停止→流式32KiB上限 | processing-handler 7项 |
 | 管理员额度 | 重复grant payload冲突、撤回缺失→可审计幂等grant/revoke，余额不足不扣减 | 管理CLI与财务相邻24项；真实preview/apply已验证撤回 |
 | 真实上传签名 | 真AWS signer离线测试复现空body CRC32→WHEN_REQUIRED，Worker仍验SHA | runtime装配测试绿 |
-| 独立构建 | 页面与服务器依赖混合、CMS app保留名缺失→静态SEO/App/Worker产物、独立资源前缀与安全SEO代理 | 初版site/app实际构建通过；最终代理构建与CI仍待发布门禁 |
+| 独立构建 | 页面与服务器依赖混合、CMS app保留名缺失→静态SEO/App/Worker产物、独立资源前缀与安全SEO代理 | site/app实际构建、最终代理构建与独立CI均已通过 |
 | 浏览器操作 | 匿名文件交接、408保留同key恢复、过期报价/余额0恢复、二值遮罩、精修失败保旧版、视频同步、真实附件下载；SSR未就绪先禁用入口 | 3个spec共11项通过，含背景/物体/签到回归；桌面/手机截图已检查 |
 | SEO发布内容 | 视频仍标Coming Soon/Free、首页仍称无视频→同步真实限制、管理员额度与入口 | 2项红测→3文件12项绿；其他未发布工具保留原Coming Soon |
 | 原账户恢复 | 真实会话原余额503，唯一邮箱与新随机ID冲突→稳定Google subject映射及旧verified Gmail会话兼容 | 52项绿，含真实已安装SDK冷启动；007已应用，真实个人账号原余额2恢复 |
 
-数据库005、006、007已在授权项目执行。GCP已配置独立服务身份、短期联邦、四项最小Secret和镜像仓库，Worker及分钟级恢复调度已真实执行成功；最终代码镜像与Vercel发布仍待完成。正式域名/DNS与已有登录Secret保留。无需新增DNS记录，SEO使用核实后的Vercel固定生产域名；自定义content子域留待以后配置。
+数据库005、006、007已在授权项目执行。GCP已配置独立服务身份、短期联邦、四项最小Secret和镜像仓库，Worker及分钟级恢复调度已真实执行成功；最终代码镜像与Vercel发布已完成，绑定和验收见下方门禁表。正式域名/DNS与已有登录Secret保留。无需新增DNS记录，SEO使用核实后的Vercel固定生产域名；自定义content子域留待以后配置。
 
 用户明确授权后的R2生命周期已单次写入并回读核实：processing/staging、inputs、masks、results创建一天到期；原全桶multipart七天清理规则保留；jobs/quotes/attempts等恢复与费用记录未加此TTL。R2物理删除由后台执行，通常可能另延后约24小时。当前新Provider不再存储无用的base64衍生遮罩；session仍为私有恢复数据。
 
@@ -74,7 +74,7 @@
 
 ## 2026-10-25 补充修复（用户已确认执行）
 
-即时投递的STS参数错误与不确定投递的无限排队是两个独立问题。#83仅增加脱敏诊断，不能视为修复后者。当前只读检查确认正式站仍为85f7c54，四项新操作已启用；财务表5笔准入均为settled、没有reserved，12条outbox均completed、没有uncertain引用。该快照未发现此类冻结，不能替代异常分支验收。
+即时投递的STS参数错误与不确定投递的无限排队是两个独立问题。#83仅增加脱敏诊断，不能视为修复后者。修复前只读快照中，正式站当时为85f7c54，四项新操作已启用；财务表5笔准入均为settled、没有reserved，12条outbox均completed、没有uncertain引用。该历史快照未发现此类冻结，不能替代异常分支验收；最终状态以发布门禁表及修复版生产验收结果为准。
 
 1. P0：先补任务与额度的有界恢复。派发前持久化nonce、首次派发时间、绝对恢复期限与generation；周期协调器同时处理从未启动Worker的任务。只读执行列表缺失不能证明请求未受理。恢复Worker沿用同一job/准入记录，有attempt时只查既有结果；到期需通过同一CAS/租约先阻止迟到Worker再幂等返还未开始处理的额度。已可能调用Provider的任务进入既有核对机制，不能清空attempt、重发收费请求或直接无条件返还。跨R2/财务写入崩溃后必须可重入完成。
 2. P1：分离Google STS的资源名audience（//iam.googleapis.com/...）与Vercel令牌的HTTPS audience。保留原身份、权限、作用域。用户“确认执行”已批准此示例偏差；真实SDK生成STS请求体的红测已转绿，发布后用零收费真实浏览器上传预检证明直接启动云执行。
