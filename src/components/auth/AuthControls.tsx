@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useId, useRef, useState } from 'react';
+import { ChevronDown, LogOut, UserRound } from 'lucide-react';
 import { authClient } from './auth-client';
 
 interface BenefitSummary {
@@ -15,6 +16,10 @@ export default function AuthControls() {
   const [benefits, setBenefits] = useState<BenefitSummary | null>(null);
   const [benefitPending, setBenefitPending] = useState(false);
   const [benefitError, setBenefitError] = useState(false);
+  const [accountOpen, setAccountOpen] = useState(false);
+  const accountMenuRef = useRef<HTMLDivElement>(null);
+  const accountButtonRef = useRef<HTMLButtonElement>(null);
+  const accountPanelId = useId();
 
   const loadBenefits = useCallback(async () => {
     if (!session?.user) return;
@@ -34,6 +39,7 @@ export default function AuthControls() {
   useEffect(() => {
     if (!session?.user) {
       setBenefits(null);
+      setAccountOpen(false);
       return;
     }
     void loadBenefits();
@@ -41,6 +47,15 @@ export default function AuthControls() {
     window.addEventListener('benefits:changed', handleChange);
     return () => window.removeEventListener('benefits:changed', handleChange);
   }, [loadBenefits, session?.user]);
+
+  useEffect(() => {
+    if (!accountOpen) return;
+    const dismissOutside = (event: PointerEvent) => {
+      if (event.target instanceof Node && !accountMenuRef.current?.contains(event.target)) setAccountOpen(false);
+    };
+    document.addEventListener('pointerdown', dismissOutside);
+    return () => document.removeEventListener('pointerdown', dismissOutside);
+  }, [accountOpen]);
 
   async function signIn() {
     setActionPending(true);
@@ -83,22 +98,65 @@ export default function AuthControls() {
     return (
       <div className="header-user-tools">
         <section className="header-benefits" aria-label="Free image uses">
-          <span>{benefitError ? 'Free uses unavailable' : <>Free uses <strong>{benefits ? `${benefits.balance}/${benefits.cap}` : '…'}</strong></>}</span>
+          <span title={benefitError ? 'Balance unavailable — open your account to retry' : 'Free image uses'}>
+            <span className="header-benefit-label">Free uses </span>
+            <strong>{benefitError ? '—' : benefits ? `${benefits.balance}/${benefits.cap}` : '…'}</strong>
+            {benefitError && <span className="sr-only">Balance unavailable</span>}
+          </span>
           {!benefitError ? (
             <button
+              className="header-check-in"
               type="button"
               onClick={checkIn}
               disabled={benefitPending || !benefits || benefits.checkedInToday || balanceFull}
             >
               {benefitPending ? 'Updating…' : checkInLabel}
             </button>
-          ) : <button type="button" onClick={loadBenefits} disabled={benefitPending}>Retry</button>}
+          ) : <button className="header-check-in" type="button" onClick={loadBenefits} disabled={benefitPending}>Retry</button>}
         </section>
-        <button className="header-account" type="button" onClick={signOut} disabled={actionPending} title="Sign out">
-          {session.user.image ? <img src={session.user.image} alt="" referrerPolicy="no-referrer" /> : null}
-          <span>{session.user.name}</span>
-          <small>{actionPending ? 'Signing out…' : 'Sign out'}</small>
-        </button>
+        <div
+          className="header-account-menu"
+          ref={accountMenuRef}
+          onBlur={(event) => {
+            if (!event.currentTarget.contains(event.relatedTarget)) setAccountOpen(false);
+          }}
+          onKeyDown={(event) => {
+            if (event.key !== 'Escape' || !accountOpen) return;
+            event.preventDefault();
+            event.stopPropagation();
+            setAccountOpen(false);
+            accountButtonRef.current?.focus();
+          }}
+        >
+          <button
+            className="header-account"
+            ref={accountButtonRef}
+            type="button"
+            aria-label="Account menu"
+            aria-haspopup="dialog"
+            aria-controls={accountPanelId}
+            aria-expanded={accountOpen}
+            onClick={() => setAccountOpen((open) => !open)}
+          >
+            {session.user.image ? <img src={session.user.image} alt="" referrerPolicy="no-referrer" /> : <UserRound size={22} aria-hidden="true" />}
+            <ChevronDown className="account-chevron" size={13} aria-hidden="true" />
+          </button>
+          <div id={accountPanelId} className="header-account-panel" role="dialog" aria-label="Account menu" hidden={!accountOpen}>
+            <p className="account-name">{session.user.name}</p>
+            <p className="account-balance" role="status">
+              {benefitError ? 'Balance unavailable. Please try again.' : benefits ? `Free uses ${benefits.balance}/${benefits.cap}` : 'Loading balance…'}
+            </p>
+            <a href="/app/image">Open workspace</a>
+            {benefitError ? <button type="button" onClick={loadBenefits} disabled={benefitPending}>{benefitPending ? 'Updating…' : 'Retry'}</button> : (
+              <button className="account-menu-check-in" type="button" onClick={checkIn} disabled={benefitPending || !benefits || benefits.checkedInToday || balanceFull}>
+                {benefitPending ? 'Updating…' : checkInLabel}
+              </button>
+            )}
+            <button className="account-sign-out" type="button" onClick={signOut} disabled={actionPending}>
+              <LogOut size={16} aria-hidden="true" />{actionPending ? 'Signing out…' : 'Sign out'}
+            </button>
+          </div>
+        </div>
       </div>
     );
   }

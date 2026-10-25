@@ -58,7 +58,7 @@ const faqSchema = visibleFaqItems.length > 0 ? {
           <div class="preview-samples" aria-label="Choose a preview sample">{home.hero.samples.map((sample,index) => <button class="sample-thumb" type="button" data-hero-sample={index} aria-pressed={index===0?'true':'false'} aria-label={sample.label}><span class="sample-art"><ResponsiveImage src={sample.image} alt="" sizes="64px" /></span><span>{sample.label}</span></button>)}</div>
           <p class="illustration-note">{home.hero.previewNote}</p>
         </div>
-        <div id="tool" class="hero-tool upload-panel"><MediaLauncher kind="image" source="homepage" copy={uploaderCopy} client:load /><p class="privacy-line">{home.hero.privacyNote}</p></div>
+        <div id="tool" class="hero-tool upload-panel"><MediaLauncher autoDetect source="homepage" copy={uploaderCopy} client:load /><p class="privacy-line">{home.hero.privacyNote}</p></div>
       </div>
       <div class="trust-row trust-list">{home.hero.trustItems.map(item => <span><CircleCheck size={16} />{item.replace(/^✓\s*/, '')}</span>)}</div>
     </div>

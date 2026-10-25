@@ -16,6 +16,28 @@ const manifest = (assets = [asset], source = origin) => ({ version: 1, origin: s
 afterEach(() => { for (const directory of directories.splice(0)) rmSync(directory, { recursive: true, force: true }); });
 
 describe('previous public App asset retention', () => {
+  it('pins App 86 workspace CSS and JavaScript alongside all six prior assets on one immutable origin', () => {
+    // Anonymous /app/image and /app/video captures on 2026-10-25 share this recursive public asset graph.
+    // Keep both previous generations available to already-open workspaces; never retain HTML or private media.
+    const value = JSON.parse(readFileSync(new URL('../../../apps/app/retained-assets.json', import.meta.url), 'utf8'));
+    const expected = [
+      { path: '/_app-assets/_kind_.VGEm7Omq.css', sha256: '0d9113dca4fa109508d538c20b4d58e540c86ae8c3a0d0681886a7225714bc92', byteSize: 74247, contentType: 'text/css' },
+      { path: '/_app-assets/client.BJQPcj77.js', sha256: '5eaf28c8b13d01d5bb092c5260ec3c903906f07afd3d530b3c0c136f45580152', byteSize: 183969, contentType: 'application/javascript' },
+      { path: '/_app-assets/public/uploads/background-remover-transparency-grid.png', sha256: 'a98023de0ce42177fd5cccb9a4fee30b5ec2424ee11e9cfae85bfb99930c5154', byteSize: 730090, contentType: 'image/png' },
+      { path: '/_app-assets/public/uploads/watermarkgemini-logo.svg', sha256: '2fc67afeb0c4d99530a52d99ef8267d414b308a5e1a499fff734433472296926', byteSize: 1847, contentType: 'image/svg+xml' },
+      { path: '/_app-assets/react.DSfmxFZS.js', sha256: 'adf1cf3c94a3015ed2afb1e9cc7ab4a7de1c13fd47d58ceebb5a685c21aacb19', byteSize: 7565, contentType: 'application/javascript' },
+      { path: '/_app-assets/WatermarkWorkspace.BuEjo2iM.js', sha256: '37b9e5a287a734f1fbbf6a31f27efde5f99a87f96af715b8f8ab4e5df66abf1b', byteSize: 75720, contentType: 'application/javascript' },
+      { path: '/_app-assets/_kind_.DeRaFZ08.css', sha256: '51965ec9d651fa3bbe68d530c240f5db788c4ccca13060c10024fa8d648b4b29', byteSize: 75296, contentType: 'text/css' },
+      { path: '/_app-assets/WatermarkWorkspace.USrjb05O.js', sha256: 'c4aed2901066aa578e02001e5b85c36126067c0b2a404c7e074ab34609bcd2b7', byteSize: 77053, contentType: 'application/javascript' },
+    ];
+    expect(value.version).toBe(1);
+    expect(value.origin).toBe('https://ai-watermark-remover-7civhp1md-shiyaos-projects-b1e333f0.vercel.app');
+    expect(value.assets).toEqual(expect.arrayContaining(expected));
+    expect(value.assets.length).toBeLessThanOrEqual(32);
+    expect(new Set(value.assets.map((entry: { path: string }) => entry.path)).size).toBe(value.assets.length);
+    expect(value.assets.reduce((sum: number, entry: { byteSize: number }) => sum + entry.byteSize, 0)).toBeLessThanOrEqual(20_000_000);
+  });
+
   it('copies only pinned static bytes into the current App output without request credentials', async () => {
     const directory = fixture();
     const fetcher = vi.fn(async () => new Response(body, { headers: { 'Content-Type': 'application/javascript; charset=utf-8', 'Content-Length': String(body.length), 'Set-Cookie': 'must-not-be-copied' } }));
