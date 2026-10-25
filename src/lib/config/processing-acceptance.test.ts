@@ -162,9 +162,20 @@ describe('authenticated v1 processing acceptance runner', () => {
     const summary = await new AcceptanceBudget(state.ledgerPath, { image: 8, video: 5 }).summary();
     expect(summary.used).toEqual({ image: 1, video: 0 }); expect(summary.remaining).toEqual({ image: 7, video: 5 });
   });
+  it('records the explicitly approved ninth image while retaining the five-video cap', async () => {
+    const state = await fixture();
+    const budget = new AcceptanceBudget(state.ledgerPath, { image: 8, video: 5 });
+    for (let index = 0; index < 8; index++) await budget.reserve('image', `previous acceptance ${index}`);
+    await budget.authorizeIncrease({ image: 9, video: 5 }, 'User approved one additional image for single-click production acceptance');
+    await runProcessingAcceptance({ ...base, ...state, imageLimit: 9 }, { environment, fetcher: site(state.sample) });
+    const summary = await new AcceptanceBudget(state.ledgerPath, { image: 9, video: 5 }).summary();
+    expect(summary.used).toEqual({ image: 9, video: 0 });
+    expect(summary.remaining).toEqual({ image: 0, video: 5 });
+    await expect(budget.reserve('image', 'unapproved extra acceptance')).rejects.toThrow(/exhausted/i);
+  });
   it('rejects image limits above the explicit supported maximum before any network request', async () => {
     const state = await fixture(); const fetcher = vi.fn();
-    await expect(runProcessingAcceptance({ ...base, ...state, imageLimit: 9 }, { environment, fetcher })).rejects.toMatchObject({ code: 'budget_authorization' });
+    await expect(runProcessingAcceptance({ ...base, ...state, imageLimit: 10 }, { environment, fetcher })).rejects.toMatchObject({ code: 'budget_authorization' });
     expect(fetcher).not.toHaveBeenCalled();
   });
 });

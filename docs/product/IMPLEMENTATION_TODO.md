@@ -1,5 +1,16 @@
 # 图片、视频去水印实施与验收 TODO
 
+## T10 · 2026-10-25 交互精简
+
+交付目标：合并 main、部署上线与生产验收。设计及证据索引见 [交互精简与验收](INTERACTION_SIMPLIFICATION.md)。
+
+- [x] Product Design 审查当前图片、视频流程和费用弹窗。
+- [x] 自动上传检查与报价、单次带费用处理、精修及固定选区自动更新。
+- [x] TDD 与 18 项工作区浏览器回归：异步竞态、过期、幂等、失败和登录恢复。
+- [ ] 本地风险门禁、桌面/移动验收、未改动工具负向检查。
+- [ ] PR/CI、合并 main、正式部署与旧静态资源兼容。
+- [ ] 图片一次、视频一次真实处理/扣额度/导出验收；图片总上限 9、视频总上限 5。
+
 启动日期：2026-10-24。交付目标：专用分支实施、TDD、本地 release:verify、PR/CI、合并 main、部署与生产验收。
 
 正式仓库：teddy920810/ai-watermark-remover；基线 5be42381e32623186ce06dc3dcc6618bae85ebd5。实施分支 codex/watermark-product-delivery。正式 checkout 的既有 10 项修改留在原处，本次实施使用隔离 worktree。

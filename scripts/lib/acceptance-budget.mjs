@@ -7,7 +7,7 @@ import { setTimeout as delay } from 'node:timers/promises';
 /** A failed or uncertain paid submission still consumes its pre-authorized test slot. */
 export class AcceptanceBudget {
   constructor(file, limits = { image: 5, video: 5 }) {
-    if (!['image', 'video'].every((kind) => Number.isInteger(limits[kind]) && limits[kind] >= 0 && limits[kind] <= (kind === 'image' ? 8 : 5))) throw new Error('Acceptance budget limits exceed the supported authorization.');
+    if (!['image', 'video'].every((kind) => Number.isInteger(limits[kind]) && limits[kind] >= 0 && limits[kind] <= (kind === 'image' ? 9 : 5))) throw new Error('Acceptance budget limits exceed the supported authorization.');
     this.file = file;
     this.limits = { ...limits };
   }
@@ -46,7 +46,7 @@ export class AcceptanceBudget {
 
   async authorizeIncrease(limits, reason) {
     if (!reason?.trim() || reason.length > 300 || /https?:\/\/|api.?key|cookie|token/i.test(reason)
-      || !['image', 'video'].every((kind) => Number.isInteger(limits[kind]) && limits[kind] >= this.limits[kind] && limits[kind] <= (kind === 'image' ? 8 : 5))) throw new Error('Explicit authorization and valid limits are required.');
+      || !['image', 'video'].every((kind) => Number.isInteger(limits[kind]) && limits[kind] >= this.limits[kind] && limits[kind] <= (kind === 'image' ? 9 : 5))) throw new Error('Explicit authorization and valid limits are required.');
     await this.transaction((state) => {
       state.authorizations ??= [];
       state.authorizations.push({ previous: { ...state.limits }, next: { ...limits }, reason, at: new Date().toISOString() });
