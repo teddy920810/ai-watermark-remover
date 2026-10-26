@@ -216,7 +216,7 @@ test('homepage blueprint previews, CTA routes and motion controls work on deskto
   await page.route('**/api/jobs', route => { processingRequests++; return route.abort(); });
   for (const width of [1920, 390]) {
     await page.setViewportSize({width, height:900});
-    await page.goto('/');
+    await openPublicPage(page, '/');
     await expect(page.locator('[data-hero-preview]:visible')).toHaveCount(1);
     await page.locator('[data-hero-sample]').nth(1).click();
     await expect(page.locator('[data-hero-sample]').nth(1)).toHaveAttribute('aria-pressed','true');
@@ -225,10 +225,11 @@ test('homepage blueprint previews, CTA routes and motion controls work on deskto
     await compare.press('ArrowRight');
     await expect(compare).toHaveValue('51');
     const bounds=await compare.boundingBox();
-    await page.mouse.move(bounds!.x+bounds!.width*.25,bounds!.y+bounds!.height*.5);
-    await page.mouse.down();
-    await page.mouse.move(bounds!.x+bounds!.width*.75,bounds!.y+bounds!.height*.5);
-    await page.mouse.up();
+    // Locator actions scroll clipped ancestors before delivering real pointer events.
+    await compare.dragTo(compare, {
+      sourcePosition: { x: bounds!.width*.25, y: bounds!.height*.5 },
+      targetPosition: { x: bounds!.width*.75, y: bounds!.height*.5 },
+    });
     expect(Number(await compare.inputValue())).toBeGreaterThan(70);
     const tabs=page.locator('[data-scenario-tab]');
     await tabs.first().focus();
