@@ -11,7 +11,6 @@ export class MemoryJobs implements ProcessingJobStore {
   async create(job: ProcessingJob) { if (this.data.has(job.id)) return false; this.data.set(job.id, { job: structuredClone(job), version: '1' }); return true; }
   async get(id: string) { return structuredClone(this.data.get(id) ?? null); }
   async compareAndSwap(id: string, version: string, job: ProcessingJob) { const current = this.data.get(id); if (!current || current.version !== version) return false; this.data.set(id, { job: structuredClone(job), version: String(Number(version) + 1) }); return true; }
-  async listForOwner(ownerId: string, limit = 20) { return [...this.data.values()].filter(({ job }) => job.ownerId === ownerId).map(({ job }) => structuredClone(job)).sort((a, b) => b.createdAt.localeCompare(a.createdAt) || a.id.localeCompare(b.id)).slice(0, limit); }
   async recordAttemptResult(result: AttemptResult) { const key = `${result.jobId}/${result.attemptId}`; if (!this.attempts.has(key)) this.attempts.set(key, structuredClone(result)); }
   async getAttemptResult(jobId: string, attemptId: string) { return structuredClone(this.attempts.get(`${jobId}/${attemptId}`) ?? null); }
 }

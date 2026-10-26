@@ -17,7 +17,8 @@
     "processing:revoke": "node --env-file-if-exists=.env.local scripts/revoke-processing-credits.mjs",
     "test:smoke:processing": "node scripts/processing-acceptance.mjs",
     "preview": "astro preview",
-    "lint": "astro check && eslint .",
+    "lint": "astro check && npm run lint:code",
+    "lint:code": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
@@ -40,8 +41,8 @@
     "verify:responsive-images": "node scripts/verify-responsive-images.mjs",
     "site:init": "node scripts/initialize-site.mjs",
     "site:validate": "node scripts/validate-site.mjs",
-    "verify:deploy": "npm run site:validate && npm run test:coverage && npm run lint && npm run build",
-    "verify": "npm run test:coverage && npm run lint && npm run build && npm run test:e2e",
+    "verify:deploy": "npm run site:validate && npm run test:coverage && npm run lint:code && npm run build",
+    "verify": "npm run test:coverage && npm run lint:code && npm run build && npm run test:e2e",
     "release:verify": "npm run audit:dependencies && npm run site:validate && npm run verify"
   },
   "dependencies": {

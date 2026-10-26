@@ -92,36 +92,37 @@ test('mobile visitors can open navigation and a dropdown', async ({ page }) => {
   await expect(dropdown.locator('xpath=..').locator('a').first()).toBeVisible();
 });
 
-test('blog tables scroll inside the article without widening the mobile page', async ({ page }) => {
+test.describe('blog tables scroll inside the article without widening the mobile page', () => {
   const contentDirectory = new URL('../../src/content/blog/', import.meta.url);
   const routes = readdirSync(contentDirectory, { encoding: 'utf8' })
     .filter((fileName) => fileName.endsWith('.md'))
     .filter((fileName) => !/^draft:\s*true\s*$/m.test(readFileSync(new URL(fileName, contentDirectory), 'utf8')))
     .map((fileName) => `/blog/${fileName.replace(/\.md$/, '')}`);
-  await page.setViewportSize({ width: 390, height: 844 });
-
   for (const route of routes) {
-    await openPublicPage(page, route);
-    await expect(page.locator('article')).toBeVisible();
-    const dimensions = await page.evaluate(() => ({
-      clientWidth: document.documentElement.clientWidth,
-      scrollWidth: document.documentElement.scrollWidth,
-      overflowing: [...document.querySelectorAll<HTMLElement>('body *')]
-        .filter((element) => element.getBoundingClientRect().right > document.documentElement.clientWidth)
-        .slice(0, 5)
-        .map((element) => ({
-          className: element.className,
-          right: Math.round(element.getBoundingClientRect().right),
-          tagName: element.tagName,
-        })),
-    }));
-    expect(
-      dimensions.scrollWidth,
-      `${route} should not widen the mobile page: ${JSON.stringify(dimensions.overflowing)}`,
-    ).toBeLessThanOrEqual(dimensions.clientWidth);
-    for (const table of await page.locator('.article-body table').all()) {
-      expect(await table.evaluate((element) => getComputedStyle(element).overflowX)).toBe('auto');
-    }
+    test(route, async ({ page }) => {
+      await page.setViewportSize({ width: 390, height: 844 });
+      await openPublicPage(page, route);
+      await expect(page.locator('article')).toBeVisible();
+      const dimensions = await page.evaluate(() => ({
+        clientWidth: document.documentElement.clientWidth,
+        scrollWidth: document.documentElement.scrollWidth,
+        overflowing: [...document.querySelectorAll<HTMLElement>('body *')]
+          .filter((element) => element.getBoundingClientRect().right > document.documentElement.clientWidth)
+          .slice(0, 5)
+          .map((element) => ({
+            className: element.className,
+            right: Math.round(element.getBoundingClientRect().right),
+            tagName: element.tagName,
+          })),
+      }));
+      expect(
+        dimensions.scrollWidth,
+        `${route} should not widen the mobile page: ${JSON.stringify(dimensions.overflowing)}`,
+      ).toBeLessThanOrEqual(dimensions.clientWidth);
+      for (const table of await page.locator('.article-body table').all()) {
+        expect(await table.evaluate((element) => getComputedStyle(element).overflowX)).toBe('auto');
+      }
+    });
   }
 });
 
@@ -215,7 +216,7 @@ test('homepage blueprint previews, CTA routes and motion controls work on deskto
   await page.route('**/api/jobs', route => { processingRequests++; return route.abort(); });
   for (const width of [1920, 390]) {
     await page.setViewportSize({width, height:900});
-    await page.goto('/');
+    await openPublicPage(page, '/');
     await expect(page.locator('[data-hero-preview]:visible')).toHaveCount(1);
     await page.locator('[data-hero-sample]').nth(1).click();
     await expect(page.locator('[data-hero-sample]').nth(1)).toHaveAttribute('aria-pressed','true');
@@ -224,10 +225,11 @@ test('homepage blueprint previews, CTA routes and motion controls work on deskto
     await compare.press('ArrowRight');
     await expect(compare).toHaveValue('51');
     const bounds=await compare.boundingBox();
-    await page.mouse.move(bounds!.x+bounds!.width*.25,bounds!.y+bounds!.height*.5);
-    await page.mouse.down();
-    await page.mouse.move(bounds!.x+bounds!.width*.75,bounds!.y+bounds!.height*.5);
-    await page.mouse.up();
+    // Locator actions scroll clipped ancestors before delivering real pointer events.
+    await compare.dragTo(compare, {
+      sourcePosition: { x: bounds!.width*.25, y: bounds!.height*.5 },
+      targetPosition: { x: bounds!.width*.75, y: bounds!.height*.5 },
+    });
     expect(Number(await compare.inputValue())).toBeGreaterThan(70);
     const tabs=page.locator('[data-scenario-tab]');
     await tabs.first().focus();

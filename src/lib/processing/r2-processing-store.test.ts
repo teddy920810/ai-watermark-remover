@@ -10,7 +10,6 @@ class MemoryJson implements ConditionalJsonStore {
   async get<T>(key: string) { const v = this.data.get(key); return v ? { value: structuredClone(v.value) as T, version: v.version } : null; }
   async create(key: string, value: unknown) { if (this.data.has(key)) return false; this.data.set(key, { value: structuredClone(value), version: '1' }); return true; }
   async update(key: string, version: string, value: unknown) { const current = this.data.get(key); if (!current || current.version !== version) return false; this.data.set(key, { value: structuredClone(value), version: String(Number(version) + 1) }); return true; }
-  async list(prefix: string, limit: number) { return [...this.data.keys()].filter((k) => k.startsWith(prefix)).sort().slice(0, limit); }
 }
 const job: ProcessingJob = { id: 'job-1', ownerId: 'user-1', operation: 'image-watermark', status: 'PREPARED', inputArtifactId: 'input-1', chargeStatus: 'reserved', createdAt: NOW, updatedAt: NOW, quote: { id: 'quote-1', ownerId: 'user-1', operation: 'image-watermark', inputArtifactId: 'input-1', amount: 1, unit: 'processingCredits', priceVersion: '1', fingerprint: 'h', createdAt: NOW, expiresAt: NOW } };
 
@@ -22,7 +21,14 @@ describe('R2 processing state', () => {
     expect(await store.compareAndSwap(job.id, current!.version, { ...job, status: 'QUEUED' })).toBe(true);
     expect(await store.compareAndSwap(job.id, current!.version, { ...job, status: 'FAILED' })).toBe(false);
     expect((await store.get(job.id))!.job.status).toBe('QUEUED');
-    expect(await store.listForOwner('intruder')).toEqual([]); expect(await store.listForOwner('user-1')).toHaveLength(1);
+  });
+  it('writes only the authoritative job manifest and leaves legacy owner indexes untouched', async () => {
+    const json = new MemoryJson(); const legacyKey = 'processing/owners/legacy/old-job.json';
+    await json.create(legacyKey, { jobId: 'old-job', ownerId: 'user-1' });
+    const create = vi.spyOn(json, 'create'); const store = new R2ProcessingJobStore(json);
+    expect(await store.create(job)).toBe(true);
+    expect(create.mock.calls.map(([key]) => key)).toEqual(['processing/jobs/job-1.json']);
+    expect(json.data.get(legacyKey)?.value).toEqual({ jobId: 'old-job', ownerId: 'user-1' });
   });
   it('keeps late attempt responses immutable and outside authoritative state', async () => {
     const store = new R2ProcessingJobStore(new MemoryJson()); await store.create(job);
@@ -49,11 +55,9 @@ describe('S3 conditional JSON adapter', () => {
     send.mockRejectedValue({ $metadata: { httpStatusCode: 412 } }); expect(await store.update('job', 'old', job)).toBe(false);
     send.mockRejectedValue(new Error('Storage unavailable')); await expect(store.create('job', job)).rejects.toThrow('Storage unavailable');
   });
-  it('reads ETags, handles absence and follows list pagination', async () => {
-    const send = vi.fn().mockResolvedValueOnce({ ETag: '"version"', Body: { transformToString: async () => '{"id":1}' } }).mockRejectedValueOnce({ $metadata: { httpStatusCode: 404 } })
-      .mockResolvedValueOnce({ Contents: [{ Key: 'p/one' }], IsTruncated: true, NextContinuationToken: 'next' }).mockResolvedValueOnce({ Contents: [{ Key: 'p/two' }], IsTruncated: false });
+  it('reads ETags and handles absence', async () => {
+    const send = vi.fn().mockResolvedValueOnce({ ETag: '"version"', Body: { transformToString: async () => '{"id":1}' } }).mockRejectedValueOnce({ $metadata: { httpStatusCode: 404 } });
     const store = new S3ConditionalJsonStore({ send } as unknown as S3Client, 'bucket');
     expect(await store.get('one')).toEqual({ value: { id: 1 }, version: '"version"' }); expect(await store.get('missing')).toBeNull();
-    expect(await store.list('p/', 10)).toEqual(['p/one', 'p/two']);
   });
 });

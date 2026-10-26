@@ -1,12 +1,27 @@
-import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync, realpathSync, rmSync } from 'node:fs';
+import { cpSync, existsSync, lstatSync, mkdirSync, readdirSync, readFileSync, writeFileSync, realpathSync, rmSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import path from 'node:path';
 import process from 'node:process';
 import { fileURLToPath, pathToFileURL, URL } from 'node:url';
+import { buildWorker, prepareWorkerContext, workerContextFiles } from './build-worker.mjs';
 
 const projectRoot = fileURLToPath(new URL('../', import.meta.url));
 const slash = (value) => value.replaceAll('\\', '/');
 const isAppPath = (value) => /^\/(?:api(?:\/|$)|app(?:\/|$)|auth\/popup$)/.test(value);
+const buildTargets = ['site', 'app', 'worker'];
+
+function resetGeneratedDirectory(root, relative) {
+  const allowed = ['dist-target/site', 'dist-target/app', 'dist-target/worker', '.vercel/output', 'apps/site/dist', 'apps/app/.vercel/output', 'output/build-inputs/site/env', 'output/build-inputs/app/env', 'output/build-inputs/app/public'];
+  if (!allowed.includes(relative)) throw new Error('Generated directory is not an approved build output');
+  const canonicalRoot = realpathSync(root); const destination = path.join(canonicalRoot, relative);
+  // Never follow a junction/symlink into a different directory, even inside this workspace.
+  for (let current = destination; current !== canonicalRoot; current = path.dirname(current)) {
+    if (lstatSync(current, { throwIfNoEntry: false })?.isSymbolicLink()) throw new Error('Generated directory must not contain symlink ancestors');
+  }
+  if (existsSync(destination)) rmSync(destination, { recursive: true, force: true });
+  mkdirSync(destination, { recursive: true });
+  return destination;
+}
 
 export function collectTargetRoutes(root, target) {
   if (!['site', 'app'].includes(target)) throw new Error('Build target must be site or app');
@@ -40,8 +55,14 @@ export function createBuildPlan(root, target) {
 }
 
 export function prepareBuildInputs(plan) {
-  mkdirSync(plan.publicDir, { recursive: true }); mkdirSync(plan.envDir, { recursive: true });
+  if (!['site', 'app'].includes(plan.target)) throw new Error('Build target must be site or app');
+  resetGeneratedDirectory(plan.root, `dist-target/${plan.target}`);
+  resetGeneratedDirectory(plan.root, `output/build-inputs/${plan.target}/env`);
   if (plan.target !== 'app') return;
+  resetGeneratedDirectory(plan.root, 'output/build-inputs/app/public');
+  // Astro's Vercel adapter stages the complete Build Output here; project.json stays intact.
+  // https://vercel.com/docs/build-output-api
+  resetGeneratedDirectory(plan.root, '.vercel/output');
   const settings = JSON.parse(readFileSync(path.join(plan.root, 'src/content/settings/site.json'), 'utf8'));
   const styleAssets = [];
   for (const css of ['global.css', 'workspace.css']) {
@@ -95,16 +116,19 @@ export function classifyTargetChanges(files) {
   const targets = new Set();
   for (const raw of files) {
     const file = slash(raw);
-    if (/^(?:docs\/|README\.md$|AGENTS\.md$|apps\/worker\/|scripts\/build-worker|scripts\/processing-acceptance\.mjs$|scripts\/lib\/acceptance-budget\.mjs$)/.test(file)) continue;
+    if (/^(?:docs\/|README\.md$|AGENTS\.md$|scripts\/processing-acceptance\.mjs$|scripts\/lib\/acceptance-budget\.mjs$)/.test(file)) continue;
+    if (/^(?:apps\/worker\/|scripts\/build-worker)/.test(file)) { targets.add('worker'); continue; }
+    if (/^(?:package(?:-lock)?\.json$|scripts\/build-target|\.github\/workflows\/build-targets)/.test(file)) { for (const target of buildTargets) targets.add(target); continue; }
     if (file === 'scripts/retain-app-assets.mjs') { targets.add('app'); continue; }
     if (/^(?:src\/styles\/workspace\.css$|src\/layouts\/App)/.test(file)) { targets.add('app'); continue; }
-    if (/^(?:package(?:-lock)?\.json$|astro\.config\.mjs$|src\/styles\/|src\/components\/auth\/|src\/lib\/auth-client|src\/content\/settings\/site\.json$|public\/uploads\/watermarkgemini-logo\.svg$|scripts\/build-target|\.github\/workflows\/build-targets)/.test(file)) { targets.add('site'); targets.add('app'); continue; }
+    if (/^(?:astro\.config\.mjs$|src\/styles\/|src\/components\/auth\/|src\/lib\/auth-client|src\/content\/settings\/site\.json$|public\/uploads\/watermarkgemini-logo\.svg$)/.test(file)) { targets.add('site'); targets.add('app'); continue; }
     if (/^(?:apps\/gateway\/)/.test(file)) continue;
-    if (/^(?:apps\/app\/|src\/pages\/(?:app|api|auth)\/|src\/components\/workspace\/|src\/lib\/(?:api\/|runtime\/|processing\/|providers\/|media\/|benefits\/|jobs\/|r2\/|users\/|config\/|auth\.ts)|db\/)/.test(file)) { targets.add('app'); continue; }
+    if (/^(?:src\/lib\/(?:runtime\/|processing\/|providers\/|media\/|benefits\/|jobs\/|r2\/|users\/|config\/)|db\/)/.test(file)) { targets.add('app'); targets.add('worker'); continue; }
+    if (/^(?:apps\/app\/|src\/pages\/(?:app|api|auth)\/|src\/components\/workspace\/|src\/lib\/(?:api\/|auth\.ts))/.test(file)) { targets.add('app'); continue; }
     if (/^(?:apps\/site\/|src\/content|src\/pages\/|src\/components\/|src\/layouts\/|src\/lib\/content\/|public\/|\.pages\.yml$|scripts\/(?:cms-|optimize-images|verify-responsive))/.test(file)) { targets.add('site'); continue; }
-    if (/^(?:src\/|scripts\/|\.github\/|tsconfig|vite|vercel\.json)/.test(file)) { targets.add('site'); targets.add('app'); }
+    if (/^(?:src\/|scripts\/|\.github\/|tsconfig|vite|vercel\.json)/.test(file)) for (const target of buildTargets) targets.add(target);
   }
-  return ['site', 'app'].filter((target) => targets.has(target));
+  return buildTargets.filter((target) => targets.has(target));
 }
 
 function origin(value) {
@@ -162,15 +186,30 @@ export function renderGatewayConfig({ siteOrigin, appOrigin, publicOrigin }) {
 }
 
 export function validateBuildArtifact(root, target) {
+  if (!buildTargets.includes(target)) throw new Error('Unknown build target');
   const output = path.join(root, 'dist-target', target);
   if (!existsSync(output)) throw new Error(`${target} artifact is missing`);
   if (target === 'site') {
     for (const name of ['api', 'app', 'auth', 'server', '.vercel', 'functions']) if (existsSync(path.join(output, name))) throw new Error(`site artifact contains forbidden ${name}`);
     if (!existsSync(path.join(output, 'index.html'))) throw new Error('site artifact has no homepage');
-  } else {
+  } else if (target === 'app') {
     if (!existsSync(path.join(output, '.vercel/output/config.json'))) throw new Error('app artifact has no Vercel Build Output');
     const report = JSON.parse(readFileSync(path.join(root, 'output/build-target-reports/app.json'), 'utf8'));
     for (const route of report.routes) if (!isAppPath(route.pattern)) throw new Error(`app route contains marketing: ${route.pattern}`);
+  } else {
+    const files = [];
+    function walk(directory, prefix = '') {
+      for (const entry of readdirSync(directory, { withFileTypes: true })) {
+        const relative = `${prefix}${entry.name}`;
+        if (entry.isDirectory()) walk(path.join(directory, entry.name), `${relative}/`);
+        else if (entry.isFile()) files.push(relative);
+        else throw new Error('worker artifact contains a non-file input');
+      }
+    }
+    walk(output);
+    if (files.sort().join('\n') !== [...workerContextFiles].sort().join('\n')) throw new Error('worker artifact must contain only the complete upload allowlist');
+    const manifest = JSON.parse(readFileSync(path.join(output, 'output/worker/build-manifest.json'), 'utf8'));
+    if (manifest.runtime !== 'node24' || manifest.entry !== 'entry.mjs' || manifest.format !== 'esm' || manifest.packages !== 'external' || !manifest.inputs?.includes('apps/worker/entry.ts')) throw new Error('worker artifact has an invalid bundle manifest');
   }
 }
 
@@ -185,20 +224,19 @@ function runNode(filename, args, env) {
 }
 export function stageDeploymentArtifact(root, target) {
   if (!['site', 'app'].includes(target)) throw new Error('Unknown deployment target');
-  const canonicalRoot = realpathSync(root);
   const source = target === 'site' ? path.join(root, 'dist-target/site') : path.join(root, 'dist-target/app/.vercel/output');
-  const destination = target === 'site' ? path.join(root, 'apps/site/dist') : path.join(root, 'apps/app/.vercel/output');
-  let ancestor = destination;
-  while (!existsSync(ancestor)) ancestor = path.dirname(ancestor);
-  const relative = path.relative(canonicalRoot, realpathSync(ancestor));
-  if (relative.startsWith('..') || path.isAbsolute(relative)) throw new Error('Deployment staging must remain inside the workspace');
-  // Only these two generated destinations are removable. Resolve existing
-  // symlinks before any recursive operation and preserve .vercel/project.json.
-  if (existsSync(destination)) rmSync(destination, { recursive: true, force: true });
-  mkdirSync(path.dirname(destination), { recursive: true });
+  const destination = resetGeneratedDirectory(root, target === 'site' ? 'apps/site/dist' : 'apps/app/.vercel/output');
   cpSync(source, destination, { recursive: true });
 }
-export function buildTarget(target) {
+export async function buildTarget(target) {
+  if (target === 'worker') {
+    await buildWorker({ cwd: projectRoot });
+    const context = await prepareWorkerContext({ cwd: projectRoot });
+    cpSync(context.directory, resetGeneratedDirectory(projectRoot, 'dist-target/worker'), { recursive: true });
+    validateBuildArtifact(projectRoot, target);
+    process.stdout.write('Validated worker artifact: dist-target/worker\n');
+    return;
+  }
   const plan = createBuildPlan(projectRoot, target); prepareBuildInputs(plan);
   const env = { ...process.env, BUILD_TARGET: target };
   for (const key of Object.keys(env)) if (/^(?:DATABASE_URL$|R2_|DEWATERMARK_|REPLICATE_|GOOGLE_|GCP_|CLOUD_RUN_|VERCEL_OIDC_TOKEN$|BETTER_AUTH_|PROCESSING_|WORKER_)/.test(key)) delete env[key];
@@ -223,7 +261,7 @@ export function buildTarget(target) {
 if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) {
   try {
     const [command, ...args] = process.argv.slice(2);
-    if (['site', 'app'].includes(command)) buildTarget(command);
+    if (buildTargets.includes(command)) await buildTarget(command);
     else if (command === 'changes') process.stdout.write(JSON.stringify(classifyTargetChanges(changedFiles(args[0], args[1]) ?? ['package.json'])));
     else if (command === 'ignore') {
       if (!['site', 'app', 'gateway'].includes(args[0])) throw new Error('Unknown deployment target');
@@ -235,6 +273,6 @@ if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.ar
       const settings = JSON.parse(readFileSync(path.join(projectRoot, 'src/content/settings/site.json'), 'utf8'));
       const config = renderGatewayConfig({ siteOrigin: process.env.SITE_ORIGIN, appOrigin: process.env.APP_ORIGIN, publicOrigin: settings.canonicalOrigin });
       process.stdout.write(`${JSON.stringify(config, null, 2)}\n`);
-    } else throw new Error('Usage: build-target.mjs site|app|changes [base head]|ignore target|gateway');
+    } else throw new Error('Usage: build-target.mjs site|app|worker|changes [base head]|ignore target|gateway');
   } catch (error) { process.stderr.write(`${error.message}\n`); process.exitCode = 1; }
 }

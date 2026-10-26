@@ -173,9 +173,27 @@ describe('authenticated v1 processing acceptance runner', () => {
     expect(summary.remaining).toEqual({ image: 0, video: 5 });
     await expect(budget.reserve('image', 'unapproved extra acceptance')).rejects.toThrow(/exhausted/i);
   });
+  it.each(['option', 'environment'])('uses the tenth image through %s only after the same ledger records explicit authorization', async (source) => {
+    const state = await fixture(); const budget = new AcceptanceBudget(state.ledgerPath, { image: 9, video: 5 });
+    for (let index = 0; index < 9; index++) await budget.reserve('image', `previous approved image ${index}`);
+    const previous = (await budget.summary()).records;
+    const options = { ...base, ...state, ...(source === 'option' ? { imageLimit: 10 } : {}) };
+    const env = { ...environment, ...(source === 'environment' ? { PROCESSING_ACCEPTANCE_IMAGE_LIMIT: '10' } : {}) };
+    const fetcher = site(state.sample);
+    await expect(runProcessingAcceptance(options, { environment: env, fetcher })).rejects.toThrow(/limits|authorization/i);
+    expect(fetcher).not.toHaveBeenCalled();
+    await budget.authorizeIncrease({ image: 10, video: 5 }, 'User approved one additional image for project simplification acceptance');
+    await runProcessingAcceptance(options, { environment: env, fetcher });
+    const summary = await new AcceptanceBudget(state.ledgerPath, { image: 10, video: 5 }).summary();
+    expect(summary.used).toEqual({ image: 10, video: 0 }); expect(summary.remaining).toEqual({ image: 0, video: 5 });
+    expect(summary.records.slice(0, 9)).toEqual(previous); expect(summary.records[9].status).toBe('passed');
+    const exhaustedFetcher = vi.fn();
+    await expect(runProcessingAcceptance(options, { environment: env, fetcher: exhaustedFetcher })).rejects.toMatchObject({ code: 'budget_exhausted' });
+    expect(exhaustedFetcher).not.toHaveBeenCalled();
+  });
   it('rejects image limits above the explicit supported maximum before any network request', async () => {
     const state = await fixture(); const fetcher = vi.fn();
-    await expect(runProcessingAcceptance({ ...base, ...state, imageLimit: 10 }, { environment, fetcher })).rejects.toMatchObject({ code: 'budget_authorization' });
+    await expect(runProcessingAcceptance({ ...base, ...state, imageLimit: 11 }, { environment, fetcher })).rejects.toMatchObject({ code: 'budget_authorization' });
     expect(fetcher).not.toHaveBeenCalled();
   });
 });

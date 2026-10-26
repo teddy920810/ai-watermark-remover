@@ -108,7 +108,7 @@ export async function runProcessingAcceptance(options = {}, dependencies = {}) {
   if (!Number.isSafeInteger(expectedAmount) || expectedAmount < 0 || !['freeUses', 'processingCredits'].includes(expectedUnit)) throw failure('amount_confirmation_required', 'Confirm the exact expected amount and allowance unit before functional acceptance');
   const kind = operation === 'video-watermark' ? 'video' : 'image';
   const imageLimit = options.imageLimit ?? Number(environment.PROCESSING_ACCEPTANCE_IMAGE_LIMIT ?? 5);
-  if (!Number.isInteger(imageLimit) || imageLimit < 0 || imageLimit > 9) throw failure('budget_authorization', 'Image acceptance limit must match the explicit supported authorization');
+  if (!Number.isInteger(imageLimit) || imageLimit < 0 || imageLimit > 10) throw failure('budget_authorization', 'Image acceptance limit must match the explicit supported authorization');
   const ledgerPath = resolve(options.ledgerPath ?? environment.ACCEPTANCE_LEDGER_PATH ?? 'output/acceptance/budget.json');
   const budget = dependencies.budget ?? new AcceptanceBudget(ledgerPath, { image: imageLimit, video: 5 });
   const remaining = (await budget.summary()).remaining[kind];

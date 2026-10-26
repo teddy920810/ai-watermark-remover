@@ -37,7 +37,8 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
-      - run: node scripts/build-target.mjs ${{ matrix.target }}
+      - name: Build and validate the selected Site, App or Worker artifact
+        run: node scripts/build-target.mjs ${{ matrix.target }}
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.target }}-${{ github.sha }}
@@ -45,4 +46,5 @@ jobs:
           include-hidden-files: true
           retention-days: 3
 # Vercel Git projects deploy independently using their target-specific ignoreCommand.
+# Worker selection bundles the real server entry and validates its seven-file upload context; it never deploys.
 # Required CI / verify remains unchanged. This workflow never receives deployment secrets.

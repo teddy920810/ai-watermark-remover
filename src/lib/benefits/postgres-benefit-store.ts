@@ -17,20 +17,16 @@ export class PostgresBenefitStore implements BenefitStore {
   constructor(private readonly pool: Pool) {}
 
   async getSummary(userId: string, email?: string): Promise<BenefitSummary> {
+    const normalizedEmail = email?.trim().toLowerCase();
+    const current = await this.readSummary(this.pool, userId);
+    // Polling reads live entitlement without updating activity or identity.
+    // First-use rewards and changed emails still use the existing transaction.
+    if (current && (!normalizedEmail || current.identity_email === normalizedEmail)) return this.summary(current);
     return this.transaction(async (client) => {
-      await this.ensureUser(client, userId, email);
-      const result = await client.query<UserState>(`
-        SELECT
-          balance::int AS balance,
-          EXISTS (
-            SELECT 1 FROM daily_checkins
-            WHERE user_id = $1 AND checkin_date = (NOW() AT TIME ZONE 'UTC')::date
-          ) AS checked_in_today,
-          0::int AS active_reservations
-        FROM user_benefits
-        WHERE user_id = $1
-      `, [userId]);
-      return this.summary(result.rows[0]);
+      await this.ensureUser(client, userId, normalizedEmail);
+      const state = await this.readSummary(client, userId);
+      if (!state) throw new Error('Benefit account is unavailable');
+      return this.summary(state);
     });
   }
 
@@ -156,6 +152,22 @@ export class PostgresBenefitStore implements BenefitStore {
         VALUES ($1, 1, $2, 'job_refund', $3)
       `, [userId, updated.rows[0].balance, jobId]);
     });
+  }
+
+  private async readSummary(client: Pool | PoolClient, userId: string) {
+    const result = await client.query<UserState & { identity_email: string | null }>(`
+      SELECT
+        balance::int AS balance,
+        EXISTS (
+          SELECT 1 FROM daily_checkins
+          WHERE user_id = $1 AND checkin_date = (NOW() AT TIME ZONE 'UTC')::date
+        ) AS checked_in_today,
+        0::int AS active_reservations,
+        (SELECT email FROM user_benefit_identities WHERE user_id = $1) AS identity_email
+      FROM user_benefits
+      WHERE user_id = $1
+    `, [userId]);
+    return result.rows[0];
   }
 
   private summary(state: Pick<UserState, 'balance' | 'checked_in_today'>): BenefitSummary {

@@ -117,9 +117,18 @@ describe('processing runtime assembly', () => {
   });
   it('uses existing benefit identity initialization without issuing processing credits', async () => {
     const s = await setup(); s.finance.balances.set('user-1', 0);
-    await s.runtime.ensureAccountIdentity('user-1', 'Person@Example.com');
+    expect(await s.runtime.balances('user-1', 'Person@Example.com')).toEqual({ freeUses: 1, processingCredits: 0 });
     expect(s.benefits.getSummary).toHaveBeenCalledWith('user-1', 'Person@Example.com');
-    expect(await s.runtime.balances('user-1')).toEqual({ freeUses: 1, processingCredits: 0 });
+    expect(s.benefits.getSummary).toHaveBeenCalledOnce();
+  });
+  it('quotes and polls durable work without repeatedly initializing benefits', async () => {
+    const s = await setup(); const job = await queueProcessing(s, 'image-watermark');
+    expect(await s.runtime.getUpload('user-1', s.upload.id)).toMatchObject({ status: 'ready' });
+    expect((await s.runtime.service.get('user-1', job.id)).id).toBe(job.id);
+    expect(await s.runtime.service.list('user-1')).toHaveLength(1);
+    expect(s.benefits.getSummary).not.toHaveBeenCalled();
+    expect(job.quote.unit).toBe('freeUses'); expect(s.finance.freeBalances.get('user-1')).toBe(0);
+    await s.runtime.close();
   });
   it('only queues upload completion and performs decoding later in the worker', async () => {
     const s = await setup();
@@ -152,7 +161,7 @@ describe('processing runtime assembly', () => {
   it('leaves durable work untouched when no execution trigger is configured', async () => {
     const s = await setup(); const claim = vi.spyOn(s.finance, 'claimDue'); await s.runtime.dispatch();
     expect(claim).not.toHaveBeenCalled();
-    expect(await s.runtime.balances('user-1')).toEqual({ processingCredits: 100, freeUses: 1 }); expect(s.benefits.getSummary).toHaveBeenCalledWith('user-1');
+    expect(await s.runtime.balances('user-1')).toEqual({ processingCredits: 100, freeUses: 1 }); expect(s.benefits.getSummary).toHaveBeenCalledWith('user-1', undefined);
   });
   it.each(['authorization', 'http-403'] as const)('retries a definitely unaccepted %s dispatch with a fresh durable nonce and one reservation', async (failure) => {
     const execution = 'projects/demo-project/locations/asia-east1/jobs/watermark-worker/executions/accepted';

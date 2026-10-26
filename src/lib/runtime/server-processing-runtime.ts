@@ -40,7 +40,7 @@ function publicOrigin(source: NodeJS.ProcessEnv) {
 type Session = (request: Request) => Promise<{ user: { id: string; email?: string } } | null | undefined>;
 interface ServerHandlerOptions {
   source?: NodeJS.ProcessEnv;
-  getRuntime?: () => ProcessingApiRuntime & Partial<Pick<ProcessingRuntime, 'ensureAccountIdentity'>>;
+  getRuntime?: () => ProcessingApiRuntime;
   loadSession?: () => Promise<Session>;
 }
 export function createServerProcessingHandler(options: ServerHandlerOptions = {}) {
@@ -56,13 +56,7 @@ export function createServerProcessingHandler(options: ServerHandlerOptions = {}
           // Capabilities reach the handler before this function is called. The
           // auth module owns its own database adapter, so it must stay lazy.
           session ??= await (options.loadSession ?? (async () => (await import('../auth')).getSession))();
-          const identity = await session(incoming);
-          if (identity?.user.id && identity.user.email && (incoming.method !== 'POST' || incoming.headers.get('origin') === origin)) {
-            // The existing benefit store preserves its first-use rule and
-            // records the email-to-account mapping used by administrator grants.
-            await runtime().ensureAccountIdentity?.(identity.user.id, identity.user.email);
-          }
-          return identity;
+          return session(incoming);
         },
       })(request);
     } catch {

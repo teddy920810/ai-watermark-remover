@@ -99,5 +99,7 @@ npm run release:verify   # 高风险改动：依赖审计 + 站点校验 + 完�
 
 所有行为变化先运行定向红测和绿测。本地根据改动范围选择上面的检查；PR CI 仍会运行完整 `npm run verify`，且必须成功后才能合并 `main`。API、鉴权、R2、Provider、安全策略、依赖、构建或 CI 修改必须在本地运行 `release:verify`。视觉验收应抽查代表模板的桌面与移动端，并同时检查一个应出现目标行为的正向页面和一个不应出现的负向页面。
 
+完整门禁的类型检查只在 Build 中执行一次；单独 `lint` 和 `build` 仍各自包含类型检查。Site/App/Worker 的独立构建入口、受影响目标和产物验收统一见 [测试与质量指南](TESTING_GUIDE.md#自动化保护) 与 [部署目标](../apps/DEPLOYMENT_TARGETS.md)，不要把 Worker 源码测试当作真实打包或生产执行的证据。
+
 Pages CMS 可能随时提交到 `main`。推送前执行 `git fetch origin main` 并检查分歧；如远端领先，先安全 rebase/merge，禁止 force push。合并到 `main` 后 Vercel 自动发布。
 

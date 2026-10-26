@@ -7,14 +7,22 @@ interface FakeState {
   checkedInToday?: boolean;
   activeReservations?: number;
   insertedUser?: boolean;
+  email?: string;
   reservation?: { user_id: string; status: string };
 }
 
 function createPool(state: FakeState) {
-  const query = vi.fn(async (source: string) => {
+  let exists = !state.insertedUser;
+  const query = vi.fn(async (source: string, values?: unknown[]) => {
     const sql = source.replace(/\s+/g, ' ').trim();
     if (sql.startsWith('INSERT INTO user_benefits')) {
-      return { rows: state.insertedUser ? [{ balance: 1 }] : [] };
+      const inserted = !exists;
+      exists = true;
+      return { rows: inserted ? [{ balance: 1 }] : [] };
+    }
+    if (sql.startsWith('INSERT INTO user_benefit_identities')) {
+      state.email = String(values?.[1]);
+      return { rows: [] };
     }
     if (sql.startsWith('SELECT balance::int AS balance FROM user_benefits')) {
       return { rows: [{ balance: state.balance }] };
@@ -34,19 +42,55 @@ function createPool(state: FakeState) {
       return { rows: [{ balance: state.balance }] };
     }
     if (sql.includes('checked_in_today')) {
-      return { rows: [{ balance: state.balance, checked_in_today: state.checkedInToday ?? false, active_reservations: 0 }] };
+      return { rows: exists ? [{ balance: state.balance, checked_in_today: state.checkedInToday ?? false, active_reservations: 0, identity_email: state.email ?? null }] : [] };
     }
     return { rows: [] };
   });
   const release = vi.fn();
   return {
-    pool: { connect: vi.fn().mockResolvedValue({ query, release }) } as unknown as Pool,
+    pool: { query, connect: vi.fn().mockResolvedValue({ query, release }) } as unknown as Pool,
     query,
     release,
   };
 }
 
 describe('PostgresBenefitStore', () => {
+  it('reads an existing account and matching normalized email without a transaction or activity writes', async () => {
+    const state = { balance: 2, email: 'person@example.com' };
+    const fake = createPool(state); const store = new PostgresBenefitStore(fake.pool);
+    expect(await store.getSummary('user-1', ' Person@Example.com ')).toMatchObject({ balance: 2 });
+    state.balance = 0;
+    expect(await store.getSummary('user-1', 'person@example.com')).toMatchObject({ balance: 0 });
+    expect(fake.pool.connect).not.toHaveBeenCalled();
+    expect(fake.query.mock.calls).toHaveLength(2);
+    expect(fake.query.mock.calls.every(([sql, values]) => sql.trim().startsWith('SELECT') && values?.[0] === 'user-1')).toBe(true);
+  });
+
+  it('reads an existing account without an email without starting a transaction', async () => {
+    const fake = createPool({ balance: 0 });
+    expect(await new PostgresBenefitStore(fake.pool).getSummary('user-1')).toMatchObject({ balance: 0 });
+    expect(fake.pool.connect).not.toHaveBeenCalled();
+    expect(fake.query).toHaveBeenCalledOnce();
+  });
+
+  it('initializes a missing account once, then reads its live balance without issuing another reward', async () => {
+    const fake = createPool({ balance: 1, insertedUser: true }); const store = new PostgresBenefitStore(fake.pool);
+    expect(await store.getSummary('user-1', 'Person@Example.com')).toMatchObject({ balance: 1 });
+    expect(await store.getSummary('user-1', 'person@example.com')).toMatchObject({ balance: 1 });
+    expect(fake.query.mock.calls.filter(([sql]) => sql.includes("'first_use'"))).toHaveLength(1);
+    expect(fake.query.mock.calls.filter(([sql]) => sql.includes('INSERT INTO user_benefit_identities'))).toHaveLength(1);
+    expect(fake.pool.connect).toHaveBeenCalledOnce();
+  });
+
+  it('synchronizes a changed email once without changing or granting the existing balance', async () => {
+    const state = { balance: 0, email: 'old@example.com' }; const fake = createPool(state); const store = new PostgresBenefitStore(fake.pool);
+    expect(await store.getSummary('user-1', ' New@Example.com ')).toMatchObject({ balance: 0 });
+    expect(await store.getSummary('user-1', 'new@example.com')).toMatchObject({ balance: 0 });
+    expect(state.email).toBe('new@example.com');
+    expect(fake.pool.connect).toHaveBeenCalledOnce();
+    expect(fake.query.mock.calls.some(([sql]) => sql.includes("'first_use'"))).toBe(false);
+  });
+
   it('returns an already reserved free use even when the available balance has reached the reward cap', async () => {
     const state = { balance: 3, reservation: { user_id: 'user-1', status: 'reserved' } };
     const fake = createPool(state);

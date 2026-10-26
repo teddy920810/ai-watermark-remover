@@ -23,6 +23,27 @@ describe('real acceptance budget', () => {
     expect(JSON.parse(await readFile(file, 'utf8')).authorizations).toHaveLength(1);
     await expect(authorized.authorizeIncrease({ image: 8, video: 6 }, 'unsupported')).rejects.toThrow(/limits/i);
   });
+  it('requires an audited increase from nine to ten while preserving all previous records and the video cap', async () => {
+    const { file } = await budget(); const ledger = new AcceptanceBudget(file, { image: 9, video: 5 });
+    for (let index = 0; index < 9; index++) await ledger.reserve('image', `previous image ${index}`);
+    for (let index = 0; index < 4; index++) await ledger.reserve('video', `previous video ${index}`);
+    const previous = JSON.parse(await readFile(file, 'utf8')).records;
+    await expect(ledger.reserve('image', 'not yet authorized')).rejects.toThrow(/exhausted/i);
+    await expect(async () => new AcceptanceBudget(file, { image: 10, video: 5 }).reserve('image', 'cannot silently change limits')).rejects.toThrow(/limits/i);
+    await ledger.authorizeIncrease({ image: 10, video: 5 }, 'User approved one additional image for project simplification acceptance');
+    const authorized = JSON.parse(await readFile(file, 'utf8'));
+    expect(authorized.records).toEqual(previous);
+    expect(authorized.authorizations).toMatchObject([{ previous: { image: 9, video: 5 }, next: { image: 10, video: 5 } }]);
+    await ledger.reserve('image', 'the one approved additional image');
+    const summary = await new AcceptanceBudget(file, { image: 10, video: 5 }).summary();
+    expect(summary.used).toEqual({ image: 10, video: 4 });
+    expect(summary.remaining).toEqual({ image: 0, video: 1 });
+    expect(summary.records.slice(0, previous.length)).toEqual(previous);
+    await expect(ledger.reserve('image', 'unapproved eleventh image')).rejects.toThrow(/exhausted/i);
+    await expect(ledger.authorizeIncrease({ image: 11, video: 5 }, 'unsupported image increase')).rejects.toThrow(/limits/i);
+    await expect(ledger.authorizeIncrease({ image: 10, video: 6 }, 'unsupported video increase')).rejects.toThrow(/limits/i);
+    expect(() => new AcceptanceBudget(file, { image: 11, video: 5 })).toThrow(/limits/i);
+  });
   it('counts an uncertain request before network work and never restores its allowance', async () => {
     const { file } = await budget();
     const ledger = new AcceptanceBudget(file, { image: 1, video: 1 });

@@ -11,6 +11,15 @@ function fixture() {
 }
 
 describe('processing v1 boundary', () => {
+  it('passes the verified session email only to the account summary, ignoring a query-string identity', async () => {
+    const f = fixture();
+    f.session.mockResolvedValue({ user: { id: 'owner', email: 'Person@Example.com' } } as never);
+    const response = await f.handler(f.request('me?email=attacker@example.com&ownerId=other'));
+    expect(response.status).toBe(200);
+    expect(f.runtime.balances).toHaveBeenCalledOnce();
+    expect(f.runtime.balances).toHaveBeenCalledWith('owner', 'Person@Example.com');
+  });
+
   it('stops reading and cancels an oversized streaming JSON body before another chunk', async () => {
     const f = fixture();
     const cancel = vi.fn();

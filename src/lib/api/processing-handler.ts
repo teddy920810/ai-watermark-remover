@@ -11,13 +11,13 @@ export interface ProcessingApiRuntime {
   getUpload(ownerId: string, id: string): Promise<unknown>;
   projectJob(ownerId: string, job: ProcessingJob): Promise<unknown>;
   projectQuote(ownerId: string, quote: ProcessingQuote): Promise<unknown>;
-  balances(ownerId: string): Promise<{ processingCredits: number; freeUses: number }>;
+  balances(ownerId: string, email?: string): Promise<{ processingCredits: number; freeUses: number }>;
   download(ownerId: string, id: string): Promise<unknown>;
   dispatch(): Promise<void>;
 }
 export interface ProcessingHandlerOptions {
   getRuntime(): ProcessingApiRuntime;
-  getSession(request: Request): Promise<{ user: { id: string } } | null | undefined>;
+  getSession(request: Request): Promise<{ user: { id: string; email?: string } } | null | undefined>;
   origin: string;
 }
 
@@ -73,7 +73,7 @@ export function createProcessingHandler(options: ProcessingHandlerOptions) {
       if (request.method === 'POST' && request.headers.get('origin') !== options.origin) return response({ error: 'Request origin is not allowed.', code: 'invalid_origin' }, 403);
       const ownerId = session.user.id;
       const runtime = options.getRuntime();
-      if (request.method === 'GET' && path === 'me') return response(await runtime.balances(ownerId));
+      if (request.method === 'GET' && path === 'me') return response(await runtime.balances(ownerId, session.user.email));
       if (request.method === 'POST' && path === 'uploads') return response(await runtime.beginUpload(ownerId, uploadSchema.parse(await body(request))), 201);
       const upload = path.match(/^uploads\/([A-Za-z0-9_-]{1,160})(\/complete)?$/);
       if (upload && request.method === 'POST' && upload[2]) {

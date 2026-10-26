@@ -1,8 +1,8 @@
-import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, rmSync, existsSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, rmSync, existsSync, symlinkSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
-import { collectTargetRoutes, createBuildPlan, targetIntegration, classifyTargetChanges, renderGatewayConfig, renderAppSiteProxy, configureAppSiteProxy, validateBuildArtifact, stageDeploymentArtifact } from '../../../scripts/build-target.mjs';
+import { collectTargetRoutes, createBuildPlan, prepareBuildInputs, targetIntegration, classifyTargetChanges, renderGatewayConfig, renderAppSiteProxy, configureAppSiteProxy, validateBuildArtifact, stageDeploymentArtifact } from '../../../scripts/build-target.mjs';
 
 const directories: string[] = [];
 function fixture() {
@@ -48,11 +48,48 @@ describe('independent build targets', () => {
     expect(() => integration.assertModule(path.join(root, 'src/lib/auth.ts'))).toThrow('site build imported');
     expect(() => integration.assertModule(path.join(root, 'src/components/auth/AuthControls.tsx'))).not.toThrow();
   });
-  it('classifies CMS and runtime commits independently while shared dependencies rebuild both', () => {
+  it('classifies content, API and durable execution changes by their actual build targets', () => {
     expect(classifyTargetChanges(['src/content/blog/post.md', '.pages.yml'])).toEqual(['site']);
-    expect(classifyTargetChanges(['src/lib/runtime/processing-services.ts', 'src/pages/api/v1/[...path].ts'])).toEqual(['app']);
-    expect(classifyTargetChanges(['package-lock.json'])).toEqual(['site', 'app']);
-    expect(classifyTargetChanges(['apps/worker/Dockerfile', 'docs/DEVELOPER_GUIDE.md'])).toEqual([]);
+    expect(classifyTargetChanges(['src/pages/api/v1/[...path].ts'])).toEqual(['app']);
+    expect(classifyTargetChanges(['src/lib/runtime/processing-services.ts'])).toEqual(['app', 'worker']);
+    expect(classifyTargetChanges(['package-lock.json'])).toEqual(['site', 'app', 'worker']);
+    expect(classifyTargetChanges(['apps/worker/Dockerfile', 'docs/DEVELOPER_GUIDE.md'])).toEqual(['worker']);
+    expect(classifyTargetChanges(['scripts/build-worker.mjs'])).toEqual(['worker']);
+    expect(classifyTargetChanges(['src/lib/providers/watermark-provider.ts', 'db/migrations/008_example.sql'])).toEqual(['app', 'worker']);
+    expect(classifyTargetChanges(['src/styles/workspace.css'])).toEqual(['app']);
+    expect(classifyTargetChanges(['src/styles/global.css'])).toEqual(['site', 'app']);
+    expect(classifyTargetChanges(['docs/DEVELOPER_GUIDE.md'])).toEqual([]);
+    expect(classifyTargetChanges(['scripts/build-target.mjs'])).toEqual(['site', 'app', 'worker']);
+  });
+  it('rebuilds App inputs and intermediate output without retaining deleted files or touching other targets', () => {
+    const root = fixture(); const plan = createBuildPlan(root, 'app');
+    prepareBuildInputs(plan);
+    const stale = ['output/build-inputs/app/public/obsolete.png', 'dist-target/app/.vercel/output/functions/obsolete.func/index.mjs', '.vercel/output/functions/obsolete.func/index.mjs'];
+    const protectedFiles = ['public/uploads/marketing.png', 'dist-target/site/index.html', 'output/worker/entry.mjs', '.vercel/project.json', 'apps/app/.vercel/project.json', 'apps/app/retained-assets.json'];
+    for (const file of [...stale, ...protectedFiles]) {
+      mkdirSync(path.dirname(path.join(root, file)), { recursive: true }); writeFileSync(path.join(root, file), file);
+    }
+    prepareBuildInputs(plan);
+    for (const file of stale) expect(existsSync(path.join(root, file)), file).toBe(false);
+    for (const file of protectedFiles) expect(readFileSync(path.join(root, file), 'utf8'), file).toBe(file);
+    expect(readFileSync(path.join(plan.publicDir, '_app-assets/public/uploads/logo.svg'), 'utf8')).toBe('<svg/>');
+  });
+  it('cleans only the Site generated output and keeps App staging and source assets', () => {
+    const root = fixture(); const plan = createBuildPlan(root, 'site');
+    const stale = path.join(root, 'dist-target/site/withdrawn.html');
+    const app = path.join(root, '.vercel/output/static/_app-assets/current.js');
+    mkdirSync(path.dirname(stale), { recursive: true }); writeFileSync(stale, 'old');
+    mkdirSync(path.dirname(app), { recursive: true }); writeFileSync(app, 'app');
+    prepareBuildInputs(plan);
+    expect(existsSync(stale)).toBe(false); expect(readFileSync(app, 'utf8')).toBe('app');
+    expect(readFileSync(path.join(root, 'public/uploads/marketing.png'), 'utf8')).toBe('marketing');
+  });
+  it('rejects redirected generated directories before deleting protected data', () => {
+    const root = fixture(); const outside = fixture(); const plan = createBuildPlan(root, 'app');
+    const sentinel = path.join(outside, 'keep.txt'); writeFileSync(sentinel, 'protected');
+    mkdirSync(path.dirname(plan.publicDir), { recursive: true }); symlinkSync(outside, plan.publicDir, 'junction');
+    expect(() => prepareBuildInputs(plan)).toThrow('Generated directory');
+    expect(readFileSync(sentinel, 'utf8')).toBe('protected');
   });
   it('fails closed if artifacts contain routes belonging to the other target', () => {
     const root = fixture(); mkdirSync(path.join(root, 'dist-target/site/api'), { recursive: true }); writeFileSync(path.join(root, 'dist-target/site/api/index.html'), 'API');
@@ -68,6 +105,25 @@ describe('independent build targets', () => {
     const app = path.join(root, 'dist-target/app'); mkdirSync(app, { recursive: true }); writeFileSync(path.join(app, 'sentinel'), 'app');
     stageDeploymentArtifact(root, 'site');
     expect(existsSync(path.join(destination, 'unpublished.html'))).toBe(false); expect(readFileSync(path.join(app, 'sentinel'), 'utf8')).toBe('app');
+  });
+  it('stages the complete App output including retained public assets while preserving its project binding', () => {
+    const root = fixture(); const output = path.join(root, 'dist-target/app/.vercel/output');
+    const files = { 'config.json': '{"version":3}', 'functions/api.func/index.mjs': 'export {};', 'static/_app-assets/retained.js': 'retained' };
+    for (const [file, value] of Object.entries(files)) { mkdirSync(path.dirname(path.join(output, file)), { recursive: true }); writeFileSync(path.join(output, file), value); }
+    const binding = path.join(root, 'apps/app/.vercel/project.json'); mkdirSync(path.dirname(binding), { recursive: true }); writeFileSync(binding, 'binding');
+    stageDeploymentArtifact(root, 'app');
+    for (const [file, value] of Object.entries(files)) expect(readFileSync(path.join(root, 'apps/app/.vercel/output', file), 'utf8')).toBe(value);
+    expect(readFileSync(binding, 'utf8')).toBe('binding');
+  });
+  it('accepts only a complete Worker upload context and rejects extra private files', () => {
+    const root = fixture(); const output = path.join(root, 'dist-target/worker');
+    const files = { '.dockerignore': '*', '.gcloudignore': '*', Dockerfile: 'FROM node:24.22.1-bookworm-slim', 'package.json': '{}', 'package-lock.json': '{}', 'output/worker/entry.mjs': 'export {};', 'output/worker/build-manifest.json': JSON.stringify({ version: 1, runtime: 'node24', entry: 'entry.mjs', format: 'esm', packages: 'external', inputs: ['apps/worker/entry.ts'] }) };
+    for (const [file, value] of Object.entries(files)) { mkdirSync(path.dirname(path.join(output, file)), { recursive: true }); writeFileSync(path.join(output, file), value); }
+    expect(() => validateBuildArtifact(root, 'worker')).not.toThrow();
+    writeFileSync(path.join(output, '.env.local'), 'not-a-real-secret');
+    expect(() => validateBuildArtifact(root, 'worker')).toThrow('worker artifact');
+    rmSync(path.join(output, '.env.local')); rmSync(path.join(output, 'output/worker/entry.mjs'));
+    expect(() => validateBuildArtifact(root, 'worker')).toThrow('worker artifact');
   });
 });
 
