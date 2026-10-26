@@ -137,7 +137,7 @@ describe('ProcessingService', () => {
     expect(s.jobs.data.size).toBe(26); expect(s.finance.admissions.size).toBe(1); expect(await s.finance.getBalance('user-1')).toBe(99);
     expect((await s.service.list('user-1')).map((job) => job.id)).toEqual([accepted.id]);
   });
-  it('fills the requested history limit across missing R2 manifests without scanning the owner index', async () => {
+  it('fills the requested history limit across missing R2 manifests using admission pagination', async () => {
     const s = setup(); const admitted: string[] = [];
     for (let index = 0; index < 25; index++) {
       s.setNow(new Date(Date.parse(NOW) + index * 1000).toISOString());
@@ -145,9 +145,9 @@ describe('ProcessingService', () => {
       admitted.push((await s.service.submit({ ownerId: 'user-1', quoteId: q.id, idempotencyKey: `history-${index}` })).id);
     }
     for (const id of admitted.slice(3)) s.jobs.data.delete(id);
-    const ownerIndex = vi.spyOn(s.jobs, 'listForOwner'); const pages = vi.spyOn(s.finance, 'listAdmissionsForOwner');
+    const pages = vi.spyOn(s.finance, 'listAdmissionsForOwner');
     expect((await s.service.list('user-1', 3)).map((job) => job.id)).toEqual(admitted.slice(0, 3).reverse());
-    expect(ownerIndex).not.toHaveBeenCalled(); expect(pages.mock.calls.length).toBeGreaterThan(1);
+    expect(pages.mock.calls.length).toBeGreaterThan(1);
     expect(pages.mock.calls.every(([ownerId, limit]) => ownerId === 'user-1' && limit! <= 100)).toBe(true);
   });
   it('orders same-time admissions deterministically, limits valid tasks and checks manifest ownership', async () => {

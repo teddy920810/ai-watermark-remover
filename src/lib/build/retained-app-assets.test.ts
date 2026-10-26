@@ -16,7 +16,7 @@ const manifest = (assets = [asset], source = origin) => ({ version: 1, origin: s
 afterEach(() => { for (const directory of directories.splice(0)) rmSync(directory, { recursive: true, force: true }); });
 
 describe('previous public App asset retention', () => {
-  it('pins App 86 workspace CSS and JavaScript alongside all six prior assets on one immutable origin', () => {
+  it('pins the current production workspace and all prior public assets on one immutable origin', () => {
     // Anonymous /app/image and /app/video captures on 2026-10-25 share this recursive public asset graph.
     // Keep both previous generations available to already-open workspaces; never retain HTML or private media.
     const value = JSON.parse(readFileSync(new URL('../../../apps/app/retained-assets.json', import.meta.url), 'utf8'));
@@ -29,9 +29,10 @@ describe('previous public App asset retention', () => {
       { path: '/_app-assets/WatermarkWorkspace.BuEjo2iM.js', sha256: '37b9e5a287a734f1fbbf6a31f27efde5f99a87f96af715b8f8ab4e5df66abf1b', byteSize: 75720, contentType: 'application/javascript' },
       { path: '/_app-assets/_kind_.DeRaFZ08.css', sha256: '51965ec9d651fa3bbe68d530c240f5db788c4ccca13060c10024fa8d648b4b29', byteSize: 75296, contentType: 'text/css' },
       { path: '/_app-assets/WatermarkWorkspace.USrjb05O.js', sha256: 'c4aed2901066aa578e02001e5b85c36126067c0b2a404c7e074ab34609bcd2b7', byteSize: 77053, contentType: 'application/javascript' },
+      { path: '/_app-assets/_kind_.DaZvEtyH.css', sha256: 'cb97c2a4b0dbba872435fd6cac268c386b89189b8ea39eff15012c86535fb2c3', byteSize: 77866, contentType: 'text/css' },
     ];
     expect(value.version).toBe(1);
-    expect(value.origin).toBe('https://ai-watermark-remover-7civhp1md-shiyaos-projects-b1e333f0.vercel.app');
+    expect(value.origin).toBe('https://ai-watermark-remover-jk2aa7vpu-shiyaos-projects-b1e333f0.vercel.app');
     expect(value.assets).toEqual(expect.arrayContaining(expected));
     expect(value.assets.length).toBeLessThanOrEqual(32);
     expect(new Set(value.assets.map((entry: { path: string }) => entry.path)).size).toBe(value.assets.length);

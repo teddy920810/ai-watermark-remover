@@ -1,17 +1,9 @@
 import { ProcessingError } from '../processing/contracts';
 import type { MediaMetadata, ProcessingArtifact, ProcessingArtifactStore, ProcessingJob, ProcessingQuote } from '../processing/contracts';
+import type { PublicArtifact, PublicDownload, PublicJob, PublicQuote } from '../contracts/processing-public';
 import { mediaKey } from './private-media-store';
 
-export interface PublicArtifact extends MediaMetadata {
-  id: string;
-  role: ProcessingArtifact['role'];
-  metadata: MediaMetadata;
-  format: string;
-  expiresAt: string;
-  previewUrl?: string;
-  expired: boolean;
-  canRefine?: boolean;
-}
+export type { PublicArtifact } from '../contracts/processing-public';
 export interface PublicProjectionOptions {
   media: Pick<ProcessingArtifactStore, 'get'> & {
     head(key: string): Promise<{ byteSize: number; contentType: string; metadata: Record<string, string> } | null>;
@@ -51,7 +43,7 @@ export class PublicProcessingProjection {
     return { id: artifact.id, role: artifact.role, ...metadata, metadata, format: format(metadata.contentType), expiresAt: artifact.expiresAt, expired,
       ...(seconds > 0 ? { previewUrl: await this.options.signPreview(artifact, seconds) } : {}), canRefine: !expired && canRefine };
   }
-  async quote(ownerId: string, quote: ProcessingQuote) {
+  async quote(ownerId: string, quote: ProcessingQuote): Promise<PublicQuote> {
     if (quote.ownerId !== ownerId) throw new ProcessingError('not_found', 'Quote was not found', 404);
     const input = await this.options.media.get(quote.inputArtifactId);
     if (!input) throw new ProcessingError('artifact_not_found', 'Input was not found', 404);
@@ -64,7 +56,7 @@ export class PublicProcessingProjection {
       expectedOutput: { contentType: video ? 'video/mp4' : 'image/jpeg', format: video ? 'MP4' : 'JPG', width: input.metadata.width, height: input.metadata.height,
         ...(video ? { durationSeconds: input.metadata.durationSeconds, fps: input.metadata.fps, hasAudio: input.metadata.hasAudio } : { transparent: false, background: 'white' }) } };
   }
-  async job(ownerId: string, job: ProcessingJob) {
+  async job(ownerId: string, job: ProcessingJob): Promise<PublicJob> {
     if (job.ownerId !== ownerId) throw new ProcessingError('not_found', 'Task was not found', 404);
     const input = await this.options.media.get(job.inputArtifactId);
     const result = job.resultArtifactId ? await this.options.media.get(job.resultArtifactId) : null;
@@ -80,7 +72,7 @@ export class PublicProcessingProjection {
       ...(input ? { input: await this.artifact(ownerId, input) } : {}), ...(result ? { result: await this.artifact(ownerId, deadline ? { ...result, expiresAt: deadline } : result, canRefine) } : {}),
       ...(code ? { errorCode: code, error: errors[code] } : {}), isDemo: this.options.isDemo ?? false };
   }
-  async download(ownerId: string, job: ProcessingJob) {
+  async download(ownerId: string, job: ProcessingJob): Promise<PublicDownload> {
     if (job.ownerId !== ownerId) throw new ProcessingError('not_found', 'Task was not found', 404);
     if (job.status !== 'READY' || !job.resultArtifactId) throw new ProcessingError('result_not_ready', 'The result is not ready to download', 409);
     const artifact = await this.options.media.get(job.resultArtifactId);

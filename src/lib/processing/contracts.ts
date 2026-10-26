@@ -93,7 +93,6 @@ export interface ProcessingJobStore {
   create(job: ProcessingJob): Promise<boolean>;
   get(id: string): Promise<VersionedJob | null>;
   compareAndSwap(id: string, expectedVersion: string, job: ProcessingJob): Promise<boolean>;
-  listForOwner(ownerId: string, limit?: number): Promise<ProcessingJob[]>;
   recordAttemptResult(result: AttemptResult): Promise<void>;
   getAttemptResult(jobId: string, attemptId: string): Promise<AttemptResult | null>;
 }

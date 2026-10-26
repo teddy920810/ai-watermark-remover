@@ -4,7 +4,8 @@ import { describe, expect, it } from 'vitest';
 const globalCss = readFileSync(new URL('../../styles/global.css', import.meta.url), 'utf8');
 const homePage = readFileSync(new URL('../../pages/index.astro', import.meta.url), 'utf8');
 const landingPage = readFileSync(new URL('../../components/LandingPage.astro', import.meta.url), 'utf8');
-const uploader = readFileSync(new URL('../../components/uploader/ImageUploader.tsx', import.meta.url), 'utf8');
+const launcher = readFileSync(new URL('../../components/launcher/MediaLauncher.tsx', import.meta.url), 'utf8');
+const launcherCss = readFileSync(new URL('../../components/launcher/launcher.css', import.meta.url), 'utf8');
 
 describe('site-wide operations visual system', () => {
   it('defines the supplied mockup blue, ink, cream, surface, and success tokens', () => {
@@ -80,8 +81,9 @@ describe('site-wide operations visual system', () => {
     expect(homePage).toContain('class="process-step-media"');
     expect(landingPage).toContain("from '@lucide/astro'");
     expect(landingPage).toContain('class="process-step-media"');
-    expect(uploader).toContain("from 'lucide-react'");
-    expect(uploader).toContain('className="upload-action"');
+    expect(launcher).toContain("from 'lucide-react'");
+    expect(launcher).toContain('className="launcher-upload-icon"');
+    expect(launcherCss).toContain('.launcher-drop');
   });
 
   it('keeps the blue system readable on compact screens', () => {

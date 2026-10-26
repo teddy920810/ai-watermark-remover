@@ -3,6 +3,8 @@ import { copyFile, lstat, mkdir, mkdtemp, realpath, writeFile } from 'node:fs/pr
 import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
+export const workerContextFiles = Object.freeze(['.dockerignore', '.gcloudignore', 'Dockerfile', 'package.json', 'package-lock.json', 'output/worker/entry.mjs', 'output/worker/build-manifest.json']);
+
 function workerPaths(options) {
   const cwd = resolve(options.cwd ?? process.cwd());
   const directory = resolve(cwd, options.outDir ?? 'output/worker');

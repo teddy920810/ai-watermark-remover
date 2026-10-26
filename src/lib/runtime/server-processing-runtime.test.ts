@@ -49,18 +49,26 @@ describe('server processing runtime boundary', () => {
     expect(response.status).toBe(403); expect(r.beginUpload).not.toHaveBeenCalled();
   });
   it('initializes the existing benefits email identity for authenticated new-workspace users', async () => {
-    const r = runtime(); r.ensureAccountIdentity = vi.fn(async () => undefined);
+    const r = runtime();
     const session = vi.fn(async () => ({ user: { id: 'owner', email: 'Person@Example.com' } }));
     const handler = createServerProcessingHandler({ source, getRuntime: () => r, loadSession: async () => session });
     const response = await handler(new Request('https://www.example.test/api/v1/me'));
-    expect(response.status).toBe(200); expect(r.ensureAccountIdentity).toHaveBeenCalledWith('owner', 'Person@Example.com');
+    expect(response.status).toBe(200); expect(r.balances).toHaveBeenCalledOnce(); expect(r.balances).toHaveBeenCalledWith('owner', 'Person@Example.com');
   });
-  it('does not initialize email identity for anonymous or cross-origin requests', async () => {
-    const r = runtime(); r.ensureAccountIdentity = vi.fn(async () => undefined);
+  it('does not initialize benefits for upload/job polling, anonymous or cross-origin requests', async () => {
+    const r = { ...runtime(), ensureAccountIdentity: vi.fn(async () => { throw new Error('Polling must not initialize an account'); }) };
+    r.getUpload = vi.fn(async () => ({ id: 'upload-1', status: 'validating' }) as never);
+    r.service.get = vi.fn(async () => ({ id: 'job-1' }) as never);
+    r.service.list = vi.fn(async () => []);
+    r.projectJob = vi.fn(async () => ({ id: 'job-1' }) as never);
     const handler = createServerProcessingHandler({ source, getRuntime: () => r, loadSession: async () => async () => ({ user: { id: 'owner', email: 'person@example.com' } }) });
     await handler(new Request('https://www.example.test/api/v1/capabilities'));
     await handler(new Request('https://www.example.test/api/v1/uploads', { method: 'POST', headers: { Origin: 'https://foreign.test' } }));
+    for (const path of ['uploads/upload-1', 'jobs/job-1', 'jobs']) {
+      expect((await handler(new Request(`https://www.example.test/api/v1/${path}`))).status).toBe(200);
+    }
     expect(r.ensureAccountIdentity).not.toHaveBeenCalled();
+    expect(r.balances).not.toHaveBeenCalled();
   });
   it('rejects a path-bearing or non-HTTPS public origin without leaking environment details', async () => {
     for (const origin of ['https://www.example.test/app', 'http://www.example.test', 'https://person:private@www.example.test']) {

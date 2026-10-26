@@ -3,7 +3,9 @@ import { describe, expect, it } from 'vitest';
 
 const layoutSource = readFileSync(new URL('./SiteLayout.astro', import.meta.url), 'utf8');
 const globalCss = readFileSync(new URL('../styles/global.css', import.meta.url), 'utf8');
-const uploaderSource = readFileSync(new URL('../components/uploader/ImageUploader.tsx', import.meta.url), 'utf8');
+const launcherSource = readFileSync(new URL('../components/launcher/MediaLauncher.tsx', import.meta.url), 'utf8');
+const launcherCopySource = readFileSync(new URL('../components/launcher/launcher-copy.ts', import.meta.url), 'utf8');
+const workspaceSource = readFileSync(new URL('../components/workspace/WatermarkWorkspace.tsx', import.meta.url), 'utf8');
 const popupSource = readFileSync(new URL('../pages/auth/popup.astro', import.meta.url), 'utf8');
 const authControlsSource = readFileSync(new URL('../components/auth/AuthControls.tsx', import.meta.url), 'utf8');
 const notFoundSource = readFileSync(new URL('../pages/404.astro', import.meta.url), 'utf8');
@@ -52,10 +54,10 @@ describe('SiteLayout Google Analytics integration', () => {
   });
 
   it('renders every brand mark as the CMS-managed logo image', () => {
-    const brandSources = [layoutSource, uploaderSource, popupSource].join('\n');
+    const brandSources = [layoutSource, workspaceSource, popupSource].join('\n');
     expect(brandSources).not.toContain('brand-mark');
     expect(layoutSource.match(/<img class="brand-logo"/g)).toHaveLength(2);
-    expect(uploaderSource).toContain('<img className="brand-logo auth-logo"');
+    expect(workspaceSource).toContain('<img className="brand-logo" src={logo}');
     expect(popupSource).toContain('<img class="brand-logo"');
   });
 
@@ -75,12 +77,12 @@ describe('SiteLayout Google Analytics integration', () => {
     expect(layoutSource).not.toContain('type="image/svg+xml"');
   });
 
-  it('uses CMS-managed copy throughout the shared upload component', () => {
-    expect(uploaderSource).toContain('copy.hero.heading');
-    expect(uploaderSource).toContain('copy.dropzone.dropLabel');
-    expect(uploaderSource).toContain('copy.result.downloadButton');
-    expect(uploaderSource).toContain('copy.auth.continueButton');
-    expect(uploaderSource).not.toContain('Drop your image here');
+  it('uses CMS-managed labels in the active media launcher', () => {
+    expect(launcherCopySource).toContain('copy?.dropzone.dropLabel');
+    expect(launcherCopySource).toContain('copy?.dropzone.browseLabel');
+    expect(launcherCopySource).toContain('copy?.dropzone.fileInputLabel');
+    expect(launcherSource).toContain('<LauncherPrompt kind={kind} copy={copy} />');
+    expect(launcherSource).toContain('aria-label={labels.fileInputLabel}');
   });
 
   it('keeps utility and error pages out of search results', () => {
@@ -90,8 +92,9 @@ describe('SiteLayout Google Analytics integration', () => {
   });
 
   it('completes Google sign-in when the OAuth provider severs window.opener', () => {
-    expect(uploaderSource).toContain("new BroadcastChannel('clearmark-auth')");
-    expect(uploaderSource).toContain("channel?.addEventListener('message', handleAuthComplete)");
+    expect(workspaceSource).toContain("new BroadcastChannel('clearmark-auth')");
+    expect(workspaceSource).toContain("channel?.addEventListener('message', broadcast)");
+    expect(workspaceSource).toContain('await authClient.getSession()');
     expect(popupSource).toContain("new BroadcastChannel('clearmark-auth')");
     expect(popupSource).toContain("channel.postMessage({ type: 'clearmark-auth-complete' })");
     expect(popupSource).toContain("window.location.replace('/#tool')");

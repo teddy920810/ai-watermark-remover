@@ -25,7 +25,8 @@ import type { UploadRecord } from './media-preflight';
 import { mediaKey, PrivateMediaStore, SITE_MAX_IMAGE_BYTES, SITE_MAX_VIDEO_BYTES } from './private-media-store';
 import { ProcessingProvider } from './processing-provider';
 import { PublicProcessingProjection } from './public-projection';
-import type { PublicArtifact } from './public-projection';
+import type { PublicUpload, PublicUploadTicket } from '../contracts/processing-public';
+export type { PublicUpload } from '../contracts/processing-public';
 
 export type ExecutionTrigger = (action: 'process' | 'reconcile' | 'preflight', id: string, ownerId: string, existingExecutionRef?: string, dispatchId?: string) => Promise<{ executionRef?: string; nextCheckAt: string; terminal?: boolean }>;
 export interface ProcessingRuntimeConfig {
@@ -51,21 +52,8 @@ export interface ProcessingRuntimeConfig {
     id?: () => string;
   };
 }
-export interface PublicUpload {
-  id: string;
-  uploadId: string;
-  kind: 'image' | 'video' | 'mask';
-  status: UploadRecord['status'];
-  createdAt: string;
-  expiresAt: string;
-  artifactId?: string;
-  artifact?: PublicArtifact;
-  previewUrl?: string;
-  error?: string;
-}
 export interface ProcessingRuntime extends ProcessingApiRuntime {
-  ensureAccountIdentity(ownerId: string, email: string): Promise<void>;
-  beginUpload(ownerId: string, declaration: UploadDeclaration): Promise<PublicUpload & { uploadUrl: string; method: 'PUT'; headers: { 'Content-Type': string } }>;
+  beginUpload(ownerId: string, declaration: UploadDeclaration): Promise<PublicUploadTicket>;
   completeUpload(ownerId: string, id: string): Promise<PublicUpload>;
   getUpload(ownerId: string, id: string): Promise<PublicUpload>;
   projectJob: PublicProcessingProjection['job'];
@@ -135,7 +123,7 @@ export function createProcessingRuntime(config: ProcessingRuntimeConfig): Proces
     prices: { version: config.priceVersion ?? 'processing-v1', amount: (operation, input) => operation === 'image-watermark-pro' ? 3 : operation === 'video-watermark' ? Math.ceil(input.durationSeconds! * 0.5) : 1 }, now, id });
   const service: ProcessingApiRuntime['service'] = {
     capabilities: () => core.capabilities(),
-    quote: async (request) => { await benefits.getSummary(request.ownerId); return core.quote(request); },
+    quote: (request) => core.quote(request),
     submit: (request) => core.submit(request), get: (owner, jobId) => core.get(owner, jobId), list: (owner, limit) => core.list(owner, limit),
   };
   const unavailableProvider: ProcessingWatermarkProvider = {
@@ -164,7 +152,6 @@ export function createProcessingRuntime(config: ProcessingRuntimeConfig): Proces
   };
   const runtime: ProcessingRuntime = {
     service,
-    async ensureAccountIdentity(owner, email) { await benefits.getSummary(owner, email); },
     async beginUpload(owner, declaration) {
       const allowed = declaration.kind === 'video' ? capabilities.find((c) => c.operation === 'video-watermark')?.enabled : declaration.kind === 'mask' ? capabilities.some((c) => c.enabled && ['image-refine', 'video-watermark'].includes(c.operation)) : capabilities.some((c) => c.enabled && c.operation.startsWith('image-'));
       if (!allowed) throw new ProcessingError('operation_unavailable', reason, 503);
@@ -182,7 +169,7 @@ export function createProcessingRuntime(config: ProcessingRuntimeConfig): Proces
     },
     async getUpload(owner, uploadId) { return projectUpload(owner, await preflight.getUpload(owner, uploadId)); },
     projectJob: (owner, job) => projection.job(owner, job), projectQuote: (owner, quote) => projection.quote(owner, quote),
-    async balances(owner) { const legacy = await benefits.getSummary(owner); return { freeUses: legacy.balance, processingCredits: await finance.getBalance(owner) }; },
+    async balances(owner, email) { const legacy = await benefits.getSummary(owner, email); return { freeUses: legacy.balance, processingCredits: await finance.getBalance(owner) }; },
     async download(owner, jobId) { return projection.download(owner, await core.get(owner, jobId)); },
     async runJob(jobId, workerId = `worker-${id()}`, dispatchId) { return worker.run(jobId, workerId, dispatchId); },
     async runPreflight(owner, uploadId) {
