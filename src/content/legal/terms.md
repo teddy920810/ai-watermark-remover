@@ -3,7 +3,7 @@ slug: terms
 title: Terms of Use | WatermarkGemini
 description: Terms for WatermarkGemini image and video tools, content permissions, processing allowances, task status and temporary results.
 eyebrow: Terms
-heading: Terms for using WatermarkGemini
+heading: Terms of Use
 ---
 
 Last updated: October 26, 2026

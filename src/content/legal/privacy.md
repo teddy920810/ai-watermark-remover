@@ -3,7 +3,7 @@ slug: privacy
 title: Privacy Policy | WatermarkGemini
 description: How WatermarkGemini handles Google account information, image and video files, local drafts, processing records, cookies and analytics.
 eyebrow: Privacy
-heading: How WatermarkGemini handles your data
+heading: Privacy Policy
 ---
 
 Last updated: October 26, 2026

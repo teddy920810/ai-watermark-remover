@@ -19,6 +19,7 @@ describe('published legal pages match the current service', () => {
     it(`${slug} keeps its route, single page heading, update date and contact`, () => {
       const { data, body } = readLegal(slug);
       expect(data.slug).toBe(slug);
+      expect(data.heading).toBe(slug === 'terms' ? 'Terms of Use' : 'Privacy Policy');
       expect(data.description).toMatch(/image/i);
       expect(data.description).toMatch(/video/i);
       expect(body).not.toMatch(/^#\s+/m);
