@@ -33,9 +33,11 @@ describe('GET /api/jobs/:id', () => {
   });
 
   it('returns 404 for an unknown job', async () => {
-    getServices.mockReturnValue({ jobs: { get: vi.fn().mockResolvedValue(null) } });
+    const get = vi.fn().mockResolvedValue(null);
+    getServices.mockReturnValue({ jobs: { get } });
     const response = await GET(context(id));
     expect(response.status).toBe(404);
+    expect(get).toHaveBeenCalledWith(id, 'google-user-1');
   });
 
   it('does not reveal a job owned by another user', async () => {

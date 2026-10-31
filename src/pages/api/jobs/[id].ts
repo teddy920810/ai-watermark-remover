@@ -15,7 +15,7 @@ export const GET: APIRoute = async ({ params, request }) => {
 
   try {
     const services = getServices();
-    const job = await services.jobs.get(id);
+    const job = await services.jobs.get(id, session.user.id);
     if (!job || job.ownerId !== session.user.id) return json({ error: 'Job not found' }, { status: 404 });
 
     if (job.status === 'completed' && job.resultKey) {

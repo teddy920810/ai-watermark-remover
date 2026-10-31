@@ -29,12 +29,14 @@ export class MemoryQuotes implements ProcessingQuoteStore {
 export class MemoryFinance implements ProcessingFinancialStore {
   balances = new Map([['user-1', 100]]);
   freeBalances = new Map<string, number>();
+  imageBalances = new Map<string, number>();
   admissions = new Map<string, Admission>();
   admissionTimes = new Map<string, string>();
   outbox = new Set<string>();
   settlements = 0;
   refunds = 0;
-  async getBalance(ownerId: string, unit: CreditUnit = 'processingCredits') { return (unit === 'freeUses' ? this.freeBalances : this.balances).get(ownerId) ?? 0; }
+  private balanceMap(unit: CreditUnit) { return unit === 'freeUses' ? this.freeBalances : unit === 'purchasedImageCredits' ? this.imageBalances : this.balances; }
+  async getBalance(ownerId: string, unit: CreditUnit = 'processingCredits') { return this.balanceMap(unit).get(ownerId) ?? 0; }
   async findAdmission(ownerId: string, key: string) { return [...this.admissions.values()].find((a) => a.ownerId === ownerId && a.idempotencyKey === key) ?? null; }
   async getAdmission(jobId: string) { return this.admissions.get(jobId) ?? null; }
   async listAdmissionsForOwner(ownerId: string, limit = 20, before?: { createdAt: string; jobId: string }) {
@@ -50,13 +52,13 @@ export class MemoryFinance implements ProcessingFinancialStore {
     if (existing) { if (existing.requestHash !== request.requestHash) throw new ProcessingError('idempotency_conflict', 'Operation key already used', 409); return { admission: existing, created: false }; }
     const balance = await this.getBalance(request.ownerId, request.unit);
     if (balance < request.amount) throw new ProcessingError('insufficient_balance', 'Not enough processing credits', 402);
-    (request.unit === 'freeUses' ? this.freeBalances : this.balances).set(request.ownerId, balance - request.amount);
+    this.balanceMap(request.unit).set(request.ownerId, balance - request.amount);
     const admission: Admission = { ...request, status: 'reserved' };
     this.admissions.set(request.jobId, admission); this.admissionTimes.set(request.jobId, request.now); this.outbox.add(request.jobId);
     return { admission, created: true };
   }
   async settle(jobId: string, ownerId: string) { const a = this.admissions.get(jobId); if (!a || a.ownerId !== ownerId) throw new Error('Invalid admission'); if (a.status === 'reserved') { a.status = 'settled'; this.settlements++; } return a.status; }
-  async refund(jobId: string, ownerId: string) { const a = this.admissions.get(jobId); if (!a || a.ownerId !== ownerId) throw new Error('Invalid admission'); if (a.status === 'reserved') { a.status = 'refunded'; this.refunds++; (a.unit === 'freeUses' ? this.freeBalances : this.balances).set(ownerId, (await this.getBalance(ownerId, a.unit)) + a.amount); } }
+  async refund(jobId: string, ownerId: string) { const a = this.admissions.get(jobId); if (!a || a.ownerId !== ownerId) throw new Error('Invalid admission'); if (a.status === 'reserved') { a.status = 'refunded'; this.refunds++; this.balanceMap(a.unit).set(ownerId, (await this.getBalance(ownerId, a.unit)) + a.amount); } }
   async claimDue() { return []; }
   async enqueuePreflight(_ownerId: string, artifactId: string) { this.outbox.add(artifactId); }
   async recordDispatch() {}

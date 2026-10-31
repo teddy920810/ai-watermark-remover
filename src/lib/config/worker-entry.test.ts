@@ -15,6 +15,11 @@ function runtimeFixture() {
 }
 
 describe('standalone processing worker entry', () => {
+  it('passes the image-purchase environment to settlement without requiring PayPal secrets', () => {
+    const config = workerConfigFromEnvironment({ ...environment, PAYPAL_CREDITS_ENABLED: 'true', PAYPAL_ENVIRONMENT: 'live', PAYPAL_IMAGE_COSTS_JSON: JSON.stringify({ 'watermark-removal': 3, 'background-removal': 2, 'object-removal': 4 }), PAYPAL_IMAGE_COST_VERSION: 'image-test-1' });
+    expect(config).toMatchObject({ imageCredits: { enabled: true, environment: 'live', costs: { 'watermark-removal': 3, 'background-removal': 2, 'object-removal': 4 }, priceVersion: 'image-test-1' } });
+    expect(JSON.stringify(config)).not.toContain('PAYPAL_CLIENT_SECRET');
+  });
   it('passes the durable dispatch identity to the worker lease fence', async () => {
     const s = runtimeFixture(); s.setJob({ dispatch: { id: 'dispatch-current' } });
     await runWorker({ ...environment, DISPATCH_ID: 'dispatch-current' }, { createRuntime: s.factory });

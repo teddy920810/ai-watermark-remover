@@ -5,6 +5,7 @@ vi.mock('../../../lib/services', () => ({ getServices }));
 vi.mock('../../../lib/auth', () => ({ getSession }));
 
 import { POST } from './index';
+import { ImagePriceChangedError } from '../../../lib/benefits/benefit-store';
 
 const inputKey = 'uploads/users/5bd39a3d505d21099461dc1b7a3f4d9f/00000000-0000-4000-8000-000000000001.png';
 const maskKey = 'uploads/users/5bd39a3d505d21099461dc1b7a3f4d9f/00000000-0000-4000-8000-000000000002.png';
@@ -87,5 +88,28 @@ describe('POST /api/jobs', () => {
     const response = await POST(context({ inputKey }));
     expect(response.status).toBe(503);
     expect(await response.text()).not.toContain('R2_ENDPOINT');
+  });
+  it.each(['background-removal', 'object-removal'] as const)('passes the captured %s price consent to the service without choosing an amount', async (operation) => {
+    const create = vi.fn().mockResolvedValue({ id: 'job-id', status: 'completed' });
+    getServices.mockReturnValue({ jobs: { create } });
+    const imageCreditConsent = { imageCostVersion: 'image-costs-v2', maxImageCredits: 340 };
+    const selection = operation === 'object-removal' ? maskKey : undefined;
+    const response = await POST(context({ inputKey, operation, ...(selection ? { maskKey: selection } : {}), imageCreditConsent }));
+    expect(response.status).toBe(201);
+    expect(create).toHaveBeenCalledExactlyOnceWith(inputKey, 'google-user-1', operation, selection, imageCreditConsent);
+  });
+  it('returns a fixed 409 price-change response without automatically creating another job', async () => {
+    const create = vi.fn().mockRejectedValue(new ImagePriceChangedError());
+    getServices.mockReturnValue({ jobs: { create } });
+    const response = await POST(context({ inputKey }));
+    expect(response.status).toBe(409);
+    await expect(response.json()).resolves.toEqual({ code: 'image_price_changed', error: 'Review the current image credit price and confirm again.' });
+    expect(create).toHaveBeenCalledOnce();
+  });
+  it('does not expose an untrusted error merely because it copies the price-change code', async () => {
+    getServices.mockReturnValue({ jobs: { create: vi.fn().mockRejectedValue(Object.assign(new Error('private provider detail'), { code: 'image_price_changed' })) } });
+    const response = await POST(context({ inputKey }));
+    expect(response.status).toBe(503);
+    expect(await response.text()).not.toContain('private provider detail');
   });
 });

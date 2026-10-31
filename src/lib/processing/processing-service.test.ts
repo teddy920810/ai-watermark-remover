@@ -3,7 +3,7 @@ import { ProcessingService } from './processing-service';
 import { MemoryArtifacts, MemoryFinance, MemoryJobs, MemoryQuotes, NOW, source } from './test-fixtures';
 import type { OperationCapability } from './contracts';
 
-export function setup() {
+export function setup(purchasedImageCreditsEnabled = false, purchasedImageCreditCost = 1) {
   const jobs = new MemoryJobs(); const artifacts = new MemoryArtifacts(); const quotes = new MemoryQuotes(); const finance = new MemoryFinance();
   artifacts.data.set('input-1', source());
   let id = 0; let now = NOW;
@@ -14,11 +14,45 @@ export function setup() {
     { operation: 'video-watermark', enabled: true, acceptedTypes: ['video/mp4'], maxBytes: 100_000_000, maxDurationSeconds: 540, requiredFps: 24 },
   ];
   const inspector = { inspect: vi.fn(async (ownerId: string, id: string) => { const a = artifacts.data.get(id); if (!a || a.ownerId !== ownerId) throw new Error('Not found'); return a; }) };
-  const service = new ProcessingService({ jobs, artifacts, quotes, finance, inspector, capabilities, prices: { version: 'test-1', amount: (op, metadata) => op === 'video-watermark' ? Math.ceil(metadata.durationSeconds! * 2) : op === 'image-watermark-pro' ? 3 : 1 }, now: () => new Date(now), id: () => `id-${++id}` });
+  const service = new ProcessingService({ jobs, artifacts, quotes, finance, inspector, capabilities, purchasedImageCreditsEnabled, purchasedImageCreditCost, imageCreditPriceVersion: 'image-price-test-1', prices: { version: 'test-1', amount: (op, metadata) => op === 'video-watermark' ? Math.ceil(metadata.durationSeconds! * 2) : op === 'image-watermark-pro' ? 3 : 1 }, now: () => new Date(now), id: () => `id-${++id}` });
   return { jobs, artifacts, quotes, finance, inspector, capabilities, service, setNow: (value: string) => { now = value; } };
 }
 
 describe('ProcessingService', () => {
+  it('seals and charges the configured image-credit amount while preserving the administrator allowance', async () => {
+    const s = setup(true, 3); s.finance.imageBalances.set('user-1', 5);
+    const quote = await s.service.quote({ ownerId: 'user-1', operation: 'image-watermark', inputArtifactId: 'input-1' });
+    expect(quote).toMatchObject({ amount: 3, unit: 'purchasedImageCredits' });
+    expect(quote.priceVersion).toContain('image-price-test-1');
+    await s.service.submit({ ownerId: 'user-1', quoteId: quote.id, idempotencyKey: 'priced-image' });
+    expect(await s.finance.getBalance('user-1', 'purchasedImageCredits')).toBe(2);
+    expect(await s.finance.getBalance('user-1')).toBe(100);
+  });
+  it('quotes a normal-image purchase allowance when no free or administrator allowance remains', async () => {
+    const s = setup(true); s.finance.balances.set('user-1', 0);
+    expect(await s.service.quote({ ownerId: 'user-1', operation: 'image-watermark', inputArtifactId: 'input-1' })).toMatchObject({ unit: 'purchasedImageCredits', amount: 1 });
+  });
+  it('uses purchased image uses for normal images without spending administrator processing credits', async () => {
+    const s = setup();
+    vi.spyOn(s.finance, 'getBalance').mockImplementation(async (_owner, unit = 'processingCredits') => String(unit) === 'purchasedImageCredits' ? 5 : unit === 'freeUses' ? 0 : 100);
+    const quote = await s.service.quote({ ownerId: 'user-1', operation: 'image-watermark', inputArtifactId: 'input-1' });
+    expect(quote).toMatchObject({ unit: 'purchasedImageCredits', amount: 1 });
+    expect(s.finance.admissions.size).toBe(0);
+  });
+  it('keeps purchased image uses out of PRO and video quotes', async () => {
+    const s = setup();
+    const readBalance = vi.spyOn(s.finance, 'getBalance').mockResolvedValue(50);
+    expect(await s.service.quote({ ownerId: 'user-1', operation: 'image-watermark-pro', inputArtifactId: 'input-1' })).toMatchObject({ unit: 'processingCredits', amount: 3 });
+    s.artifacts.data.set('video', source({ id: 'video', metadata: { kind: 'video', contentType: 'video/mp4', byteSize: 1000, width: 1280, height: 720, durationSeconds: 10, fps: 24 } }));
+    expect(await s.service.quote({ ownerId: 'user-1', operation: 'video-watermark', inputArtifactId: 'video' })).toMatchObject({ unit: 'processingCredits', amount: 20 });
+    expect(readBalance).not.toHaveBeenCalled();
+  });
+  it('uses free image allowances before purchased image uses', async () => {
+    const s = setup();
+    const readBalance = vi.spyOn(s.finance, 'getBalance').mockResolvedValue(50);
+    expect(await s.service.quote({ ownerId: 'user-1', operation: 'image-watermark', inputArtifactId: 'input-1' })).toMatchObject({ unit: 'freeUses', amount: 1 });
+    expect(readBalance.mock.calls.map((call) => call[1])).toEqual(['freeUses']);
+  });
   it('preflights without creating a financial reservation', async () => {
     const s = setup(); await s.service.preflight('user-1', 'input-1');
     expect(s.finance.admissions.size).toBe(0); expect(s.inspector.inspect).toHaveBeenCalled();

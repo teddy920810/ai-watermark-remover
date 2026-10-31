@@ -15,6 +15,9 @@ export interface ProcessingServiceOptions {
   now?: () => Date;
   id?: () => string;
   quoteTtlMs?: number;
+  purchasedImageCreditsEnabled?: boolean;
+  purchasedImageCreditCost?: number;
+  imageCreditPriceVersion?: string;
 }
 
 export class ProcessingService {
@@ -36,11 +39,17 @@ export class ProcessingService {
   async quote(request: QuoteRequest): Promise<ProcessingQuote> {
     operationSchema.parse(request.operation);
     const { input, mask } = await this.validate(request);
-    const unit = request.operation === 'image-watermark' && await this.options.finance.getBalance(request.ownerId, 'freeUses') >= 1 ? 'freeUses' : 'processingCredits';
-    const amount = unit === 'freeUses' ? 1 : amountSchema.parse(this.options.prices.amount(request.operation, input.metadata));
+    const imageCost = amountSchema.parse(this.options.purchasedImageCreditCost ?? 1);
+    let unit: ProcessingQuote['unit'] = 'processingCredits';
+    if (request.operation === 'image-watermark') {
+      if (await this.options.finance.getBalance(request.ownerId, 'freeUses') >= 1) unit = 'freeUses';
+      else if (await this.options.finance.getBalance(request.ownerId, 'purchasedImageCredits') >= imageCost) unit = 'purchasedImageCredits';
+      else if (this.options.purchasedImageCreditsEnabled && await this.options.finance.getBalance(request.ownerId, 'processingCredits') < 1) unit = 'purchasedImageCredits';
+    }
+    const amount = unit === 'processingCredits' ? amountSchema.parse(this.options.prices.amount(request.operation, input.metadata)) : unit === 'purchasedImageCredits' ? imageCost : 1;
     const now = this.now();
     const quote: ProcessingQuote = {
-      ...request, id: this.id(), amount, unit, priceVersion: this.options.prices.version,
+      ...request, id: this.id(), amount, unit, priceVersion: this.priceVersion(unit),
       fingerprint: this.fingerprint(request, input, mask), createdAt: now.toISOString(),
       expiresAt: new Date(now.getTime() + (this.options.quoteTtlMs ?? 10 * 60_000)).toISOString(),
     };
@@ -63,7 +72,7 @@ export class ProcessingService {
     const requestHash = this.requestHash(quote);
     if (Date.parse(quote.expiresAt) <= this.now().getTime()) throw new ProcessingError('quote_expired', 'Confirm a new quote before processing', 409);
     const { input, mask } = await this.validate(quote);
-    if (this.fingerprint(quote, input, mask) !== quote.fingerprint || quote.priceVersion !== this.options.prices.version) throw new ProcessingError('quote_changed', 'Input or price changed; confirm a new quote', 409);
+    if (this.fingerprint(quote, input, mask) !== quote.fingerprint || quote.priceVersion !== this.priceVersion(quote.unit)) throw new ProcessingError('quote_changed', 'Input or price changed; confirm a new quote', 409);
     const now = this.now().toISOString();
     const job: ProcessingJob = {
       id: this.id(), ownerId: request.ownerId, operation: quote.operation, status: 'PREPARED', quote,
@@ -148,5 +157,9 @@ export class ProcessingService {
   }
   private requestHash(quote: ProcessingQuote): string {
     return createHash('sha256').update(`${quote.id}:${quote.fingerprint}:${quote.amount}:${quote.unit}:${quote.priceVersion}`).digest('hex');
+  }
+  private priceVersion(unit: ProcessingQuote['unit']) {
+    return unit === 'purchasedImageCredits' && this.options.imageCreditPriceVersion
+      ? `${this.options.prices.version}:image:${this.options.imageCreditPriceVersion}` : this.options.prices.version;
   }
 }

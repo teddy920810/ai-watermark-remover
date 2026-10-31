@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useReducer, useRef, useState, type ChangeEvent, type DragEvent } from 'react';
 import { Columns2, CloudUpload, Download, LockKeyhole, Palette, Trash2 } from 'lucide-react';
 import { authClient } from '../auth/auth-client';
+import BuyCreditsLink from '../payments/BuyCreditsLink';
+import { ImagePriceChangedError, useImageCreditPrice, type ImageCreditApproval } from '../payments/useImageCreditPrice';
 import { putFileWithRetry } from '../../lib/upload/direct-upload';
 import { MAX_UPLOAD_BYTES, validateUploadMetadata } from '../../lib/upload/validation';
 import type { UploaderCopy } from '../../lib/content/site-settings';
@@ -32,7 +34,8 @@ const TRANSPARENT_BACKGROUND = PRESET_BACKGROUNDS[0]!;
 
 async function api<T extends JsonRecord>(url: string, init?: RequestInit): Promise<T> {
   const response = await fetch(url, init);
-  const body = (await response.json()) as T & { error?: string };
+  const body = (await response.json()) as T & { error?: string; code?: string };
+  if (response.status === 409 && body.code === 'image_price_changed') throw new ImagePriceChangedError();
   if (!response.ok) throw new Error(body.error ?? 'Something went wrong. Please try again.');
   return body;
 }
@@ -76,6 +79,9 @@ async function downloadWithBackground(resultUrl: string, color: string): Promise
 
 export default function BackgroundRemoverUploader({ logo, siteName, copy }: Props) {
   const { data: session, isPending: sessionPending, refetch: refetchSession } = authClient.useSession();
+  const imagePrice = useImageCreditPrice('background-removal');
+  const acceptedPrice = useRef<ImageCreditApproval | null>(null);
+  const submitLock = useRef(false);
   const [state, dispatch] = useReducer(uploadReducer, initialUploadState);
   const [file, setFile] = useState<File | null>(null);
   const [dragging, setDragging] = useState(false);
@@ -111,6 +117,7 @@ export default function BackgroundRemoverUploader({ logo, siteName, copy }: Prop
       return;
     }
     setFile(nextFile);
+    acceptedPrice.current = null;
     setSelectedBackground(TRANSPARENT_BACKGROUND);
     setShowOriginal(false);
     setResultError(null);
@@ -146,8 +153,10 @@ export default function BackgroundRemoverUploader({ logo, siteName, copy }: Prop
     if (nextFile) selectFile(nextFile);
   }
 
-  const uploadAndProcess = useCallback(async () => {
-    if (!file) return;
+  const uploadAndProcess = useCallback(async (approval: ImageCreditApproval) => {
+    if (!file || submitLock.current) return;
+    submitLock.current = true;
+    acceptedPrice.current = null;
     try {
       dispatch({ type: 'upload' });
       const signed = await api<{ url: string; key: string }>('/api/upload-url', {
@@ -161,7 +170,7 @@ export default function BackgroundRemoverUploader({ logo, siteName, copy }: Prop
       const created = await api<{ id: string; status: string }>('/api/jobs', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ inputKey: signed.key, operation: 'background-removal' }),
+        body: JSON.stringify({ inputKey: signed.key, operation: 'background-removal', ...approval }),
       });
       window.dispatchEvent(new Event('benefits:changed'));
       dispatch({ type: 'process', jobId: created.id });
@@ -181,9 +190,10 @@ export default function BackgroundRemoverUploader({ logo, siteName, copy }: Prop
       throw new Error('Processing took too long. Please try again.');
     } catch (error) {
       window.dispatchEvent(new Event('benefits:changed'));
+      if (error instanceof ImagePriceChangedError) { acceptedPrice.current = null; await imagePrice.refresh(); }
       dispatch({ type: 'error', message: userFacingError(error, 'The image service could not be reached. Please check your connection and try again.') });
-    }
-  }, [file]);
+    } finally { submitLock.current = false; }
+  }, [file, imagePrice.refresh]);
 
   const refreshResultLinks = useCallback(async () => {
     if (!state.jobId) throw new Error('This result can no longer be refreshed. Please process the image again.');
@@ -229,7 +239,7 @@ export default function BackgroundRemoverUploader({ logo, siteName, copy }: Prop
       await refetchSession();
       setShowLogin(false);
       setLoginPending(false);
-      await uploadAndProcess();
+      if (acceptedPrice.current) await uploadAndProcess(acceptedPrice.current);
     }
     function handleWindowMessage(event: MessageEvent) {
       if (event.origin === window.location.origin) void completeAuth(event.data);
@@ -248,17 +258,19 @@ export default function BackgroundRemoverUploader({ logo, siteName, copy }: Prop
   }, [refetchSession, uploadAndProcess]);
 
   function start() {
-    if (!file || sessionPending) return;
+    if (!file || sessionPending || busy || submitLock.current || !imagePrice.ready || !imagePrice.approval) return;
+    acceptedPrice.current = imagePrice.approval;
     if (!session?.user) {
       setShowLogin(true);
       return;
     }
-    void uploadAndProcess();
+    void uploadAndProcess(acceptedPrice.current);
   }
 
   async function continueWithGoogle() {
     const popup = window.open('about:blank', 'clearmark-google-auth', 'popup=yes,width=520,height=680,left=240,top=80');
     if (!popup) {
+      acceptedPrice.current = null;
       dispatch({ type: 'error', message: 'Please allow popups for this site, then try Google sign-in again.' });
       setShowLogin(false);
       return;
@@ -270,6 +282,7 @@ export default function BackgroundRemoverUploader({ logo, siteName, copy }: Prop
       disableRedirect: true,
     });
     if (result.error || !result.data?.url) {
+      acceptedPrice.current = null;
       popup.close();
       setLoginPending(false);
       dispatch({ type: 'error', message: 'Unable to start Google sign-in. Please try again.' });
@@ -279,6 +292,7 @@ export default function BackgroundRemoverUploader({ logo, siteName, copy }: Prop
   }
 
   function reset() {
+    acceptedPrice.current = null;
     setFile(null);
     setSelectedBackground(TRANSPARENT_BACKGROUND);
     setShowOriginal(false);
@@ -287,6 +301,8 @@ export default function BackgroundRemoverUploader({ logo, siteName, copy }: Prop
     if (inputRef.current) inputRef.current.value = '';
     dispatch({ type: 'reset' });
   }
+
+  function dismissLogin() { acceptedPrice.current = null; setShowLogin(false); }
 
   async function downloadResult() {
     if (!state.jobId) return;
@@ -333,13 +349,16 @@ export default function BackgroundRemoverUploader({ logo, siteName, copy }: Prop
       )}
 
       {state.message ? <p className="error-message" role="alert">{state.message}</p> : null}
+      <BuyCreditsLink message={state.message} />
 
       {state.previewUrl && state.phase !== 'completed' ? (
         <div className="preview-panel">
           <img src={state.previewUrl} alt={formatCopy(copy.preview.altTemplate, { fileName: state.fileName ?? '' })} />
           <div className="preview-meta">
             <div><strong>{state.fileName}</strong><span>{busy ? copy.preview.processingLabel : copy.preview.readyLabel}</span></div>
-            <button className="button button-primary" type="button" onClick={start} disabled={busy}>
+            <p className="image-credit-price" id="background-credit-price" role="status">{imagePrice.pending ? 'Checking processing price…' : imagePrice.label}</p>
+            {imagePrice.error ? <button className="button button-ghost" type="button" onClick={() => void imagePrice.refresh()}>Retry credit price</button> : null}
+            <button className="button button-primary" type="button" onClick={start} disabled={busy || !imagePrice.ready} aria-describedby="background-credit-price">
               {state.phase === 'uploading' ? copy.preview.uploadingButton : state.phase === 'processing' ? copy.preview.processingButton : copy.preview.removeButton}
             </button>
             {!busy ? <button className="button button-ghost" type="button" onClick={reset}>{copy.preview.chooseAnotherButton}</button> : null}
@@ -406,14 +425,14 @@ export default function BackgroundRemoverUploader({ logo, siteName, copy }: Prop
       {showLogin ? (
         <div className="auth-modal-backdrop">
           <section className="auth-modal" role="dialog" aria-modal="true" aria-labelledby="background-auth-title">
-            <button className="auth-modal-close" type="button" onClick={() => setShowLogin(false)} aria-label={copy.auth.closeLabel}>×</button>
+            <button className="auth-modal-close" type="button" onClick={dismissLogin} aria-label={copy.auth.closeLabel}>×</button>
             <img className="brand-logo auth-logo" src={logo} alt={`${siteName} logo`} />
             <h3 id="background-auth-title">{copy.auth.title}</h3>
-            <p>{copy.auth.description}</p>
+            <p>{acceptedPrice.current?.imageCreditConsent ? `Processing starts after sign-in using 1 free use first; otherwise up to ${acceptedPrice.current.imageCreditConsent.maxImageCredits.toLocaleString('en-US')} image credits.` : copy.auth.description}</p>
             <button className="button button-primary auth-google-button" type="button" onClick={continueWithGoogle} disabled={loginPending}>
               <span className="google-mark">G</span>{loginPending ? copy.auth.connectingButton : copy.auth.continueButton}
             </button>
-            <button className="button button-ghost" type="button" onClick={() => setShowLogin(false)}>{copy.auth.dismissButton}</button>
+            <button className="button button-ghost" type="button" onClick={dismissLogin}>{copy.auth.dismissButton}</button>
           </section>
         </div>
       ) : null}

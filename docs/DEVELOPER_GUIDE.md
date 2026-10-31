@@ -60,6 +60,8 @@ npm run db:migrate
 
 ## 内容模型
 
+正式 PayPal 图片 Credits 的配置、批次账本、退款来源和 Web/Worker 发布顺序见 [PayPal 发布说明](PAYPAL_LIVE_RELEASE.md)。启用前先执行新增支付迁移，再更新支持 `purchasedImageCredits` 的既有 Worker，最后开启 Web 的已购额度与新收款；不要把旧 Sandbox 身份切换或测试部署覆盖到当前正式架构。运行中的已接受任务按原预留金额结算；暂停新购买时保留已购额度开关与明确的操作费率。
+
 - 博客 schema：`src/content.config.ts`，文件位于 `src/content/blog/`。
 - 落地页 schema：同上，文件位于 `src/content/landing-pages/`。
 - CMS 表单：`.pages.yml`。

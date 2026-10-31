@@ -41,4 +41,20 @@ describe('API contracts', () => {
   it('rejects arbitrary object keys', () => {
     expect(() => parseCreateJob({ inputKey: 'results/private.png' })).toThrow();
   });
+  it('accepts an optional versioned maximum for image credit consent without changing the free-only request', () => {
+    const inputKey = 'uploads/users/5bd39a3d505d21099461dc1b7a3f4d9f/eb8fa168-c11c-4e54-8c63-137d649ed1db.webp';
+    const imageCreditConsent = { imageCostVersion: 'image-costs:v2', maxImageCredits: 340 };
+    expect(parseCreateJob({ inputKey, imageCreditConsent })).toMatchObject({ inputKey, operation: 'watermark-removal', imageCreditConsent });
+    expect(parseCreateJob({ inputKey })).not.toHaveProperty('imageCreditConsent');
+  });
+  it.each([
+    { imageCostVersion: '', maxImageCredits: 1 }, { imageCostVersion: 'bad version', maxImageCredits: 1 },
+    { imageCostVersion: 'v'.repeat(101), maxImageCredits: 1 }, { imageCostVersion: 'v1', maxImageCredits: 0 },
+    { imageCostVersion: 'v1', maxImageCredits: -1 }, { imageCostVersion: 'v1', maxImageCredits: 1.5 },
+    { imageCostVersion: 'v1', maxImageCredits: 1_000_001 }, { imageCostVersion: 'v1', maxImageCredits: '1' },
+    { imageCostVersion: 'v1', maxImageCredits: 1, userId: 'chosen-by-client' },
+  ])('rejects unsafe or additional consent fields: %j', (imageCreditConsent) => {
+    const inputKey = 'uploads/users/5bd39a3d505d21099461dc1b7a3f4d9f/eb8fa168-c11c-4e54-8c63-137d649ed1db.webp';
+    expect(() => parseCreateJob({ inputKey, imageCreditConsent })).toThrow();
+  });
 });

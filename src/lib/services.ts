@@ -1,4 +1,7 @@
+import { Pool } from 'pg';
+import { z } from 'zod';
 import { getServerEnv } from './config/server-env';
+import { PostgresBenefitStore } from './benefits/postgres-benefit-store';
 import { JobService } from './jobs/job-service';
 import { R2JobStore } from './jobs/r2-job-store';
 import { DewatermarkProvider } from './providers/dewatermark-provider';
@@ -9,8 +12,48 @@ import { MockObjectProvider } from './providers/mock-object-provider';
 import { ReplicateObjectProvider } from './providers/replicate-object-provider';
 import type { LegacyWatermarkProvider } from './providers/watermark-provider';
 import { R2ObjectStore } from './r2/r2-object-store';
+import { getPaymentConfig } from './payments/payment-config';
+import { PostgresJobRequestStore } from './jobs/postgres-job-request-store';
 
 let cached: ReturnType<typeof createServices> | undefined;
+let cachedAccounts: AccountServices | undefined;
+
+interface AccountServices {
+  pool: Pool;
+  benefits: PostgresBenefitStore;
+  requests?: PostgresJobRequestStore;
+  recoverUser(userId: string): Promise<void>;
+}
+
+function createAccountServices(): AccountServices {
+  const databaseUrl = z.url().parse(process.env.DATABASE_URL);
+  const paymentConfig = getPaymentConfig();
+  const pool = new Pool({
+    connectionString: databaseUrl,
+    max: 3,
+    idleTimeoutMillis: 10_000,
+    connectionTimeoutMillis: 5_000,
+  });
+  const benefits = new PostgresBenefitStore(pool, paymentConfig.creditsEnabled, paymentConfig.environment, paymentConfig.imageCosts, paymentConfig.creditsEnabled ? paymentConfig.imageCostVersion : undefined);
+  const requests = paymentConfig.creditsEnabled ? new PostgresJobRequestStore(pool, paymentConfig.environment) : undefined;
+  return {
+    pool,
+    benefits,
+    requests,
+    async recoverUser(userId) {
+      if (!requests) return;
+      const candidates = await requests.recoverable(userId);
+      if (candidates.length === 0) return;
+      // A balance with no pending settlement needs only Postgres. Actual job
+      // recovery still requires the media services and must fail if unavailable.
+      await getServices().jobs.recoverUser(userId);
+    },
+  };
+}
+
+export function getAccountServices(): AccountServices {
+  return (cachedAccounts ??= createAccountServices());
+}
 
 function createServices() {
   const env = getServerEnv();
@@ -21,12 +64,7 @@ function createServices() {
     bucket: env.R2_BUCKET,
   });
   const jobStore = new R2JobStore(objects);
-  const benefits = new PostgresBenefitStore(new Pool({
-    connectionString: env.DATABASE_URL,
-    max: 3,
-    idleTimeoutMillis: 10_000,
-    connectionTimeoutMillis: 5_000,
-  }));
+  const { benefits, requests } = getAccountServices();
   const provider: LegacyWatermarkProvider = env.WATERMARK_PROVIDER === 'dewatermark'
     ? new DewatermarkProvider(objects, {
         apiKey: env.DEWATERMARK_API_KEY as string,
@@ -65,6 +103,7 @@ function createServices() {
         'object-removal': objectProvider,
       },
       benefits,
+      ...(requests ? { requests } : {}),
     }),
   };
 }
@@ -72,5 +111,3 @@ function createServices() {
 export function getServices() {
   return (cached ??= createServices());
 }
-import { Pool } from 'pg';
-import { PostgresBenefitStore } from './benefits/postgres-benefit-store';

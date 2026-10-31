@@ -13,4 +13,8 @@ export function processingLabel(status: string) {
   const labels: Record<string, string> = { PREPARED: 'Preparing your task', QUEUED: 'Waiting to start', VALIDATING: 'Checking your file', TRANSFERRING: 'Preparing the media', SUBMITTING: 'Starting removal', PROCESSING: 'Removing watermarks', SAVING: 'Saving your result', SETTLING: 'Finalizing your result', READY: 'Ready to review', UNKNOWN: 'Checking the processing confirmation', FAILED: 'Processing could not finish', REFUNDED: 'Processing failed · credits returned', EXPIRED: 'This result has expired' };
   return labels[status] ?? 'Checking task status';
 }
-export function creditLabel(amount: number, unit: string) { return unit === 'freeUses' ? `${amount} free image ${amount === 1 ? 'use' : 'uses'}` : `${amount} processing ${amount === 1 ? 'credit' : 'credits'}`; }
+export function creditLabel(amount: number, unit: string) {
+  if (unit === 'freeUses') return `${amount} free image ${amount === 1 ? 'use' : 'uses'}`;
+  if (unit === 'purchasedImageCredits') return `${amount} image ${amount === 1 ? 'credit' : 'credits'}`;
+  return `${amount} processing ${amount === 1 ? 'credit' : 'credits'}`;
+}

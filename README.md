@@ -95,6 +95,8 @@ PR 的 GitHub CI 始终运行完整 `npm run verify`，它是合并 `main` 的�
 
 ## 文档索引
 
+- [PayPal 图片 Credits 与正式发布](docs/PAYPAL_LIVE_RELEASE.md)：一次性购买，三种图片工具分别计费；与免费次数、管理员处理额度分开，默认关闭收款。
+
 - [Pages CMS 中文操作教程](docs/PAGES_CMS_GUIDE.md)
 - [开发者指南](docs/DEVELOPER_GUIDE.md)
 - [运维手册](docs/OPERATIONS_RUNBOOK.md)

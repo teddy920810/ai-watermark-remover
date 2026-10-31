@@ -5,6 +5,7 @@ import { pathToFileURL } from 'node:url';
 import { z } from 'zod';
 import { cloudRunTriggerFromEnvironment } from '../../src/lib/runtime/cloud-run-trigger';
 import { createProcessingRuntime, type ProcessingRuntime, type ProcessingRuntimeConfig } from '../../src/lib/runtime/processing-services';
+import { imageCreditConfigFromEnvironment } from '../../src/lib/payments/image-credit-config';
 
 type Environment = Record<string, string | undefined>;
 type Mode = 'preflight' | 'process' | 'reconcile' | 'dispatch';
@@ -49,6 +50,7 @@ export function workerConfigFromEnvironment(source: Environment): ProcessingRunt
     databaseUrl, providerMode: providerMode as 'mock' | 'dewatermark', apiKey: source.DEWATERMARK_API_KEY,
     legacyProvider: { mode: legacy.data.WATERMARK_PROVIDER, baseUrl: legacy.data.DEWATERMARK_BASE_URL, predictMode: legacy.data.DEWATERMARK_PREDICT_MODE, timeoutMs: legacy.data.DEWATERMARK_TIMEOUT_MS, mockDelayMs: legacy.data.MOCK_PROCESSING_DELAY_MS },
     ffprobePath: source.FFPROBE_PATH, enabled, priceVersion: source.PROCESSING_PRICE_VERSION ?? 'processing-v1', trigger,
+    imageCredits: imageCreditConfigFromEnvironment(source),
   };
 }
 export interface WorkerDependencies {

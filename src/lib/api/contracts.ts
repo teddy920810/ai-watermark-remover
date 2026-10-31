@@ -4,10 +4,15 @@ import { validateUploadMetadata } from '../upload/validation';
 import { processingOperationSchema } from '../jobs/job';
 
 const uploadSchema = z.object({ contentType: z.string(), size: z.number() }).strict();
+const imageCreditConsentSchema = z.object({
+  imageCostVersion: z.string().regex(/^[a-zA-Z0-9:_-]{1,100}$/),
+  maxImageCredits: z.number().int().min(1).max(1_000_000),
+}).strict();
 const createJobSchema = z.object({
   inputKey: z.string().refine(isUploadKey, 'Invalid upload key'),
   maskKey: z.string().refine(isUploadKey, 'Invalid mask key').optional(),
   operation: processingOperationSchema.default('watermark-removal'),
+  imageCreditConsent: imageCreditConsentSchema.optional(),
 }).strict().superRefine((value, context) => {
   if (value.operation === 'object-removal') {
     if (!value.maskKey) {

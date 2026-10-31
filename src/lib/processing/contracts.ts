@@ -19,7 +19,7 @@ export const metadataSchema = z.object({
 export type MediaMetadata = z.infer<typeof metadataSchema>;
 export type ProcessingStatus = 'PREPARED' | 'QUEUED' | 'VALIDATING' | 'TRANSFERRING' | 'SUBMITTING' | 'PROCESSING' | 'SAVING' | 'SETTLING' | 'READY' | 'UNKNOWN' | 'FAILED' | 'REFUNDED' | 'EXPIRED';
 export type ChargeStatus = 'reserved' | 'settled' | 'refunded';
-export type CreditUnit = 'freeUses' | 'processingCredits';
+export type CreditUnit = 'freeUses' | 'purchasedImageCredits' | 'processingCredits';
 
 /** Internal records contain private keys. HTTP responses must use a public projection. */
 export interface ProcessingArtifact {
