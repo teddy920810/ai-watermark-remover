@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "origin": "https://ai-watermark-remover-l19745qqo-shiyaos-projects-b1e333f0.vercel.app",
+  "origin": "https://ai-watermark-remover-34sy9seeb-shiyaos-projects-b1e333f0.vercel.app",
   "assets": [
     {
       "path": "/_app-assets/_kind_.VGEm7Omq.css",
@@ -114,6 +114,18 @@
       "path": "/_app-assets/WatermarkWorkspace.Cs3H74rl.css",
       "sha256": "7ade13130d6ae7b90558a77c7d0699f78120c504158bec24975fbf961a591418",
       "byteSize": 8839,
+      "contentType": "text/css"
+    },
+    {
+      "path": "/_app-assets/_kind_.1KZ3MJ3A.css",
+      "sha256": "100e4958d1504397641a7b7a58f0fcd4a8d9424c74947fe3169b83feb83d1921",
+      "byteSize": 77896,
+      "contentType": "text/css"
+    },
+    {
+      "path": "/_app-assets/credits.BD2977eY.css",
+      "sha256": "907ec11d70a4c5b6861f8e221ed5a0078411ec2b184fa11a396a08db5245e6c1",
+      "byteSize": 67328,
       "contentType": "text/css"
     }
   ]
