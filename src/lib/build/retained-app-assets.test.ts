@@ -17,8 +17,8 @@ afterEach(() => { for (const directory of directories.splice(0)) rmSync(director
 
 describe('previous public App asset retention', () => {
   it('pins the current production workspace and all prior public assets on one immutable origin', () => {
-    // Anonymous /app/image and /app/video captures on 2026-10-25 share this recursive public asset graph.
-    // Keep both previous generations available to already-open workspaces; never retain HTML or private media.
+    // The 2026-10-31 immutable production App carries the earlier generations
+    // plus the pricing/workspace graph. Keep public files, never HTML/private media.
     const value = JSON.parse(readFileSync(new URL('../../../apps/app/retained-assets.json', import.meta.url), 'utf8'));
     const expected = [
       { path: '/_app-assets/_kind_.VGEm7Omq.css', sha256: '0d9113dca4fa109508d538c20b4d58e540c86ae8c3a0d0681886a7225714bc92', byteSize: 74247, contentType: 'text/css' },
@@ -30,9 +30,19 @@ describe('previous public App asset retention', () => {
       { path: '/_app-assets/_kind_.DeRaFZ08.css', sha256: '51965ec9d651fa3bbe68d530c240f5db788c4ccca13060c10024fa8d648b4b29', byteSize: 75296, contentType: 'text/css' },
       { path: '/_app-assets/WatermarkWorkspace.USrjb05O.js', sha256: 'c4aed2901066aa578e02001e5b85c36126067c0b2a404c7e074ab34609bcd2b7', byteSize: 77053, contentType: 'application/javascript' },
       { path: '/_app-assets/_kind_.DaZvEtyH.css', sha256: 'cb97c2a4b0dbba872435fd6cac268c386b89189b8ea39eff15012c86535fb2c3', byteSize: 77866, contentType: 'text/css' },
+      { path: '/_app-assets/_kind_.D_vaBh4v.css', sha256: 'c6e0b25040635a17b9047f83e9bebe015b32a9a69479295bac5d37ab06c857d9', byteSize: 19407, contentType: 'text/css' },
+      { path: '/_app-assets/arrow-right.DGLZUg4l.js', sha256: '9406cfff123e28ab6ad9180c0f5864e83ee16b3a8fa1e4c65cf1f068eed6e720', byteSize: 160, contentType: 'application/javascript' },
+      { path: '/_app-assets/AuthControls.BYaZ8k8p.js', sha256: '92dd856697006a10d91dbfe4245b37af8d6c65e5d9ca0fbb42ab38afa4fa2a24', byteSize: 4311, contentType: 'application/javascript' },
+      { path: '/_app-assets/CreditCheckout.C5vclqM6.js', sha256: '199620e3b0b9cf6345cc711fc382a060a96f7e8193aeb8a8191a9ec409b205e5', byteSize: 18874, contentType: 'application/javascript' },
+      { path: '/_app-assets/credits.Cs3H74rl.css', sha256: '7ade13130d6ae7b90558a77c7d0699f78120c504158bec24975fbf961a591418', byteSize: 8839, contentType: 'text/css' },
+      { path: '/_app-assets/global.DNxveWwK.css', sha256: '4f8397574906e6f99fb989c8afe8c8123a363032aadc27269fd6f44be66d5f68', byteSize: 58490, contentType: 'text/css' },
+      { path: '/_app-assets/jsx-runtime.oWLvl7P2.js', sha256: 'aa927142f4c972eede1b3aee54e642f4231d91e839be48e951f4bc8d354bc05b', byteSize: 32785, contentType: 'application/javascript' },
+      { path: '/_app-assets/user-round.Dhooj_tf.js', sha256: '1d29354e053ae22e5cd0eb6988150928c335935841dd2b8934f3834851b596f5', byteSize: 177, contentType: 'application/javascript' },
+      { path: '/_app-assets/WatermarkWorkspace.BcRuoLVk.js', sha256: '25a1f60411cccfaa0a67d956f78c88cc61000551fbf4a3d05b06499a973680bf', byteSize: 48274, contentType: 'application/javascript' },
+      { path: '/_app-assets/WatermarkWorkspace.Cs3H74rl.css', sha256: '7ade13130d6ae7b90558a77c7d0699f78120c504158bec24975fbf961a591418', byteSize: 8839, contentType: 'text/css' },
     ];
     expect(value.version).toBe(1);
-    expect(value.origin).toBe('https://ai-watermark-remover-jk2aa7vpu-shiyaos-projects-b1e333f0.vercel.app');
+    expect(value.origin).toBe('https://ai-watermark-remover-l19745qqo-shiyaos-projects-b1e333f0.vercel.app');
     expect(value.assets).toEqual(expect.arrayContaining(expected));
     expect(value.assets.length).toBeLessThanOrEqual(32);
     expect(new Set(value.assets.map((entry: { path: string }) => entry.path)).size).toBe(value.assets.length);

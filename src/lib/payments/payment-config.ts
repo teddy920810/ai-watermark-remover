@@ -44,3 +44,13 @@ export function getPaymentConfig(source: NodeJS.ProcessEnv = process.env) {
   return { enabled, creditsEnabled, environment, clientId, clientSecret, merchantId, webhookId, packages, catalogVersion, imageCosts: imagePrices.costs, imageCostVersion: imagePrices.version };
 }
 export type PaymentConfig = ReturnType<typeof getPaymentConfig>;
+
+// Explicit projection shared by the API and the request-rendered pricing page.
+// Never pass the server configuration object to an island: it contains credentials.
+export function publicPaymentCatalog(config: PaymentConfig) {
+  return {
+    enabled: config.enabled, creditsEnabled: config.creditsEnabled, environment: config.environment,
+    ...(config.enabled ? { clientId: config.clientId } : {}),
+    packages: config.packages, imageCosts: config.imageCosts, imageCostVersion: config.imageCostVersion,
+  };
+}

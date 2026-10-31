@@ -41,6 +41,8 @@ The App also needs the approved `PAYPAL_CATALOG_JSON` package array and `PAYPAL_
 
 `PAYPAL_ENABLED` controls new orders. `PAYPAL_CREDITS_ENABLED` preserves purchased balances and fulfillment when new orders are paused. Live credit consumption requires explicit costs even if new checkout is paused; it never falls back to Sandbox's one-credit defaults. Opening Live checkout also requires `PAYPAL_LIVE_APPROVED=true`, the approved catalog/version, real processing Providers and a valid durable dispatch configuration. Pure configuration parsing does not verify IAM, Worker deployment or actual results.
 
+The private `/app/credits` route is rendered on request by App so the first HTML contains the runtime catalog instead of an empty loading row. Both the page and catalog API use an explicit public projection; the full server configuration and credentials must never become island props. Browser initialization still confirms the catalog API before loading the PayPal SDK. Pending authentication uses a neutral status rather than briefly declaring the visitor signed out. Public SEO pages remain static. See [Astro request-time rendering](https://docs.astro.build/en/guides/on-demand-rendering/).
+
 ## Financial and account invariants
 
 - Keep current `google_account_owners`, canonical `getSession`, authentication secret and legacy owner IDs. Do not import the obsolete Sandbox `wm_google_*` identity switch, merge by PayPal email, move old R2 keys or rewrite historic balances.
