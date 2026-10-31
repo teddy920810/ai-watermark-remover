@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { assertCmsPublication } from '../scripts/cms-publication.mjs';
 import { publishedAtSchema } from './lib/content/published-date';
 import { homepageSchema } from './lib/content/homepage';
+import { landingComparisonSchema, landingDesignFields } from './lib/content/landing-design';
 import { siteCtaSchema, siteSettingsSchema, uploaderCopyOverrideSchema } from './lib/content/site-settings';
 import { imageSettingsSchema } from './lib/content/image-metadata';
 import { trustedHtmlSchema } from './lib/content/trusted-html';
@@ -96,6 +97,7 @@ const landingFeatureItemSchema = z.object({
   image: z.string().min(1),
   imageAlt: z.string().min(1),
   imagePosition: z.enum(['left', 'right']).default('right'),
+  comparison: landingComparisonSchema.optional(),
 });
 
 const landingFeaturesSchema = z.object({
@@ -108,6 +110,7 @@ const landingFeaturesSchema = z.object({
 const landingPages = defineCollection({
   loader: glob({ base: './src/content/landing-pages', pattern: '**/*.json' }),
   schema: z.object({
+    ...landingDesignFields,
     templateVersion: z.literal(1).optional(),
     slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
     draft: z.boolean().default(false),

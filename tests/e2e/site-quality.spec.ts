@@ -17,8 +17,8 @@ test('ChatGPT landing modules keep source visuals and page-local actions without
   await page.goto('/chatgpt-watermark-remover');
   await expect(page.locator('.landing-features-section .feature-item')).toHaveCount(3);
   await expect(page.locator('.faq-list details')).toHaveCount(6);
-  await expect(page.locator('main > section')).toHaveCount(5);
-  await expect(page.locator('main > section').nth(3)).toHaveAttribute('id', 'image-requirements');
+  await expect(page.locator('.tool-landing > section')).toHaveCount(7);
+  await expect(page.locator('.tool-landing > section').nth(3)).toHaveAttribute('id', 'image-requirements');
   for (const image of await page.locator('.landing-features-section img').all()) {
     await image.scrollIntoViewIfNeeded();
     await expect(image).toHaveAttribute('src', /\/uploads\/chatgpt-feature-/);
@@ -395,16 +395,17 @@ test('FAQ section emits a FAQPage JSON-LD schema', async ({ page }) => {
 });
 
 test('tool landing pages render their own usage steps and FAQ sections', async ({ page }) => {
+  test.setTimeout(90_000); // Check the independent content on all published tool pages.
   const contentDirectory = new URL('../../src/content/landing-pages/', import.meta.url);
   const pages = readdirSync(contentDirectory, { encoding: 'utf8' }).filter((fileName) => fileName.endsWith('.json')).map((fileName) => {
     const content = JSON.parse(
       readFileSync(new URL(fileName, contentDirectory), 'utf8'),
     );
-    return { path: `/${content.slug}`, faqHeading: content.faq.heading as string, draft: content.draft === true };
+    return { path: `/${content.slug}`, faqHeading: content.faq.heading as string, faqIntro: content.faq.intro as string, draft: content.draft === true };
   }).filter((content) => !content.draft);
   expect(new Set(pages.map(({ faqHeading }) => faqHeading)).size).toBe(pages.length);
 
-  for (const { path, faqHeading } of pages) {
+  for (const { path, faqHeading, faqIntro } of pages) {
     await page.goto(path);
     const process = page.locator('#how-it-works');
     await expect(process.getByRole('heading', { level: 2 })).toBeVisible();
@@ -413,7 +414,7 @@ test('tool landing pages render their own usage steps and FAQ sections', async (
 
     const faq = page.locator('.faq-section');
     await expect(faq.getByRole('heading', { level: 2 })).toHaveText(faqHeading);
-    await expect(faq.locator('.section-heading > p')).toBeVisible();
+    await expect(faq.locator('.section-heading > p')).toHaveText(faqIntro);
     await expect(faq.locator('details').first()).toBeVisible();
   }
 });

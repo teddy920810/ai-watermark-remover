@@ -119,5 +119,37 @@
         "imagePosition": "right"
       }
     ]
+  },
+  "heroSamples": [
+    {
+      "id": "preview-1",
+      "label": "Example 1",
+      "image": "/uploads/remove-gemini-watermark.png",
+      "imageAlt": "remove veo watermark without blur"
+    },
+    {
+      "id": "preview-2",
+      "label": "Example 2",
+      "image": "/uploads/remove-logo-from-image.png",
+      "imageAlt": "remove veo watermark without cropping"
+    },
+    {
+      "id": "preview-3",
+      "label": "Example 3",
+      "image": "/uploads/remove-text-from-image.png",
+      "imageAlt": "clean veo 3 video exports"
+    }
+  ],
+  "relatedTools": {
+    "enabled": true,
+    "eyebrow": "Popular tools",
+    "heading": "All AI tools of WatermarkGemini",
+    "intro": "Start with the cleanup workflow that best matches your image."
+  },
+  "guides": {
+    "enabled": true,
+    "eyebrow": "Helpful guides",
+    "heading": "Learn More About Free AI Watermark Remover from Image",
+    "intro": "Practical guides for cleaner, more polished images."
   }
 }

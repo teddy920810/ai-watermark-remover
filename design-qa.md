@@ -188,3 +188,59 @@ The production report showed zero package cards in the first HTML response, foll
 - Chrome again logged two unattributed storage-access errors in this existing profile; cards and sign-in checks completed, and no corresponding application exception appeared in focused automated coverage. Real payment, signed Live callbacks, paid processing and refund remain separate user-gated acceptance.
 
 final result: passed
+
+## 工具落地页 v16 本地迭代（2026-10-31）
+
+本节只记录本轮工具页，保留以上历史首页验收记录。工作区为 canonical `teddy920810/ai-watermark-remover`，本轮从 `main@5be42381` 开始；既有首页、账户、支付和处理流程改动未被覆盖。未提交、推送或部署。
+
+### 范围和交互契约
+
+- 20 个公开工具页和 1 条草稿共用新布局；各页保留独立标题、流程、FAQ、图片、上传文案和处理类型，保留 Coming Soon。
+- 示例选择与前后对比仅改变本地展示，不选择上传文件、不创建 job、不改变余额。真实流程仍由三个既有 uploader 完成：选图、必要时登录、上传、处理、结果和下载。
+- 首屏样例、Feature 比较图、相关工具与指南由各页 CMS 配置。清空关联 slug 列表恢复自动选择；草稿和未开放工具不进入可用工具卡片。指南使用真实博客路由。
+- Gemini 配置 3 个首屏样例及 4 组 Feature 比较；原前三组 Feature 文案和原图字段保留。其他工具的既有拼接对比图继续静态显示，不再叠加虚构水印；可在 CMS 提供真实前后图启用滑块。
+
+### 参考与截图证据
+
+- 参考源码：`E:/xwechat_files/sy236577346_7b05/msg/file/2026-10/gemini-watermark-remover-optimized-release-v16/outputs/gemini-watermark-remover-optimized/index.html`，同目录 CSS、交互脚本和 assets。
+- 六张新增原图与设计包 SHA-256 全部一致；响应式衍生图已生成。
+- 当前本地预览：`http://127.0.0.1:4386/gemini-watermark-remover`，HTTP 200，包含 3 个 Hero 与 4 个 Feature 比较。
+- 浏览器实现截图：`output/tool-landing-v16/gemini-desktop.png`、`output/tool-landing-v16/gemini-mobile.png`，状态为匿名、首屏第一个样例、滑块 50%。实际文件尺寸为 1905×890 和 375×812；截图请求尺寸为 1920×1080 和 390×844，浏览器实际输出不同，未做密度归一化，不能作为 1:1 对照。
+- 功能测试使用的浏览器视口为桌面 1440/1920 与手机 390；Feature 测试为 1920×1080、390×1080。
+- 原稿 `file://` 的浏览器访问被安全策略拒绝，未绕过。后续浏览器连接超时，未补拍最终完整页面。缺少可打开的原稿参考截图，未形成原稿与实现的同视口拼图，整页和局部的视觉对照均未通过验收。
+
+### 已检查的五项表面及有意差异
+
+- 字体：沿用 DM Sans 和 Plus Jakarta Sans；按源码迁移标题、行高和字号，并保留 Gemini 的分行。已查看实现首屏，原稿实际换行仍待同视口对照。
+- 布局：1160px 首屏工作区、1200px 内容区、步骤、交替 Feature、卡片、双列指南及窄屏堆叠已实现；保留原 header、公共 CTA/footer 及工作区展开契约。精确间距的原稿对照待补。
+- 颜色：延续原蓝色系统；小字、步骤数字、After 标签及工具 CTA 略微加深；Feature 水印徽标增加深色底以满足可读性。属于明确的可访问性差异。
+- 图片：新增素材来自设计包，保留原有页面素材；真实图片加载、非占位图及滑块 0%/100% 裁切已通过测试。原稿裁切与密度对照待补。
+- 文案：各工具既有内容独立保留；Gemini 第四块按实际免费余额、Google 登录、每日签到及私有存储说明撰写，未复制设计包中不符合实际的 “no credits to purchase”。
+
+### 验证及修复历史
+
+- TDD：CMS/model、Feature 新配置、可用工具过滤和空列表语义均有先失败后通过的测试；最新模型 32 项通过。内容相关三文件曾完成 136 项通过。
+- 新浏览器行为：首轮 4 项通过，覆盖桌面/手机示例切换、指针/键盘、背景/物体选图展开与重置、独立 FAQ、真实链接、Coming Soon 和首页负向区域；确认无上传/处理请求。增加的四组 Feature 目标也先红后绿。
+- 一次标准 `check:ui`：144 项单元通过；公共页面首轮 15/18 通过。失败涉及博客循环并发超时、旧 FAQ 简介可见性断言以及小字对比度，首次证据保存在 `output/tool-landing-qa/first-check-ui-failure/`。
+- 修复：FAQ 按新设计隐藏简介，但断言仍锁定各页独立文本；20 页循环扩大到 90 秒；逐项修复对比度。博客单项串行复核通过，20 页流程/FAQ 和 Hero 图片/交互复核通过。
+- 最后两项定向复核通过：全部公开页面和 404 无 serious/critical 可访问性问题；4 组 Feature 在桌面/手机使用正确图片，实际加载并完成 0%/100% 裁切验证。Feature 导航使用 DOMContentLoaded，再逐图等待，避免把外部 GA 脚本 Pending 当作页面失败，未放宽图片或交互断言。
+- Astro 等价类型检查：排除工作区既有 `output/` 临时副本后，217 文件、0 errors；项目 tsconfig 未修改。定向 ESLint 和最终 diff 检查通过。
+- 以上为本地代码和功能证据；未修改 API、Provider、鉴权、R2、环境或域名，相关生产 gate 为 not applicable。未触发付费处理或 Production Smoke。
+
+### 当前结论
+
+本地功能验证通过；原稿与实现的同视口视觉对照仍受参考截图缺失及浏览器连接问题阻塞。
+
+依据 `product-design/skills/design-qa/SKILL.md`：“If either artifact cannot be opened, captured, or compared, write `design-qa.md` with `final result: blocked` and name the blocker.” 后续需可访问参考画面与最终实现截图，按同视口、同状态对照后才能标记视觉验收通过。
+
+final result: blocked
+
+### 用户发布授权与远端基线保留（2026-10-31）
+
+用户在查看本地预览及上述视觉限制后明确指示“提交上线”。发布工作转入隔离分支 `codex/tool-landing-v16`，基于 `f6d26c9` 移植本轮工具页增量；上述旧本地验证数字与静态 uploader 描述仅记录当时基线，不能替代发布分支验证。
+
+发布版保留远端最新 `MediaLauncher`、图片/视频工作区跳转、视频已开放状态与既有处理能力，schema 保留 `video-watermark-remover`；9 个 Coming Soon 与两条草稿不因改版改变。API、Provider、账户权益、PayPal、鉴权、环境、域名及首页既有实现均不属于本次发布改动。发布分支将单独记录 CI、部署与生产只读验证结果。
+
+用户上线指示没有把缺失的原稿同视口截图对照转为已通过；原稿视觉比较限制继续保留，不能以代码检查或部署状态替代。
+
+final result: blocked

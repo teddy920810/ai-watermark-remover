@@ -95,7 +95,12 @@
         "description": "Cropping out a corner watermark can cut away important subjects, backgrounds, or space you planned to use for text.\nWatermarkGemini removes the visible Gemini mark from the image instead, helping you keep the original frame and composition intact.",
         "image": "/uploads/gemini-no-crop.webp",
         "imageAlt": "Remove Gemini watermark without cropping",
-        "imagePosition": "right"
+        "imagePosition": "left",
+        "comparison": {
+          "image": "/uploads/tool-landing-v16/gemini-travel.png",
+          "style": "gemini",
+          "watermark": "GEMINI"
+        }
       },
       {
         "eyebrow": "FEATURE 2",
@@ -103,7 +108,12 @@
         "description": "Simply blurring or covering a watermark can leave an obvious patch behind.\nWatermarkGemini cleans the visible mark while restoring the surrounding area so backgrounds such as skies, walls, textures, illustrations, and product surfaces look more natural.",
         "image": "/uploads/gemini-natural-background.webp",
         "imageAlt": "Gemini watermark remover with natural background",
-        "imagePosition": "left"
+        "imagePosition": "right",
+        "comparison": {
+          "image": "/uploads/tool-landing-v16/gemini-texture.png",
+          "style": "gemini",
+          "watermark": "GEMINI"
+        }
       },
       {
         "eyebrow": "FEATURE 3",
@@ -111,8 +121,70 @@
         "description": "You shouldn't need Photoshop, clone tools, or manual pixel editing just to clean a small Gemini watermark.\nUpload your image, process the visible mark online, preview the result, and download a cleaner version ready for presentations, social posts, product visuals, and other projects.",
         "image": "/uploads/gemini-easy-online.webp",
         "imageAlt": "Remove Gemini watermark online easily",
-        "imagePosition": "right"
+        "imagePosition": "left",
+        "comparison": {
+          "image": "/uploads/tool-landing-v16/gemini-laptop.png",
+          "style": "gemini",
+          "watermark": "GEMINI"
+        }
+      },
+      {
+        "eyebrow": "FEATURE 4",
+        "heading": "Free Online Watermark Removal with Private Processing",
+        "description": "Use WatermarkGemini directly in your browser. Sign in with Google to use your free processing balance and earn additional free credits through daily check-in. Uploaded images and processed results stay in private storage and are scheduled for automatic deletion after 24 hours.",
+        "image": "/uploads/tool-landing-v16/gemini-private.png",
+        "imageAlt": "Laptop and lock representing private Gemini watermark cleanup processing",
+        "imagePosition": "right",
+        "comparison": {
+          "image": "/uploads/tool-landing-v16/gemini-private.png",
+          "style": "gemini",
+          "watermark": "GEMINI"
+        }
       }
     ]
+  },
+  "heroSamples": [
+    {
+      "id": "water",
+      "label": "Water portrait",
+      "image": "/uploads/tool-landing-v16/gemini-water.png",
+      "imageAlt": "Portrait in water for a Gemini watermark cleanup illustration",
+      "comparison": {
+        "style": "gemini",
+        "watermark": "GEMINI"
+      }
+    },
+    {
+      "id": "travel",
+      "label": "Travel portrait",
+      "image": "/uploads/tool-landing-v16/gemini-travel.png",
+      "imageAlt": "Travel portrait with a dog for a Gemini watermark cleanup illustration",
+      "comparison": {
+        "style": "gemini",
+        "watermark": "GEMINI"
+      }
+    },
+    {
+      "id": "serum",
+      "label": "Product photo",
+      "image": "/uploads/tool-landing-v16/gemini-serum.png",
+      "imageAlt": "Skincare serum product photo for a Gemini watermark cleanup illustration",
+      "comparison": {
+        "style": "gemini",
+        "watermark": "GEMINI"
+      }
+    }
+  ],
+  "relatedTools": {
+    "enabled": true,
+    "eyebrow": "Popular tools",
+    "heading": "All AI tools of WatermarkGemini",
+    "intro": "Start with the cleanup workflow that best matches your image."
+  },
+  "guides": {
+    "enabled": true,
+    "eyebrow": "Helpful guides",
+    "heading": "Learn More About Free AI Watermark Remover from Image",
+    "intro": "Practical guides for cleaner, more polished images."
   }
 }

@@ -65,5 +65,37 @@
     "dropzone": {
       "dropLabel": "Coming Soon"
     }
+  },
+  "heroSamples": [
+    {
+      "id": "preview-1",
+      "label": "Upload preview",
+      "image": "/uploads/workflow-upload-step.png",
+      "imageAlt": "Image entering the secure upload workflow"
+    },
+    {
+      "id": "preview-2",
+      "label": "Processing preview",
+      "image": "/uploads/workflow-ai-detection-step.png",
+      "imageAlt": "AI detecting a visible watermark area in an image"
+    },
+    {
+      "id": "preview-3",
+      "label": "Download preview",
+      "image": "/uploads/workflow-download-step.png",
+      "imageAlt": "Before and after image ready for secure download"
+    }
+  ],
+  "relatedTools": {
+    "enabled": true,
+    "eyebrow": "Popular tools",
+    "heading": "All AI tools of WatermarkGemini",
+    "intro": "Start with the cleanup workflow that best matches your image."
+  },
+  "guides": {
+    "enabled": true,
+    "eyebrow": "Helpful guides",
+    "heading": "Learn More About Free AI Watermark Remover from Image",
+    "intro": "Practical guides for cleaner, more polished images."
   }
 }
