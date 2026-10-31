@@ -22,12 +22,13 @@ const imageOperations = [
   { operation: 'object-removal', label: 'Object removal' },
 ] as const;
 
-export default function CreditCheckout() {
+export default function CreditCheckout({ initialCatalog }: { initialCatalog?: PaymentCatalog } = {}) {
   const { data: session, isPending } = authClient.useSession();
-  const [catalog, setCatalog] = useState<PaymentCatalog | null>(null);
+  const [catalog, setCatalog] = useState<PaymentCatalog | null>(initialCatalog ?? null);
+  const [catalogConfirmed, setCatalogConfirmed] = useState(false);
   const userId = paymentAccountId(session?.user);
   const [catalogError, setCatalogError] = useState(false);
-  const [sku, setSku] = useState('');
+  const [sku, setSku] = useState(initialCatalog?.packages[0]?.sku ?? '');
   const [orders, setOrders] = useState<PaymentOrder[]>([]);
   const [ordersError, setOrdersError] = useState(false);
   const [order, setOrder] = useState<PaymentOrder | null>(null);
@@ -68,11 +69,13 @@ export default function CreditCheckout() {
   }, [saveActiveAttempt, storagePrefix]);
 
   const loadCatalog = useCallback(async () => {
+    setCatalogConfirmed(false);
     setCatalogError(false);
     try {
       const next = await paymentRequest<PaymentCatalog>('/api/payments/catalog');
       setCatalog(next);
       setSku((selected) => next.packages.some((item) => item.sku === selected) ? selected : (next.packages[0]?.sku ?? ''));
+      setCatalogConfirmed(true);
     } catch { setCatalogError(true); }
   }, []);
 
@@ -138,7 +141,7 @@ export default function CreditCheckout() {
   }, [loadOrders, refreshPaymentViews, resolveActiveAttempt, showOrder, storagePrefix, userId]);
 
   useEffect(() => {
-    if (!catalog?.enabled || !catalog.clientId || !userId || restoredUserId !== userId || !sku || !containerRef.current) return;
+    if (!catalogConfirmed || !catalog?.enabled || !catalog.clientId || !userId || restoredUserId !== userId || !sku || !containerRef.current) return;
     let disposed = false;
     let buttons: PayPalButtons | undefined;
     const keyName = `${storagePrefix}request:${sku}`;
@@ -179,7 +182,7 @@ export default function CreditCheckout() {
       disposed = true;
       void buttons?.close().catch(() => undefined);
     };
-  }, [catalog, generation, refreshPaymentViews, resolveActiveAttempt, restoredUserId, saveActiveAttempt, showOrder, sku, storagePrefix, userId]);
+  }, [catalog, catalogConfirmed, generation, refreshPaymentViews, resolveActiveAttempt, restoredUserId, saveActiveAttempt, showOrder, sku, storagePrefix, userId]);
 
   async function signIn() {
     setSigningIn(true);
@@ -303,6 +306,7 @@ export default function CreditCheckout() {
           <div className="payment-action">
             {!userId && !isPending ? <button className="button button-primary" type="button" onClick={signIn} disabled={signingIn || !catalog.enabled}>{signingIn ? 'Connecting…' : 'Sign in with Google to buy'}</button> : null}
             {isPending ? <p role="status">Checking sign-in…</p> : null}
+            {userId && !catalogConfirmed && !catalogError ? <p role="status">Checking payment availability…</p> : null}
             {userId && !catalog.enabled ? <button className="button button-primary" type="button" disabled>Checkout unavailable</button> : null}
             <div ref={containerRef} className="paypal-button-container" hidden={!userId || !catalog.enabled || status === 'fulfilled' || status === 'confirming'} />
             {status === 'creating' ? <p role="status">Creating your order…</p> : null}
@@ -328,7 +332,7 @@ export default function CreditCheckout() {
       </section> : null}
       <section className="payment-history" id="orders" aria-labelledby="payment-orders-heading">
         <div className="payment-history-heading"><h2 id="payment-orders-heading">Your orders</h2>{userId ? <button type="button" className="button button-ghost" onClick={() => loadOrders(true)} disabled={busy || checking || activeAttempt !== null}>Refresh orders</button> : null}</div>
-        {!userId ? <p>Sign in to see purchases for your account.</p> : ordersError ? <p role="alert">Your order history could not load. Refresh it before making another purchase.</p> : orders.length === 0 ? <p>No purchases yet.</p> : <div className="payment-table-wrap"><table><thead><tr><th scope="col">Order</th><th scope="col">Credits</th><th scope="col">Total</th><th scope="col">Status</th><th scope="col">Action</th></tr></thead><tbody>{orders.map((item) => <tr key={item.id}>
+        {isPending ? <p role="status">Checking sign-in…</p> : !userId ? <p>Sign in to see purchases for your account.</p> : ordersError ? <p role="alert">Your order history could not load. Refresh it before making another purchase.</p> : orders.length === 0 ? <p>No purchases yet.</p> : <div className="payment-table-wrap"><table><thead><tr><th scope="col">Order</th><th scope="col">Credits</th><th scope="col">Total</th><th scope="col">Status</th><th scope="col">Action</th></tr></thead><tbody>{orders.map((item) => <tr key={item.id}>
           <td><code>{item.id}</code><small>{new Date(item.createdAt).toLocaleDateString()}</small></td><td>{item.credits}</td><td>{formatPrice(item.amountCents, item.currency)}</td><td>{labels[item.status] ?? 'Needs review'}</td><td><button type="button" disabled={busy || checking || activeAttempt !== null} onClick={() => checkOrder(item.id)}>Check order</button></td>
         </tr>)}</tbody></table></div>}
       </section>

@@ -1,13 +1,15 @@
 ---
 import AuthControls from '../../components/auth/AuthControls';
 import CreditCheckout from '../../components/payments/CreditCheckout';
+import { getPaymentConfig, publicPaymentCatalog } from '../../lib/payments/payment-config';
 import { Monitor, ShieldCheck, WalletCards } from '@lucide/astro';
 import site from '../../content/settings/site.json';
 import '../../styles/global.css';
 import '../../styles/payments.css';
 
-export const prerender = true;
-const appAsset = (path: string) => process.env.BUILD_TARGET === 'app' ? `/_app-assets/public${path}` : path;
+export const prerender = false;
+const initialCatalog = publicPaymentCatalog(getPaymentConfig());
+const appAsset = (path: string) => import.meta.env.BUILD_TARGET === 'app' ? `/_app-assets/public${path}` : path;
 ---
 <!doctype html>
 <html lang={site.locale}>
@@ -36,7 +38,7 @@ const appAsset = (path: string) => process.env.BUILD_TARGET === 'app' ? `/_app-a
           <li><ShieldCheck size={21} aria-hidden="true" />No automatic renewal</li>
         </ul>
       </div>
-      <CreditCheckout client:load />
+      <CreditCheckout initialCatalog={initialCatalog} client:load />
       <div class="pricing-terms">
         <p>One-time payment. No automatic renewal. Purchased image credits have no scheduled expiry, cannot be transferred, and cannot be exchanged for cash. Process only images you are authorized to edit.</p>
         <p>These image credits do not cover PRO, brush refinement, or video processing.</p>

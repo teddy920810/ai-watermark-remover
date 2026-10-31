@@ -175,3 +175,16 @@ Source visual truth: `output/pricing-design/reference.png` (the supplied HitPaw 
 - Real purchase, signed callback delivery, paid-credit processing and refund acceptance remain pending. They are not implied by this design check.
 
 final result: passed
+
+## Incognito first-render regression — 2026-10-31
+
+The production report showed zero package cards in the first HTML response, followed by a loading message and prematurely anonymous order history. Request rendering now emits the approved public catalog before browser code runs; only an explicit public whitelist is serialized. The client still confirms the latest catalog before loading PayPal, and pending session checks use a neutral status.
+
+- Desktop 1680 × 957 and mobile 390 × 844 were inspected in Chrome. Captures: output/pricing-first-render-desktop.png and output/pricing-first-render-mobile.png; mobile content width 375 at viewport 390, with no horizontal overflow. Four cards remain present during pending checks.
+- The supplied source and current desktop capture were normalized and opened together in output/pricing-first-render-comparison.png. Typography, four-card hierarchy, spacing, brand colors, logo/icons and approved one-time-purchase copy remain consistent with the accepted layout. No CSS or reference assets changed in this fix; no actionable P0/P1/P2 visual issue remains.
+- New raw-HTML and delayed-network tests first failed on zero cards. The corrected page renders four cards, sends one catalog request and keeps measured section geometry within 2px. The enabled dummy-Sandbox check confirms zero SDK requests before catalog confirmation, exactly one afterward, and zero create/capture requests.
+- Full local release verification passed audit threshold, 1,074 unit tests (9 database opt-ins skipped), coverage, lint, Astro checks and build. Its parallel browser run preserved 95 passes / 6 failures / 1 opt-in skip. The six unchanged failures passed once serially at their original timeouts; traces showed delayed development hydration/refresh. The enabled SDK opt-in passed separately using dummy local credentials only. This is not represented as a one-shot clean full gate; required PR CI remains separate.
+- Nineteen audited retained application assets preserve all previous nine entries plus production615 dependencies. Retention tests 9/9 and the actual App artifact build passed. Local artifacts are not deployed as Windows-built App functions.
+- Chrome again logged two unattributed storage-access errors in this existing profile; cards and sign-in checks completed, and no corresponding application exception appeared in focused automated coverage. Real payment, signed Live callbacks, paid processing and refund remain separate user-gated acceptance.
+
+final result: passed

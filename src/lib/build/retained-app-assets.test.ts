@@ -17,8 +17,8 @@ afterEach(() => { for (const directory of directories.splice(0)) rmSync(director
 
 describe('previous public App asset retention', () => {
   it('pins the current production workspace and all prior public assets on one immutable origin', () => {
-    // Anonymous /app/image and /app/video captures on 2026-10-25 share this recursive public asset graph.
-    // Keep both previous generations available to already-open workspaces; never retain HTML or private media.
+    // The 2026-10-31 immutable production App carries the earlier generations
+    // plus the pricing/workspace graph. Keep public files, never HTML/private media.
     const value = JSON.parse(readFileSync(new URL('../../../apps/app/retained-assets.json', import.meta.url), 'utf8'));
     const expected = [
       { path: '/_app-assets/_kind_.VGEm7Omq.css', sha256: '0d9113dca4fa109508d538c20b4d58e540c86ae8c3a0d0681886a7225714bc92', byteSize: 74247, contentType: 'text/css' },
@@ -32,7 +32,7 @@ describe('previous public App asset retention', () => {
       { path: '/_app-assets/_kind_.DaZvEtyH.css', sha256: 'cb97c2a4b0dbba872435fd6cac268c386b89189b8ea39eff15012c86535fb2c3', byteSize: 77866, contentType: 'text/css' },
     ];
     expect(value.version).toBe(1);
-    expect(value.origin).toBe('https://ai-watermark-remover-jk2aa7vpu-shiyaos-projects-b1e333f0.vercel.app');
+    expect(value.origin).toBe('https://ai-watermark-remover-l19745qqo-shiyaos-projects-b1e333f0.vercel.app');
     expect(value.assets).toEqual(expect.arrayContaining(expected));
     expect(value.assets.length).toBeLessThanOrEqual(32);
     expect(new Set(value.assets.map((entry: { path: string }) => entry.path)).size).toBe(value.assets.length);
