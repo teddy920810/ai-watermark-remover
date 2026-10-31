@@ -15,6 +15,23 @@ function section(body: string, heading: RegExp) {
 }
 
 describe('published legal pages match the current service', () => {
+  it('limits purchased image credits to the three priced image operations and discloses payment handling', () => {
+    const terms = readLegal('terms').body;
+    const purchases = section(terms, /purchased image credits/i);
+    expect(purchases).toMatch(/standard image watermark removal[\s\S]*background removal[\s\S]*object removal/i);
+    expect(purchases).toMatch(/do not[\s\S]*PRO[\s\S]*refinement[\s\S]*video/i);
+    expect(purchases).toMatch(/one-time[\s\S]*automatic renewal/i);
+    expect(purchases).toMatch(/free[\s\S]*first/i);
+    expect(purchases).toMatch(/watermark removal[^\n]*100 Credits/i);
+    expect(purchases).toMatch(/background removal[^\n]*10 Credits/i);
+    expect(purchases).toMatch(/object removal[^\n]*10 Credits/i);
+    expect(purchases).toMatch(/viewing[^\n]*downloading[^\n]*no Credits/i);
+    expect(purchases).toMatch(/refund[\s\S]*order/i);
+    const paymentPrivacy = section(readLegal('privacy').body, /payments/i);
+    expect(paymentPrivacy).toMatch(/PayPal/);
+    expect(paymentPrivacy).toMatch(/order[\s\S]*refund/i);
+    expect(paymentPrivacy).toMatch(/do not[\s\S]*card|do not[\s\S]*password/i);
+  });
   for (const slug of ['terms', 'privacy'] as const) {
     it(`${slug} keeps its route, single page heading, update date and contact`, () => {
       const { data, body } = readLegal(slug);

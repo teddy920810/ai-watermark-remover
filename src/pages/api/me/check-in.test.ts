@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { getServices, getSession } = vi.hoisted(() => ({ getServices: vi.fn(), getSession: vi.fn() }));
-vi.mock('../../../lib/services', () => ({ getServices }));
+const { getAccountServices, getServices, getSession } = vi.hoisted(() => ({ getAccountServices: vi.fn(), getServices: vi.fn(), getSession: vi.fn() }));
+vi.mock('../../../lib/services', () => ({ getAccountServices, getServices }));
 vi.mock('../../../lib/auth', () => ({ getSession }));
 
 import { POST } from './check-in';
@@ -11,6 +11,7 @@ const context = { request: new Request('https://example.test/api/me/check-in', {
 describe('POST /api/me/check-in', () => {
   beforeEach(() => {
     getServices.mockReset();
+    getAccountServices.mockReset();
     getSession.mockReset();
     getSession.mockResolvedValue({ user: { id: 'google-user-1', email: 'Person@Example.com' } });
   });
@@ -22,10 +23,13 @@ describe('POST /api/me/check-in', () => {
 
   it('returns the atomic daily check-in result', async () => {
     const checkIn = vi.fn().mockResolvedValue({ balance: 2, cap: 3, dailyReward: 1, checkedInToday: true, granted: true, balanceFull: false });
-    getServices.mockReturnValue({ benefits: { checkIn } });
+    const recoverUser = vi.fn();
+    getAccountServices.mockReturnValue({ recoverUser, benefits: { checkIn } });
     const response = await POST(context);
     expect(response.status).toBe(200);
     await expect(response.json()).resolves.toMatchObject({ balance: 2, checkedInToday: true, granted: true });
     expect(checkIn).toHaveBeenCalledWith('google-user-1', 'Person@Example.com');
+    expect(getServices).not.toHaveBeenCalled();
+    expect(recoverUser).not.toHaveBeenCalled();
   });
 });

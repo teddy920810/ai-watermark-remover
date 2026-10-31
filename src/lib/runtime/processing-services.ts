@@ -26,6 +26,7 @@ import { mediaKey, PrivateMediaStore, SITE_MAX_IMAGE_BYTES, SITE_MAX_VIDEO_BYTES
 import { ProcessingProvider } from './processing-provider';
 import { PublicProcessingProjection } from './public-projection';
 import type { PublicUpload, PublicUploadTicket } from '../contracts/processing-public';
+import type { ImageCreditCosts } from '../payments/image-credit-prices';
 export type { PublicUpload } from '../contracts/processing-public';
 
 export type ExecutionTrigger = (action: 'process' | 'reconcile' | 'preflight', id: string, ownerId: string, existingExecutionRef?: string, dispatchId?: string) => Promise<{ executionRef?: string; nextCheckAt: string; terminal?: boolean }>;
@@ -39,6 +40,7 @@ export interface ProcessingRuntimeConfig {
   legacyProvider?: { mode: 'mock' | 'dewatermark'; baseUrl?: string; predictMode?: '3.0' | '4.0'; timeoutMs?: number; mockDelayMs?: number };
   enabled?: boolean;
   priceVersion?: string;
+  imageCredits?: { enabled: boolean; environment: 'sandbox' | 'live'; costs?: ImageCreditCosts; priceVersion?: string };
   trigger?: ExecutionTrigger;
   /** Test ports are explicit; production defaults always use real SDK adapters. */
   dependencies?: {
@@ -96,6 +98,7 @@ class MockPrivateProcessingProvider implements ProcessingWatermarkProvider {
 
 /** No Astro imports, process globals, background promises or startup network calls. */
 export function createProcessingRuntime(config: ProcessingRuntimeConfig): ProcessingRuntime {
+  if (config.imageCredits?.enabled && config.imageCredits.environment === 'live' && (!config.imageCredits.costs || !config.imageCredits.priceVersion)) throw new Error('Live image-credit operation prices are required');
   const deps = config.dependencies ?? {};
   const now = deps.now ?? (() => new Date()); const id = deps.id ?? randomUUID;
   // Presigning a browser PUT has no body yet. SDK default CRC32 would bind its
@@ -103,8 +106,8 @@ export function createProcessingRuntime(config: ProcessingRuntimeConfig): Proces
   // https://docs.aws.amazon.com/sdkref/latest/guide/feature-dataintegrity.html
   const client = deps.client ?? new S3Client({ endpoint: config.r2.endpoint, region: 'auto', forcePathStyle: true, requestChecksumCalculation: 'WHEN_REQUIRED', credentials: { accessKeyId: config.r2.accessKeyId, secretAccessKey: config.r2.secretAccessKey } });
   const pool = deps.pool ?? new Pool({ connectionString: config.databaseUrl });
-  const finance = deps.finance ?? new PostgresProcessingStore(pool);
-  const benefits = deps.benefits ?? new PostgresBenefitStore(pool);
+  const finance = deps.finance ?? new PostgresProcessingStore(pool, { imageCreditsEnabled: config.imageCredits?.enabled, paymentEnvironment: config.imageCredits?.environment ?? 'sandbox' });
+  const benefits = deps.benefits ?? new PostgresBenefitStore(pool, config.imageCredits?.enabled ?? false, config.imageCredits?.environment ?? 'sandbox', config.imageCredits?.costs);
   const media = new PrivateMediaStore({ client, bucket: config.r2.bucket, ffprobePath: config.ffprobePath, signUrl: deps.signUrl, now });
   const json = new S3ConditionalJsonStore(client, config.r2.bucket);
   const jobs = new R2ProcessingJobStore(json); const quotes = new R2ProcessingQuoteStore(json);
@@ -118,7 +121,7 @@ export function createProcessingRuntime(config: ProcessingRuntimeConfig): Proces
     { operation: 'image-refine', enabled: available, acceptedTypes: ['image/jpeg'], maxBytes: 48 * 1024 * 1024 },
     { operation: 'video-watermark', enabled: available, acceptedTypes: ['video/mp4'], maxBytes: SITE_MAX_VIDEO_BYTES, maxDurationSeconds: 540, requiredFps: 24 },
   ].map((capability) => ({ ...capability, ...(!available ? { reason } : {}) })) as OperationCapability[];
-  const core = new ProcessingService({ jobs, artifacts: media, quotes, finance, capabilities,
+  const core = new ProcessingService({ jobs, artifacts: media, quotes, finance, capabilities, purchasedImageCreditsEnabled: config.imageCredits?.enabled, purchasedImageCreditCost: config.imageCredits?.costs?.['watermark-removal'], imageCreditPriceVersion: config.imageCredits?.priceVersion,
     inspector: { inspect: async (owner, artifactId) => { const a = await media.get(artifactId); if (!a || a.ownerId !== owner) throw new ProcessingError('artifact_not_found', 'Validated input was not found', 404); return a; } },
     prices: { version: config.priceVersion ?? 'processing-v1', amount: (operation, input) => operation === 'image-watermark-pro' ? 3 : operation === 'video-watermark' ? Math.ceil(input.durationSeconds! * 0.5) : 1 }, now, id });
   const service: ProcessingApiRuntime['service'] = {
@@ -169,7 +172,7 @@ export function createProcessingRuntime(config: ProcessingRuntimeConfig): Proces
     },
     async getUpload(owner, uploadId) { return projectUpload(owner, await preflight.getUpload(owner, uploadId)); },
     projectJob: (owner, job) => projection.job(owner, job), projectQuote: (owner, quote) => projection.quote(owner, quote),
-    async balances(owner, email) { const legacy = await benefits.getSummary(owner, email); return { freeUses: legacy.balance, processingCredits: await finance.getBalance(owner) }; },
+    async balances(owner, email) { const legacy = await benefits.getSummary(owner, email); return { freeUses: legacy.balance, processingCredits: await finance.getBalance(owner), ...(config.imageCredits?.enabled ? { purchasedImageCredits: await finance.getBalance(owner, 'purchasedImageCredits') } : {}) }; },
     async download(owner, jobId) { return projection.download(owner, await core.get(owner, jobId)); },
     async runJob(jobId, workerId = `worker-${id()}`, dispatchId) { return worker.run(jobId, workerId, dispatchId); },
     async runPreflight(owner, uploadId) {

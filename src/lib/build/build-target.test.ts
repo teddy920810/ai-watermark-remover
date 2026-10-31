@@ -23,6 +23,17 @@ function fixture() {
 afterEach(() => { for (const directory of directories.splice(0)) rmSync(directory, { recursive: true, force: true }); });
 
 describe('independent build targets', () => {
+  it('keeps the image-use checkout and payment endpoints in App while Terms remain in Site', () => {
+    const root = fixture();
+    for (const file of ['src/pages/app/credits.astro', 'src/pages/api/payments/paypal/webhook.ts', 'src/pages/terms.astro']) {
+      mkdirSync(path.dirname(path.join(root, file)), { recursive: true }); writeFileSync(path.join(root, file), 'fixture');
+    }
+    const app = collectTargetRoutes(root, 'app').map((route) => route.pattern);
+    const site = collectTargetRoutes(root, 'site').map((route) => route.pattern);
+    expect(app).toEqual(expect.arrayContaining(['/app/credits', '/api/payments/paypal/webhook']));
+    expect(site).not.toContain('/app/credits'); expect(site).not.toContain('/api/payments/paypal/webhook');
+    expect(site).toContain('/terms');
+  });
   it('selects routes before bundling so site cannot import API, popup or app pages', () => {
     const root = fixture();
     expect(collectTargetRoutes(root, 'site').map((r) => r.pattern).sort()).toEqual(['/404', '/[slug]', '/blog/[slug]', '/', '/robots.txt'].sort());

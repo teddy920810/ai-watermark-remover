@@ -7,6 +7,8 @@ import {
   type ChangeEvent, type DragEvent, type PointerEvent as ReactPointerEvent,
 } from 'react';
 import { authClient } from '../auth/auth-client';
+import BuyCreditsLink from '../payments/BuyCreditsLink';
+import { ImagePriceChangedError, useImageCreditPrice, type ImageCreditApproval } from '../payments/useImageCreditPrice';
 import type { UploaderCopy } from '../../lib/content/site-settings';
 import { putFileWithRetry } from '../../lib/upload/direct-upload';
 import { MAX_UPLOAD_BYTES, validateUploadMetadata } from '../../lib/upload/validation';
@@ -21,7 +23,8 @@ interface Props { logo: string; siteName: string; copy: UploaderCopy }
 
 async function api<T extends JsonRecord>(url: string, init?: RequestInit): Promise<T> {
   const response = await fetch(url, init);
-  const body = (await response.json()) as T & { error?: string };
+  const body = (await response.json()) as T & { error?: string; code?: string };
+  if (response.status === 409 && body.code === 'image_price_changed') throw new ImagePriceChangedError();
   if (!response.ok) throw new Error(body.error ?? 'Something went wrong. Please try again.');
   return body;
 }
@@ -37,6 +40,9 @@ function userFacingError(error: unknown, fallback: string) {
 
 export default function ObjectRemoverUploader({ logo, siteName, copy }: Props) {
   const { data: session, isPending: sessionPending, refetch: refetchSession } = authClient.useSession();
+  const imagePrice = useImageCreditPrice('object-removal');
+  const acceptedPrice = useRef<ImageCreditApproval | null>(null);
+  const submitLock = useRef(false);
   const [state, dispatch] = useReducer(uploadReducer, initialUploadState);
   const [file, setFile] = useState<File | null>(null);
   const [dragging, setDragging] = useState(false);
@@ -87,6 +93,7 @@ export default function ObjectRemoverUploader({ logo, siteName, copy }: Props) {
       return;
     }
     setFile(nextFile);
+    acceptedPrice.current = null;
     setShowOriginal(false);
     setResultError(null);
     historyRef.current = [];
@@ -237,8 +244,10 @@ export default function ObjectRemoverUploader({ logo, siteName, copy }: Props) {
     return new Promise((resolve, reject) => mask.toBlob((blob) => blob ? resolve(blob) : reject(new Error('The mask could not be prepared.')), 'image/png'));
   }
 
-  const uploadAndProcess = useCallback(async () => {
-    if (!file) return;
+  const uploadAndProcess = useCallback(async (approval: ImageCreditApproval) => {
+    if (!file || submitLock.current) return;
+    submitLock.current = true;
+    acceptedPrice.current = null;
     try {
       const maskBlob = await exportMask();
       dispatch({ type: 'upload' });
@@ -259,7 +268,7 @@ export default function ObjectRemoverUploader({ logo, siteName, copy }: Props) {
       if (!sourceUpload.ok || !maskUpload.ok) throw new Error('The image and mask could not be uploaded. Please try again.');
       const created = await api<{ id: string; status: string }>('/api/jobs', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ inputKey: sourceSigned.key, maskKey: maskSigned.key, operation: 'object-removal' }),
+        body: JSON.stringify({ inputKey: sourceSigned.key, maskKey: maskSigned.key, operation: 'object-removal', ...approval }),
       });
       window.dispatchEvent(new Event('benefits:changed'));
       dispatch({ type: 'process', jobId: created.id });
@@ -276,14 +285,16 @@ export default function ObjectRemoverUploader({ logo, siteName, copy }: Props) {
       throw new Error('Processing took too long. Please try again.');
     } catch (error) {
       window.dispatchEvent(new Event('benefits:changed'));
+      if (error instanceof ImagePriceChangedError) { acceptedPrice.current = null; await imagePrice.refresh(); }
       dispatch({ type: 'error', message: userFacingError(error, 'The image service could not be reached. Please check your connection and try again.') });
-    }
-  }, [file, hasMask]);
+    } finally { submitLock.current = false; }
+  }, [file, hasMask, imagePrice.refresh]);
 
   function start() {
-    if (!file || !hasMask || sessionPending || busy) return;
+    if (!file || !hasMask || sessionPending || busy || submitLock.current || !imagePrice.ready || !imagePrice.approval) return;
+    acceptedPrice.current = imagePrice.approval;
     if (!session?.user) return setShowLogin(true);
-    void uploadAndProcess();
+    void uploadAndProcess(acceptedPrice.current);
   }
 
   useEffect(() => {
@@ -297,7 +308,7 @@ export default function ObjectRemoverUploader({ logo, siteName, copy }: Props) {
         dispatch({ type: 'error', message: 'Google sign-in could not be confirmed. Please try again.' });
         return;
       }
-      await refetchSession(); setShowLogin(false); setLoginPending(false); await uploadAndProcess();
+      await refetchSession(); setShowLogin(false); setLoginPending(false); if (acceptedPrice.current) await uploadAndProcess(acceptedPrice.current);
     }
     function handleWindowMessage(event: MessageEvent) {
       if (event.origin === window.location.origin) void completeAuth(event.data);
@@ -310,20 +321,24 @@ export default function ObjectRemoverUploader({ logo, siteName, copy }: Props) {
 
   async function continueWithGoogle() {
     const popup = window.open('about:blank', 'clearmark-google-auth', 'popup=yes,width=520,height=680,left=240,top=80');
-    if (!popup) { setShowLogin(false); dispatch({ type: 'error', message: 'Please allow popups, then try again.' }); return; }
+    if (!popup) { acceptedPrice.current = null; setShowLogin(false); dispatch({ type: 'error', message: 'Please allow popups, then try again.' }); return; }
     setLoginPending(true);
     const result = await authClient.signIn.social({ provider: 'google', callbackURL: `${window.location.origin}/auth/popup`, disableRedirect: true });
     if (result.error || !result.data?.url) {
+      acceptedPrice.current = null;
       popup.close(); setLoginPending(false); dispatch({ type: 'error', message: 'Unable to start Google sign-in. Please try again.' }); return;
     }
     popup.location.href = result.data.url;
   }
 
   function reset() {
+    acceptedPrice.current = null;
     setFile(null); setShowOriginal(false); setResultError(null); resetMask();
     if (inputRef.current) inputRef.current.value = '';
     dispatch({ type: 'reset' });
   }
+
+  function dismissLogin() { acceptedPrice.current = null; setShowLogin(false); }
 
   async function downloadResult() {
     if (!state.jobId) return;
@@ -360,6 +375,7 @@ export default function ObjectRemoverUploader({ logo, siteName, copy }: Props) {
       ) : null}
 
       {state.message ? <p className="error-message" role="alert">{state.message}</p> : null}
+      <BuyCreditsLink message={state.message} />
 
       {state.previewUrl ? (
         <div className="object-workspace">
@@ -383,7 +399,9 @@ export default function ObjectRemoverUploader({ logo, siteName, copy }: Props) {
                 <button type="button" onClick={clearMask} disabled={!hasMask}><RotateCcw size={17} />Clear</button>
               </div>
               <p>Paint or lasso the full object. A small margin helps AI blend the repaired area naturally.</p>
-              <button className="button button-primary object-remove-button" type="button" onClick={start} disabled={!hasMask || busy || sessionPending}>
+              <p className="image-credit-price" id="object-credit-price" role="status">{imagePrice.pending ? 'Checking processing price…' : imagePrice.label}</p>
+              {imagePrice.error ? <button className="button button-ghost" type="button" onClick={() => void imagePrice.refresh()}>Retry credit price</button> : null}
+              <button className="button button-primary object-remove-button" type="button" onClick={start} disabled={!hasMask || busy || sessionPending || !imagePrice.ready} aria-describedby="object-credit-price">
                 {state.phase === 'uploading' ? 'Uploading image and mask…' : state.phase === 'processing' ? 'Removing object…' : 'Remove object'}
               </button>
             </aside>
@@ -401,10 +419,10 @@ export default function ObjectRemoverUploader({ logo, siteName, copy }: Props) {
       {busy ? <div className="progress-track" aria-label="Processing"><span /></div> : null}
 
       {showLogin ? <div className="auth-modal-backdrop"><section className="auth-modal" role="dialog" aria-modal="true" aria-labelledby="object-auth-title">
-        <button className="auth-modal-close" type="button" onClick={() => setShowLogin(false)} aria-label={copy.auth.closeLabel}>×</button>
-        <img className="brand-logo auth-logo" src={logo} alt={`${siteName} logo`} /><h3 id="object-auth-title">{copy.auth.title}</h3><p>{copy.auth.description}</p>
+        <button className="auth-modal-close" type="button" onClick={dismissLogin} aria-label={copy.auth.closeLabel}>×</button>
+        <img className="brand-logo auth-logo" src={logo} alt={`${siteName} logo`} /><h3 id="object-auth-title">{copy.auth.title}</h3><p>{acceptedPrice.current?.imageCreditConsent ? `Processing starts after sign-in using 1 free use first; otherwise up to ${acceptedPrice.current.imageCreditConsent.maxImageCredits.toLocaleString('en-US')} image credits.` : copy.auth.description}</p>
         <button className="button button-primary auth-google-button" type="button" onClick={continueWithGoogle} disabled={loginPending}><span className="google-mark">G</span>{loginPending ? copy.auth.connectingButton : copy.auth.continueButton}</button>
-        <button className="button button-ghost" type="button" onClick={() => setShowLogin(false)}>{copy.auth.dismissButton}</button>
+        <button className="button button-ghost" type="button" onClick={dismissLogin}>{copy.auth.dismissButton}</button>
       </section></div> : null}
 
       <p className="privacy-note"><LockKeyhole size={14} /> {copy.privacyNote}</p>

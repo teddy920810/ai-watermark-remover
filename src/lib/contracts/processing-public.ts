@@ -1,6 +1,6 @@
 /** Browser-safe HTTP response types. Private storage and execution records stay server-side. */
 export type Operation = 'image-watermark' | 'image-watermark-pro' | 'image-refine' | 'video-watermark';
-export type CreditUnit = 'freeUses' | 'processingCredits';
+export type CreditUnit = 'freeUses' | 'purchasedImageCredits' | 'processingCredits';
 export type JobStatus = 'PREPARED' | 'QUEUED' | 'VALIDATING' | 'TRANSFERRING' | 'SUBMITTING' | 'PROCESSING' | 'SAVING' | 'SETTLING' | 'READY' | 'UNKNOWN' | 'FAILED' | 'REFUNDED' | 'EXPIRED';
 export type ChargeStatus = 'reserved' | 'settled' | 'refunded';
 
@@ -113,4 +113,5 @@ export interface PublicDownload {
 export interface PublicBalances {
   freeUses: number;
   processingCredits: number;
+  purchasedImageCredits?: number;
 }

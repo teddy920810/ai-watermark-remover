@@ -8,6 +8,7 @@ interface FakeState {
   activeReservations?: number;
   insertedUser?: boolean;
   email?: string;
+  paidBalance?: number;
   reservation?: { user_id: string; status: string };
 }
 
@@ -15,6 +16,7 @@ function createPool(state: FakeState) {
   let exists = !state.insertedUser;
   const query = vi.fn(async (source: string, values?: unknown[]) => {
     const sql = source.replace(/\s+/g, ' ').trim();
+    if (sql.includes('SUM(l.available)')) return { rows: [{ balance: state.paidBalance ?? 0 }] };
     if (sql.startsWith('INSERT INTO user_benefits')) {
       const inserted = !exists;
       exists = true;
@@ -55,6 +57,17 @@ function createPool(state: FakeState) {
 }
 
 describe('PostgresBenefitStore', () => {
+  it('adds purchased image uses to a read-only existing-account summary without changing free entitlement', async () => {
+    const state = { balance: 2, email: 'person@example.com', paidBalance: 5 };
+    const fake = createPool(state);
+    expect(await new PostgresBenefitStore(fake.pool, true, 'live').getSummary('user-1', 'person@example.com')).toMatchObject({
+      balance: 2, paidBalance: 5,
+    });
+    expect(await new PostgresBenefitStore(fake.pool, true, 'live').getSummary('user-1', 'person@example.com')).not.toHaveProperty('totalBalance');
+    expect(fake.pool.connect).not.toHaveBeenCalled();
+    expect(fake.query.mock.calls.every(([sql]) => sql.trim().startsWith('SELECT'))).toBe(true);
+  });
+
   it('reads an existing account and matching normalized email without a transaction or activity writes', async () => {
     const state = { balance: 2, email: 'person@example.com' };
     const fake = createPool(state); const store = new PostgresBenefitStore(fake.pool);

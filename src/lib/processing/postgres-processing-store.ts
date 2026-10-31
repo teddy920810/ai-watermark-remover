@@ -2,15 +2,19 @@ import { randomUUID } from 'node:crypto';
 import type { Pool, PoolClient } from 'pg';
 import { amountSchema, ProcessingError } from './contracts';
 import type { Admission, AdmissionHistoryCursor, AdmissionHistoryPage, ChargeStatus, CreditUnit, OutboxMessage, ProcessingFinancialStore, ReserveRequest } from './contracts';
+import { consumePurchasedImageCredit, getPurchasedImageBalance, refundPurchasedImageCredit, reservePurchasedImageCredit } from '../payments/image-credit-wallet';
 
 interface AdmissionRow { job_id: string; owner_id: string; operation_key: string; request_hash: string; amount: number | string; unit: CreditUnit; status: ChargeStatus }
 const integer = (value: number | string) => { const n = Number(value); if (!Number.isSafeInteger(n) || n < 0) throw new Error('Invalid credit amount'); return n; };
 const admission = (row: AdmissionRow): Admission => ({ jobId: row.job_id, ownerId: row.owner_id, idempotencyKey: row.operation_key, requestHash: row.request_hash, amount: integer(row.amount), unit: row.unit, status: row.status });
 
 export class PostgresProcessingStore implements ProcessingFinancialStore {
-  constructor(private readonly pool: Pool) {}
+  constructor(private readonly pool: Pool, private readonly imageOptions: { imageCreditsEnabled?: boolean; paymentEnvironment?: 'sandbox' | 'live' } = {}) {}
+
+  private imageReservation(jobId: string, ownerId: string, amount?: number) { return { jobId, ownerId, environment: this.imageOptions.paymentEnvironment ?? 'live', ...(amount !== undefined ? { amount } : {}) }; }
 
   async getBalance(ownerId: string, unit: CreditUnit = 'processingCredits'): Promise<number> {
+    if (unit === 'purchasedImageCredits') return this.imageOptions.imageCreditsEnabled ? getPurchasedImageBalance(this.pool, ownerId, this.imageOptions.paymentEnvironment ?? 'live') : 0;
     if (unit === 'freeUses') return this.transaction(async (client) => { await this.ensureFree(client, ownerId); return this.lockBalance(client, ownerId, unit); });
     const result = await this.pool.query<{ available_credits: string }>('SELECT available_credits FROM processing_accounts WHERE owner_id = $1', [ownerId]);
     return result.rows[0] ? integer(result.rows[0].available_credits) : 0;
@@ -41,6 +45,7 @@ export class PostgresProcessingStore implements ProcessingFinancialStore {
   async reserveAndEnqueue(request: ReserveRequest): Promise<{ admission: Admission; created: boolean }> {
     amountSchema.parse(request.amount);
     if (request.unit === 'freeUses' && request.amount !== 1) throw new ProcessingError('invalid_free_reservation', 'A normal image uses one free use');
+    if (request.unit === 'purchasedImageCredits' && !this.imageOptions.imageCreditsEnabled) throw new ProcessingError('image_credits_unavailable', 'Purchased image credits are temporarily unavailable', 503);
     return this.transaction(async (client) => {
       // Every admission locks the independent account first, including free-use requests.
       await this.ensureAccount(client, request.ownerId);
@@ -51,13 +56,15 @@ export class PostgresProcessingStore implements ProcessingFinancialStore {
         if (prior.requestHash !== request.requestHash || prior.amount !== request.amount || prior.unit !== request.unit) throw new ProcessingError('idempotency_conflict', 'Operation key belongs to another request', 409);
         return { admission: prior, created: false };
       }
-      if (request.unit === 'freeUses') await this.ensureFree(client, request.ownerId);
+      if (request.unit === 'freeUses' || request.unit === 'purchasedImageCredits') await this.ensureFree(client, request.ownerId);
       const balance = await this.lockBalance(client, request.ownerId, request.unit);
-      if (balance < request.amount) throw new ProcessingError('insufficient_balance', request.unit === 'freeUses' ? 'No free uses remaining; confirm a new quote' : 'Not enough processing credits', 402);
+      if (balance < request.amount) throw new ProcessingError('insufficient_balance', request.unit === 'freeUses' ? 'No free uses remaining; confirm a new quote' : request.unit === 'purchasedImageCredits' ? 'Not enough purchased image credits; confirm a new quote' : 'Not enough processing credits', 402);
       if (request.unit === 'freeUses') {
         const updated = await client.query<{ balance: number }>('UPDATE user_benefits SET balance = balance - 1, last_active_at = NOW() WHERE user_id = $1 RETURNING balance', [request.ownerId]);
         await client.query("INSERT INTO job_credit_reservations (job_id, user_id, status) VALUES ($1, $2, 'reserved')", [request.jobId, request.ownerId]);
         await client.query("INSERT INTO benefit_ledger (user_id, delta, balance_after, reason, reference_id) VALUES ($1, -1, $2, 'job_reserve', $3)", [request.ownerId, updated.rows[0].balance, request.jobId]);
+      } else if (request.unit === 'purchasedImageCredits') {
+        if (!await reservePurchasedImageCredit(client, this.imageReservation(request.jobId, request.ownerId, request.amount))) throw new ProcessingError('insufficient_balance', 'Not enough purchased image credits', 402);
       } else {
         const updated = await client.query<{ available_credits: string }>('UPDATE processing_accounts SET available_credits = available_credits - $2, updated_at = NOW() WHERE owner_id = $1 RETURNING available_credits', [request.ownerId, request.amount]);
         await this.ledger(client, request.ownerId, -request.amount, integer(updated.rows[0].available_credits), 'reserve', request.jobId);
@@ -113,7 +120,8 @@ export class PostgresProcessingStore implements ProcessingFinancialStore {
       if (current.unit === 'freeUses') {
         await client.query("UPDATE job_credit_reservations SET status = 'consumed', updated_at = NOW() WHERE job_id = $1 AND user_id = $2 AND status = 'reserved'", [jobId, ownerId]);
         await client.query('UPDATE user_benefits SET last_active_at = NOW(), last_processed_at = NOW() WHERE user_id = $1', [ownerId]);
-      } else await this.ledger(client, ownerId, 0, balance, 'settle', jobId);
+      } else if (current.unit === 'purchasedImageCredits') await consumePurchasedImageCredit(client, this.imageReservation(jobId, ownerId));
+      else await this.ledger(client, ownerId, 0, balance, 'settle', jobId);
       return 'settled';
     });
   }
@@ -128,6 +136,8 @@ export class PostgresProcessingStore implements ProcessingFinancialStore {
         const updated = await client.query<{ balance: number }>('UPDATE user_benefits SET balance = balance + 1, last_active_at = NOW() WHERE user_id = $1 RETURNING balance', [ownerId]);
         await client.query("UPDATE job_credit_reservations SET status = 'refunded', updated_at = NOW() WHERE job_id = $1 AND user_id = $2 AND status = 'reserved'", [jobId, ownerId]);
         await client.query("INSERT INTO benefit_ledger (user_id, delta, balance_after, reason, reference_id) VALUES ($1, 1, $2, 'job_refund', $3)", [ownerId, updated.rows[0].balance, jobId]);
+      } else if (current.unit === 'purchasedImageCredits') {
+        await refundPurchasedImageCredit(client, this.imageReservation(jobId, ownerId));
       } else {
         const updated = await client.query<{ available_credits: string }>('UPDATE processing_accounts SET available_credits = available_credits + $2, updated_at = NOW() WHERE owner_id = $1 RETURNING available_credits', [ownerId, current.amount]);
         await this.ledger(client, ownerId, current.amount, integer(updated.rows[0].available_credits), 'refund', jobId, reason);
@@ -171,6 +181,10 @@ export class PostgresProcessingStore implements ProcessingFinancialStore {
     if (inserted.rows[0]) await client.query("INSERT INTO benefit_ledger (user_id, delta, balance_after, reason, reference_id) VALUES ($1, 1, 1, 'first_use', $1)", [ownerId]);
   }
   private async lockBalance(client: PoolClient, ownerId: string, unit: CreditUnit): Promise<number> {
+    if (unit === 'purchasedImageCredits') {
+      await client.query('SELECT user_id FROM user_benefits WHERE user_id = $1 FOR UPDATE', [ownerId]);
+      return getPurchasedImageBalance(client, ownerId, this.imageOptions.paymentEnvironment ?? 'live');
+    }
     if (unit === 'freeUses') {
       const result = await client.query<{ balance: number }>('SELECT balance FROM user_benefits WHERE user_id = $1 FOR UPDATE', [ownerId]);
       return result.rows[0] ? integer(result.rows[0].balance) : 0;

@@ -6,7 +6,7 @@ eyebrow: Privacy
 heading: Privacy Policy
 ---
 
-Last updated: October 26, 2026
+Last updated: October 31, 2026
 
 This policy explains what WatermarkGemini collects, why it is used, how long it is kept and the choices available to you. It covers our website, Google sign-in, and image and video tools. Our [Terms of Use](/terms) explain permitted use and processing allowances.
 
@@ -25,6 +25,12 @@ Anonymous selection and preview happen in your browser. The browser can store se
 When you are signed in, the watermark workspaces can automatically upload your selected file for validation and quoting before you click the processing button. Background and object tools upload when you request their processing action, including continuing that request after sign-in. The preparation and removal stages are described in our Terms of Use.
 
 Uploaded images, videos, selection masks and results use private storage. We also handle technical media details, operation and task identifiers, status, timestamps, provider references and allowance transactions to perform and recover tasks. Videos may contain audio; media you send may itself contain personal information. Upload only material you have permission to share, and avoid confidential or sensitive files.
+
+## Payments
+
+PayPal processes checkout and payment authentication under its [Privacy Statement](https://www.paypal.com/us/legalhub/paypal/privacy-full). We do not collect your payment-card details or PayPal password. PayPal may receive technical browser and transaction information when its checkout components load or you interact with them.
+
+Our service retains the Google account's order association, purchased package, amount, currency, PayPal order and capture identifiers, payment status, verified event identifiers, refund or dispute references, and purchased image-credit balance adjustments. These records support fulfillment, payment reconciliation, refunds, fraud prevention and account support. Payment and allowance records may be retained longer than temporary media for these purposes and applicable obligations; they are not automatically removed with uploaded files. We do not use the PayPal buyer's email to move a purchase to a different Google account.
 
 ## Processing providers and infrastructure
 

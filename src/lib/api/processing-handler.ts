@@ -11,7 +11,7 @@ export interface ProcessingApiRuntime {
   getUpload(ownerId: string, id: string): Promise<unknown>;
   projectJob(ownerId: string, job: ProcessingJob): Promise<unknown>;
   projectQuote(ownerId: string, quote: ProcessingQuote): Promise<unknown>;
-  balances(ownerId: string, email?: string): Promise<{ processingCredits: number; freeUses: number }>;
+  balances(ownerId: string, email?: string): Promise<{ processingCredits: number; freeUses: number; purchasedImageCredits?: number }>;
   download(ownerId: string, id: string): Promise<unknown>;
   dispatch(): Promise<void>;
 }

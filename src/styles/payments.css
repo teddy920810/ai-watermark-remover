@@ -1,0 +1,61 @@
+.pricing-page { max-width: 1120px; margin: 0 auto; padding: 76px 28px; }
+.pricing-page h1 { max-width: 800px; margin: 14px 0 22px; font-size: clamp(2.1rem, 5vw, 3.7rem); line-height: 1.1; letter-spacing: -.045em; }
+.pricing-intro { max-width: 780px; color: var(--muted); line-height: 1.8; }
+.credit-checkout { margin-top: 36px; }
+.payment-notice { padding: 14px 18px; border-left: 3px solid var(--brand-blue-action); background: #f4f7ff; line-height: 1.65; }
+.credit-packages { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin: 26px 0; padding: 0; border: 0; }
+.credit-package { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; position: relative; padding: 26px; border: 1px solid var(--line); border-radius: 16px; background: var(--card); cursor: pointer; }
+.credit-package.is-selected { border-color: var(--brand-blue-action); box-shadow: 0 0 0 1px var(--brand-blue-action); background: #f8faff; }
+.credit-package input { position: absolute; top: 26px; right: 22px; width: 18px; height: 18px; accent-color: var(--brand-blue-action); }
+.credit-package-name { font-size: .88rem; font-weight: 700; padding-right: 20px; }
+.credit-package > strong { font-size: 1.8rem; color: var(--brand-navy); }
+.credit-package-price { font-size: 1.45rem; font-weight: 800; }
+.credit-package-price small { color: var(--muted); font-size: .75rem; }
+.credit-package-detail { font-size: .78rem; color: var(--muted); line-height: 1.5; }
+.payment-review { display: grid; grid-template-columns: 1.2fr 1fr; gap: 36px; padding: 28px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.payment-review h2, .payment-outcome h2, .payment-history h2 { margin: 0 0 14px; font-size: 1.3rem; }
+.payment-review p, .payment-outcome p, .pricing-terms p, .payment-history > p { line-height: 1.75; color: var(--muted); }
+.payment-rates { margin: 26px 0; }
+.payment-rates h2 { margin: 0 0 14px; font-size: 1.1rem; }
+.payment-rates dl { display: flex; flex-wrap: wrap; gap: 12px; margin: 0; }
+.payment-rates dl > div { flex: 1 1 180px; padding: 15px 18px; border: 1px solid var(--line); border-radius: 12px; }
+.payment-rates dt { color: var(--muted); font-size: .85rem; }
+.payment-rates dd { margin: 7px 0 0; font-weight: 750; }
+.payment-rates > p { color: var(--muted); line-height: 1.7; }
+.payment-action { align-self: center; min-width: 0; }
+.paypal-button-container { position: relative; z-index: 0; min-height: 45px; }
+.paypal-button-container[hidden] { display: none; }
+.payment-outcome { margin: 28px 0; padding: 24px; background: #f4f7ff; border-radius: 12px; }
+.payment-outcome .button + .button { margin-left: 12px; }
+.payment-outcome code { overflow-wrap: anywhere; }
+.payment-history { margin: 42px 0 26px; scroll-margin-top: 100px; }
+.payment-history-heading { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.payment-history-heading .button { min-height: 38px; font-size: .8rem; }
+.payment-table-wrap { overflow: auto; }
+.payment-history table { width: 100%; border-collapse: collapse; font-size: .86rem; }
+.payment-history th, .payment-history td { padding: 16px 12px; border-bottom: 1px solid var(--line); text-align: left; }
+.payment-history td code { font-size: .72rem; }
+.payment-history td small { display: block; margin-top: 6px; color: var(--muted); }
+.payment-history td button { border: 0; color: var(--brand-blue-text); background: transparent; text-decoration: underline; cursor: pointer; font: inherit; white-space: nowrap; }
+.pricing-terms { max-width: 900px; margin-top: 35px; padding-top: 20px; border-top: 1px solid var(--line); font-size: .82rem; }
+.credit-purchase-prompt { line-height: 1.6; padding: 12px 0; font-size: .86rem; }
+.credit-purchase-prompt a { font-weight: 750; text-decoration: underline; color: var(--brand-blue-text); }
+.credits-header { justify-content: space-between; }
+.credits-header .header-auth { margin-left: auto; }
+.credits-back { display: block; width: fit-content; margin-bottom: 26px; color: var(--brand-blue-text); font-size: .85rem; }
+.workspace-balances { flex-wrap: wrap; }
+.workspace-image-use-link { color: var(--brand-blue-text); text-decoration: underline; font-weight: 700; }
+.image-credit-price { margin: 12px 0; color: var(--muted); font-size: .82rem; line-height: 1.65; }
+@media (max-width: 700px) {
+  .pricing-page { padding: 42px 18px; }
+  .credit-packages { grid-template-columns: 1fr; gap: 12px; }
+  .credit-package { padding: 20px; gap: 7px; }
+  .credit-package > strong { font-size: 1.5rem; }
+  .payment-review { grid-template-columns: 1fr; gap: 18px; }
+  .payment-history td, .payment-history th { padding: 12px 8px; }
+  .payment-outcome { padding: 18px; }
+  .payment-outcome .button { margin: 8px 0; }
+  .payment-outcome .button + .button { margin-left: 0; }
+  .credits-header { gap: 10px; padding-inline: 16px; }
+  .credits-header .brand { font-size: .85rem; }
+}

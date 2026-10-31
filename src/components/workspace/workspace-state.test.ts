@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { canConfirmQuote, canRefineResult, canSubmitConfirmation, jobIsActive, processingLabel } from './workspace-state';
+import { canConfirmQuote, canRefineResult, canSubmitConfirmation, creditLabel, jobIsActive, processingLabel } from './workspace-state';
 describe('workspace processing safeguards', () => {
+  it('keeps purchased image credits distinct from free uses and administrator processing credits', () => {
+    expect(creditLabel(100, 'purchasedImageCredits')).toBe('100 image credits');
+    expect(creditLabel(1, 'purchasedImageCredits')).toBe('1 image credit');
+    expect(creditLabel(1, 'freeUses')).toBe('1 free image use');
+    expect(creditLabel(3, 'processingCredits')).toBe('3 processing credits');
+  });
   it('requires a current quote and explicit confirmation', () => {
     expect(canConfirmQuote(null, false, 100)).toBe(false);
     expect(canConfirmQuote({ expiresAt: new Date(99).toISOString() }, false, 100)).toBe(false);

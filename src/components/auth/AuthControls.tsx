@@ -8,6 +8,7 @@ interface BenefitSummary {
   dailyReward: number;
   checkedInToday: boolean;
   balanceFull?: boolean;
+  paidBalance?: number;
 }
 
 export default function AuthControls() {
@@ -147,6 +148,10 @@ export default function AuthControls() {
               {benefitError ? 'Balance unavailable. Please try again.' : benefits ? `Free uses ${benefits.balance}/${benefits.cap}` : 'Loading balance…'}
             </p>
             <a href="/app/image">Open workspace</a>
+            <p className="account-balance">
+              {benefitError ? 'Purchased image credits unavailable' : benefits ? `Purchased image credits ${benefits.paidBalance ?? 0}` : 'Loading image credits…'}
+            </p>
+            <a href="/app/credits">Buy image credits</a>
             {benefitError ? <button type="button" onClick={loadBenefits} disabled={benefitPending}>{benefitPending ? 'Updating…' : 'Retry'}</button> : (
               <button className="account-menu-check-in" type="button" onClick={checkIn} disabled={benefitPending || !benefits || benefits.checkedInToday || balanceFull}>
                 {benefitPending ? 'Updating…' : checkInLabel}
