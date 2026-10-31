@@ -40,9 +40,11 @@ describe('previous public App asset retention', () => {
       { path: '/_app-assets/user-round.Dhooj_tf.js', sha256: '1d29354e053ae22e5cd0eb6988150928c335935841dd2b8934f3834851b596f5', byteSize: 177, contentType: 'application/javascript' },
       { path: '/_app-assets/WatermarkWorkspace.BcRuoLVk.js', sha256: '25a1f60411cccfaa0a67d956f78c88cc61000551fbf4a3d05b06499a973680bf', byteSize: 48274, contentType: 'application/javascript' },
       { path: '/_app-assets/WatermarkWorkspace.Cs3H74rl.css', sha256: '7ade13130d6ae7b90558a77c7d0699f78120c504158bec24975fbf961a591418', byteSize: 8839, contentType: 'text/css' },
+      { path: '/_app-assets/_kind_.1KZ3MJ3A.css', sha256: '100e4958d1504397641a7b7a58f0fcd4a8d9424c74947fe3169b83feb83d1921', byteSize: 77896, contentType: 'text/css' },
+      { path: '/_app-assets/credits.BD2977eY.css', sha256: '907ec11d70a4c5b6861f8e221ed5a0078411ec2b184fa11a396a08db5245e6c1', byteSize: 67328, contentType: 'text/css' },
     ];
     expect(value.version).toBe(1);
-    expect(value.origin).toBe('https://ai-watermark-remover-l19745qqo-shiyaos-projects-b1e333f0.vercel.app');
+    expect(value.origin).toBe('https://ai-watermark-remover-34sy9seeb-shiyaos-projects-b1e333f0.vercel.app');
     expect(value.assets).toEqual(expect.arrayContaining(expected));
     expect(value.assets.length).toBeLessThanOrEqual(32);
     expect(new Set(value.assets.map((entry: { path: string }) => entry.path)).size).toBe(value.assets.length);
