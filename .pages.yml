@@ -30,6 +30,47 @@ actions:
       button: 开始检查
 
 components:
+  landing-comparison:
+    type: object
+    label: 可拖动对比（可选）
+    description: 留空时展示静态图片。真实前后图请填写原图；示意水印只用于已确认的干净底图，不代表真实处理结果。
+    fields:
+      - name: image
+        label: 功能对比干净底图 / Feature after image（可选）
+        type: image
+        description: 仅功能亮点使用。可选择设计稿的干净底图作为对比 After，同时保留原“功能图片”资源。首屏样例仍使用样例本身的图片；单独填本字段不会启用对比，还需配置真实原图或示意叠层。
+        options:
+          media: images
+      - name: beforeImage
+        label: 原图 / Before image（可选）
+        type: image
+        description: 与主图同构图的处理前图片；填写后主图作为 After 展示。
+        options:
+          media: images
+      - name: style
+        label: 示意叠层样式（可选）
+        type: select
+        description: 仅在没有真实原图、且主图为干净底图时选择；不要给已拼接的前后图再次加水印。
+        options:
+          values:
+            - { name: gemini, label: Gemini 标记示意 }
+            - { name: watermark, label: 文字水印示意 }
+      - name: watermark
+        label: 示意水印文字（可选）
+        type: string
+  landing-related-content:
+    type: object
+    label: 关联内容（可选）
+    fields:
+      - { name: enabled, label: 显示此模块, type: boolean, default: true }
+      - { name: eyebrow, label: 模块小标题, type: string, required: true }
+      - { name: heading, label: 模块标题｜H2, type: string, required: true }
+      - { name: intro, label: 模块简介, type: text, required: true }
+      - name: slugs
+        label: 内容网址标识 / Slugs（可选）
+        type: string
+        list: true
+        description: 只填已发布内容的 slug，不带斜杠。工具模块留空时自动读取可用工具；指南模块留空时读取最新已发布文章。草稿和不存在的条目不会显示。
   uploader-copy-override:
     type: object
     label: 上传组件独立文案（可选）
@@ -1536,6 +1577,34 @@ content:
         list:
           min: 1
         description: 每一项会显示为列表条目，不属于标题层级。
+      - name: heroSamples
+        label: 当前工具页首屏样例 / Hero previews（可选）
+        type: object
+        description: 独立维护当前工具页样例；切换或拖动示例不会上传图片、发起处理或扣除额度。没有配置对比时只展示静态图片。
+        list:
+          min: 1
+          max: 6
+          collapsible:
+            collapsed: true
+            summary: "{label}"
+        fields:
+          - name: id
+            label: 样例标识（当前页内唯一）
+            type: string
+            required: true
+            pattern:
+              regex: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              message: 使用小写字母、数字和连字符，同一页面不能重复。
+          - { name: label, label: 样例名称, type: string, required: true }
+          - name: image
+            label: 样例图片 / After image
+            type: image
+            required: true
+            options:
+              media: images
+          - { name: imageAlt, label: 图片替代文字｜IMG ALT, type: string, required: true }
+          - name: comparison
+            component: landing-comparison
       - name: uploader
         component: uploader-copy-override
         label: 当前工具页上传组件独立文案（可选）
@@ -1723,6 +1792,14 @@ content:
                   values:
                     - { name: right, label: 右侧 }
                     - { name: left, label: 左侧 }
+              - name: comparison
+                component: landing-comparison
+      - name: relatedTools
+        label: 当前工具页相关工具（可选）
+        component: landing-related-content
+      - name: guides
+        label: 当前工具页指南模块（可选）
+        component: landing-related-content
       - name: faq
         label: 常见问题 / FAQ
         type: object

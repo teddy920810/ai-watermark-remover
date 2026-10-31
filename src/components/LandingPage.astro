@@ -3,13 +3,17 @@ import MediaLauncher from './launcher/MediaLauncher';
 import BackgroundRemoverUploader from './uploader/BackgroundRemoverUploader';
 import ObjectRemoverUploader from './uploader/ObjectRemoverUploader';
 import ResponsiveImage from './ResponsiveImage.astro';
+import LandingComparison from './LandingComparison.astro';
 import SiteLayout from '../layouts/SiteLayout.astro';
 import { getCollection, type CollectionEntry } from 'astro:content';
 import { splitFeatureCopy } from '../lib/content/feature-copy';
 import { visibleItems } from '../lib/content/item-visibility';
 import { resolvePublicImageSource } from '../lib/content/image-fallback';
 import { resolveUploaderCopy } from '../lib/content/site-settings';
-import { CircleCheck, Plus } from '@lucide/astro';
+import { publicLandingEntries, sortBlogEntries } from '../lib/content/entries';
+import { availableRelatedToolEntries } from '../lib/content/landing-design';
+import { ArrowRight, CircleCheck, Dot, Plus } from '@lucide/astro';
+import '../styles/tool-landing.css';
 
 interface Props { page: CollectionEntry<'landingPages'>['data'] }
 const { page } = Astro.props;
@@ -18,6 +22,33 @@ if (!siteEntry) throw new Error('Site settings CMS content is missing.');
 const site = siteEntry.data;
 const siteLogo = resolvePublicImageSource(site.logo);
 const uploaderCopy = resolveUploaderCopy(site.uploader, page.uploader);
+const fallbackSamples = visibleItems(page.features?.items ?? []).slice(0, 3).map((item, index) => ({
+  id: `preview-${index + 1}`, label: item.heading, image: item.image, imageAlt: item.imageAlt, comparison: item.comparison,
+}));
+const samples = page.heroSamples ?? (fallbackSamples.length ? fallbackSamples : site.processVisuals.map((visual, index) => ({
+  id: `preview-${index + 1}`, label: `Workflow step ${index + 1}`, ...visual, comparison: undefined,
+})));
+const [homepage] = await getCollection('homepage');
+const publicPages = publicLandingEntries(await getCollection('landingPages'));
+const publishedPaths = new Set(availableRelatedToolEntries(publicPages).map(({ data }) => '/' + data.slug));
+const defaultTools = (homepage?.data.removalTools.cards ?? []).filter(item => item.href === '/#tool' || publishedPaths.has(item.href));
+const relatedTools = page.relatedTools?.slugs
+  ? availableRelatedToolEntries(publicPages, page.relatedTools.slugs).map(tool => {
+      const slug = tool.data.slug;
+      const card = defaultTools.find(item => item.href === '/' + slug);
+      return { title: card?.title ?? tool.data.eyebrow, copy: card?.copy ?? tool.data.description, image: card?.image ?? tool.data.heroSamples?.[0]?.image ?? site.processVisuals[0].image, alt: card?.alt ?? tool.data.heading, href: '/' + slug };
+    })
+  : defaultTools;
+const blogPosts = sortBlogEntries(await getCollection('blog'));
+const guides = page.guides?.slugs
+  ? page.guides.slugs.flatMap(slug => {
+      const post = blogPosts.find(({ data }) => data.slug === slug);
+      return post ? [post] : [];
+    }).slice(0, 6)
+  : blogPosts.slice(0, 6);
+const guideColumns = [guides.slice(0, 3), guides.slice(3, 6)].filter(column => column.length);
+const headingParts = page.heading.split(' – ');
+const cta = { ...site.cta, ...page.cta, buttonHref: page.cta?.buttonHref ?? '#tool' };
 const features = page.features;
 const featureItems = visibleItems(features?.items ?? []).map((item) => ({
   ...item,
@@ -34,58 +65,85 @@ const faqSchema = visibleFaqItems.length > 0 ? {
 } : undefined;
 ---
 
-<SiteLayout title={page.title} description={page.description} schema={faqSchema} cta={page.cta}>
-  <section class="hero compact-hero">
+<SiteLayout title={page.title} description={page.description} schema={faqSchema} cta={cta}>
+  <div class="tool-landing">
+  <section class="hero landing-hero section-shell" id="upload">
     <div class="hero-inner">
       <div class="hero-copy">
         <div class="hero-eyebrow-row">
           <span class="eyebrow">{page.eyebrow}</span>
           {page.statusLabel && <span class="hero-status-badge">{page.statusLabel}</span>}
         </div>
-        <h1>{page.heading}</h1>
-        <p>{page.intro}</p>
-        <ul class="check-list">{page.benefits.map((benefit) => <li><CircleCheck size={19} stroke-width={2.5} />{benefit}</li>)}</ul>
+        <h1>{headingParts.length > 1 ? <>{headingParts[0]} – <em>{headingParts.slice(1).join(' – ')}</em></> : page.heading}</h1>
+        <p class="hero-intro">{page.intro}</p>
+        <ul class="hero-points">{page.benefits.map((benefit) => <li><CircleCheck size={15} stroke-width={2.5} aria-hidden="true" />{benefit}</li>)}</ul>
         {page.heroActions && <div class="hero-actions">{page.heroActions.map((action, index) => <a class={index === 0 ? 'cta-button' : 'text-link'} href={action.href}>{action.label}</a>)}</div>}
       </div>
-      <div id="tool" class="hero-tool">
+      <div class="hero-workbench">
+        {samples.length > 0 && <div class="hero-preview" aria-label="Example previews">
+          {samples.map((sample, index) => <div data-landing-preview hidden={index !== 0}>
+            {sample.comparison
+              ? <LandingComparison image={sample.comparison.image ?? sample.image} alt={sample.imageAlt} comparison={sample.comparison} sampleId={sample.id} eager={index === 0} />
+              : <div class="landing-sample-image"><ResponsiveImage src={sample.image} alt={sample.imageAlt} sizes="(max-width: 900px) calc(100vw - 40px), 640px" loading={index === 0 ? 'eager' : 'lazy'} fetchpriority={index === 0 ? 'high' : undefined} /></div>}
+          </div>)}
+          <div class="hero-samples" aria-label="Choose an example preview">{samples.map((sample, index) => <button class="hero-sample" type="button" data-landing-sample aria-pressed={index === 0} aria-label={`Preview ${sample.label}`}><ResponsiveImage src={sample.comparison?.image ?? sample.image} alt="" sizes="72px" /></button>)}</div>
+        </div>}
+        <div id="tool" class="hero-tool">
         {page.toolKind === 'background-remover'
           ? <BackgroundRemoverUploader logo={siteLogo} siteName={site.name} copy={uploaderCopy} client:load />
           : page.toolKind === 'object-remover'
             ? <ObjectRemoverUploader logo={siteLogo} siteName={site.name} copy={uploaderCopy} client:load />
             : <MediaLauncher kind={page.toolKind === 'video-watermark-remover' ? 'video' : 'image'} source={page.slug} copy={uploaderCopy} client:load />}
       </div>
+      </div>
     </div>
   </section>
 
-  <section class="section process-section" id="how-it-works">
+  <section class="section-shell landing-process process-section" id="how-it-works">
     <div class="section-heading"><span class="eyebrow">{page.process.eyebrow}</span><h2>{page.process.heading}</h2><p>{page.process.intro}</p></div>
-    <div class="steps">
+    <div class="steps step-grid">
       {page.process.steps.map((step, index) => {
         const visual = site.processVisuals[index];
-        return <article><div class="process-step-media"><ResponsiveImage src={step.image ?? visual.image} alt={step.imageAlt ?? visual.imageAlt} sizes="(max-width: 900px) calc(100vw - 40px), 360px" /></div><div class="process-step-copy"><span class="step-number">{step.number}</span><h3>{step.title}</h3><p>{step.description}</p></div></article>;
+        return <article class="step-card"><div class="process-step-media"><ResponsiveImage src={step.image ?? visual.image} alt={step.imageAlt ?? visual.imageAlt} sizes="(max-width: 900px) calc(100vw - 40px), 400px" /></div><div class="process-step-copy"><span class="step-number">{step.number}</span><h3>{step.title}</h3><p>{step.description}</p></div></article>;
       })}
     </div>
   </section>
 
   {features && featureItems.length ? (
-    <section class="section features-section landing-features-section" aria-labelledby="features-heading">
+    <section class="features features-section landing-features-section section-shell" aria-labelledby="features-heading">
       <div class="section-heading"><span class="eyebrow">{features.eyebrow}</span><h2 id="features-heading">{features.heading}</h2><p>{features.intro}</p></div>
       <div class="feature-list">
-        {featureItems.map((item) => <article class:list={{ 'feature-item': true, 'is-image-left': item.imagePosition === 'left' }}>
+        {featureItems.map((item, index) => <article class:list={{ 'feature-row': true, 'feature-item': true, 'is-image-left': item.imagePosition === 'left', reverse: item.imagePosition === 'right' }}>
+          <div class="feature-media">{item.comparison ? <LandingComparison image={item.comparison.image ?? item.image} alt={item.imageAlt} comparison={item.comparison} sampleId={`feature-${index + 1}`} /> : <ResponsiveImage src={item.image} alt={item.imageAlt} sizes="(max-width: 900px) calc(100vw - 40px), 540px" />}</div>
           <div class="feature-copy"><span class="eyebrow">{item.eyebrow}</span><h3>{item.heading}</h3><p>{item.copy.description}</p>{item.copy.listItems.length > 0 && <ul class="feature-list-items">{item.copy.listItems.map((listItem) => <li>{listItem}</li>)}</ul>}</div>
-          <div class="feature-media"><ResponsiveImage src={item.image} alt={item.imageAlt} sizes="(max-width: 900px) calc(100vw - 40px), 520px" /></div>
         </article>)}
       </div>
     </section>
   ) : null}
 
-  {page.scope && <section class="section landing-scope-section" id="image-requirements" aria-labelledby="scope-heading">
+  {page.scope && <section class="section-shell landing-scope-section" id="image-requirements" aria-labelledby="scope-heading">
     <div class="section-heading"><span class="eyebrow">{page.scope.eyebrow}</span><h2 id="scope-heading">{page.scope.heading}</h2><p>{page.scope.intro}</p></div>
     <div class="scope-items">{page.scope.items.map((item) => <article><h3>{item.heading}</h3><p>{item.description}</p></article>)}</div>
   </section>}
 
-  {visibleFaqItems.length > 0 && <section class="section faq-section">
+  {page.relatedTools?.enabled !== false && relatedTools.length > 0 && <section class="tools section-shell" id="ai-tools" aria-labelledby="related-tools-heading">
+    <div class="section-heading"><span class="eyebrow">{page.relatedTools?.eyebrow ?? 'Popular tools'}</span><h2 id="related-tools-heading">{page.relatedTools?.heading ?? 'All AI tools of WatermarkGemini'}</h2><p>{page.relatedTools?.intro ?? 'Start with the cleanup workflow that best matches your image.'}</p></div>
+    <div class="tool-grid">{relatedTools.map(item => <a class:list={['tool-card', { active: item.href === '/' + page.slug }]} href={item.href} aria-current={item.href === '/' + page.slug ? 'page' : undefined}><ResponsiveImage src={item.image} alt={item.alt} sizes="(max-width: 760px) calc(100vw - 40px), 300px" /><h3>{item.title}</h3><p>{item.copy}</p><b>Explore tool <ArrowRight size={16} aria-hidden="true" /></b></a>)}</div>
+  </section>}
+
+  {page.guides?.enabled !== false && guideColumns.length > 0 && <section class="guides section-shell home-guides" id="guides" aria-labelledby="guides-heading">
+    <div class="section-heading row-heading"><span class="eyebrow">{page.guides?.eyebrow ?? 'Helpful guides'}</span><h2 id="guides-heading">{page.guides?.heading ?? 'Learn More About Free AI Watermark Remover from Image'}</h2><p>{page.guides?.intro ?? 'Practical guides for cleaner, more polished images.'}</p></div>
+    <div class="guides-list-grid">{guideColumns.map(column => <ul class="guides-list">{column.map(({ data: post }) => <li><a href={`/blog/${post.slug}`}><Dot size={20} aria-hidden="true" /><span>{post.title}</span><ArrowRight size={18} aria-hidden="true" /></a></li>)}</ul>)}</div>
+  </section>}
+
+  {visibleFaqItems.length > 0 && <section class="faq section-shell faq-section">
     <div class="section-heading"><span class="eyebrow">{page.faq.eyebrow}</span><h2>{page.faq.heading}</h2><p>{page.faq.intro}</p></div>
     <div class="faq-list">{visibleFaqItems.map((item) => <details><summary>{item.question}<span aria-hidden="true"><Plus size={20} /></span></summary><p>{item.answer}</p></details>)}</div>
   </section>}
+  </div>
 </SiteLayout>
+
+<script>
+  import { initializeLandingInteractions } from '../lib/landing-interactions';
+  document.querySelectorAll<HTMLElement>('.tool-landing').forEach(initializeLandingInteractions);
+</script>

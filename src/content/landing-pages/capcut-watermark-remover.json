@@ -133,5 +133,37 @@
     "description": "WatermarkGemini is preparing a dedicated page for visible-watermark cleanup on CapCut image exports you own or are authorized to edit. The CapCut-specific processing workflow is not available yet.",
     "buttonLabel": "See available image cleanup tools",
     "buttonHref": "/#tool"
+  },
+  "heroSamples": [
+    {
+      "id": "preview-1",
+      "label": "Example 1",
+      "image": "/uploads/capcut-operations-feature-1.png",
+      "imageAlt": "Use an export you can edit"
+    },
+    {
+      "id": "preview-2",
+      "label": "Example 2",
+      "image": "/uploads/capcut-operations-feature-2.png",
+      "imageAlt": "Identify the visible area"
+    },
+    {
+      "id": "preview-3",
+      "label": "Example 3",
+      "image": "/uploads/capcut-operations-feature-3.png",
+      "imageAlt": "Review before you export"
+    }
+  ],
+  "relatedTools": {
+    "enabled": true,
+    "eyebrow": "Popular tools",
+    "heading": "All AI tools of WatermarkGemini",
+    "intro": "Start with the cleanup workflow that best matches your image."
+  },
+  "guides": {
+    "enabled": true,
+    "eyebrow": "Helpful guides",
+    "heading": "Learn More About Free AI Watermark Remover from Image",
+    "intro": "Practical guides for cleaner, more polished images."
   }
 }

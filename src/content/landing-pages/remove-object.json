@@ -135,5 +135,37 @@
       { "enabled": true, "question": "What happens to my uploaded image and mask?", "answer": "The original image, generated mask, and result are stored privately and are designed to expire after 24 hours. Provider credentials and private storage keys never reach the browser." },
       { "enabled": true, "question": "Can I upload any image?", "answer": "Only upload images you own or are authorized to edit. Do not use the tool to violate copyright, privacy, trademark, or other rights, and avoid confidential material." }
     ]
+  },
+  "heroSamples": [
+    {
+      "id": "preview-1",
+      "label": "Example 1",
+      "image": "/uploads/object-remover-upload.png",
+      "imageAlt": "Large clean photo workspace prepared for object selection"
+    },
+    {
+      "id": "preview-2",
+      "label": "Example 2",
+      "image": "/uploads/object-remover-mask.png",
+      "imageAlt": "Blue brush mask demonstrating an object selection"
+    },
+    {
+      "id": "preview-3",
+      "label": "Example 3",
+      "image": "/uploads/object-remover-result.png",
+      "imageAlt": "Desk surface naturally reconstructed after object removal"
+    }
+  ],
+  "relatedTools": {
+    "enabled": true,
+    "eyebrow": "Popular tools",
+    "heading": "All AI tools of WatermarkGemini",
+    "intro": "Start with the cleanup workflow that best matches your image."
+  },
+  "guides": {
+    "enabled": true,
+    "eyebrow": "Helpful guides",
+    "heading": "Learn More About Free AI Watermark Remover from Image",
+    "intro": "Practical guides for cleaner, more polished images."
   }
 }

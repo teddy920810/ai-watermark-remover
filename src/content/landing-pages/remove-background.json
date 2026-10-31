@@ -174,5 +174,37 @@
         "answer": "Only upload images you own or are authorized to edit. Do not use the service to infringe copyright, privacy, trademark, or other rights, and avoid uploading confidential material."
       }
     ]
+  },
+  "heroSamples": [
+    {
+      "id": "preview-1",
+      "label": "Example 1",
+      "image": "/uploads/background-remover-product-photo.png",
+      "imageAlt": "Product photo shown before and after background removal"
+    },
+    {
+      "id": "preview-2",
+      "label": "Example 2",
+      "image": "/uploads/background-remover-hair-detail.png",
+      "imageAlt": "Detailed hair edges preserved on a transparent background"
+    },
+    {
+      "id": "preview-3",
+      "label": "Example 3",
+      "image": "/uploads/background-remover-background-colors.png",
+      "imageAlt": "Background-removed subject previewed on several color options"
+    }
+  ],
+  "relatedTools": {
+    "enabled": true,
+    "eyebrow": "Popular tools",
+    "heading": "All AI tools of WatermarkGemini",
+    "intro": "Start with the cleanup workflow that best matches your image."
+  },
+  "guides": {
+    "enabled": true,
+    "eyebrow": "Helpful guides",
+    "heading": "Learn More About Free AI Watermark Remover from Image",
+    "intro": "Practical guides for cleaner, more polished images."
   }
 }
