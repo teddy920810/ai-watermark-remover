@@ -6,7 +6,7 @@ const tools = [
   { path: '/remove-object', operation: 'object-removal', button: 'Remove object' },
 ] as const;
 
-async function fixture(page: Page, tool: typeof tools[number], initiallySignedIn = true, catalogFail = false) {
+async function fixture(page: Page, tool: typeof tools[number], initiallySignedIn = true, catalogFail = false, initialCanvasTop?: number) {
   const state = { signedIn: initiallySignedIn, cost: 10, version: '2026-10-31-v1', catalogReads: 0, catalogFail };
   await page.route('**/api/auth/get-session', route => route.fulfill({ json: state.signedIn ? { user: { id: 'credit-consent-user', name: 'Credit buyer' }, session: { id: 'credit-session' } } : null }));
   await page.route('**/api/me/benefits', route => route.fulfill({ json: { balance: 0, paidBalance: 4990, cap: 3, dailyReward: 1, checkedInToday: false } }));
@@ -25,15 +25,42 @@ async function fixture(page: Page, tool: typeof tools[number], initiallySignedIn
   const image = await sharp({ create: { width: 128, height: 96, channels: 3, background: '#5577aa' } }).png().toBuffer();
   await container.locator('input[type=file]').setInputFiles({ name: 'consent-image.png', mimeType: 'image/png', buffer: image });
   if (tool.operation === 'object-removal') {
-    const bounds = await page.getByLabel('Object removal mask canvas').boundingBox();
+    const canvas = page.getByLabel('Object removal mask canvas');
+    await expect(page.locator('.hero-inner')).toHaveClass(/is-tool-expanded/);
+    await expect(container.locator('.object-editor-stage > img')).toHaveJSProperty('naturalWidth', 128);
+    await expect(canvas).toHaveJSProperty('width', 128);
+    await expect(canvas).toHaveJSProperty('height', 96);
+    if (initialCanvasTop !== undefined) {
+      await canvas.evaluate((element, top) => {
+        window.scrollTo({ top: window.scrollY + element.getBoundingClientRect().top - top, behavior: 'instant' });
+      }, initialCanvasTop);
+    }
+    // Expanding the hero can move the editor behind the sticky mobile header.
+    await canvas.scrollIntoViewIfNeeded();
+    const bounds = await canvas.boundingBox();
     expect(bounds).not.toBeNull();
-    await page.mouse.move(bounds!.x + bounds!.width * .4, bounds!.y + bounds!.height * .4);
+    await canvas.hover({ position: { x: bounds!.width * .4, y: bounds!.height * .4 } });
+    const visibleBounds = await canvas.boundingBox();
+    expect(visibleBounds).not.toBeNull();
     await page.mouse.down();
-    await page.mouse.move(bounds!.x + bounds!.width * .6, bounds!.y + bounds!.height * .6, { steps: 3 });
+    await page.mouse.move(visibleBounds!.x + visibleBounds!.width * .6, visibleBounds!.y + visibleBounds!.height * .6, { steps: 3 });
     await page.mouse.up();
+    await expect.poll(() => canvas.evaluate(element => {
+      const surface = element as HTMLCanvasElement;
+      const pixels = surface.getContext('2d')!.getImageData(0, 0, surface.width, surface.height).data;
+      return pixels.some((value, index) => index % 4 === 3 && value > 10);
+    })).toBe(true);
   }
   return { state, container, button: container.getByRole('button', { name: tool.button, exact: true }) };
 }
+
+test('mobile object selection recovers the visible canvas after the expanded layout changes its scroll position', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  // The CI failure began with the canvas top at -28px behind the sticky header.
+  const { container, button } = await fixture(page, tools[1], true, false, -28);
+  await expect(container.getByRole('status')).toContainText('1 free use first; otherwise 10 image credits');
+  await expect(button).toBeEnabled();
+});
 
 for (const tool of tools) {
   test(`${tool.operation} shows the maximum charge before submitting the displayed consent`, async ({ page }) => {
