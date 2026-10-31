@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { ArrowRight, Check } from 'lucide-react';
 import { authClient } from '../auth/auth-client';
 import { createPaymentCallbacks, formatPrice, loadPayPalSDK, orderCheckoutStatus, PaymentRequestError, paymentRequest, recoverPaymentOrder, safeReturnPath, type CheckoutStatus, type PaymentCatalog, type PaymentOrder, type PayPalButtons } from './payment-client';
 import { canResolveAttempt, parsePaymentAttempt, paymentAccountId, type PaymentAttempt } from './payment-attempt';
@@ -236,6 +237,11 @@ export default function CreditCheckout() {
   }
 
   const selected = catalog?.packages.find((item) => item.sku === sku);
+  function selectPackage(nextSku: string) {
+    setSku(nextSku);
+    setStatus('idle');
+    showOrder(null);
+  }
   const busy = status === 'creating' || status === 'approving' || status === 'confirming';
   const imageCostsConfigured = catalog?.imageCosts && imageOperations.every(({ operation }) => {
     const amount = catalog.imageCosts?.[operation];
@@ -249,20 +255,43 @@ export default function CreditCheckout() {
       {catalog ? <>
         {!catalog.enabled ? <p className="payment-notice" role="status">Purchases are not available yet. No payment can be made. Package prices are previews until checkout opens.</p> : null}
         {catalog.enabled && catalog.environment === 'sandbox' ? <p className="payment-notice">Sandbox checkout — test accounts only. No real payment.</p> : null}
-        <section className="payment-rates" aria-labelledby="payment-rates-heading">
-          <h2 id="payment-rates-heading">Credits per image operation</h2>
-          {imageCostsConfigured ? <dl>{imageOperations.map(({ operation, label }) => <div key={operation}><dt>{label}</dt><dd>{catalog.imageCosts?.[operation].toLocaleString('en-US')} credits</dd></div>)}</dl> : <p>Open a supported image tool to check its current credit cost before processing.</p>}
-        </section>
         <fieldset className="credit-packages" disabled={busy || activeAttempt !== null || status === 'fulfilled'}>
           <legend className="sr-only">Choose an image credit package</legend>
-          {catalog.packages.map((item) => <label key={item.sku} className={`credit-package ${sku === item.sku ? 'is-selected' : ''}`}>
-            <input type="radio" name="credit-package" value={item.sku} checked={sku === item.sku} onChange={() => { setSku(item.sku); setStatus('idle'); showOrder(null); }} />
-            <span className="credit-package-name">{item.name}</span>
-            <strong>{item.credits.toLocaleString('en-US')} credits</strong>
+          <article className="credit-package credit-package-free">
+            <h2 className="credit-package-name">Free</h2>
+            <p className="credit-package-description">A little room to try things out.</p>
+            <span className="credit-package-price">$0.00 <small>USD</small></span>
+            <strong className="credit-package-quantity">Start with free image uses</strong>
+            <a className="credit-package-cta" href={returnTo}>Try for free <ArrowRight size={18} aria-hidden="true" /></a>
+            <ul className="credit-package-features">
+              <li><Check size={17} aria-hidden="true" />1 free use on first sign-in</li>
+              <li><Check size={17} aria-hidden="true" />Daily check-in adds 1 free use</li>
+              <li><Check size={17} aria-hidden="true" />Free-use balance capped at 3</li>
+              <li><Check size={17} aria-hidden="true" />All three standard image tools</li>
+              <li><Check size={17} aria-hidden="true" />No purchase needed</li>
+            </ul>
+          </article>
+          {catalog.packages.map((item) => <article key={item.sku} className={`credit-package ${item.sku === 'plus' ? 'is-recommended' : ''} ${sku === item.sku ? 'is-selected' : ''}`}>
+            {item.sku === 'plus' ? <span className="credit-package-badge">Recommended</span> : null}
+            <input id={`credit-package-${item.sku}`} type="radio" name="credit-package" aria-label={`${item.name}: ${item.credits.toLocaleString('en-US')} credits for ${formatPrice(item.amountCents, item.currency)} ${item.currency}`} value={item.sku} checked={sku === item.sku} onChange={() => selectPackage(item.sku)} />
+            <label htmlFor={`credit-package-${item.sku}`} className="credit-package-name">{item.name}</label>
+            <span className="credit-package-description">{item.sku === 'starter' ? 'For occasional image edits.' : item.sku === 'plus' ? 'More room for everyday projects.' : item.sku === 'pro' ? 'A bigger balance for bigger batches.' : 'Ready for your next image project.'}</span>
             <span className="credit-package-price">{formatPrice(item.amountCents, item.currency)} <small>{item.currency}</small></span>
-            <span className="credit-package-detail">One-time purchase · No automatic renewal</span>
-          </label>)}
+            <strong className="credit-package-quantity">{item.credits.toLocaleString('en-US')} credits</strong>
+            <button className="credit-package-cta" type="button" onClick={() => selectPackage(item.sku)}>{sku === item.sku ? 'Selected plan' : `Choose ${item.name}`} <ArrowRight size={18} aria-hidden="true" /></button>
+            <ul className="credit-package-features">
+              <li><Check size={17} aria-hidden="true" />All three standard image tools</li>
+              <li><Check size={17} aria-hidden="true" />Free uses are used first</li>
+              <li><Check size={17} aria-hidden="true" />No scheduled credit expiry</li>
+              <li><Check size={17} aria-hidden="true" />One-time purchase · No automatic renewal</li>
+              <li><Check size={17} aria-hidden="true" />Local edits & downloads are free</li>
+            </ul>
+          </article>)}
         </fieldset>
+        <section className="payment-rates" aria-labelledby="payment-rates-heading">
+          <div className="payment-rates-intro"><h2 id="payment-rates-heading">Credits per image operation</h2><p>One balance. Three ways to create.</p></div>
+          {imageCostsConfigured ? <dl>{imageOperations.map(({ operation, label }) => <div key={operation}><dt>{label}</dt><dd>{catalog.imageCosts?.[operation].toLocaleString('en-US')} credits</dd></div>)}</dl> : <p>Open a supported image tool to check its current credit cost before processing.</p>}
+        </section>
         <section className="payment-review" aria-labelledby="payment-review-heading">
           <div>
             <h2 id="payment-review-heading">Review your purchase</h2>

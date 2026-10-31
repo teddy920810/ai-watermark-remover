@@ -1,6 +1,7 @@
 ---
 import AuthControls from '../../components/auth/AuthControls';
 import CreditCheckout from '../../components/payments/CreditCheckout';
+import { Monitor, ShieldCheck, WalletCards } from '@lucide/astro';
 import site from '../../content/settings/site.json';
 import '../../styles/global.css';
 import '../../styles/payments.css';
@@ -18,20 +19,27 @@ const appAsset = (path: string) => process.env.BUILD_TARGET === 'app' ? `/_app-a
     <meta name="description" content="Purchase image credits and review your payment history." />
     <link rel="icon" href={appAsset(site.favicon)} />
   </head>
-  <body>
+  <body class="credits-page">
     <header class="site-header credits-header">
       <a class="brand" href="/" aria-label={`${site.name} home`}><img class="brand-logo" src={appAsset(site.logo)} alt="" /><span>{site.name}</span></a>
+      <nav aria-label="Pricing navigation"><a href="/app/image">Image workspace</a><a href="#payment-rates-heading">How credits work</a><a href="#orders">Your orders</a></nav>
       <div class="header-auth"><AuthControls client:load /></div>
     </header>
     <main class="pricing-page" aria-labelledby="pricing-heading">
       <a class="credits-back" href="/app/image">Back to image workspace</a>
-      <span class="eyebrow">PURCHASED IMAGE CREDITS</span>
-      <h1 id="pricing-heading">More images. One simple purchase.</h1>
-      <p class="pricing-intro">Buy credits for standard watermark removal, background removal, and object removal. Each tool shows its credit cost before processing.</p>
-      <p class="pricing-intro">These image credits do not cover PRO, brush refinement, or video processing.</p>
+      <div class="pricing-hero">
+        <h1 id="pricing-heading">More images. One simple purchase.</h1>
+        <p class="pricing-intro">One shared balance for watermark removal, background removal, and object removal.</p>
+        <ul class="pricing-assurances" aria-label="Purchase benefits">
+          <li><Monitor size={21} aria-hidden="true" />Work in your browser</li>
+          <li><WalletCards size={21} aria-hidden="true" />One-time purchase</li>
+          <li><ShieldCheck size={21} aria-hidden="true" />No automatic renewal</li>
+        </ul>
+      </div>
       <CreditCheckout client:load />
       <div class="pricing-terms">
         <p>One-time payment. No automatic renewal. Purchased image credits have no scheduled expiry, cannot be transferred, and cannot be exchanged for cash. Process only images you are authorized to edit.</p>
+        <p>These image credits do not cover PRO, brush refinement, or video processing.</p>
         <p>Image files and results are temporary and expire after 24 hours. Download your results promptly. For purchase refunds, contact support with your order number before using the credits; used or disputed orders require review.</p>
         <p>Read our <a href="/terms">Terms</a> and <a href="/privacy">Privacy Policy</a> before buying.</p>
       </div>

@@ -45,6 +45,105 @@ async function setup(page: Page, options: { enabled?: boolean; mode?: 'success' 
   ` }));
 }
 
+// Approved launch catalog is intentionally local to these layout regressions.
+// The older 5/15/40 fixtures below continue testing payment recovery separately.
+async function setupApprovedPricingLayout(page: Page, enabled = true) {
+  await setup(page, { enabled });
+  let creates = 0;
+  await page.route('**/api/payments/catalog', route => route.fulfill({ json: {
+    enabled, creditsEnabled: true, clientId: 'sandbox-public-id', environment: 'sandbox',
+    packages: [
+      { sku: 'starter', name: 'Starter', credits: 4990, amountCents: 499, currency: 'USD' },
+      { sku: 'plus', name: 'Plus', credits: 9990, amountCents: 999, currency: 'USD' },
+      { sku: 'pro', name: 'Pro', credits: 19990, amountCents: 1999, currency: 'USD' },
+    ],
+    imageCosts: { 'watermark-removal': 100, 'background-removal': 10, 'object-removal': 10 }, imageCostVersion: '2026-10-31-v1',
+  } }));
+  await page.route('**/api/payments/paypal/orders', route => {
+    creates += 1;
+    return route.fulfill({ status: 500, json: { error: 'This layout check must not create a payment order.' } });
+  });
+  return () => creates;
+}
+
+test('pricing reference layout: desktop four-card comparison selects Plus and keeps free navigation non-billable', async ({ page }) => {
+  const creates = await setupApprovedPricingLayout(page);
+  await page.setViewportSize({ width: 1440, height: 1100 });
+  await page.goto('/app/credits');
+  const group = page.getByRole('group', { name: 'Choose an image credit package' });
+  const cards = group.locator('.credit-package');
+  await expect(cards).toHaveCount(4);
+  const free = cards.filter({ has: page.getByText('Free', { exact: true }) });
+  const starter = cards.filter({ has: page.getByText('Starter', { exact: true }) });
+  const plus = cards.filter({ has: page.getByText('Plus', { exact: true }) });
+  const pro = cards.filter({ has: page.getByText('Pro', { exact: true }) });
+  for (const card of [free, starter, plus, pro]) await expect(card).toBeVisible();
+  await expect(starter).toContainText('4,990 credits');
+  await expect(starter).toContainText('$4.99');
+  await expect(plus).toContainText('9,990 credits');
+  await expect(plus).toContainText('$9.99');
+  await expect(pro).toContainText('19,990 credits');
+  await expect(pro).toContainText('$19.99');
+  await expect(plus).toContainText(/Recommended|Most popular/i);
+  const recommendation = await plus.evaluate(node => {
+    const style = getComputedStyle(node);
+    return [style.borderColor, style.backgroundColor, style.boxShadow];
+  });
+  const ordinary = await pro.evaluate(node => {
+    const style = getComputedStyle(node);
+    return [style.borderColor, style.backgroundColor, style.boxShadow];
+  });
+  expect(recommendation).not.toEqual(ordinary);
+  const desktop = await cards.evaluateAll(nodes => nodes.map(node => {
+    const rect = node.getBoundingClientRect(); return { x: rect.x, y: rect.y, width: rect.width };
+  }));
+  expect(desktop.every(box => Math.abs(box.y - desktop[0].y) < 32)).toBe(true);
+  expect(desktop.every((box, index) => index === 0 || box.x >= desktop[index - 1].x + desktop[index - 1].width)).toBe(true);
+  const rates = page.getByRole('region', { name: 'Credits per image operation' });
+  await expect(rates).toContainText('Watermark removal100 credits');
+  await expect(rates).toContainText('Background removal10 credits');
+  await expect(rates).toContainText('Object removal10 credits');
+  await plus.getByRole('button', { name: 'Choose Plus', exact: true }).click();
+  await expect(group.getByRole('radio', { name: /Plus/ })).toBeChecked();
+  await expect(page.getByRole('region', { name: 'Review your purchase' })).toContainText('9,990 image credits');
+  await expect(page.getByRole('region', { name: 'Review your purchase' })).toContainText('$9.99');
+  expect(creates()).toBe(0);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(1440);
+  const startFree = free.getByRole('link', { name: /free|start|try/i });
+  await expect(startFree).toHaveAttribute('href', '/app/image');
+  await startFree.click();
+  await expect(page).toHaveURL(/\/app\/image$/);
+  expect(creates()).toBe(0);
+});
+
+test('pricing reference layout: tablet has two columns, mobile has one and closed checkout cannot accept payment', async ({ page }) => {
+  const creates = await setupApprovedPricingLayout(page, false);
+  await page.setViewportSize({ width: 900, height: 1100 });
+  await page.goto('/app/credits');
+  const cards = page.getByRole('group', { name: 'Choose an image credit package' }).locator('.credit-package');
+  await expect(cards).toHaveCount(4);
+  const tablet = await cards.evaluateAll(nodes => nodes.map(node => {
+    const rect = node.getBoundingClientRect(); return { x: rect.x, y: rect.y, width: rect.width, height: rect.height };
+  }));
+  expect(Math.abs(tablet[0].y - tablet[1].y)).toBeLessThan(32);
+  expect(Math.abs(tablet[2].y - tablet[3].y)).toBeLessThan(32);
+  expect(Math.abs(tablet[0].x - tablet[2].x)).toBeLessThan(2);
+  expect(tablet[1].x).toBeGreaterThanOrEqual(tablet[0].x + tablet[0].width);
+  expect(tablet[2].y).toBeGreaterThan(tablet[0].y + tablet[0].height - 2);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(900);
+  await page.setViewportSize({ width: 390, height: 844 });
+  const mobile = await cards.evaluateAll(nodes => nodes.map(node => {
+    const rect = node.getBoundingClientRect(); return { x: rect.x, y: rect.y, width: rect.width, height: rect.height };
+  }));
+  expect(mobile.every(box => Math.abs(box.x - mobile[0].x) < 2)).toBe(true);
+  expect(mobile.every((box, index) => index === 0 || box.y >= mobile[index - 1].y + mobile[index - 1].height - 2)).toBe(true);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+  await expect(page.getByRole('button', { name: 'Checkout unavailable', exact: true })).toBeDisabled();
+  await expect(page.getByRole('button', { name: 'PayPal test checkout' })).toHaveCount(0);
+  await expect(page.locator('script[src*="paypal.com/sdk/js"]')).toHaveCount(0);
+  expect(creates()).toBe(0);
+});
+
 test('credit bundles show each tool cost and do not unlock PRO processing', async ({ page }) => {
   await setup(page);
   await page.route('**/api/payments/catalog', route => route.fulfill({ json: {
