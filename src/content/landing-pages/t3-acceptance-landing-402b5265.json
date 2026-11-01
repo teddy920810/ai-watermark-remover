@@ -1,0 +1,68 @@
+{
+  "templateVersion": 1,
+  "slug": "t3-acceptance-landing-402b5265",
+  "draft": true,
+  "toolKind": "background-remover",
+  "title": "Operator tool draft example",
+  "description": "An unpublished example of a complete tool landing document for the content API.",
+  "eyebrow": "Content API example",
+  "heading": "Operator tool draft example",
+  "intro": "This unpublished document demonstrates the required landing-page fields.",
+  "benefits": [
+    "Choose a supported image",
+    "Preview the result before exporting"
+  ],
+  "process": {
+    "eyebrow": "Workflow",
+    "heading": "Three steps",
+    "intro": "Use reviewed instructions that match the actual tool.",
+    "steps": [
+      {
+        "number": "01",
+        "title": "Choose an image",
+        "description": "Choose an image you own or are authorized to edit."
+      },
+      {
+        "number": "02",
+        "title": "Review the request",
+        "description": "Sign in, review the displayed cost and explicitly start processing."
+      },
+      {
+        "number": "03",
+        "title": "Inspect and download",
+        "description": "Inspect the result and use the download control to export it."
+      }
+    ]
+  },
+  "features": {
+    "eyebrow": "Example image",
+    "heading": "A static image example",
+    "intro": "One image renders as a static illustration.",
+    "items": [
+      {
+        "enabled": true,
+        "eyebrow": "Product photo",
+        "heading": "Use a reviewed source image",
+        "description": "A second image is optional and must be a real matching After image for comparison.",
+        "listItems": [
+          "Keep the original image and its alt text accurate"
+        ],
+        "image": "/uploads/content-api/a5395d365d1479f2da110200/authorized-source-8cf97f818c9f8b4b.png",
+        "imageAlt": "A product photograph used in the existing background removal example",
+        "imagePosition": "right"
+      }
+    ]
+  },
+  "faq": {
+    "eyebrow": "Example questions",
+    "heading": "Before publication",
+    "intro": "Replace these example explanations with reviewed editorial content.",
+    "items": [
+      {
+        "enabled": true,
+        "question": "Is this page published?",
+        "answer": "No. New API documents remain drafts until the exact difference is approved and passes the protected release flow."
+      }
+    ]
+  }
+}
