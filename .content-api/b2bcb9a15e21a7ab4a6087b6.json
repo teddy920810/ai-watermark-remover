@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "id": "b2bcb9a15e21a7ab4a6087b6",
+  "title": "R3-T2 protected isolated draft CI acceptance",
+  "actor": "seo-editor-01",
+  "baseRevision": "69fcdc9c1c9384d4d943f83c9928506c552af83a",
+  "createdAt": "2026-11-01T15:08:01.623Z",
+  "entries": [
+    "src/content/blog/t3-acceptance-blog-402b5265.md",
+    "src/content/landing-pages/t3-acceptance-landing-402b5265.json"
+  ],
+  "assets": [
+    {
+      "path": "/uploads/content-api/b2bcb9a15e21a7ab4a6087b6/r3-authorized-source-8cf97f818c9f8b4b.png",
+      "sha256": "8cf97f818c9f8b4b575e9b22a88df677e73a93bad2834b9814731a068b4fe426",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 1669495,
+      "mime": "image/png"
+    }
+  ],
+  "events": {
+    "760accde7ae82620a5900ba72e278bf4cf87df977c797cf123ec8a803e651930": {
+      "fingerprint": "86013bc940882793f6d0fae6999ff7c6b33dba324d5b18d4702c999b21ad6e35",
+      "result": {}
+    },
+    "238d26e93eddc6f4f00db3a4c61be525aebdfb0f304f3d0c9cd85408676c5a65": {
+      "fingerprint": "b937dcae4d69673933a581560fa12032dd95374c4da91ecada710592f34d3afe",
+      "result": {
+        "asset": {
+          "path": "/uploads/content-api/b2bcb9a15e21a7ab4a6087b6/r3-authorized-source-8cf97f818c9f8b4b.png",
+          "sha256": "8cf97f818c9f8b4b575e9b22a88df677e73a93bad2834b9814731a068b4fe426",
+          "width": 1536,
+          "height": 1024,
+          "bytes": 1669495,
+          "mime": "image/png"
+        }
+      }
+    },
+    "7ba5656098ab14480a7b425ec94a9ba3a8b3f044478b22c9bae118457a0a6bbe": {
+      "fingerprint": "c6311d33e8971537154aa8942ada81bb028469dcfb7b0431157a2ff694e17e83",
+      "result": {}
+    },
+    "ee570311ca0a10cfd8aba1d2b385c544c7a16ffd8f936cd87b8d89fcc3b95d5d": {
+      "fingerprint": "d5cc6fb40d171e89d05b13e36b523e9c4613f42003f8c00f49bd90ff0456db1a",
+      "result": {}
+    },
+    "28657d0fbc0d2663561795406df3073b36c3d931214d0158b6775eb21fa2b68f": {
+      "fingerprint": "2436c289598d1fec4ccbda9cc04dd8ddcd2aaf45b9f2ba9ebfc071c3cc14a69f",
+      "result": {}
+    }
+  },
+  "pull": 110,
+  "approval": {
+    "digest": "00e51bd708bb609380228ce39866aae47e6fce6424fe360bb4acb62acdecdbf7",
+    "actor": "seo-editor-01",
+    "reference": "https://github.com/teddy920810/ai-watermark-remover/pull/110#issuecomment-6559855455",
+    "note": "Authorized technical acceptance only: preserve both existing isolated fixtures as draft:true; approve only these original-byte asset references and this exact digest. No public SEO or protected baseline change."
+  }
+}
