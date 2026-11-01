@@ -40,4 +40,3 @@ export function collectPublicationIssues(records, assetExists) {
   }
   return [...new Set(issues)];
 }
-

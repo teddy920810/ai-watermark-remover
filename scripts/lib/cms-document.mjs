@@ -5,4 +5,3 @@ export function parseCmsDocument(path, source) {
   if (!match) throw new Error(`${path}: missing frontmatter.`);
   return { path, data: YAML.parse(match[1]), body: match[2] };
 }
-
