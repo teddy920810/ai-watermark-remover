@@ -1,8 +1,9 @@
-import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, rmSync, existsSync, symlinkSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, rmSync, existsSync, symlinkSync, renameSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
-import { collectTargetRoutes, createBuildPlan, prepareBuildInputs, targetIntegration, classifyTargetChanges, renderGatewayConfig, renderAppSiteProxy, configureAppSiteProxy, validateBuildArtifact, stageDeploymentArtifact, assertRequiredTargetBuilds } from '../../../scripts/build-target.mjs';
+import { collectTargetRoutes, createBuildPlan, prepareBuildInputs, targetIntegration, classifyTargetChanges, renderGatewayConfig, renderAppSiteProxy, configureAppSiteProxy, validateBuildArtifact, stageDeploymentArtifact, assertRequiredTargetBuilds, changedTargetFiles } from '../../../scripts/build-target.mjs';
 
 const directories: string[] = [];
 function fixture() {
@@ -23,6 +24,17 @@ function fixture() {
 afterEach(() => { for (const directory of directories.splice(0)) rmSync(directory, { recursive: true, force: true }); });
 
 describe('independent build targets', () => {
+  it('includes the deleted executable side when a source file is renamed into documentation', () => {
+    const root = fixture();
+    const git = (...args: string[]) => execFileSync('git', ['-C', root, ...args], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim();
+    git('init'); git('add', '.');
+    git('-c', 'user.name=CI fixture', '-c', 'user.email=ci@example.test', 'commit', '-m', 'fixture base');
+    const base = git('rev-parse', 'HEAD');
+    mkdirSync(path.join(root, 'docs'));
+    renameSync(path.join(root, 'src/pages/api/v1/[...path].ts'), path.join(root, 'docs/moved.md'));
+    git('add', '.'); git('-c', 'user.name=CI fixture', '-c', 'user.email=ci@example.test', 'commit', '-m', 'rename executable');
+    expect(classifyTargetChanges(changedTargetFiles(base, git('rev-parse', 'HEAD'), root)!)).toEqual(['app']);
+  });
   it('revalidates every packaging target for ignore and otherwise unknown input changes', () => {
     for (const file of ['.gitignore', '.vercelignore', 'unknown-runtime.js']) expect(classifyTargetChanges([file])).toEqual(['site', 'app', 'worker']);
   });

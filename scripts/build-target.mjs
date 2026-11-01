@@ -235,10 +235,10 @@ export function validateBuildArtifact(root, target) {
   }
 }
 
-function changedFiles(base, head = 'HEAD') {
+export function changedTargetFiles(base, head = 'HEAD', root = projectRoot) {
   if (!base || /^0+$/.test(base)) return null;
-  const result = spawnSync('git', ['diff', '--name-only', base, head, '--'], { cwd: projectRoot, encoding: 'utf8', shell: false });
-  return result.status === 0 ? result.stdout.trim().split(/\r?\n/).filter(Boolean) : null;
+  const result = spawnSync('git', ['diff', '--no-renames', '--name-only', '-z', base, head, '--'], { cwd: root, encoding: 'utf8', shell: false });
+  return result.status === 0 ? result.stdout.split('\0').filter(Boolean) : null;
 }
 function runNode(filename, args, env) {
   const result = spawnSync(process.execPath, [filename, ...args], { cwd: projectRoot, env, stdio: 'inherit', shell: false });
@@ -285,11 +285,11 @@ if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.ar
   try {
     const [command, ...args] = process.argv.slice(2);
     if (buildTargets.includes(command)) await buildTarget(command);
-    else if (command === 'changes') process.stdout.write(JSON.stringify(classifyTargetChanges(changedFiles(args[0], args[1]) ?? ['package.json'])));
+    else if (command === 'changes') process.stdout.write(JSON.stringify(classifyTargetChanges(changedTargetFiles(args[0], args[1]) ?? ['package.json'])));
     else if (command === 'required') assertRequiredTargetBuilds(JSON.parse(process.env.SELECTED_TARGETS ?? 'null'), process.env.TARGET_BUILD_RESULT, process.env.TARGET_PLAN_RESULT);
     else if (command === 'ignore') {
       if (!['site', 'app', 'gateway'].includes(args[0])) throw new Error('Unknown deployment target');
-      const files = changedFiles(process.env.VERCEL_GIT_PREVIOUS_SHA, process.env.VERCEL_GIT_COMMIT_SHA);
+      const files = changedTargetFiles(process.env.VERCEL_GIT_PREVIOUS_SHA, process.env.VERCEL_GIT_COMMIT_SHA);
       process.exitCode = (args[0] === 'gateway' ? !files || files.some((file) => /^(?:apps\/gateway\/|scripts\/build-target)/.test(file)) : classifyTargetChanges(files ?? ['package.json']).includes(args[0])) ? 1 : 0;
     }
     else if (command === 'gateway') {
