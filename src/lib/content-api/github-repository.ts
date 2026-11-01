@@ -87,8 +87,19 @@ export class GitHubContentRepository implements ContentRepository {
     if (result.errors) fail(503, 'PR_READY_FAILED', 'Content commit is preserved. Retry review with the same key or mark the PR ready in GitHub.');
   }
   async checks(revision: string): Promise<ContentCheck[]> {
-    const result = await this.call(`${repository}/commits/${revision}/check-runs?per_page=100&filter=latest`);
-    return result.check_runs.map((run: { name: string; conclusion: string; status: string; app: { id: number } }) => ({ name: run.name, success: run.status === 'completed' && run.conclusion === 'success', appId: run.app.id }));
+    if (!/^[a-f0-9]{40}$/.test(revision)) fail(422, 'INVALID_REF', 'Checks require an exact commit SHA.');
+    // Fine-grained PATs cannot call Checks. This fixed repository is public: use the documented anonymous read contract, never the content write credential.
+    // https://docs.github.com/en/rest/checks/runs?apiVersion=2026-03-10#list-check-runs-for-a-git-reference
+    const response = await this.fetcher(`https://api.github.com${repository}/commits/${revision}/check-runs?per_page=100&filter=latest`, {
+      method: 'GET', redirect: 'error', signal: AbortSignal.timeout(25_000), headers: { Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2026-03-10' },
+    });
+    if (!response.ok) fail(503, 'CHECKS_UNAVAILABLE', `Public Checks could not be verified (${response.status}). Limits or repository privacy require maintainer review; publication remains blocked.`);
+    const result = await response.json();
+    if (!Array.isArray(result.check_runs)) fail(503, 'CHECKS_UNAVAILABLE', 'Public Checks response is malformed; publication remains blocked.');
+    return result.check_runs.map((run: { name: string; head_sha: string; conclusion: string; status: string; app: { id: number } }) => {
+      if (!run || typeof run.name !== 'string' || typeof run.app?.id !== 'number' || !/^[a-f0-9]{40}$/.test(run.head_sha ?? '')) fail(503, 'CHECKS_UNAVAILABLE', 'Public Checks response is malformed; publication remains blocked.');
+      return { name: run.name, success: run.head_sha === revision && run.status === 'completed' && run.conclusion === 'success', appId: run.app.id };
+    });
   }
   async changedFiles(number: number) {
     const result: string[] = [];

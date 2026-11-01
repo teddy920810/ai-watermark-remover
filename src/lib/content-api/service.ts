@@ -142,15 +142,16 @@ export function createContentApi({ repository, config, fetch: fetcher = globalTh
       let snapshot: ContentSnapshot; let change: Change;
       if (create) {
         exact(data, ['title']); if (typeof data.title !== 'string' || !data.title.trim() || data.title.length > 180 || [...data.title].some(char => char.charCodeAt(0) < 32)) fail(422, 'INVALID_TITLE', 'Provide a single-line title, at most 180 characters.');
-        try { snapshot = await repository.snapshot(branch); change = metadata(snapshot, id); }
+        try { snapshot = await load(id); change = metadata(snapshot, id); }
         catch (error) {
           if ((error as { status?: number }).status !== 404) throw error;
           const main = await repository.snapshot('main'); await repository.createBranch(branch, main.revision); snapshot = await repository.snapshot(branch);
-          change = { version: 1, id, title: data.title, actor: config.actor, baseRevision: main.revision, createdAt: new Date().toISOString(), entries: [], assets: [], events: {} };
+          change = snapshot.files.has(metadataPath(id)) ? metadata(snapshot, id)
+            : { version: 1, id, title: data.title, actor: config.actor, baseRevision: main.revision, createdAt: new Date().toISOString(), entries: [], assets: [], events: {} };
         }
       } else { snapshot = await load(id); change = metadata(snapshot, id); }
       const event = change.events[eventKey];
-      if (event) { if (event.fingerprint !== fingerprint) fail(409, 'IDEMPOTENCY_CONFLICT', 'This key was used with a different operation or payload.'); if (path[2] === 'review' && change.pull && change.approval) await repository.ready(change.pull); return reply({ ...(create ? view(snapshot, change) : await status(snapshot, change)), ...event.result }, create ? 201 : 200, snapshot.revision); }
+      if (event) { if (event.fingerprint !== fingerprint) fail(409, 'IDEMPOTENCY_CONFLICT', 'This key was used with a different operation or payload.'); if (path[2] === 'review' && change.pull && change.approval) await repository.ready(change.pull); return reply({ ...(create && !change.pull ? view(snapshot, change) : await status(snapshot, change)), ...event.result }, create ? 201 : 200, snapshot.revision); }
       if (!create) {
         if (change.pull) { const pull = await repository.getPull(change.pull); if (pull.merged && request.method === 'POST' && path.length === 3 && path[2] === 'publish') { exact(data, []); return reply(await status(snapshot, change), 202, snapshot.revision); } if (pull.merged || pull.state === 'closed') fail(409, 'CHANGE_CLOSED', 'This review is closed. Start a new change set.'); }
         const expected = request.headers.get('if-match'); if (!expected) fail(428, 'REVISION_REQUIRED', 'Provide the quoted revision in If-Match.');

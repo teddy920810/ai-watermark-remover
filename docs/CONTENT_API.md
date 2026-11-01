@@ -7,7 +7,7 @@
 ## 部署和安全前置
 
 1. 部署包含本接口的 App 和 Site 版本。保留现有 Google/R2/支付配置，内容服务不用这些凭据。
-2. 仓库维护者在 GitHub 创建**只选 `teddy920810/ai-watermark-remover`** 的 fine-grained PAT，或等价的专用 GitHub App installation token。权限为 Contents read/write、Pull requests read/write、Checks read、Metadata read；不授予 Workflows write，不设主分支保护绕过身份。若采用有时效的 installation token，需要部署方提供自动续期，不能把即将到期的安装 token 当长期配置。首版最简单的是有明确到期日的单仓库 PAT。
+2. 仓库维护者在 GitHub 创建**只选 `teddy920810/ai-watermark-remover`** 的 fine-grained PAT，或等价的专用 GitHub App installation token。写入凭据权限为 Contents read/write、Pull requests read/write、Metadata read；不授予 Workflows write，不设主分支保护绕过身份。若采用有时效的 installation token，需要部署方提供自动续期，不能把即将到期的安装 token 当长期配置。首版最简单的是有明确到期日的单仓库 PAT。
 3. 将仓库凭据仅作为 App **Production Secret** `CONTENT_GITHUB_TOKEN` 保存。不得复制本机宽范围个人 token，不放入 Site、浏览器、Git、请求示例、截图或日志。GitHub 的文件权限不是路径级权限，服务端另行强制内容路径白名单，main 保护继续作为外部门禁。
 4. 在维护根目录运行 `node scripts/content-api-token.mjs`，生成 32 随机字节的 Bearer Token。脚本只写 Git 忽略的 `.secrets/content-api-token.txt` 和 `.sha256`，不打印 token，已有文件时拒绝覆盖。用密码管理器把 token 交给被授权的内容负责人/Agent；该持有人有内容修改和批准发布权限，应先审阅具体差异再调用审核接口。
 5. 把 `.sha256` 文件中的摘要设为 App Production Secret `CONTENT_API_TOKEN_SHA256`；设非秘密标识 `CONTENT_API_ACTOR`，如 `seo-editor-01`。摘要不能当 Bearer Token 使用。Preview 使用独立 token 和隔离凭据或保持关闭，不能继承 Production 凭据。
@@ -17,6 +17,8 @@
 
 官方合同：[GitHub Git trees](https://docs.github.com/en/rest/git/trees#create-a-tree)、[引用更新](https://docs.github.com/en/rest/git/refs#update-a-reference)、[fine-grained PAT](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)、[Vercel 环境变量](https://vercel.com/docs/environment-variables)、[函数请求体限制](https://vercel.com/docs/functions/limitations#request-body-size)。
 
+**Checks 读取与写入凭据分开。** GitHub 明确列出 [fine-grained PAT 不支持 Checks API](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#fine-grained-personal-access-tokens-limitations)。当前仓库为 public，按 [公开 Checks 无鉴权读取合同](https://docs.github.com/en/rest/checks/runs?apiVersion=2026-03-10#list-check-runs-for-a-git-reference)，服务端只读固定仓库和精确 SHA，不携带 Authorization 或内容写凭据；仍核对返回 head、GitHub Actions app15368 和两个必需检查。403/404/429/异常/限流均阻塞发布，不回退到宽权限 token。查询审核状态不要高频轮询，建议至少间隔 120 秒并在限流时退避。若未来仓库改为 private，必须先重新配置官方支持 Checks 的受限凭据合同；当前匿名路径会拒绝放行，不能沿用 PAT 并误报通过。
+
 ## 通用协议
 
 生产前缀为 `https://www.watermarkgemini.com/api/content/v1`。全部端点需要 `Authorization: Bearer <token>`，响应不缓存、不索引，不支持用 Google 会话或查询参数代替 token。
@@ -24,6 +26,8 @@
 写请求使用 `Content-Type: application/json`、8–128 字符的 `Idempotency-Key`（ASCII 字母/数字/下划线/连字符）。除创建变更集外，还需要 `If-Match: "<revision>"`，包含双引号。revision 是 Git commit SHA，不能用时间戳或内容 digest 替代。先读取当前 revision，再修改；并发提交通过非强制 Git 引用更新保护，失败不会覆盖另一写入。
 
 同一个变更集内，每项新操作使用新 key；传输失败时以相同 method、path、JSON 字节及 key 重试。成功的保存/上传/审核会把 key 摘要和请求指纹记入 Git；重试返回原操作产物及当前变更状态，不重复建文件。使用同 key 提交不同内容返回 409。创建的 key 与 actor 决定稳定变更集 ID；不要重复使用创建 key。校验不写 Git；发布操作经 PR 合并，本身不会再次创建内容。每个变更集最多 20 篇内容、30 个素材、200 次记录操作。
+
+同一次创建的重试可继续使用原创建 key：已合并分支被删除时，从 main 审计和 merge revision 恢复原 id、批准引用并读取合并/发布状态，不重新建分支。并发首次创建在分支出现后会复用已写入的元数据，不清空另一个请求已保存的编辑；不同内容复用同 key 仍返回 409。
 
 所有响应中的 `revision` 都可用于下一次修改，成功响应也提供带引号的 ETag。首次创建返回 201，保存/上传/审核返回 200，成功请求合并返回 202。错误结构为 `{"error":{"code":"REVISION_CONFLICT","message":"...","details":[]}}`，details 仅在有字段/发布问题时出现，不含凭据。
 
@@ -109,12 +113,40 @@ Markdown 不接受 raw HTML、MDX import/export 或可执行组件。图片支�
 以下保存为本机忽略目录的脚本，用 Node 22/24 执行。Token 从受保护文件读取，不放进参数或打印。示例创建**未发布草稿**，上传图片、引用、校验并保留恢复信息；不会自动批准示例内容。
 
 ```js
-import { readFile, writeFile } from 'node:fs/promises';
-import { randomUUID } from 'node:crypto';
+import { readFile, writeFile, mkdir, rename } from 'node:fs/promises';
+import { randomUUID, createHash } from 'node:crypto';
 const token = (await readFile('.secrets/content-api-token.txt', 'utf8')).trim();
 const root = 'https://www.watermarkgemini.com/api/content/v1';
-const run = randomUUID();
+const recordFile = 'output/content-draft-recovery.json';
+const image = await readFile('authorized-image.png');
+const documentSource = await readFile('docs/examples/content-api/blog.json', 'utf8');
+const inputSha = createHash('sha256').update(image).update(documentSource).digest('hex');
+await mkdir('output', { recursive: true });
+let journal;
+try { journal = JSON.parse(await readFile(recordFile, 'utf8')); }
+catch (error) { if (error.code !== 'ENOENT') throw new Error('Recovery record is invalid; preserve it for review.'); }
+journal ??= { version: 1, origin: root, inputSha, run: randomUUID(), requests: {}, responses: {} };
+if (journal.version !== 1 || journal.origin !== root || journal.inputSha !== inputSha) {
+  throw new Error('Recovery record belongs to different input or origin; use a new record.');
+}
+async function saveJournal() {
+  await writeFile(recordFile + '.tmp', JSON.stringify(journal, null, 2), { mode: 0o600 });
+  await rename(recordFile + '.tmp', recordFile);
+}
+await saveJournal(); // Output, target and original keys are durable before the first write.
+const run = journal.run;
 async function api(path, method = 'GET', data, revision, key = randomUUID()) {
+  if (data !== undefined) {
+    const descriptor = { path, method, digest: createHash('sha256').update(JSON.stringify(data)).digest('hex') };
+    const previous = journal.requests[key];
+    if (previous && (previous.path !== path || previous.method !== method || previous.digest !== descriptor.digest)) {
+      throw new Error('This operation key belongs to different content; review before using a new key.');
+    }
+    if (journal.responses[key]) return journal.responses[key];
+    if (previous) revision = previous.revision;
+    else journal.requests[key] = { ...descriptor, revision };
+    await saveJournal(); // Preserve the original revision even if the response becomes UNKNOWN.
+  }
   const response = await fetch(root + path, {
     method, redirect: 'error',
     headers: {
@@ -126,17 +158,17 @@ async function api(path, method = 'GET', data, revision, key = randomUUID()) {
   });
   const result = await response.json();
   if (!response.ok) throw new Error(`${response.status}: ${result.error.code}`);
+  if (data !== undefined) { journal.responses[key] = result; await saveJournal(); }
   return result;
 }
 const schema = await api('/schema');
 if (!schema.kinds.includes('blog')) throw new Error('Blog unavailable');
 let change = await api('/changes', 'POST', { title: 'Editorial draft review' }, undefined, `${run}-create`);
-const image = await readFile('authorized-image.png');
 change = await api(`/changes/${change.id}/assets`, 'POST', {
   name: 'editorial-photo.png', mime: 'image/png', base64: image.toString('base64'),
 }, change.revision, `${run}-asset`);
 const assetPath = change.asset.path;
-const document = JSON.parse(await readFile('docs/examples/content-api/blog.json', 'utf8'));
+const document = JSON.parse(documentSource);
 document.data.slug = `editorial-draft-${run.slice(0, 8)}`;
 document.data.coverImage = assetPath;
 document.data.coverAlt = 'Accurate description supplied by the content owner';
@@ -144,7 +176,7 @@ document.body = `## Editorial draft\n\n![Accurate source image description](${as
 change = await api(`/changes/${change.id}/entries/blog/${document.data.slug}`,
   'PUT', document, change.revision, `${run}-save`);
 const validation = await api(`/changes/${change.id}/validate`, 'POST', {}, change.revision, `${run}-validate`);
-await writeFile('output/content-draft-recovery.json', JSON.stringify({ run, change, validation }, null, 2));
+journal.last = { change, validation }; await saveJournal();
 console.log({ id: change.id, revision: change.revision, publishable: validation.publishable });
 ```
 
@@ -167,6 +199,8 @@ console.log({ state: released.state, pullRequest: released.pullRequest });
 
 现有内容更新：先 GET `/entries/{kind}/{slug}`，读取完整 data/body；创建变更集后仅修改获授权字段，完整 PUT 到相同 kind/slug，再走校验与精确审核。不要把创建模板覆盖到既有内容上。工具页使用完整 landing.json 结构，同样 PUT 到 `/entries/landing/{slug}`。
 
+示例必须沿用同一恢复文件重跑，不能每次换 run/key。创建成功就保存了 id/revision；后续上传/写正文的每次请求前也保留原 key、payload 摘要和 revision，响应丢失时以同一请求恢复 UNKNOWN。更换 origin、图片或原始文档时拒绝复用旧记录；新内容需要新的恢复文件和明确的新操作键。恢复记录不保存 Token、签名 URL 或图片字节，不要同时用多个进程修改同一记录。
+
 ## 错误与失败恢复
 
 | HTTP / code | 处理 |
@@ -187,6 +221,7 @@ console.log({ state: released.state, pullRequest: released.pullRequest });
 | 422 `NOT_PUBLISHABLE` / `CHANGE_LIMIT` / `INVALID_SLUG` / `RESERVED_SLUG` / `IMMUTABLE_SLUG` / `INVALID_TITLE` | 完成发布要求，或分为新变更；不能改现有 URL |
 | 428 `REVISION_REQUIRED` | 先 GET revision，按带引号格式提供 If-Match |
 | 503 `NOT_CONFIGURED` / `REPOSITORY_NOT_CONFIGURED` / `REPOSITORY_UNAVAILABLE` 等 | 检查专用凭据、授权范围、到期和平台状态；相同 key 重试，不重建内容 |
+| 503 `CHECKS_UNAVAILABLE` | 公开 Checks 异常、限流或仓库不再公开；等待/交维护者处理，绝不当作 CI 通过，也不安装宽权限 token 绕过 |
 
 审核在 Git 提交/PR 准备就绪中断时，分支和审计保留；同 key 重试恢复，或由维护者在 GitHub 把 PR 标记 Ready。合并因 main 前进而失败时，维护者在 PR 更新分支并检查冲突；如果无法保证原批准差异，重新基于最新 main 建变更集并迁移明确选择的内容/素材，旧分支保留供恢复。网络超时不能据此认定“没有写入”，先 GET 变更，再以原 key 重试。
 
@@ -198,3 +233,5 @@ node scripts/content-api-smoke.mjs --token-file .secrets/content-api-token.txt -
 ```
 
 第二条创建隔离未发布草稿和原字节素材，核对跨请求持久读取与下载哈希；不调用 review/publish、不发真实文章、不触发 Provider 或处理扣费。真实 PR/CI/部署链另按发布证据核验，不把这条草稿检查或 Mock 当作真实内容已经发布。
+
+写验收会在首个远程请求前准备并检查恢复文件；`--out` 未传时默认 `output/content-api-draft-smoke.json`。创建成功立即记 id/revision，各阶段保存进度，失败时原 key 与 pending 请求保留。断网/上传失败后以**相同 origin、image 和 --out** 重跑，复用原草稿而非另建；输出目录不可写则不会先创建 Git 分支。不要删除恢复记录“重跑”来掩盖 UNKNOWN；更换输入或目标需新记录，并保留原分支供人工恢复/清理。

@@ -98,6 +98,9 @@ describe('content-only Agent API', () => {
     const review = await call(`/changes/${change.id}/review`, 'POST', { digest: change.digest, approval: 'The content owner approves these exact isolated fixture differences.' }, change.revision, 'review-87654321');
     expect(review.status).toBe(200); change = await review.json();
     expect(repository.comments[0]).toContain(change.digest); expect(change.approval.reference).toContain('#issuecomment-');
+    repository.checks = async () => { throw new Error('Public Checks unavailable or rate-limited'); };
+    expect((await call(`/changes/${change.id}/publish`, 'POST', {}, change.revision, 'publish-87654321')).status).toBe(503);
+    expect(repository.pull!.merged).toBe(false);
     repository.checks = async () => [{ name: 'verify', success: true, appId: 999 }];
     expect((await call(`/changes/${change.id}/publish`, 'POST', {}, change.revision, 'publish-87654321')).status).toBe(409);
     repository.checks = async () => [{ name: 'verify', success: true, appId: 15368 }, { name: 'Required target artifacts', success: true, appId: 15368 }];
@@ -138,5 +141,69 @@ describe('content-only Agent API', () => {
     const refused = await call(`/changes/${change.id}/publish`, 'POST', {}, revision, 'publish-protected-123');
     expect(refused.status).toBe(409); expect((await refused.json()).error.code).toBe('BASELINE_SCOPE_VIOLATION');
     expect(repository.pull!.merged).toBe(false);
+  });
+  it('replays the original create after its merged branch is deleted without recreating it or resetting approval history', async () => {
+    const { call, repository } = harness();
+    const payload = { title: 'Creation replay after merged branch deletion' };
+    const created = await (await call('/changes', 'POST', payload)).json();
+    const branch = `codex/content-${created.id}`;
+    const merged = await repository.snapshot(branch);
+    const metadataPath = `.content-api/${created.id}.json`;
+    const metadata = JSON.parse(merged.files.get(metadataPath)!.toString());
+    metadata.pull = 101;
+    metadata.approval = { digest: created.digest, actor: config.actor, reference: 'https://github.com/teddy920810/ai-watermark-remover/pull/101#issuecomment-123', note: 'Previously approved exact content difference.' };
+    merged.files.set(metadataPath, Buffer.from(JSON.stringify(metadata)));
+    merged.revision = 'f'.repeat(40);
+    repository.refs.set('main', merged);
+    repository.pull = { number: 101, url: 'https://github.com/teddy920810/ai-watermark-remover/pull/101', state: 'closed', merged: true, branch, head: created.revision, mergeRevision: merged.revision };
+    repository.refs.delete(branch);
+    const before = repository.commits;
+    const response = await call('/changes', 'POST', payload);
+    expect(response.status).toBe(201);
+    const replay = await response.json();
+    expect(replay.id).toBe(created.id); expect(replay.baseRevision).toBe(created.baseRevision);
+    expect(replay.approval).toEqual(metadata.approval); expect(replay.pullRequest).toContain('/pull/101');
+    expect(replay.state).toBe('merged-awaiting-deployment'); expect(replay.mergeRevision).toBe(merged.revision);
+    expect(repository.refs.has(branch)).toBe(false); expect(repository.commits).toBe(before);
+    expect(repository.refs.get('main')!.files.get(metadataPath)).toEqual(merged.files.get(metadataPath));
+    expect((await call('/changes', 'POST', { title: 'Different content with the old creation key' })).status).toBe(409);
+    expect((await (await call(`/changes/${created.id}`)).json()).state).toBe('merged-awaiting-deployment');
+  });
+  it('reuses metadata written by another create before its post-create snapshot, preserving intervening edits', async () => {
+    const { call, repository } = harness();
+    const snapshot = repository.snapshot.bind(repository);
+    let missingReads = 0; let releaseMissing!: () => void;
+    const bothMissing = new Promise<void>(resolve => { releaseMissing = resolve; });
+    repository.snapshot = async ref => {
+      if (ref.startsWith('codex/content-') && missingReads < 2 && !repository.refs.has(ref)) {
+        missingReads++; if (missingReads === 2) releaseMissing(); await bothMissing;
+        throw Object.assign(new Error('Both creators saw an absent branch'), { status: 404 });
+      }
+      return snapshot(ref);
+    };
+    const createBranch = repository.createBranch.bind(repository);
+    let creates = 0; let releaseLaterCreator!: () => void;
+    const firstEditPersisted = new Promise<void>(resolve => { releaseLaterCreator = resolve; });
+    repository.createBranch = async (branch, revision) => {
+      if (++creates === 1) await createBranch(branch, revision);
+      else await firstEditPersisted;
+    };
+    const payload = { title: 'Concurrent creation with one durable request key' };
+    const pending = [call('/changes', 'POST', payload), call('/changes', 'POST', payload)].map(async response => { const result = await response; return { status: result.status, data: await result.json() }; });
+    const initial = await Promise.race(pending);
+    try {
+      expect(initial.status).toBe(201);
+      const document = JSON.parse(readFileSync('docs/examples/content-api/blog.json', 'utf8'));
+      document.data.slug = 'concurrent-edit'; document.body = '## Concurrent edit\n\nPersisted before the later creator resumes.';
+      const saved = await call(`/changes/${initial.data.id}/entries/blog/concurrent-edit`, 'PUT', document, initial.data.revision, 'intervening-edit-123');
+      expect(saved.status).toBe(200); const edited = await saved.json();
+      const before = repository.commits;
+      releaseLaterCreator();
+      const replay = (await Promise.all(pending)).find(result => result !== initial)!;
+      expect(replay.status).toBe(201); expect(replay.data.revision).toBe(edited.revision);
+      expect(replay.data.entries).toEqual(['src/content/blog/concurrent-edit.md']);
+      expect(repository.commits).toBe(before);
+      expect((await (await call(`/changes/${edited.id}`)).json()).entries).toEqual(edited.entries);
+    } finally { releaseLaterCreator(); }
   });
 });

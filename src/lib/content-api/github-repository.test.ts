@@ -2,6 +2,27 @@ import { describe, expect, it, vi } from 'vitest';
 import { GitHubContentRepository } from './github-repository';
 const revision = 'a'.repeat(40);
 describe('GitHub content persistence contract', () => {
+  it('reads public Checks without the content write credential and requires the requested exact SHA', async () => {
+    const request = vi.fn(async () => new Response(JSON.stringify({ check_runs: [
+      { name: 'verify', head_sha: revision, status: 'completed', conclusion: 'success', app: { id: 15368 } },
+      { name: 'Required target artifacts', head_sha: 'b'.repeat(40), status: 'completed', conclusion: 'success', app: { id: 15368 } },
+    ] })));
+    const result = await new GitHubContentRepository('content-write-credential-not-for-checks', request).checks(revision);
+    const [url, init] = request.mock.calls[0] as unknown as [string, RequestInit];
+    expect(url).toBe(`https://api.github.com/repos/teddy920810/ai-watermark-remover/commits/${revision}/check-runs?per_page=100&filter=latest`);
+    expect(new Headers(init.headers).has('authorization')).toBe(false);
+    expect(result).toEqual([{ name: 'verify', success: true, appId: 15368 }, { name: 'Required target artifacts', success: false, appId: 15368 }]);
+  });
+  it.each([403, 404, 429, 500])('never treats public Checks HTTP %s as passed or retries with write credentials', async status => {
+    const request = vi.fn(async () => new Response(JSON.stringify({ message: 'Unavailable' }), { status }));
+    await expect(new GitHubContentRepository('content-write-credential-not-for-checks', request).checks(revision)).rejects.toThrow();
+    expect(request).toHaveBeenCalledTimes(1);
+    expect(new Headers((request.mock.calls[0] as unknown as [string, RequestInit])[1].headers).has('authorization')).toBe(false);
+  });
+  it('fails closed on malformed public Checks responses', async () => {
+    const request = vi.fn(async () => new Response(JSON.stringify({ check_runs: [{ name: 'verify', status: 'completed', conclusion: 'success' }] })));
+    await expect(new GitHubContentRepository('write-token', request).checks(revision)).rejects.toThrow();
+  });
   it('refuses a content pull request targeting an unprotected branch or another repository', async () => {
     const request = vi.fn(async () => new Response(JSON.stringify({ number: 101, html_url: 'https://github.com/teddy920810/ai-watermark-remover/pull/101', state: 'open', base: { ref: 'unprotected' }, head: { sha: revision, ref: 'codex/content-abcdefabcdefabcdefabcdef', repo: { full_name: 'teddy920810/ai-watermark-remover' } } })));
     await expect(new GitHubContentRepository('test-only-token', request).getPull(101)).rejects.toThrow();
