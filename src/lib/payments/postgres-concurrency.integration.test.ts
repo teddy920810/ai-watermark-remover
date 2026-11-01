@@ -7,6 +7,8 @@ import { createJob } from '../jobs/job';
 import { PostgresJobRequestStore } from '../jobs/postgres-job-request-store';
 import { PostgresProcessingStore } from '../processing/postgres-processing-store';
 import { PostgresPaymentStore } from './postgres-payment-store';
+import { PaymentService } from './payment-service';
+import { getPaymentConfig } from './payment-config';
 import { reservePurchasedImageCredit } from './image-credit-wallet';
 import { ensureFreeBenefitAccount } from '../benefits/free-benefits';
 
@@ -95,6 +97,36 @@ describe.skipIf(!databaseUrl)('real isolated PostgreSQL payment concurrency', ()
   beforeEach(async () => {
     await pool.query('TRUNCATE payment_orders,payment_events,payment_adjustments,user_benefits,processing_accounts,processing_admissions,processing_outbox CASCADE');
   }, 30_000);
+
+  it('recovers a changed-catalog purchase concurrently by its exact owner, environment and original snapshot', async () => {
+    const original = await payments.createOrder(owner, purchase, 'original-request');
+    await payments.attachPaypalOrder(original.id, paypalOrderId);
+    const live = new PostgresPaymentStore(pool, 'live');
+    const otherEnvironment = await live.createOrder(owner, purchase, 'original-request');
+    const otherOwner = await payments.createOrder('other-owner', purchase, 'original-request');
+    const config = getPaymentConfig({ PAYPAL_ENABLED: 'true', PAYPAL_CLIENT_ID: 'public', PAYPAL_CLIENT_SECRET: 'private', PAYPAL_MERCHANT_ID: 'QA-MERCHANT', PAYPAL_WEBHOOK_ID: 'WH1' });
+    let creates = 0;
+    const gateway = {
+      async createOrder() { creates++; throw new Error('Recovery must not create a replacement PayPal order'); },
+      async captureOrder() { throw new Error('Recovery must not capture'); },
+      async getOrder() { throw new Error('Recovery must not query PayPal'); },
+      async getCapture() { throw new Error('Recovery must not query PayPal'); },
+      async getRefund() { throw new Error('Recovery must not query PayPal'); },
+      async verifyWebhook() { return false; },
+    };
+    const service = new PaymentService({ ...config, packages: [], catalogVersion: 'withdrawn-v2' }, payments, gateway);
+    const restored = await Promise.all(Array.from({ length: 6 }, () => service.create(owner, purchase.sku, 'original-request')));
+    for (const result of restored) expect(result).toMatchObject({ ...purchase, id: original.id, userId: owner, environment: 'sandbox', paypalOrderId });
+    expect((await live.getOrderByRequestKey(owner, 'original-request'))?.id).toBe(otherEnvironment.id);
+    expect((await payments.getOrderByRequestKey('other-owner', 'original-request'))?.id).toBe(otherOwner.id);
+    expect(await payments.getOrderByRequestKey('stranger', 'original-request')).toBeNull();
+    expect(await payments.getOrderByRequestKey(owner, 'missing-request')).toBeNull();
+    await expect(service.create(owner, 'changed-sku', 'original-request')).rejects.toMatchObject({ status: 409 });
+    await expect(service.create(owner, purchase.sku, 'new-request')).rejects.toMatchObject({ status: 400 });
+    expect(creates).toBe(0);
+    expect((await pool.query('SELECT id FROM paid_credit_lots')).rows).toHaveLength(0);
+    expect((await pool.query('SELECT id FROM payment_orders')).rows).toHaveLength(3);
+  }, 60_000);
 
   it('initializes a fresh owner exactly once across six real concurrent connections', async () => {
     const freshOwner = `fresh-${randomUUID()}`;

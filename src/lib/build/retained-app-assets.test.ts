@@ -16,9 +16,13 @@ const manifest = (assets = [asset], source = origin) => ({ version: 1, origin: s
 afterEach(() => { for (const directory of directories.splice(0)) rmSync(directory, { recursive: true, force: true }); });
 
 describe('previous public App asset retention', () => {
+  it('retains the production checkout entry used before payment recovery changes', () => {
+    const value = JSON.parse(readFileSync(new URL('../../../apps/app/retained-assets.json', import.meta.url), 'utf8'));
+    expect(value.assets).toEqual(expect.arrayContaining([{ path: '/_app-assets/CreditCheckout.DF4Rby08.js', sha256: 'df8f60e5a4b3828b113bbb89b0228d39e2db74301aabf0b4586a5922c11891cd', byteSize: 15467, contentType: 'application/javascript' }]));
+  });
   it('pins the current production workspace and all prior public assets on one immutable origin', () => {
-    // The 028a8d2 production App carries the earlier generations. Its entry and
-    // lazy workspace chunks must survive the video-entry/allowance UI release.
+    // Production 988656d carries every earlier generation. Preserve those pins
+    // and its current checkout entry when publishing payment recovery changes.
     const value = JSON.parse(readFileSync(new URL('../../../apps/app/retained-assets.json', import.meta.url), 'utf8'));
     const expected = [
       { path: '/_app-assets/_kind_.VGEm7Omq.css', sha256: '0d9113dca4fa109508d538c20b4d58e540c86ae8c3a0d0681886a7225714bc92', byteSize: 74247, contentType: 'text/css' },
@@ -49,7 +53,7 @@ describe('previous public App asset retention', () => {
       { path: '/_app-assets/WatermarkWorkspace.BmkIsLiM.js', sha256: '6aec322f775f07139a5e827edb88d3f3bf64b81b0f8a9e4406e11e8fcdbf1f07', byteSize: 60347, contentType: 'application/javascript' },
     ];
     expect(value.version).toBe(1);
-    expect(value.origin).toBe('https://ai-watermark-remover-2ykuwxw9s-shiyaos-projects-b1e333f0.vercel.app');
+    expect(value.origin).toBe('https://ai-watermark-remover-itgzugxj1-shiyaos-projects-b1e333f0.vercel.app');
     expect(value.assets).toEqual(expect.arrayContaining(expected));
     expect(value.assets.length).toBeLessThanOrEqual(32);
     expect(new Set(value.assets.map((entry: { path: string }) => entry.path)).size).toBe(value.assets.length);

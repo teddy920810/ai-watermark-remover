@@ -41,6 +41,7 @@ export interface PaymentStore {
   createOrder(userId: string, purchase: PaymentPurchase, requestKey: string): Promise<PaymentOrder>;
   attachPaypalOrder(id: string, paypalOrderId: string): Promise<PaymentOrder>;
   getOrder(id: string): Promise<PaymentOrder | null>;
+  getOrderByRequestKey(userId: string, requestKey: string): Promise<PaymentOrder | null>;
   getOrderByPaypalId(id: string): Promise<PaymentOrder | null>;
   getOrderByCaptureId(id: string): Promise<PaymentOrder | null>;
   listOrders(userId: string): Promise<PaymentOrder[]>;

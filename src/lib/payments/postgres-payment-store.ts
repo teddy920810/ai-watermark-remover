@@ -67,6 +67,12 @@ export class PostgresPaymentStore implements PaymentStore {
   }
 
   getOrder(id: string): Promise<PaymentOrder | null> { return this.find('id', id); }
+  async getOrderByRequestKey(userId: string, requestKey: string): Promise<PaymentOrder | null> {
+    return this.transaction(async (client) => {
+      const result = await client.query<OrderRow>('SELECT * FROM payment_orders WHERE user_id=$1 AND request_key=$2 AND environment=$3', [userId, requestKey, this.environment]);
+      return result.rows[0] ? order(result.rows[0]) : null;
+    });
+  }
   getOrderByPaypalId(id: string): Promise<PaymentOrder | null> { return this.find('paypal_order_id', id); }
   getOrderByCaptureId(id: string): Promise<PaymentOrder | null> { return this.find('capture_id', id); }
 

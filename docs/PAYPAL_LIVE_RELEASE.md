@@ -2,7 +2,11 @@
 
 This implementation extends the current App and stable account owners. The former Sandbox checkout was tested on an older source tree; its deployment is not a release artifact for this version. Live credentials and successful configuration checks are not evidence of a completed real transaction.
 
-## Current release state — 2026-10-31
+## Current engineering audit — 2026-11-01
+
+The [payment audit and remaining gates](PAYMENT_AUDIT.md) separate the current source, old Sandbox transaction, Live configuration and unverified real-money flows. Production catalog readback still shows new checkout disabled and purchased-image support enabled, with the approved 4,990 / 9,990 / 19,990 packages and 100 / 10 / 10 operation costs. Engineering recovery fixes do not authorize opening checkout or real transactions.
+
+## Historical Live preparation — 2026-10-31
 
 The account holder created the Live App and webhook and reported completed account review with no collection restriction. A read-only Live OAuth and webhook lookup accepted the credentials and confirmed the exact direct URL and five required events. No Live order, capture or refund was created by this preparation.
 
@@ -44,6 +48,8 @@ The App also needs the approved `PAYPAL_CATALOG_JSON` package array and `PAYPAL_
 The exact public `/pricing` route is rendered on request by the existing App target from `getPaymentConfig → publicPaymentCatalog`. It is indexable, has one canonical and uses `no-store`; Site remains static and does not import private payment configuration. Its pure catalog component has no hydration, order requests or PayPal SDK. Selecting a plan links to `/app/credits?sku=...&returnTo=...` and does not create an order. The URL selects only a validated SKU; the server determines money and catalog version.
 
 The private `/app/credits` route retains selected-plan confirmation, Google sign-in, payment, Your orders and the existing per-account activeAttempt storage. A retained attempt's SKU, request key and order win over a new URL SKU, including withdrawn packages; confirmed orders retain their original amounts. Browser initialization still confirms the latest catalog before loading the unchanged PayPal SDK. Neither request-rendered page passes full server configuration or private credentials to the browser. Pending authentication uses a neutral status. Existing `/app/credits`, `#orders` and safe returnTo links remain valid. See [Astro request-time rendering](https://docs.astro.build/en/guides/on-demand-rendering/).
+
+When checkout is enabled, a lost Create response recovers the saved purchase by environment, owner and request key before consulting the latest catalog, and requires the same SKU. Original amounts, credits and catalog version remain sealed; new requests still use current prices and the store's conflict guard. Pausing new Create remains effective. A definitive `ORDER_NOT_APPROVED` may show the original PayPal approval button only for the matching created order, retained SKU and request key. Pending/unknown results, forbidden requests and mismatched purchases stay locked against another payment. Keep the existing official SDK and server-side Capture contract unchanged. PayPal idempotency retention is bounded; an unresolved Create outside that window needs original-transaction reconciliation, never a replacement payment.
 
 ## Financial and account invariants
 
