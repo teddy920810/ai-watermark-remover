@@ -62,6 +62,10 @@ npm run db:migrate
 
 ## 内容模型
 
+法律正文位于 `src/content/legal/`，由受信任的 CMS/Git 编辑者经受保护发布流程维护。现有 Markdown 编译管线的 `safeLegalMarkdown` 仅约束该目录：拒绝原始 HTML，链接只接受 HTTPS、mailto、站内绝对路径及锚点；代码块和行内代码仍按文本显示。不要把内容 API 的 Blog/landing 校验当作法律页已受保护，也不要为法律文本引入可执行 MDX。
+
+所有 `SiteLayout` 的 JSON-LD 在最终 `set:html` 输出处使用 `serializeJsonLd`，将 JSON 中的 `<` 转为 `\u003c`，避免元数据提前结束 script 节点；解析后的字段值保持不变。新增 schema 继续通过这一共享边界，不直接拼接 JSON 或以 HTML 实体替代 JSON 转义。规则依据见 [Astro Markdown 插件](https://docs.astro.build/en/guides/markdown-content/#markdown-plugins)和 [HTML script 内容限制](https://html.spec.whatwg.org/multipage/scripting.html#restrictions-for-contents-of-script-elements)。
+
 SEO 运营 Agent 的服务端入口与部署前置见 [内容 API](CONTENT_API.md)。API 和 Astro 共用 `src/lib/content/entry-schemas.ts`；模板仍取自 `cms-templates/`，纯文档解析/发布规则位于 `scripts/lib/cms-*`。内容/运营素材持久到 Git 内容分支，不能写部署临时磁盘或借用用户 R2 上传接口。内容 Token 与仓库专用凭据分开，部署到 App；Site 只生成静态页面和不含秘密的发布 digest 证明。
 
 正式 PayPal 图片 Credits 的配置、批次账本、退款来源和 Web/Worker 发布顺序见 [PayPal 发布说明](PAYPAL_LIVE_RELEASE.md)。启用前先执行新增支付迁移，再更新支持 `purchasedImageCredits` 的既有 Worker，最后开启 Web 的已购额度与新收款；不要把旧 Sandbox 身份切换或测试部署覆盖到当前正式架构。运行中的已接受任务按原预留金额结算；暂停新购买时保留已购额度开关与明确的操作费率。

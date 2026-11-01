@@ -22,6 +22,13 @@ function absoluteUrl(origin: string, path: string) {
   return new URL(path, origin).toString();
 }
 
+/** JSON is embedded in an HTML script raw-text context, even for application/ld+json.
+ * https://html.spec.whatwg.org/multipage/scripting.html#restrictions-for-contents-of-script-elements
+ */
+export function serializeJsonLd(value: Record<string, unknown>): string {
+  return JSON.stringify(value).replaceAll('<', '\\u003c');
+}
+
 export function buildCollectionPageSchema(input: PageSchemaInput) {
   return {
     '@type': 'CollectionPage',

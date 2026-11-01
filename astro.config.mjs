@@ -8,10 +8,12 @@ import process from 'node:process';
 import { fileURLToPath, URL } from 'node:url';
 import { replaceMissingBlogImages } from './src/lib/content/remark-missing-blog-images';
 import { optimizeBlogImages } from './src/lib/content/remark-optimized-blog-images';
+import { safeLegalMarkdown } from './src/lib/content/remark-safe-legal';
 import { createBuildPlan, prepareBuildInputs, targetIntegration } from './scripts/build-target.mjs';
 
 const siteSettings = JSON.parse(readFileSync(new URL('./src/content/settings/site.json', import.meta.url), 'utf8'));
 const blogContentDirectory = fileURLToPath(new URL('./src/content/blog', import.meta.url));
+const legalContentDirectory = fileURLToPath(new URL('./src/content/legal', import.meta.url));
 const publicDirectory = fileURLToPath(new URL('./public', import.meta.url));
 const target = process.env.BUILD_TARGET || 'combined';
 if (!['combined', 'site', 'app'].includes(target)) throw new Error('BUILD_TARGET must be combined, site or app');
@@ -29,6 +31,7 @@ export default defineConfig({
   markdown: {
     processor: unified({
       remarkPlugins: [
+        [safeLegalMarkdown, { legalDirectory: legalContentDirectory }],
         [replaceMissingBlogImages, { blogDirectory: blogContentDirectory, publicDirectory }],
         [optimizeBlogImages, { blogDirectory: blogContentDirectory }],
       ],

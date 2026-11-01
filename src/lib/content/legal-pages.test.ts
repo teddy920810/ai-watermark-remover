@@ -15,6 +15,20 @@ function section(body: string, heading: RegExp) {
 }
 
 describe('published legal pages match the current service', () => {
+  it('explains whole-video selection, paused checkout and authorized public publishing', () => {
+    const terms = readLegal('terms').body;
+    expect(section(terms, /services/i)).toMatch(/fixed[\s\S]*entire video/i);
+    const purchases = section(terms, /purchased image credits/i);
+    expect(purchases).toMatch(/new purchases[\s\S]*paused/i);
+    expect(purchases).toMatch(/existing[\s\S]*balances[\s\S]*orders[\s\S]*refund/i);
+    const publishing = section(terms, /publishing/i);
+    expect(publishing).toMatch(/authorized[\s\S]*permission/i);
+    expect(publishing).toMatch(/public[\s\S]*Git/i);
+    const privacyPublishing = section(readLegal('privacy').body, /published site content/i);
+    expect(privacyPublishing).toMatch(/Git[\s\S]*original[\s\S]*audit/i);
+    expect(privacyPublishing).toMatch(/history[\s\S]*private[\s\S]*24.hour/i);
+    expect(privacyPublishing).toMatch(/review[\s\S]*publish/i);
+  });
   it('limits purchased image credits to the three priced image operations and discloses payment handling', () => {
     const terms = readLegal('terms').body;
     const purchases = section(terms, /purchased image credits/i);

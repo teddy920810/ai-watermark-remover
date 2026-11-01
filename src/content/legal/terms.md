@@ -6,7 +6,7 @@ eyebrow: Terms
 heading: Terms of Use
 ---
 
-Last updated: October 31, 2026
+Last updated: November 2, 2026
 
 By using WatermarkGemini, you agree to these terms. Our [Privacy Policy](/privacy) explains how we handle account information, uploaded media and service records.
 
@@ -16,11 +16,17 @@ WatermarkGemini provides tools for editing supported images and MP4 videos. Avai
 
 Follow the file requirements and output information shown in the tool. A guide, tool name or "Coming Soon" page does not mean that processing is available. Dedicated PDF processing, batch processing and moving-watermark tracking are not currently supported.
 
+For video fixed-area processing, the selected area applies to the entire video. It is intended for a watermark that stays in one place; it does not follow a moving watermark.
+
 ## Your content and permission
 
 You retain the rights you hold in your original content. Upload only files you own or have permission to upload, modify and send to the service providers involved in processing. You authorize us to store, transmit, process and return those files to provide the requested service, as described in our Privacy Policy.
 
 Using our tools does not give you ownership of someone else's content or permission to alter a mark without authorization. Do not use the service to misrepresent authorship, evade licensing requirements or infringe another person's intellectual property, privacy or other rights.
+
+## Publishing site content
+
+Only authorized editors may submit website articles and public assets through our content tools. You must have permission to publish the text and original images you submit, including any necessary permission from people whose information appears in them. These submissions and publication audit records are stored in Git and its history for review and website publication. They are separate from private media submitted for processing. Do not submit confidential or private files as public site assets.
 
 ## Starting a task
 
@@ -37,6 +43,8 @@ Standard image watermark removal, background removal and object removal use free
 Each new processing task, including a refinement or a separately requested attempt, has its own allowance requirement. A quote can expire or change when you choose another file, mode or selection; review the current cost before proceeding.
 
 ## Purchased image credits and refunds
+
+New purchases are currently paused. Checkout is available only when enabled by the service. Pausing new purchases does not remove existing purchased balances, orders or access to refund support. Existing orders and task reservations remain subject to the confirmation, recovery and refund rules below.
 
 Purchased image credits cover standard image watermark removal, background removal and object removal, after free uses are used first. When no free use is available, standard image watermark removal costs 100 Credits per image, background removal costs 10 Credits per image, and object removal costs 10 Credits per processing request. Local editing, viewing a result and downloading it again cost no Credits. Each new server processing request has its own charge. Review the quoted amount before starting; accepted tasks keep their original reservation rather than being repriced on a retry.
 
