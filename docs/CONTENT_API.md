@@ -1,5 +1,7 @@
 # SEO 运营 Agent 内容 API
 
+日常操作先读 [运营快读](CONTENT_API_QUICKSTART.md)；本文保留完整技术、安全、幂等与恢复合同。
+
 本接口只管理工具落地页、Blog 和运营公共素材。内容权威仍是 Git；每个变更集保存在 `codex/content-{id}`，内容和素材经同一 PR、必需 CI、受保护 main 和 Site 部署生效。App 提供 API，SEO 页面继续由 Astro 静态生成。接口不提供处理任务、用户私有媒体、权益、报价、Provider 或任意文件写入权限。
 
 代码提供接口不代表生产已启用。启用必须完成下述专用凭据配置及真实草稿验收；未配置时拒绝请求，不能把模拟测试称为生产可用。
@@ -80,7 +82,7 @@ Markdown 不接受 raw HTML、MDX import/export 或可执行组件。图片支�
 
 工具图像只有 image 时静态显示；增加 afterImage 才可能启用共用 ImageDisplay 比较。两张图必须是运营提供的真实 Before/After 独立文件、宽高比一致，并由内容负责人确认同构构图；自动尺寸校验无法证明内容真实。不得通过生成水印、合成前图或使用图内烘焙滑柄冒充可交互比较。原有图片路径/文件名/字节/alt 不会因本接口部署被改动。
 
-完整且可解析的请求示例：[`blog.json`](examples/content-api/blog.json)、[`landing.json`](examples/content-api/landing.json)。示例只在文档目录，不会生成 SEO 页面；它们引用现有公共图片，也可将相应字段替换为本变更集实际上传返回的 path。模板中的待替换文字与占位图必须完成后才能申请发布。
+完整且可解析的请求示例：[`blog.json`](examples/content-api/blog.json)、[`blog-html.json`](examples/content-api/blog-html.json)、[`landing.json`](examples/content-api/landing.json)。示例只在文档目录，不会生成 SEO 页面；它们引用现有公共图片，也可将相应字段替换为本变更集实际上传返回的 path。模板中的待替换文字与占位图必须完成后才能申请发布。[可执行草稿示例](examples/content-api/draft.mjs)保留原请求键和完整上传结果，支持两张真实原图上传后填入 `image`/`afterImage`；不自动批准或发布。旧 uploader 文案仅兼容保存，当前 Launcher 不消费它。
 
 ## 素材规则
 

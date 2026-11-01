@@ -9,37 +9,171 @@
     "eyebrow": "Content API example",
     "heading": "Operator tool draft example",
     "intro": "This unpublished document demonstrates the required landing-page fields.",
-    "benefits": ["Choose a supported image", "Preview the result before exporting"],
+    "benefits": [
+      "Choose a supported image",
+      "Preview the result before exporting"
+    ],
     "process": {
       "eyebrow": "Workflow",
       "heading": "Three steps",
       "intro": "Use reviewed instructions that match the actual tool.",
       "steps": [
-        { "number": "01", "title": "Choose an image", "description": "Choose an image you own or are authorized to edit." },
-        { "number": "02", "title": "Review the request", "description": "Sign in, review the displayed cost and explicitly start processing." },
-        { "number": "03", "title": "Inspect and download", "description": "Inspect the result and use the download control to export it." }
+        {
+          "number": "01",
+          "title": "Choose an image",
+          "description": "Choose an image you own or are authorized to edit.",
+          "image": "/uploads/background-remover-product-photo.png",
+          "imageAlt": "A product photograph used in the existing background removal example"
+        },
+        {
+          "number": "02",
+          "title": "Review the request",
+          "description": "Sign in, review the displayed cost and explicitly start processing.",
+          "image": "/uploads/background-remover-product-photo.png",
+          "imageAlt": "A product photograph used in the existing background removal example"
+        },
+        {
+          "number": "03",
+          "title": "Inspect and download",
+          "description": "Inspect the result and use the download control to export it.",
+          "image": "/uploads/background-remover-product-photo.png",
+          "imageAlt": "A product photograph used in the existing background removal example"
+        }
       ]
     },
     "features": {
       "eyebrow": "Example image",
       "heading": "A static image example",
       "intro": "One image renders as a static illustration.",
-      "items": [{
-        "enabled": true,
-        "eyebrow": "Product photo",
-        "heading": "Use a reviewed source image",
-        "description": "A second image is optional and must be a real matching After image for comparison.",
-        "listItems": ["Keep the original image and its alt text accurate"],
-        "image": "/uploads/background-remover-product-photo.png",
-        "imageAlt": "A product photograph used in the existing background removal example",
-        "imagePosition": "right"
-      }]
+      "items": [
+        {
+          "enabled": true,
+          "eyebrow": "Product photo",
+          "heading": "Use a reviewed source image",
+          "description": "A second image is optional and must be a real matching After image for comparison.",
+          "listItems": [
+            "Keep the original image and its alt text accurate"
+          ],
+          "image": "/uploads/background-remover-product-photo.png",
+          "imageAlt": "A product photograph used in the existing background removal example",
+          "imagePosition": "right"
+        }
+      ]
     },
     "faq": {
       "eyebrow": "Example questions",
       "heading": "Before publication",
       "intro": "Replace these example explanations with reviewed editorial content.",
-      "items": [{ "enabled": true, "question": "Is this page published?", "answer": "No. New API documents remain drafts until the exact difference is approved and passes the protected release flow." }]
+      "items": [
+        {
+          "enabled": true,
+          "question": "Is this page published?",
+          "answer": "No. New API documents remain drafts until the exact difference is approved and passes the protected release flow."
+        }
+      ]
+    },
+    "statusLabel": "Unpublished example",
+    "heroSamples": [
+      {
+        "id": "product-photo",
+        "label": "Product photo",
+        "image": "/uploads/background-remover-product-photo.png",
+        "imageAlt": "A product photograph used in the existing background removal example"
+      }
+    ],
+    "heroActions": [
+      {
+        "label": "Choose an image",
+        "href": "#tool"
+      },
+      {
+        "label": "Read the workflow",
+        "href": "#how-it-works"
+      }
+    ],
+    "uploader": {
+      "hero": {
+        "eyebrow": "Free Image Watermark Remover",
+        "heading": "Remove Watermark from Photo Online for Free",
+        "demoBadge": "100% Free",
+        "demoBadgeTitle": "The MVP returns an unchanged copy"
+      },
+      "dropzone": {
+        "dropLabel": "Drop Your Image Here",
+        "browseLabel": "or click to browse",
+        "formatLabel": "JPG, PNG, or WEBP",
+        "maxSizeLabel": "up to {maxSize} MB",
+        "fileInputLabel": "Choose an image to remove the watermark"
+      },
+      "preview": {
+        "altTemplate": "Preview of {fileName}",
+        "processingLabel": "Securely processing your image…",
+        "readyLabel": "Ready to process",
+        "removeButton": "Remove watermark",
+        "uploadingButton": "Uploading…",
+        "processingButton": "Processing…",
+        "chooseAnotherButton": "Choose another"
+      },
+      "result": {
+        "originalLabel": "Original",
+        "resultLabel": "Result",
+        "originalAlt": "Original upload",
+        "resultAlt": "Processed result",
+        "demoNote": "Demo mode returns a secure copy while the real AI provider is being integrated.",
+        "downloadButton": "Download result",
+        "processAnotherButton": "Process another"
+      },
+      "auth": {
+        "closeLabel": "Close sign-in dialog",
+        "title": "Sign in to start processing",
+        "description": "Your selected image will stay on this page. Processing starts automatically after Google sign-in.",
+        "connectingButton": "Connecting to Google…",
+        "continueButton": "Continue with Google",
+        "dismissButton": "Not now"
+      },
+      "privacyNote": "Private upload · Automatically deleted after 24 hours"
+    },
+    "scope": {
+      "eyebrow": "Requirements",
+      "heading": "Use authorized source images",
+      "intro": "Review the current tool limits before starting.",
+      "items": [
+        {
+          "heading": "Authorization",
+          "description": "Use an image you own or have permission to edit."
+        },
+        {
+          "heading": "Review",
+          "description": "Inspect the actual result before downloading it."
+        }
+      ]
+    },
+    "relatedTools": {
+      "enabled": true,
+      "eyebrow": "Tools",
+      "heading": "Other image workflows",
+      "intro": "Choose a published tool that fits your task.",
+      "slugs": [
+        "remove-background",
+        "remove-logo-from-image"
+      ]
+    },
+    "guides": {
+      "enabled": true,
+      "eyebrow": "Guides",
+      "heading": "Read the source guidance",
+      "intro": "Published articles explain the supported workflow.",
+      "slugs": [
+        "how-to-remove-adobe-stock-watermark",
+        "how-to-remove-bandicam-watermark"
+      ]
+    },
+    "cta": {
+      "eyebrow": "Next step",
+      "heading": "Choose an authorized image",
+      "description": "Review the source and displayed cost before processing.",
+      "buttonLabel": "Choose an image",
+      "buttonHref": "#tool"
     }
   },
   "body": ""
