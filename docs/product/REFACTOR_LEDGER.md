@@ -1,17 +1,17 @@
-# AI Watermark 本地重构与验收台账
+# AI Watermark 重构阶段与发布验收台账
 
 更新：2026-11-01。唯一当前阶段台账；方案历史保存在[归档快照](../history/REFACTOR_PLAN_2026-10-31.md)。P0–P7及内容回退阶段为本地交付；用户于2026-11-01（Asia/Shanghai）在主任务明确“目标是上线，去安排吧”，已核实原始用户消息，目标扩大为研发收尾、受保护PR/CI/main、Site/App/Worker部署与匹配生产验收。既有内容原值和预算继续保护；不自动充值，不开启/扩大正式收款，不删除金融依据或未恢复任务。
 
-当前：P0–P7本地机制及内容回退已验收；现推进main发布候选。素材原值保持，运营整改独立登记。敏感恢复数据擦除、Blog独立发布分类与受保护CMS草稿流程已在候选实现，正在结清最终门禁、CI和真实环境证据，尚未上线。以下43项为阶段记录，实时发布进度见文末。
+PR98重构已于2026-11-01发布，代码为`028a8d2`，原始生产验收见文末“本轮上线交付与验收结清”。后续下载核查、视频入口、内容API与支付恢复交付见[发布记录](RELEASE_READINESS.md)。素材原值、金融恢复与预算继续保护；正式购买未开启。以下P0–P7、内容回退及候选准备章节保存各自当时的状态，“未提交”“pending”不表示后续仍未交付，也不能把原通过结果继承给新版本。
 
 ## 版本与唯一执行位置
 
 - 当前维护目录：D:/ermei/ai-watermark-remove。origin：https://github.com/teddy920810/ai-watermark-remover.git。
-- 基线 HEAD：574ad43e53e5696e225f7fa73606e3849d7bd2db；本地分支：codex/refactor-local-20261031。所有本轮实现尚未提交，阶段版本由独立 manifest、文件 SHA-256 和二进制 patch 识别。
+- P0–P7本地阶段快照：基线 HEAD 为574ad43e53e5696e225f7fa73606e3849d7bd2db，分支为codex/refactor-local-20261031。当时实现尚未提交，阶段版本由独立 manifest、文件 SHA-256 和二进制 patch 识别；PR98发布版本与后续交付另见对应记录。
 - 产品源码、配置和仓库脚本保持跨平台；D 盘是本机维护登记，不是产品运行依赖。本轮在Windows主机验证，未冒称macOS/Linux实机验收。其他聊天的源码工作目录没有被覆盖、删除或归档。
 - 原始D盘103个文件已逐一保全，原HEAD为5be42381；恢复stash为410512fce71bab1a8fc2554e893c6ffaea5a4de1。按[原件清单](../../output/refactor-plan-2026-10-31/p0-preservation/manifest.json)选择性恢复，不将旧Pricing/支付草稿整体回灌当前实现。凭据不在这些源码工作包中。
 
-## 43项状态
+## 43项状态（P0–P7本地阶段快照）
 
 | 项 | 已接受工作范围 | 当前状态及边界 |
 | --- | --- | --- |
@@ -80,7 +80,7 @@
 | P6 | [后端A](../../output/refactor-plan-2026-10-31/p6-a-implementation/manifest.json) / [背景](../../output/refactor-plan-2026-10-31/p6-background-implementation/manifest.json) / [物体](../../output/refactor-plan-2026-10-31/p6-object-implementation/manifest.json) | [完整分项及首失败/补验来源](../../output/refactor-plan-2026-10-31/p6-gate-results.json) |
 | P7 | [原件与静态入边](../../output/refactor-plan-2026-10-31/p7-retirement/manifest.json) / [清理范围](../../output/refactor-plan-2026-10-31/p7-retirement/cleanup.json) / [最终工作包](../../output/refactor-plan-2026-10-31/p7-implementation/manifest.json) | [本地分项](../../output/refactor-plan-2026-10-31/p7-gate-results.json) |
 
-## 门禁分别结清
+## 门禁分别结清（P0–P7本地阶段快照）
 
 | 门禁 | 当前证据/状态 |
 | --- | --- |
@@ -93,7 +93,9 @@
 | OAuth与真实处理 | 尚未以真实用户会话、PG并发、生产Web/Worker配置和实际Provider完成本轮验收；未来按受影响操作和明确预算逐项核实，不记为通过。 |
 | Production Smoke | 本轮无生产环境/域名改动，未执行public smoke；未来部署后的匹配认证功能smoke仍pending，尤其新背景与物体必须各自一次，不循环收费重试。 |
 
-## 保留项与退出条件
+## 保留项与退出条件（阶段记录）
+
+下列设置、工作树和待验收项为记录时的快照；PR98后续结清结果见文末。现行逐项退出条件与负责人从[兼容清单](../COMPATIBILITY.md)读取，不能凭此历史列表删除资源或重跑付费验收。
 
 - P1.6：本地AGENTS、预检、PR模板、合同和规范已落地。P1只读快照显示main保护未启用、Protect规则disabled，CMS/模板仍存在main直写；这是2026-10-31的回读证据，不能当后续时刻的现状。外部强制设置未获本轮修改授权，仍需在后续发布前核实并处理。
 - 旧 /api/jobs、上传、查询、下载、Provider与金融/身份/attempt/receipt记录继续保留。当前客户端迁入v1不证明旧客户端、在途任务、结果和会话窗口已结束；不停止旧准入，也不重写旧账本。
@@ -277,7 +279,7 @@
 ### 本轮上线交付与验收结清（2026-11-01）
 
 - [PR #98](https://github.com/teddy920810/ai-watermark-remover/pull/98)已合并，生产代码028a8d23909eb129020e44846e5c17f3a624bffd与最终候选8daeba81fa7961995f524da38bef2758152cb18d的tree同为414efb7cfc62dbb4df6ca031df8f15ba708995a5。原内容27项提交态复核无偏差，public无改名或字节变化，原MVP归档blob不变。
-- 新静态保留逻辑的本地标准release:verify先通过audit/site校验，既有ESLint边界在高并发下超过5秒；原失败保留。安全进程检查未发现可停止的自有孤儿进程，一次降低并发后的覆盖率1250 passed/10外部skip、Lint、类型/Build、134页面passed/1按设计skip、图片组件4项及实际Site产物全部通过。最终候选CI/产物run41270292807/41270292808和合并main的CI/产物/CMS校验run41271155626/41271155629/41271155590均成功；不把首轮超时记为通过。
+- 新静态保留逻辑的本地标准release:verify先通过audit/site校验，既有ESLint边界在高并发下超过5秒；原失败保留。安全进程检查未发现可停止的自有孤儿进程，一次降低并发后的覆盖率1250 passed/10外部skip、Lint、类型/Build、134个浏览器用例passed/1按设计skip、图片组件4项及实际Site产物全部通过。最终候选CI/产物run41270292807/41270292808和合并main的CI/产物/CMS校验run41271155626/41271155629/41271155590均成功；不把首轮超时记为通过。
 - main保护回读为严格PR/必需verify与Required target artifacts、管理员约束、会话结清、禁止强推/删除；两个check均固定GitHub Actions app15368。配置来源合同：[GitHub状态检查保护](https://docs.github.com/en/rest/branches/branch-protection#update-status-check-protection)。CMS真实内容保存仍由内容所有者操作；未因研发验收创建文章或变更内容基线。
 - App正式部署dpl_9sWT9mSpXvKXk7FMHWwUb2zhTQuY，Site正式部署dpl_FWGHzrdWkuwNnjnDaPiGAGa7sTgC，均绑定028a8d2；App正式域名与固定Site alias已回读确认。Worker固定digest aec7597aac8f1854a54680e8437a4dfbf973973e33bf71e6a139aea51a22eda8/generation7先行部署，保留兼容旧任务；最终上下文七文件与其构建来源一致。无DNS/证书变更，不扩大支付开关。
 - 预览、生产各37项静态资源逐字节hash通过；生产28个页面236处原图/alt匹配。首页/Gemini/Terms桌面/手机及六项操作结果已查看，无横向溢出。Gemini桌面初截图懒加载未完成，补等待真实图像decode后的截图；原件保留。原缺图继续正常fallback，不擅自换素材。

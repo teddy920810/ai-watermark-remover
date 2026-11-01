@@ -33,7 +33,7 @@ Astro 负责内容路由和服务端 API；React 只用于上传交互岛。浏�
 
 新图片/视频工作区位于 `/app/image`、`/app/video`，使用 `/api/v1` 报价、任务和临时下载接口。非收费媒体检查和已确认任务由独立 Worker 执行，金融预留和耐久 outbox 在 PostgreSQL，媒体与权威任务状态在私有 R2。PRO、精修、视频使用独立的管理员处理额度；旧免费次数、旧 API 和其他工具保持兼容。
 
-新处理配置见 [配置说明](product/PROCESSING_CONFIGURATION.md)，独立 Web 构建见 [部署目标](../apps/DEPLOYMENT_TARGETS.md)，Worker、R2 清理和真实验收见 [部署说明](product/WORKER_DEPLOYMENT.md)。新账号和再次登录的稳定归属见 [Google 账户身份](ACCOUNT_IDENTITY.md)。实施与发布结果统一记录在 [TODO](product/IMPLEMENTATION_TODO.md)。
+新处理配置见 [配置说明](product/PROCESSING_CONFIGURATION.md)，独立 Web 构建见 [部署目标](../apps/DEPLOYMENT_TARGETS.md)，Worker、R2 清理和真实验收见 [部署说明](product/WORKER_DEPLOYMENT.md)。新账号和再次登录的稳定归属见 [Google 账户身份](ACCOUNT_IDENTITY.md)。现行规范从 [总索引](INDEX.md) 进入；重构阶段与原始验收见 [重构台账](product/REFACTOR_LEDGER.md)，后续交付见 [发布记录](product/RELEASE_READINESS.md)。原 [T0–T11 TODO](product/IMPLEMENTATION_TODO.md) 为历史记录，不能继承其中预算或测试结果。
 
 当前 `MockWatermarkProvider` 仅复制对象。接入真实服务时，实现 `src/lib/providers/watermark-provider.ts` 的契约并在 `src/lib/services.ts` 注入，不要改变公开 API 响应格式。选择和预览图片无需登录；创建与查询任务必须有有效会话，并且任务只能由其 `ownerId` 对应的用户读取。
 

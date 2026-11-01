@@ -8,4 +8,6 @@
 
 逐一校验job、artifact、attempt和provider/mock receipt的归属与关联，读取receipt中的结果到期时间，包含旧大遮罩但有大小上限。擦除已知session/诊断遮罩字段，不按名称模糊删除全部metadata。apply先获取组内job租约，再重新检查版本；每条更新以ETag为条件。冲突或中断可能留下部分已擦除记录，不会丢失金融字段；租约过期后重新预演可幂等续行。重试只擦除字段，不重新提交处理。
 
-上线先执行只读盘点和dry-run，核对eligible/skipped与原因、digest及版本，才运行同计划的apply。新代码默认不调度自动擦除；现有dispatcher和Provider收费行为不变。代码回退保留已擦除的过期JSON，不能恢复过期session；活跃任务和金融恢复不依赖这些符合条件的字段。
+每次手动维护先执行只读盘点和dry-run，核对eligible/skipped与原因、digest及版本，才运行同计划的apply。默认不调度自动擦除；启用定期擦除属于另行确认的运行政策。现有dispatcher和Provider收费行为不变。代码回退保留已擦除的过期JSON，不能恢复过期session；活跃任务和金融恢复不依赖这些符合条件的字段。
+
+2026-11-01的单次真实维护已记录在[重构发布台账](REFACTOR_LEDGER.md)：预演检查13任务，7任务/6组符合条件，同digest apply擦除35条记录；后验保留13任务、0待擦除。该次结果不是未来任务可擦除的证明，也不授权再次apply、删除控制记录或开启自动调度；原预演、apply、后验与失败证据继续保留。

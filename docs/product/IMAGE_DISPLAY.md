@@ -1,6 +1,6 @@
 # Public image display
 
-Status: P3 shared renderer implemented locally. P5 content replacements were revoked by the user on 2026-11-01; original paths, alt and example copy are restored. Verification belongs to the stage ledger. No deployment is implied.
+Status: current implementation contract. P5 content replacements were revoked by the user on 2026-11-01; original paths, alt and example copy are restored. PR98 deployment and original-content acceptance belong to the [refactor ledger](./REFACTOR_LEDGER.md). Later releases have separate evidence in [release records](./RELEASE_READINESS.md); local mechanics tests alone do not establish production acceptance.
 
 `src/components/ImageDisplay.astro` owns public image display. `ResponsiveImage.astro` remains its responsive source/dimensions/fallback primitive. Editors and video players keep their own functional controls.
 

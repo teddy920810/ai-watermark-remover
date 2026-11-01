@@ -15,13 +15,14 @@
 | [CMS教程](PAGES_CMS_GUIDE.md) / [建站模板](TEMPLATE_GUIDE.md) | 内容编辑和有限模板；不配置真实能力/费率/Provider |
 | [运营 Agent 内容 API](CONTENT_API.md) | 内容域 Bearer Token、Git 变更集、素材、具体差异批准、受保护发布与接入示例；生产启用须核对凭据和实际验收 |
 | [图片展示](product/IMAGE_DISPLAY.md) / [素材清单](product/CONTENT_MEDIA_MIGRATION.json) | 单/双图、失败降级、内容归属与已撤销的P5替换；运营素材待办 |
-| [上线剩余工作](product/RELEASE_READINESS.md) | 待实施清理、最终审查、真实验收、授权发布、观察与兼容退出 |
+| [发布记录与兼容观察](product/RELEASE_READINESS.md) | 按版本区分重构发布、后续交付、历史发布前标准与剩余观察 |
 | [App工作区](product/APP_WORKSPACE.md) | 六类新操作的共同协调、选区差异、状态/草稿归属和旧API兼容 |
 | [统一文件入口](product/FILE_INTAKE.md) | 公共入口、App再次选文件/拖入、推荐提示、CMS边界与本地草稿 |
 | [功能交付](FUNCTIONAL_TOOL_DELIVERY.md) / [贡献指南](../CONTRIBUTING.md) | 操作合同、验证与规范同步 |
 | [后端组装与事务归属](product/BACKEND_OWNERSHIP.md) | 免费权益原语、同次读取、恢复候选及Web/Worker资源责任 |
 | [图片操作迁移](product/IMAGE_OPERATIONS.md) | 逐操作准入、PNG/费用、供应商恢复与旧协议退出边界 |
 | [兼容与退出](COMPATIBILITY.md) | 旧消费者/资源的退出证据，禁止按时间自动删除 |
+| [过期恢复字段擦除](product/SENSITIVE_RETENTION.md) | 手动预演、计划digest、关联组与条件写；不启用自动调度，不删除媒体或金融依据 |
 
 | 其他资料 | 状态 |
 | --- | --- |
@@ -32,8 +33,8 @@
 | [单次处理交互](product/INTERACTION_SIMPLIFICATION.md)、[头部上传](product/HEADER_UNIFIED_UPLOAD.md)、[设计QA](../design-qa.md) | 已接受交互与历史发布证据；保留首失败及待验收 |
 | `docs/templates/`、`cms-templates/` | 可执行/可复制模板，与消费者一起维护 |
 
-当前本地重构的唯一阶段状态在[正式台账](product/REFACTOR_LEDGER.md)。原 output 草稿只保留指向它的入口；方案历史快照与历史材料分类见[归档索引](history/README.md)。本地证据仍留在忽略目录，不把凭据或历史产物加入源码。
+P0–P7阶段及PR98原始发布证据在[重构台账](product/REFACTOR_LEDGER.md)，2026-11-01后续交付从[发布记录](product/RELEASE_READINESS.md)进入。台账中的本地阶段快照不代表后续版本仍未提交或上线。原 output 草稿只保留指向台账的入口；方案历史快照与历史材料分类见[归档索引](history/README.md)。本地证据仍留在忽略目录，不把凭据或历史产物加入源码。
 
 当前规范、决策背景/ADR、历史发布/验收与可执行模板按上表分开；历史文中的“当前”和预算只指其记录日期，不能覆盖现行合同。
 
-CMS保存、required CI、Vercel构建和生产验收是独立门禁。当前CMS主分支直写路径仍存在；外部保护及发布设置未核实/未获修改授权时，记录为pending，不能声称已阻止绕过。
+CMS保存、required CI、Vercel构建和生产验收是独立门禁。2026-11-01的PR98发布已回读受保护PR、严格必需CI、管理员约束及模板草稿流程；后续内容API的真实草稿发布证据见发布记录。运营仍须在明确授权范围审阅具体差异；后续发布时重新核对保护设置和实际发布结果，不能把历史快照当作永远有效的外部强制保证。
