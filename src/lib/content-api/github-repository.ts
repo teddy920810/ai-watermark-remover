@@ -73,7 +73,18 @@ export class GitHubContentRepository implements ContentRepository {
     if (existing.length) return this.pull(existing[0]);
     return this.pull(await this.call(`${repository}/pulls`, 'POST', { title: `content: ${title}`, head: branch, base: 'main', draft: true, body: 'Content API review. Content-owner authorization must bind to the exact digest and files. Required CI and protected-main rules apply. Content and assets ship together.' }));
   }
-  async getPull(number: number) { return this.pull(await this.call(`${repository}/pulls/${number}`)); }
+  async getPull(number: number) {
+    const pull = this.pull(await this.call(`${repository}/pulls/${number}`));
+    if (pull.merged && !/^[a-f0-9]{40}$/.test(pull.mergeRevision ?? '')) {
+      // A merged REST response may omit merge_commit_sha. Recover this PR's authoritative commit, never today's main.
+      // https://docs.github.com/en/graphql/reference/pulls#pullrequest (mergeCommit)
+      const result = await this.call('/graphql', 'POST', { query: 'query($number:Int!) { repository(owner:"teddy920810",name:"ai-watermark-remover") { pullRequest(number:$number) { merged mergeCommit { oid } } } }', variables: { number } });
+      const merged = result.data?.repository?.pullRequest;
+      if (result.errors || merged?.merged !== true || !/^[a-f0-9]{40}$/.test(merged.mergeCommit?.oid ?? '')) fail(503, 'MERGE_REVISION_UNAVAILABLE', 'The exact merged revision is not available. Retry without recreating the change.');
+      pull.mergeRevision = merged.mergeCommit.oid;
+    }
+    return pull;
+  }
   async comment(number: number, body: string) { return (await this.call(`${repository}/issues/${number}/comments`, 'POST', { body })).html_url as string; }
   async verifyApproval(number: number, reference: string, digest: string) {
     const match = new RegExp(`^https://github\\.com/teddy920810/ai-watermark-remover/pull/${number}#issuecomment-([1-9][0-9]*)$`).exec(reference);
