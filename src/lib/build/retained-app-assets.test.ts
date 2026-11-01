@@ -17,8 +17,8 @@ afterEach(() => { for (const directory of directories.splice(0)) rmSync(director
 
 describe('previous public App asset retention', () => {
   it('pins the current production workspace and all prior public assets on one immutable origin', () => {
-    // The 2026-10-31 immutable production App carries the earlier generations
-    // plus the pricing/workspace graph. Keep public files, never HTML/private media.
+    // The 028a8d2 production App carries the earlier generations. Its entry and
+    // lazy workspace chunks must survive the video-entry/allowance UI release.
     const value = JSON.parse(readFileSync(new URL('../../../apps/app/retained-assets.json', import.meta.url), 'utf8'));
     const expected = [
       { path: '/_app-assets/_kind_.VGEm7Omq.css', sha256: '0d9113dca4fa109508d538c20b4d58e540c86ae8c3a0d0681886a7225714bc92', byteSize: 74247, contentType: 'text/css' },
@@ -45,9 +45,11 @@ describe('previous public App asset retention', () => {
       { path: '/_app-assets/_kind_.D2i4fH02.css', sha256: '924fd1da6278031a6af7a7b7bb556f12ea39e36bb04c5d1befd95ce85a872001', byteSize: 77980, contentType: 'text/css' },
       { path: '/_app-assets/credits.C1ObQpkI.css', sha256: '85ffff39b0d08a7a40f24ff5a649eb041c99f9416261dfb47574028979d68120', byteSize: 67412, contentType: 'text/css' },
       { path: '/_app-assets/CreditCheckout.CQMqwqrS.js', sha256: '0b3ae904a69f1b238a63a577677dc6defa40604f4adab58d6037d511f3dac74f', byteSize: 19125, contentType: 'application/javascript' },
+      { path: '/_app-assets/AppWorkspace.CYaIy_GU.js', sha256: '67d06b741f2be5ab650f61714910f8345e548979e8e3419265477aaedc8d4595', byteSize: 4784, contentType: 'application/javascript' },
+      { path: '/_app-assets/WatermarkWorkspace.BmkIsLiM.js', sha256: '6aec322f775f07139a5e827edb88d3f3bf64b81b0f8a9e4406e11e8fcdbf1f07', byteSize: 60347, contentType: 'application/javascript' },
     ];
     expect(value.version).toBe(1);
-    expect(value.origin).toBe('https://ai-watermark-remover-46fogy5z8-shiyaos-projects-b1e333f0.vercel.app');
+    expect(value.origin).toBe('https://ai-watermark-remover-2ykuwxw9s-shiyaos-projects-b1e333f0.vercel.app');
     expect(value.assets).toEqual(expect.arrayContaining(expected));
     expect(value.assets.length).toBeLessThanOrEqual(32);
     expect(new Set(value.assets.map((entry: { path: string }) => entry.path)).size).toBe(value.assets.length);
