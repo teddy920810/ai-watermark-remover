@@ -64,6 +64,9 @@ test('object spends one free use without consuming purchased or administrator cr
 
 test('object paste uses the common file checks without submitting a task', async ({ page }) => {
   const state=await imageOperationFixture(page,{operation:'object-removal',autoSelect:false});
+  // A replacement paste is ignored while the initial file is still opening.
+  await expect(page.getByText('background-source.png',{exact:true})).toBeVisible();
+  await expect(page.getByLabel('Upload file to workspace')).toBeEnabled();
   const image=await sharp({create:{width:80,height:60,channels:3,background:'#aabbcc'}}).png().toBuffer();
   await page.evaluate(base64=>{const transfer=new DataTransfer();transfer.items.add(new File([Uint8Array.from(atob(base64),value=>value.charCodeAt(0))],'pasted-image.png',{type:'image/png'}));document.dispatchEvent(new ClipboardEvent('paste',{clipboardData:transfer,bubbles:true,cancelable:true}));},image.toString('base64'));
   await expect(page.getByText('pasted-image.png',{exact:true})).toBeVisible();expect(state.submissions).toBe(0);expect(state.oldRequests).toBe(0);

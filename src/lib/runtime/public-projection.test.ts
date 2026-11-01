@@ -16,10 +16,16 @@ function setup() {
 }
 
 describe('public processing projection', () => {
-  it.each(['background-removal', 'object-removal'] as const)('keeps the %s PNG filename when issuing a fresh download', async operation => {
-    const s = setup(); const result = { ...artifact, key: mediaKey('result', 'user-1', 'a-1', 'image/png'), metadata: { ...artifact.metadata, contentType: 'image/png' } };
-    s.media.get.mockResolvedValue(result); s.media.head.mockResolvedValue({ byteSize: 1000, contentType: 'image/png', metadata: { 'owner-id': 'user-1', 'artifact-id': 'a-1' } });
-    const filename = operation === 'object-removal' ? 'object-removed-image.png' : 'background-removed-image.png';
+  it.each([
+    ['image-watermark', 'image/jpeg', 'cleaned-image.jpg'],
+    ['image-watermark-pro', 'image/jpeg', 'cleaned-image.jpg'],
+    ['image-refine', 'image/jpeg', 'cleaned-image.jpg'],
+    ['background-removal', 'image/png', 'background-removed-image.png'],
+    ['object-removal', 'image/png', 'object-removed-image.png'],
+    ['video-watermark', 'video/mp4', 'cleaned-video.mp4'],
+  ] as const)('keeps the %s filename when issuing a fresh download', async (operation, contentType, filename) => {
+    const s = setup(); const result = { ...artifact, key: mediaKey('result', 'user-1', 'a-1', contentType), metadata: { ...artifact.metadata, kind: contentType === 'video/mp4' ? 'video' as const : 'image' as const, contentType } };
+    s.media.get.mockResolvedValue(result); s.media.head.mockResolvedValue({ byteSize: 1000, contentType, metadata: { 'owner-id': 'user-1', 'artifact-id': 'a-1' } });
     expect(await s.projection.download('user-1', { ...job, operation })).toMatchObject({ filename });
     expect(s.media.createDownloadUrl).toHaveBeenCalledWith(result.key, filename, 300);
   });
