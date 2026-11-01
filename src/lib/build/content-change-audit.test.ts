@@ -110,4 +110,12 @@ describe('single content change audit closure from immutable Git objects', () =>
     f.put('src/content/landing-pages/broken.json', '{"draft":true,');
     expect(() => assertCmsPublication(f.cwd)).toThrow();
   });
+  it('keeps an existing publication audit ID out of the new-change fast path', async () => {
+    const f = current; const base = f.commit();
+    const changed = readFileSync(path.join(f.cwd, entryPath), 'utf8') + '\nA later draft edit.\n';
+    f.put(entryPath, changed);
+    f.record.pull = 124; f.record.approval.reference = 'https://github.com/teddy920810/ai-watermark-remover/pull/124#issuecomment-456';
+    f.record.approval.digest = sha(JSON.stringify([[entryPath, sha(changed)]]));
+    expect((await planVerification(base, f.commit(), f.cwd)).mode).toBe('full');
+  });
 });

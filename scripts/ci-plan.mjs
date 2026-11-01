@@ -73,6 +73,7 @@ export function planVerification(base, head, cwd = process.cwd()) {
       const tab = row.indexOf('\t'); return [row.slice(tab + 1), row.slice(0, tab).split(' ')];
     }));
     const baseTree = tree(base); const headTree = tree(head);
+    assert(!baseTree.has(auditFiles[0])); // Existing publication IDs and recovery anchors always require full review.
     for (const file of files) assert(headTree.get(file)?.[0] === '100644' && headTree.get(file)?.[1] === 'blob' && (!baseTree.has(file) || baseTree.get(file)?.[0] === '100644'));
     // Renames appear as deletion + addition and fail the regular-head-file rule.
     const record = JSON.parse(read(head, auditFiles[0]).toString());
