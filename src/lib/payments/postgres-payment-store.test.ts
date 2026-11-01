@@ -1,9 +1,11 @@
 import { readdir, readFile } from 'node:fs/promises';
 import { PGlite } from '@electric-sql/pglite';
 import type { Pool, PoolClient } from 'pg';
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { PostgresBenefitStore } from '../benefits/postgres-benefit-store';
 import { PostgresPaymentStore } from './postgres-payment-store';
+import { PaymentService } from './payment-service';
+import { getPaymentConfig } from './payment-config';
 import { consumePurchasedImageCredit, getPurchasedImageBalance, refundPurchasedImageCredit, reservePurchasedImageCredit } from './image-credit-wallet';
 
 // Real SQL, isolated in memory. PGlite serializes transactions; these tests do
@@ -45,6 +47,49 @@ beforeEach(async () => {
 afterAll(async () => { await db.close(); });
 
 describe('PayPal image-use lots on the current production schema', () => {
+  it.each(['withdrawn', 'amount', 'credits', 'version'] as const)('recovers a lost create by its original snapshot after catalog %s changes', async (changed) => {
+    const original = await payments.createOrder('owner-1', purchase, 'lost-response');
+    await payments.attachPaypalOrder(original.id, capture.paypalOrderId);
+    const config = getPaymentConfig({ PAYPAL_ENABLED: 'true', PAYPAL_CLIENT_ID: 'public', PAYPAL_CLIENT_SECRET: 'private', PAYPAL_MERCHANT_ID: 'MERCHANT1', PAYPAL_WEBHOOK_ID: 'WH1' });
+    const item = { sku: purchase.sku, name: 'Starter', credits: changed === 'credits' ? 99 : purchase.credits, amountCents: changed === 'amount' ? 999 : purchase.amountCents, currency: 'USD' as const };
+    const gateway = { createOrder: vi.fn(), captureOrder: vi.fn(), getOrder: vi.fn(), getCapture: vi.fn(), getRefund: vi.fn(), verifyWebhook: vi.fn() };
+    const service = new PaymentService({ ...config, environment: 'live', packages: changed === 'withdrawn' ? [] : [item], catalogVersion: changed === 'version' ? 'new-v2' : purchase.catalogVersion }, payments, gateway);
+
+    await expect(service.create('owner-1', purchase.sku, 'lost-response')).resolves.toMatchObject({ ...purchase, id: original.id, paypalOrderId: capture.paypalOrderId });
+    expect(gateway.createOrder).not.toHaveBeenCalled();
+    expect(gateway.captureOrder).not.toHaveBeenCalled();
+    expect((await payments.listOrders('owner-1'))).toHaveLength(1);
+    expect((await db.query('SELECT id FROM paid_credit_lots')).rows).toHaveLength(0);
+    await expect(service.create('owner-1', 'different-sku', 'lost-response')).rejects.toMatchObject({ status: 409 });
+    if (changed === 'withdrawn') await expect(service.create('owner-1', purchase.sku, 'new-request')).rejects.toMatchObject({ status: 400 });
+    await expect(new PaymentService({ ...config, enabled: false }, payments, gateway).create('owner-1', purchase.sku, 'lost-response')).rejects.toMatchObject({ status: 503 });
+  });
+
+  it('looks up a recovery key only within its exact account and environment', async () => {
+    const original = await payments.createOrder('owner-1', purchase, 'shared-request');
+    const otherOwner = await payments.createOrder('owner-2', purchase, 'shared-request');
+    const sandbox = new PostgresPaymentStore(pool, 'sandbox');
+    const otherEnvironment = await sandbox.createOrder('owner-1', purchase, 'shared-request');
+    expect((await payments.getOrderByRequestKey('owner-1', 'shared-request'))?.id).toBe(original.id);
+    expect((await payments.getOrderByRequestKey('owner-2', 'shared-request'))?.id).toBe(otherOwner.id);
+    expect((await sandbox.getOrderByRequestKey('owner-1', 'shared-request'))?.id).toBe(otherEnvironment.id);
+    expect(await payments.getOrderByRequestKey('stranger', 'shared-request')).toBeNull();
+    expect(await payments.getOrderByRequestKey('owner-1', 'missing-key')).toBeNull();
+  });
+
+  it('continues an unattached local order using its accepted price after the catalog changes', async () => {
+    const original = await payments.createOrder('owner-1', purchase, 'lost-remote-response');
+    const config = getPaymentConfig({ PAYPAL_ENABLED: 'true', PAYPAL_CLIENT_ID: 'public', PAYPAL_CLIENT_SECRET: 'private', PAYPAL_MERCHANT_ID: 'MERCHANT1', PAYPAL_WEBHOOK_ID: 'WH1' });
+    const gateway = { createOrder: vi.fn().mockResolvedValue({ id: capture.paypalOrderId, status: 'CREATED' }), captureOrder: vi.fn(), getOrder: vi.fn(), getCapture: vi.fn(), getRefund: vi.fn(), verifyWebhook: vi.fn() };
+    const service = new PaymentService({ ...config, packages: [], catalogVersion: 'changed' }, payments, gateway);
+    const recovered = await service.create('owner-1', purchase.sku, 'lost-remote-response');
+    expect(recovered).toMatchObject({ ...purchase, id: original.id, paypalOrderId: capture.paypalOrderId });
+    expect(gateway.createOrder).toHaveBeenCalledWith(expect.objectContaining({ ...purchase, id: original.id }));
+    await service.create('owner-1', purchase.sku, 'lost-remote-response');
+    expect(gateway.createOrder).toHaveBeenCalledTimes(1);
+    expect(gateway.captureOrder).not.toHaveBeenCalled();
+  });
+
   it('reuses one purchase request but rejects changed snapshots and invalid financial inputs', async () => {
     const first = await payments.createOrder('owner-1', purchase, 'same-request');
     expect((await payments.createOrder('owner-1', purchase, 'same-request')).id).toBe(first.id);

@@ -238,6 +238,11 @@ export default function CreditCheckout({ initialCatalog, initialSku, initialRetu
 
   const selected = catalog?.packages.find((item) => item.sku === sku);
   const busy = status === 'creating' || status === 'approving' || status === 'confirming';
+  // A definitive lack of buyer approval can resume only this retained order.
+  // Unknown/pending results must keep the existing payment locked for recovery.
+  const resumeApproval = status === 'unpaid' && order?.status === 'created' && Boolean(order.paypalOrderId)
+    && activeAttempt?.orderId === order.id && activeAttempt.sku === order.sku && sku === order.sku
+    && requestKeys.current[`${storagePrefix}request:${sku}`] === activeAttempt.requestKey;
 
   return (
     <div className="credit-checkout">
@@ -261,7 +266,7 @@ export default function CreditCheckout({ initialCatalog, initialSku, initialRetu
             {isPending ? <p role="status">Checking sign-in…</p> : null}
             {userId && !catalogConfirmed && !catalogError ? <p role="status">Checking payment availability…</p> : null}
             {userId && !catalog.enabled ? <button className="button button-primary" type="button" disabled>Checkout unavailable</button> : null}
-            <div ref={containerRef} className="paypal-button-container" hidden={!userId || !catalog.enabled || status === 'fulfilled' || status === 'confirming' || activeAttempt !== null} />
+            <div ref={containerRef} className="paypal-button-container" hidden={!userId || !catalog.enabled || status === 'fulfilled' || status === 'confirming' || (activeAttempt !== null && !resumeApproval)} />
             {status === 'creating' ? <p role="status">Creating your order…</p> : null}
             {status === 'approving' ? <p role="status">Complete payment in the PayPal window.</p> : null}
             {status === 'cancelled' ? <p role="status">Checkout cancelled. You can use the PayPal button when you are ready.</p> : null}

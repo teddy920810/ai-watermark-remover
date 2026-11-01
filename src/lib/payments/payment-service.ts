@@ -12,9 +12,15 @@ export class PaymentService {
   }
   async create(userId: string, sku: string, requestKey: string) {
     if (!this.config.enabled) throw new PaymentError('Checkout is not available.', 503);
-    const item = this.config.packages.find((entry) => entry.sku === sku);
-    if (!item) throw new PaymentError('Unknown package.', 400);
-    const order = await this.store.createOrder(userId, { sku, credits: item.credits, amountCents: item.amountCents, currency: item.currency, catalogVersion: this.config.catalogVersion }, requestKey);
+    // An accepted purchase keeps its snapshot when a create response was lost.
+    // New purchases still use the current catalog and the store's conflict guard.
+    let order = await this.store.getOrderByRequestKey(userId, requestKey);
+    if (order && order.sku !== sku) throw new PaymentError('Payment request belongs to another purchase.', 409);
+    if (!order) {
+      const item = this.config.packages.find((entry) => entry.sku === sku);
+      if (!item) throw new PaymentError('Unknown package.', 400);
+      order = await this.store.createOrder(userId, { sku, credits: item.credits, amountCents: item.amountCents, currency: item.currency, catalogVersion: this.config.catalogVersion }, requestKey);
+    }
     if (order.paypalOrderId || order.status !== 'created') return order;
     const remote = await this.paypal.createOrder(order);
     if (!/^[A-Z0-9]{1,36}$/.test(remote.id) || !['CREATED', 'PAYER_ACTION_REQUIRED'].includes(remote.status)) throw new PaymentError('Unable to start checkout.');

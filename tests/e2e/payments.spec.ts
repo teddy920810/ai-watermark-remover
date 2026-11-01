@@ -323,6 +323,64 @@ test('an existing checkout takes priority over a new URL SKU and never creates a
   expect(creates).toBe(0);
 });
 
+test('a restored unapproved order resumes PayPal approval with the same purchase identity', async ({ page }) => {
+  await setup(page);
+  const original = { ...order, status: 'created' };
+  const requestKey = '20000000-0000-4000-8000-000000000002';
+  await page.addInitScript(value => sessionStorage.setItem('clearmark-payment:payment-user:active', JSON.stringify(value)), { sku: original.sku, requestKey, orderId: original.id });
+  let approved = false;
+  let creates = 0;
+  let captures = 0;
+  await page.route(`**/api/payments/orders/${original.id}`, route => route.fulfill({ json: original }));
+  await page.route('**/api/payments/paypal/orders', route => {
+    creates++;
+    expect(route.request().headers()['idempotency-key']).toBe(requestKey);
+    expect(route.request().postDataJSON()).toEqual({ sku: original.sku });
+    approved = true;
+    return route.fulfill({ json: original });
+  });
+  await page.route(`**/api/payments/paypal/orders/${original.id}/capture`, route => {
+    captures++;
+    return approved ? route.fulfill({ json: { ...original, status: 'fulfilled' } }) : route.fulfill({ status: 422, json: { code: 'ORDER_NOT_APPROVED' } });
+  });
+  await page.goto('/app/credits?sku=regular');
+  await page.getByRole('button', { name: 'Check payment', exact: true }).click();
+  await expect(page.getByText('This order has not been approved for payment.', { exact: false })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'PayPal test checkout' })).toBeVisible();
+  expect(creates).toBe(0);
+  for (const width of [1440, 390]) {
+    await page.setViewportSize({ width, height: 1000 });
+    await expect(page.getByRole('button', { name: 'PayPal test checkout' })).toBeVisible();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+    await page.screenshot({ path: `output/paypal-ui/t4-resume-approval-${width}.png`, fullPage: true });
+  }
+  await page.getByRole('button', { name: 'PayPal test checkout' }).click();
+  await expect(page.getByRole('heading', { name: 'Your credits have arrived' })).toBeVisible();
+  expect(creates).toBe(1);
+  expect(captures).toBe(2);
+  expect(await page.evaluate(() => sessionStorage.getItem('clearmark-payment:payment-user:active'))).toBeNull();
+});
+
+for (const outcome of [{ name: 'unknown timeout', status: 503 }, { name: 'forbidden capture', status: 403 }, { name: 'pending confirmation', status: 200 }, { name: 'mismatched purchase', status: 422 }]) {
+  test(`a restored ${outcome.name} never reopens PayPal approval`, async ({ page }) => {
+    await setup(page);
+    const original = { ...order, status: 'created' };
+    const active = { sku: original.sku, requestKey: '20000000-0000-4000-8000-000000000002', orderId: original.id };
+    await page.addInitScript(value => sessionStorage.setItem('clearmark-payment:payment-user:active', JSON.stringify(value)), active);
+    await page.route(`**/api/payments/orders/${original.id}`, route => route.fulfill({ json: outcome.status === 422 ? { ...original, sku: 'different-sku' } : original }));
+    await page.route(`**/api/payments/paypal/orders/${original.id}/capture`, route => route.fulfill({ status: outcome.status, json: outcome.status === 200 ? original : { code: outcome.status === 422 ? 'ORDER_NOT_APPROVED' : undefined } }));
+    let creates = 0;
+    await page.route('**/api/payments/paypal/orders', route => { creates++; return route.fulfill({ status: 500 }); });
+    await page.goto('/app/credits');
+    await page.getByRole('button', { name: 'Check payment', exact: true }).click();
+    if (outcome.status === 422) await expect(page.getByText('This order has not been approved for payment.', { exact: false })).toBeVisible();
+    else await expect(page.getByRole('heading', { name: 'Confirming your payment' })).toBeVisible();
+    await expect(page.locator('.paypal-button-container')).toBeHidden();
+    expect(creates).toBe(0);
+    expect(await page.evaluate(() => JSON.parse(sessionStorage.getItem('clearmark-payment:payment-user:active')!))).toEqual(active);
+  });
+}
+
 test('a compact signed-in header keeps daily check-in on one line', async ({ page }) => {
   await setup(page);
   await page.setViewportSize({ width: 1280, height: 900 });
