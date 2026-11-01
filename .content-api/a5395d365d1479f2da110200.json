@@ -44,6 +44,17 @@
     "7dc37e9e739cd13dac7ea310ce1b180667b77f8d788e5cd7f716a1df1cc26f25": {
       "fingerprint": "cb509852cc78da83bff5895ef1c7c91de6d22a9e18bb7449b8170e54dec8d907",
       "result": {}
+    },
+    "e258a08b527e5e977548f66cf815c1dd5c0968a2bc40327f2f9f5255150c19a4": {
+      "fingerprint": "593c124fa31d9306dac015a789d4e6519de2a79421785f83910a774ea43f5ec5",
+      "result": {}
     }
+  },
+  "pull": 103,
+  "approval": {
+    "digest": "55abb9bf12fcb934b7fa38ec8f92ce6fdbd59bdca316e3b58b28ab471acf87f4",
+    "actor": "seo-editor-01",
+    "reference": "https://github.com/teddy920810/ai-watermark-remover/pull/103#issuecomment-6555646641",
+    "note": "Authorized technical acceptance only: this exact digest, original-byte asset, Blog and landing remain draft:true. No synthetic page or existing SEO modification is approved for public routing or indexing."
   }
 }
