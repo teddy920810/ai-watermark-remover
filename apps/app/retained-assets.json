@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "origin": "https://ai-watermark-remover-34sy9seeb-shiyaos-projects-b1e333f0.vercel.app",
+  "origin": "https://ai-watermark-remover-46fogy5z8-shiyaos-projects-b1e333f0.vercel.app",
   "assets": [
     {
       "path": "/_app-assets/_kind_.VGEm7Omq.css",
@@ -127,6 +127,24 @@
       "sha256": "907ec11d70a4c5b6861f8e221ed5a0078411ec2b184fa11a396a08db5245e6c1",
       "byteSize": 67328,
       "contentType": "text/css"
+    },
+    {
+      "path": "/_app-assets/_kind_.D2i4fH02.css",
+      "sha256": "924fd1da6278031a6af7a7b7bb556f12ea39e36bb04c5d1befd95ce85a872001",
+      "byteSize": 77980,
+      "contentType": "text/css"
+    },
+    {
+      "path": "/_app-assets/credits.C1ObQpkI.css",
+      "sha256": "85ffff39b0d08a7a40f24ff5a649eb041c99f9416261dfb47574028979d68120",
+      "byteSize": 67412,
+      "contentType": "text/css"
+    },
+    {
+      "path": "/_app-assets/CreditCheckout.CQMqwqrS.js",
+      "sha256": "0b3ae904a69f1b238a63a577677dc6defa40604f4adab58d6037d511f3dac74f",
+      "byteSize": 19125,
+      "contentType": "application/javascript"
     }
   ]
 }

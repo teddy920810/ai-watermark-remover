@@ -42,9 +42,12 @@ describe('previous public App asset retention', () => {
       { path: '/_app-assets/WatermarkWorkspace.Cs3H74rl.css', sha256: '7ade13130d6ae7b90558a77c7d0699f78120c504158bec24975fbf961a591418', byteSize: 8839, contentType: 'text/css' },
       { path: '/_app-assets/_kind_.1KZ3MJ3A.css', sha256: '100e4958d1504397641a7b7a58f0fcd4a8d9424c74947fe3169b83feb83d1921', byteSize: 77896, contentType: 'text/css' },
       { path: '/_app-assets/credits.BD2977eY.css', sha256: '907ec11d70a4c5b6861f8e221ed5a0078411ec2b184fa11a396a08db5245e6c1', byteSize: 67328, contentType: 'text/css' },
+      { path: '/_app-assets/_kind_.D2i4fH02.css', sha256: '924fd1da6278031a6af7a7b7bb556f12ea39e36bb04c5d1befd95ce85a872001', byteSize: 77980, contentType: 'text/css' },
+      { path: '/_app-assets/credits.C1ObQpkI.css', sha256: '85ffff39b0d08a7a40f24ff5a649eb041c99f9416261dfb47574028979d68120', byteSize: 67412, contentType: 'text/css' },
+      { path: '/_app-assets/CreditCheckout.CQMqwqrS.js', sha256: '0b3ae904a69f1b238a63a577677dc6defa40604f4adab58d6037d511f3dac74f', byteSize: 19125, contentType: 'application/javascript' },
     ];
     expect(value.version).toBe(1);
-    expect(value.origin).toBe('https://ai-watermark-remover-34sy9seeb-shiyaos-projects-b1e333f0.vercel.app');
+    expect(value.origin).toBe('https://ai-watermark-remover-46fogy5z8-shiyaos-projects-b1e333f0.vercel.app');
     expect(value.assets).toEqual(expect.arrayContaining(expected));
     expect(value.assets.length).toBeLessThanOrEqual(32);
     expect(new Set(value.assets.map((entry: { path: string }) => entry.path)).size).toBe(value.assets.length);
@@ -109,8 +112,9 @@ describe('previous public App asset retention', () => {
       const fetcher = vi.fn(); await expect(retainAppAssets(fixture(), value, fetcher)).rejects.toThrow(); expect(fetcher).not.toHaveBeenCalled();
     }
   });
-  it('keeps retention App-only and acceptance tooling outside both deployment targets', () => {
-    expect(classifyTargetChanges(['scripts/retain-app-assets.mjs', 'apps/app/retained-assets.json'])).toEqual(['app']);
+  it('selects both static-retention consumers and leaves acceptance tooling outside deployment targets', () => {
+    expect(classifyTargetChanges(['scripts/retain-app-assets.mjs'])).toEqual(['site', 'app']);
+    expect(classifyTargetChanges(['apps/app/retained-assets.json'])).toEqual(['app']);
     expect(classifyTargetChanges(['scripts/processing-acceptance.mjs', 'scripts/lib/acceptance-budget.mjs'])).toEqual([]);
   });
 });

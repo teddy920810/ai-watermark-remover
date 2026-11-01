@@ -125,7 +125,7 @@ export function classifyTargetChanges(files) {
     if (/^(?:docs\/|README\.md$|AGENTS\.md$|scripts\/processing-acceptance\.mjs$|scripts\/lib\/acceptance-budget\.mjs$)/.test(file)) continue;
     if (/^(?:apps\/worker\/|scripts\/build-worker)/.test(file)) { targets.add('worker'); continue; }
     if (/^(?:package(?:-lock)?\.json$|scripts\/build-target|\.github\/workflows\/build-targets)/.test(file)) { for (const target of buildTargets) targets.add(target); continue; }
-    if (file === 'scripts/retain-app-assets.mjs') { targets.add('app'); continue; }
+    if (file === 'scripts/retain-app-assets.mjs') { targets.add('site'); targets.add('app'); continue; }
     if (file === 'src/pages/pricing.astro') { targets.add('app'); continue; }
     if (file === 'src/lib/services.ts') { targets.add('app'); continue; }
     if (/^src\/components\/launcher\/(?:MediaLauncher\.tsx|launcher\.css)$/.test(file)) { targets.add('site'); targets.add('app'); continue; }
@@ -264,6 +264,7 @@ export async function buildTarget(target) {
   const astroPackage = JSON.parse(readFileSync(path.join(projectRoot, 'node_modules/astro/package.json'), 'utf8'));
   const astroBin = typeof astroPackage.bin === 'string' ? astroPackage.bin : astroPackage.bin.astro;
   runNode(path.join(projectRoot, 'node_modules/astro', astroBin), ['build', '--config', slash(path.relative(projectRoot, plan.configFile))], env);
+  if (target === 'site') runNode(path.join(projectRoot, 'scripts/retain-app-assets.mjs'), ['site'], env);
   if (target === 'app') {
     const source = path.join(projectRoot, '.vercel/output');
     if (!existsSync(path.join(source, 'config.json'))) throw new Error('Vercel adapter did not produce app output');
