@@ -273,3 +273,20 @@
 - 生产retention预演ttwln成功：13任务、7满足条件任务/6关联组、6保留。按同一计划digest执行qbkr2成功擦除35条记录；只读后验g7gxs为13任务仍在、0待擦除记录/组。不删除媒体或金融控制记录，不启用清理调度；真实执行日志均在发布证据目录。
 - 切换前真实公开资源盘点发现当前574ad43的3个样式/脚本不在旧清单，最终产物也未包含其中的_kind_.D2i4fH02.css。保留清单改以当前生产固定origin46fogy5z8为来源；此前21项哈希逐一不变，补入3个当前页面及其模块依赖，合计24项，仍只允许公开静态字节。独立红测后9项保留测试通过；不改变任何旧脚本内容或支付初始化。实际App打包与新head必需CI另行结清。
 - 该App保留清单的实际本地打包已通过。Site从现有sitemap逐页读取39个生产页面并递归核对模块导入，13个当前公开哈希资源共443742字节需要跨版本保留；共用原有有界、逐字节校验逻辑，Site仅允许现有公开固定alias与_site-assets命名空间，保持独立部署URL的保护。3项红测后43项定向绿测；此处涉及构建脚本，因此重新执行完整发布门禁，不以之前head的CI替代。
+
+### 本轮上线交付与验收结清（2026-11-01）
+
+- [PR #98](https://github.com/teddy920810/ai-watermark-remover/pull/98)已合并，生产代码028a8d23909eb129020e44846e5c17f3a624bffd与最终候选8daeba81fa7961995f524da38bef2758152cb18d的tree同为414efb7cfc62dbb4df6ca031df8f15ba708995a5。原内容27项提交态复核无偏差，public无改名或字节变化，原MVP归档blob不变。
+- 新静态保留逻辑的本地标准release:verify先通过audit/site校验，既有ESLint边界在高并发下超过5秒；原失败保留。安全进程检查未发现可停止的自有孤儿进程，一次降低并发后的覆盖率1250 passed/10外部skip、Lint、类型/Build、134页面passed/1按设计skip、图片组件4项及实际Site产物全部通过。最终候选CI/产物run41270292807/41270292808和合并main的CI/产物/CMS校验run41271155626/41271155629/41271155590均成功；不把首轮超时记为通过。
+- main保护回读为严格PR/必需verify与Required target artifacts、管理员约束、会话结清、禁止强推/删除；两个check均固定GitHub Actions app15368。配置来源合同：[GitHub状态检查保护](https://docs.github.com/en/rest/branches/branch-protection#update-status-check-protection)。CMS真实内容保存仍由内容所有者操作；未因研发验收创建文章或变更内容基线。
+- App正式部署dpl_9sWT9mSpXvKXk7FMHWwUb2zhTQuY，Site正式部署dpl_FWGHzrdWkuwNnjnDaPiGAGa7sTgC，均绑定028a8d2；App正式域名与固定Site alias已回读确认。Worker固定digest aec7597aac8f1854a54680e8437a4dfbf973973e33bf71e6a139aea51a22eda8/generation7先行部署，保留兼容旧任务；最终上下文七文件与其构建来源一致。无DNS/证书变更，不扩大支付开关。
+- 预览、生产各37项静态资源逐字节hash通过；生产28个页面236处原图/alt匹配。首页/Gemini/Terms桌面/手机及六项操作结果已查看，无横向溢出。Gemini桌面初截图懒加载未完成，补等待真实图像decode后的截图；原件保留。原缺图继续正常fallback，不擅自换素材。
+- 真实Google登录已完成，发布后同一真实会话可读取自有任务和下载；28项匿名/跨归属任务、下载及六类报价拒绝检查通过，且3个外部归属源control metadata确实存在，不能把不存在ID的404当归属证明。列表无越权任务，拒绝检查未改余额或调用Provider。六项真实Web→短期云身份→Worker→私有R2→Provider→产物下载均通过。
+- 五项图片实际通过：普通447×447 JPG/1处理Credit，PRO679×450 JPG/3处理Credits，精修447×447 JPG/1处理Credit且复用普通原结果/session与mask，背景447×447透明PNG/1免费次数，物体1586×992 PNG/1免费次数。背景真正白底下载通过；PNG原RGB中保留透明像素下的源色不是未去背景，已用实际浏览器棋盘/白底导出核对。精修原结果已基本清净，验证复用与版本链，不宣称此例额外质量提升。
+- 视频只用最后一个已批准槽：3秒/24fps/512×320带SAMPLE的原始fixture，实际输出3.018秒MP4、音轨与可见去水印均通过；未使用此前已去水印的site-video输出作输入。视频UI验收脚本初找Download MP4，实际按钮为Download video，修正脚本后播放/下载通过，没有重发处理。AAC样本的零交叉计数受编码噪声影响，保留该初始测量，改用解码PCM能量与440Hz频谱峰核对通过；不将容器有音轨等同有真实音频信号。
+- 五项图片与视频均已真实浏览器下载；除背景已验证的白底派生导出外，其余五项下载文件与服务端产物逐字节一致。逐项仅一次job POST；生产金融只读事务确认6项各一个准入、一个扣费且全部settled，无退款相抵的重复扣费。合计图片5处理Credits＋视频2处理Credits＋2免费次数，测试余额0/0/0；未使用已购Credits、购买、充值或真实支付/退款。原14条预算记录不变，新增6条均passed，总20条；图片处理预算使用5/10，但新增5图片槽/原剩余1视频槽已用完，不继续收费测试。
+- 生产public smoke通过。真实retention预演ttwln、同digest apply qbkr2与后验g7gxs均成功：当时13任务中的7任务/6组擦除35条记录，后验保留13任务且0待擦除；6个未满足条件任务未被强行清理。不启用自动清理、不删除媒体或金融记录。
+
+各项证据在本机忽略目录output/refactor-release-2026-11-01：static-retention-gates.json、main-repository-verification.json、web-production-verified.json、staged-asset-verification.json、public-http-verification.json、ownership-proof-summary.json、foreign-artifact-existence.json、qa-各操作.json、ui-各操作.json、qa-financial-audit.json、video-audio-verification.json及原始失败日志。脱敏验收摘要不含会话cookie、Provider/R2凭据或签名下载URL；原始云元数据仅本地保留，登录状态单独保存在.secrets中，均不得直接共享或提交。
+
+上线交付门禁已结清；后续仅按既定条件观察并退役旧准入/客户端/资源，不立即删旧API、金融/恢复依据或其他聊天目录。52个烘焙素材候选与1个原缺图仍归运营/SEO决定；当前发布没有扩大研发内容权限。
