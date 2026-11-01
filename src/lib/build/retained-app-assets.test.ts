@@ -16,6 +16,13 @@ const manifest = (assets = [asset], source = origin) => ({ version: 1, origin: s
 afterEach(() => { for (const directory of directories.splice(0)) rmSync(directory, { recursive: true, force: true }); });
 
 describe('previous public App asset retention', () => {
+  it('retains the two current production stylesheets replaced by the Header update', () => {
+    const value = JSON.parse(readFileSync(new URL('../../../apps/app/retained-assets.json', import.meta.url), 'utf8'));
+    expect(value.assets).toEqual(expect.arrayContaining([
+      { path: '/_app-assets/AppWorkspaceLayout.Ch2LtI16.css', sha256: '10ed2616736f643dfc1597456fa72a2595a80199326d36aaae2318847d68e3e2', byteSize: 41902, contentType: 'text/css' },
+      { path: '/_app-assets/payments.CRMEhp0R.css', sha256: '23ead3fa3948bd7be6b1fe9d6401d2cc94b0253bf91dc80420ca66940de112ad', byteSize: 29844, contentType: 'text/css' },
+    ]));
+  });
   it('retains the production checkout entry used before payment recovery changes', () => {
     const value = JSON.parse(readFileSync(new URL('../../../apps/app/retained-assets.json', import.meta.url), 'utf8'));
     expect(value.assets).toEqual(expect.arrayContaining([{ path: '/_app-assets/CreditCheckout.DF4Rby08.js', sha256: 'df8f60e5a4b3828b113bbb89b0228d39e2db74301aabf0b4586a5922c11891cd', byteSize: 15467, contentType: 'application/javascript' }]));

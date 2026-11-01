@@ -27,11 +27,13 @@ export function publicNavigation(items: readonly NavigationItem[], entries: read
     && !reservedToolSlugs.has(data.slug) && defaultToolGroup(data.toolKind))
     .map(({ data }) => ['/' + data.slug, data]));
   const seen = new Set<string>();
-  const publicLink = (link: NavigationLink): NavigationLink[] => {
-    if (/^https?:\/\//.test(link.href) || link.href.startsWith('#')) return [{ ...link }];
+  const groups = new Set<NavigationItem>();
+  const cloneLink = (link: NavigationItem) => ({ ...link, ...(link.children ? { children: [...link.children] } : {}) });
+  const publicLink = (link: NavigationItem): NavigationItem[] => {
+    if (/^https?:\/\//.test(link.href) || link.href.startsWith('#')) return [cloneLink(link)];
     if (!link.href.startsWith('/') || link.href.startsWith('//')) return [];
     const route = normalizeRoute(link.href);
-    if (knownPageRoutes.includes(route)) return [{ ...link }];
+    if (knownPageRoutes.includes(route) || route.startsWith('/blog/')) return [cloneLink(link)];
     if (!tools.has(route) || seen.has(route)) return [];
     seen.add(route);
     return [{ ...link, href: route }];
@@ -39,18 +41,24 @@ export function publicNavigation(items: readonly NavigationItem[], entries: read
   const navigation = items.flatMap((item): NavigationItem[] => {
     if (item.children && (item.children.length || !item.href)) {
       const children = item.children.flatMap(publicLink);
-      return [{ ...item, children }];
+      const group = { ...item, children };
+      groups.add(group);
+      return [group];
     }
     return publicLink(item);
   });
   for (const [href, data] of [...tools].sort(([left], [right]) => left < right ? -1 : left > right ? 1 : 0)) {
     if (seen.has(href)) continue;
     const label = defaultToolGroup(data.toolKind)!;
-    let group = navigation.find(item => item.label === label && item.children);
-    if (!group) { group = { label, href: '', children: [] }; navigation.push(group); }
+    let group = navigation.find(item => item.label === label && groups.has(item));
+    if (!group) { group = { label, href: '', children: [] }; groups.add(group); navigation.push(group); }
     group.children!.push({ label: data.heading, href, ...(data.statusLabel ? { badge: data.statusLabel } : {}) });
+    seen.add(href);
   }
-  return navigation.filter(item => !item.children || item.children.length || item.href);
+  return navigation.flatMap(item => {
+    if (!groups.has(item) || item.children?.length) return [item];
+    return publicLink({ label: item.label, href: item.href, ...(item.badge ? { badge: item.badge } : {}) });
+  });
 }
 
 export function sortBlogEntries<T extends PublishedEntry>(entries: readonly T[]): T[] {

@@ -82,6 +82,29 @@ describe('publicNavigation', () => {
     expect({ items, entries }).toEqual(before);
   });
 
+  it('validates empty-group parent fallbacks and deduplicates them against other groups', () => {
+    const fallback = (href: string) => ({ label: 'Fallback', href, children: [{ label: 'Draft', href: '/private' }] });
+    expect(publicNavigation([fallback('/private')], [tool('private', { draft: true })])).toEqual([]);
+    expect(publicNavigation([fallback('/unknown')], [])).toEqual([]);
+    const first = { label: 'First', href: '', children: [{ label: 'Keep', href: '/existing' }] };
+    expect(publicNavigation([first, fallback('/existing/?source=duplicate')], [tool('existing'), tool('private', { draft: true })])).toEqual([first]);
+  });
+
+  it('keeps a normal link with a default group label separate without mutating its empty children', () => {
+    const link = { label: 'Watermark Removers', href: '/blog', children: [] };
+    const before = structuredClone(link);
+    expect(publicNavigation([link], [tool('new-tool')])).toEqual([
+      link,
+      { label: 'Watermark Removers', href: '', children: [{ label: 'Tool new-tool', href: '/new-tool' }] },
+    ]);
+    expect(link).toEqual(before);
+  });
+
+  it('preserves ordinary Blog article links with their original query and anchor', () => {
+    const link = { label: 'Adobe Stock guide', href: '/blog/how-to-remove-adobe-stock-watermark?source=header#alternatives', children: [] };
+    expect(publicNavigation([link], [])).toEqual([link]);
+  });
+
   it('preserves all 20 current tools and nine Soon labels and excludes the three drafts', () => {
     const settings = JSON.parse(readFileSync('src/content/settings/site.json', 'utf8'));
     const entries = readdirSync('src/content/landing-pages').filter(file => file.endsWith('.json')).map(file => ({ data: JSON.parse(readFileSync(`src/content/landing-pages/${file}`, 'utf8')) }));
