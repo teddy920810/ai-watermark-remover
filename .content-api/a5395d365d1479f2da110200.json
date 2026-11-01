@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "id": "a5395d365d1479f2da110200",
+  "title": "T3 protected unpublished Blog and landing acceptance",
+  "actor": "seo-editor-01",
+  "baseRevision": "920f304b3772d6b668188bdb654c4876d2981092",
+  "createdAt": "2026-11-01T08:38:52.936Z",
+  "entries": [],
+  "assets": [],
+  "events": {
+    "86054cc6284bcc7351a05ae5b9202664107014912ed7d61bb372d6e930ef28d8": {
+      "fingerprint": "8aa4d0e80d17849e46095bd784598c7ac60ecc72e865d3634885b8d5205452fd",
+      "result": {}
+    }
+  }
+}
