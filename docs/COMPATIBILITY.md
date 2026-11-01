@@ -34,3 +34,17 @@
 | 公共素材 / 运营、SEO | 52个烘焙控件候选和1个原缺图的内容决定、明确授权及资源退出窗口；9个源PNG已缺的本地衍生文件继续保留，不能按可再生缓存删除。 |
 
 R2媒体TTL、短期下载票据和敏感字段擦除的24小时恢复缓冲均不是上述控制记录、旧客户端或静态资源的退出证明。[字段擦除](product/SENSITIVE_RETENTION.md)只按单次计划手动运行，不授权定期调度或删除金融记录。P0/P7恢复包、首失败、原用户PNG、付费验收媒体和预算账本继续保留；历史工作树与分支归属另行核对，本清理不处理Git引用。
+
+## 分支与工作树保留项
+
+普通 feature 远端由 GitHub 在合并后自动删除，本地由 PR owner 按[开发指南](DEVELOPER_GUIDE.md#合并后的分支收尾)完成条件删除。真正需要远端引用的恢复或其他 PR 依赖才登记例外；本地占用只阻止本地删除。以下旧集合继续保留，本表不授权批量删除或解除既有保护。
+
+| 保留项 | 责任 owner | 下次复核与退出证据 |
+| --- | --- | --- |
+| 上轮 `codex/download-filenames-20261101`、`codex/seo-content-api-20261101`、`codex/video-entry-credits-20261101`、`codex/content-api-merge-recovery-20261101`、`codex/payment-recovery-20261101`、`codex/refactor-release-record-20261101`，以及 `codex/maintenance-closure-20261101` | 总控聊天 `01a190a1-ac52-7a53-a1da-5e3a9f6968c1` 负责逐条复核；原交付 owner 和精确 SHA 见上轮治理 manifest | 2026-11-08 前首次复核：观察期验收、实际恢复依赖、无新提交/开放 PR/占用及恢复包覆盖。另行确认精确 allowlist 后退出，不能因已合并自动扩大此次清理范围。 |
+| 旧内容验收夹具 `codex/content-a5395d365d1479f2da110200@52bd65b3b8e0460970e01c8d9fa88d1bf1508f2c` | 内容 API 维护任务 `01a19705-3fa3-79e3-84a3-5a451138d0aa` 提供依赖证据，总控复核 | 2026-11-08 前复核其恢复/幂等验收是否仍需远端 ref；替代证据和恢复包具备后单独确认退出，当前保持保护。 |
+| C 盘占用分支 `codex/tool-landing-asset-compat` | 原附件 owner，总控聊天 `01a190a1-ac52-7a53-a1da-5e3a9f6968c1` | 2026-11-08 前核对附件归属、独有内容和恢复包；由有归属权限的 owner 决定可恢复归档并释放占用。不得直接删目录。 |
+| C 盘占用分支 `codex/update-legal-pages` | 原聊天 `01a1786a-793b-7c61-86ea-8daf223aaf97`；总控跟进 | 2026-11-08 前按原附件和独有工作复核，具备可恢复归档证据后由 owner 释放；本轮不接管该工作树。 |
+| 其他历史 detached 工作树，含 `.tools/framework-final`、`framework-phase-2`、`framework-worktree` 的 110 项旧状态 | 已知原聊天继续负责；未查明归属的由总控聊天 `01a190a1-ac52-7a53-a1da-5e3a9f6968c1` 负责认领核对 | 2026-11-08 前完成首次归属复核。先保存独有源码/证据和恢复依据，再通过应用附件 owner 归档；不得因 detached、目录日期或 owner 未明而删除。 |
+
+延期须记录具名 owner、新复核日期和仍缺的退出证据。复核日期不是删除期限；已合并工程的后续运营素材或新发布批次使用新分支，不作为原 feature 永久保留理由。上轮 bundle、manifest、首失败和既有工作树保留原样。

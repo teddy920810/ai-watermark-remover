@@ -109,6 +109,30 @@ npm run release:verify   # 高风险改动：依赖审计 + 站点校验 + 完�
 
 Pages CMS在内容分支保存，经受保护PR与必需CI后进入`main`；模板工作流只创建审核分支和草稿PR。推送前执行`git fetch origin main`检查分歧；如远端领先，先安全rebase/merge，禁止force push。合并后Vercel按目标独立发布。
 
+### 合并后的分支收尾
+
+本仓库启用 GitHub 原生 **Automatically delete head branches**（`delete_branch_on_merge`）。它只删除合并后的远端引用，不改本地分支、工作树或未提交文件；本地暂时占用不应成为普通 feature 远端永久保留的理由。保护规则仍优先；fork PR 取决于来源仓库设置和合并者权限，不能保证自动删除。[GitHub 官方合同](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/managing-the-automatic-deletion-of-branches)。
+
+PR owner 在本次交付验收后负责收尾：
+
+1. 核对同仓库 PR 确实 `merged`、目标为 `main`、原 head 完整 SHA 与待删引用相同，并确认权威 merge SHA 已进入最新 `origin/main`。`closed` 不等于合并；squash 来源不一定是 main 祖先，不能仅用 `git branch --merged` 判断。正常 squash 可比较来源 head 与该 merge 的完整 tree；不一致时先查明差异再决定。
+2. 保留精确 head 的可恢复对象：删除前创建并 `verify`/`list-heads` 核对 Git bundle，或核对已经完整覆盖该 head 的现有恢复包。不能只记 SHA 后依赖未来垃圾回收仍保留对象；不打包未提交文件或凭据。
+3. 回读远端引用；原生已删除则记录完成，不重建。遗留远端先核对保护、其他开放 PR 和真实恢复依赖；只有明确授权的单条引用才能用完整 expected SHA 的 lease 删除，不附带 tags、mirror 或 submodule 推送。未知、换头、失败均停下核对，不自动扩展清理范围。
+4. 本地由 owner 释放占用后再清理。检查全部 `git worktree list --porcelain`、开放 PR 与依赖；默认/保护分支、符号引用、其他 owner、夹具和具名保留项不得删除。唯一写入时段内再次核对，然后以 expected SHA 做条件删除，不使用无条件 `branch -D`、reset、stash、全仓 prune 或目录删除。
+
+以下跨平台命令仅演示单条本地收尾。先把示例分支和 `EXPECTED_SHA` 换成已审阅值，按上述前提执行；任何非零结果都停止，不清锁或循环重试：
+
+```sh
+git worktree list --porcelain
+git for-each-ref --format="%(refname) %(objectname) %(symref)" refs/heads/codex/example
+git bundle create --version=3 output/branch-example.bundle refs/heads/codex/example
+git bundle verify output/branch-example.bundle
+git bundle list-heads output/branch-example.bundle
+git update-ref --no-deref -d refs/heads/codex/example EXPECTED_SHA
+```
+
+删除后核对精确 before/after 引用集合并报告 owner 收尾结果；本地仍占用则具名记录待释放，不阻塞远端原生删除。新工作从最新 main 开新分支。保留项及到期复核见[兼容与退出](COMPATIBILITY.md#分支与工作树保留项)；到期只触发复核，不自动删除，也不授权定时全仓清理。
+
 原内容独立基线不自动随CMS保存更新。受保护的既有内容需要内容负责人先明确授权具体PR差异，维护者再运行`node scripts/update-content-baseline.mjs --approval APPROVED_PR_URL EXACT_CONTENT_PATH`，把fixture变化一并提交原PR审阅。该命令只更新测试预期，不改内容；填写PR链接本身不授予内容修改权限。新建草稿仍受草稿、模板文本、URL和图片检查约束。
 
 获授内容权限的运营 Token 持有人也可通过内容 API 的显式 review 操作批准当前 digest 对应的具体差异；服务端记录 PR 审计评论，只同步本次批准涉及的既有基线记录，并把内容、素材、基线留在同一 PR 供审阅。普通保存不更新基线，后续编辑撤销批准；发布前再核对批准评论、素材哈希与基线范围。研发验收草稿不等于内容负责人批准，不能因此改动既有内容值。
