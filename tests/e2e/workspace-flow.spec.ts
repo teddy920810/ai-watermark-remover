@@ -42,6 +42,55 @@ async function imageUploadFixture(page: Page) {
 function imageQuote(id: string, operation = 'image-watermark', amount = 1, unit = 'freeUses', expiresAt = quoteExpiration()) {
   return { id, operation, amount, unit, expiresAt, expectedOutput: { contentType: 'image/jpeg', format: 'JPG', width: 80, height: 60 } };
 }
+
+for (const viewport of [{ name: 'desktop', width: 1440, height: 900 }, { name: 'mobile', width: 390, height: 844 }]) {
+  test.describe(`video allowance · ${viewport.name}`, () => {
+    test.use({ viewport: { width: viewport.width, height: viewport.height } });
+
+    test('explains administrator credits before anonymous upload', async ({ page }) => {
+      await account(page, false);
+      const writes: string[] = [];
+      page.on('request', request => { if (request.method() === 'POST' && /\/api\/v1\/(uploads|quotes|jobs)/.test(request.url())) writes.push(request.url()); });
+      await page.goto('/app/video');
+      await expect(page.getByRole('heading', { name: 'Choose a file' })).toBeVisible();
+      const explanation = page.getByText(/Video processing uses administrator-allocated processing credits/);
+      await expect(explanation).toBeVisible();
+      await expect(explanation).toContainText('Free image uses and purchased image credits do not apply.');
+      await expect(explanation).toContainText('File checks use no credits.');
+      await expect(explanation).toContainText('Review the quoted cost and click Remove watermarks to start processing.');
+      expect(writes).toEqual([]);
+    });
+
+    test('image balances cannot enable a video with zero processing credits', async ({ page }) => {
+      await account(page);
+      await page.route('**/api/v1/me', route => json(route, { freeUses: 3, purchasedImageCredits: 100, processingCredits: 0 }));
+      const video = readFileSync(new URL('../fixtures/workspace-24fps.mp4', import.meta.url));
+      const metadata = { kind: 'video', contentType: 'video/mp4', byteSize: video.length, width: 160, height: 90, durationSeconds: 2, fps: 24, hasAudio: true };
+      const artifact = { id: 'allowance-video', role: 'input', metadata, previewUrl: `${origin}/fixture/allowance.mp4`, expiresAt: expiration() };
+      let submissions = 0;
+      await page.route('**/fixture/allowance.mp4', route => route.fulfill({ contentType: 'video/mp4', body: video }));
+      await page.route('**/fixture/allowance-upload', route => route.fulfill({ status: 200 }));
+      await page.route('**/api/v1/uploads', route => json(route, { id: 'allowance-upload', uploadUrl: `${origin}/fixture/allowance-upload` }, 201));
+      await page.route('**/api/v1/uploads/allowance-upload/complete', route => json(route, { status: 'validating' }, 202));
+      await page.route('**/api/v1/uploads/allowance-upload', route => json(route, { id: 'allowance-upload', status: 'ready', artifact }));
+      await page.route('**/api/v1/quotes', route => {
+        expect(route.request().postDataJSON()).toEqual({ operation: 'video-watermark', inputArtifactId: artifact.id });
+        return json(route, { id: 'allowance-quote', operation: 'video-watermark', amount: 1, unit: 'processingCredits', expiresAt: quoteExpiration(), expectedOutput: { format: 'MP4', contentType: 'video/mp4', width: 160, height: 90 } });
+      });
+      await page.route('**/api/v1/jobs', route => {
+        if (route.request().method() === 'GET') return json(route, { jobs: [] });
+        submissions += 1; return json(route, { error: 'No video processing is authorized.' }, 409);
+      });
+      await page.goto('/app/video');
+      await expect(page.getByText(/Video processing uses administrator-allocated processing credits/)).toBeVisible();
+      await page.getByLabel('Upload file to workspace').setInputFiles({ name: 'allowance.mp4', mimeType: 'video/mp4', buffer: video });
+      await expect(page.getByRole('button', { name: 'Remove watermarks · 1 processing credit', exact: true })).toBeDisabled();
+      await expect(page.getByRole('alert')).toContainText('Ask an administrator to allocate processing credits.');
+      await expect(page.getByRole('link', { name: 'Buy image credits', exact: false })).toHaveCount(0);
+      expect(submissions).toBe(0);
+    });
+  });
+}
 test('landing hands an anonymous file to the workspace and restores it without an upload or charge', async ({ page }) => {
   await account(page, false);
   let processingRequests = 0;

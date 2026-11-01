@@ -40,6 +40,7 @@ export default function MediaLauncher({ source = 'landing', recommendation, comp
   const imageLimit = launcherLimit('image', capabilityFor(capabilities, 'image')?.maxBytes);
   const videoCapability = capabilityFor(capabilities, 'video');
   const videoLimit = launcherLimit('video', videoCapability?.maxBytes);
+  const workspaceHref = recommendation?.operation === 'video-watermark' ? workspacePath('video') : '/app';
   useEffect(() => {
     mounted.current = true;
     setHydrated(true);
@@ -79,7 +80,7 @@ export default function MediaLauncher({ source = 'landing', recommendation, comp
     </div>}
     {!compact && capabilityError && <p className="launcher-service-note" role="status">Current processing availability could not be checked. You can still prepare a file; the workspace checks before processing.</p>}
     {!compact && capabilities.filter(value => (value.operation === 'image-watermark' || value.operation === 'video-watermark') && !value.enabled).map(value => <p className="launcher-service-note" key={value.operation}>{value.operation === 'video-watermark' ? 'Video' : 'Image'} processing: {value.reason ?? 'Temporarily unavailable. You can still prepare your file in the workspace.'}</p>)}
-    {error && <div className="launcher-error" role="alert"><p>{error}</p><a href="/app">Open workspace <ArrowRight size={15} /></a></div>}
-    {!compact && <><p className="launcher-local-note">Your file stays on this device until you sign in and upload.</p>{!onFileSelected && <a className="launcher-workspace-link" href="/app">Open workspace <ArrowRight size={15} /></a>}</>}
+    {error && <div className="launcher-error" role="alert"><p>{error}</p><a href={workspaceHref}>Open workspace <ArrowRight size={15} /></a></div>}
+    {!compact && <><p className="launcher-local-note">Your file stays on this device until you sign in and upload.</p>{!onFileSelected && <a className="launcher-workspace-link" href={workspaceHref}>Open workspace <ArrowRight size={15} /></a>}</>}
   </div>;
 }

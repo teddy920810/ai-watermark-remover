@@ -113,3 +113,63 @@ test('the video landing page accepts images and MP4 through the common entry', a
   await expect(page.locator('#tool').getByRole('button', { name: 'Upload file', exact: true })).toBeVisible();
   await expect(page.locator('.launcher-modes')).toHaveCount(0);
 });
+
+for (const viewport of [{ name: 'desktop', width: 1440, height: 900 }, { name: 'mobile', width: 390, height: 844 }]) {
+  test.describe(`video entry · ${viewport.name}`, () => {
+    test.use({ viewport: { width: viewport.width, height: viewport.height } });
+
+    test('opens the video workspace without a file or draft', async ({ page }) => {
+      const writes = await anonymous(page);
+      await page.goto('/video-watermark-remover');
+      const open = page.locator('#tool').getByRole('link', { name: 'Open workspace' });
+      await expect(open).toHaveAttribute('href', '/app/video');
+      await open.click();
+      await expect(page).toHaveURL(/\/app\/video$/);
+      await expect(page.getByLabel('Choose operation')).toHaveValue('video-watermark');
+      await expect(page.getByRole('heading', { name: 'Remove video watermarks' })).toBeVisible();
+      expect(writes).toEqual([]);
+    });
+
+    test('keeps the video workspace on file error recovery', async ({ page }) => {
+      const writes = await anonymous(page);
+      await page.goto('/video-watermark-remover');
+      const picker = page.getByTestId('media-launcher-file');
+      await expect(picker).toBeEnabled();
+      await picker.setInputFiles({ name: 'broken.mp4', mimeType: 'video/mp4', buffer: Buffer.from('not an MP4') });
+      const recovery = page.getByRole('alert').getByRole('link', { name: 'Open workspace' });
+      await expect(recovery).toHaveAttribute('href', '/app/video');
+      await recovery.click();
+      await expect(page.getByLabel('Choose operation')).toHaveValue('video-watermark');
+      expect(writes).toEqual([]);
+    });
+
+    for (const kind of ['image', 'video'] as const) test(`the selected ${kind} takes priority over the video recommendation`, async ({ page }) => {
+      const writes = await anonymous(page);
+      await page.goto('/video-watermark-remover');
+      const picker = page.getByTestId('media-launcher-file');
+      await expect(picker).toBeEnabled();
+      const name = kind === 'image' ? 'video-page-image.png' : 'video-page-clip.mp4';
+      await picker.setInputFiles({ name, mimeType: kind === 'image' ? 'image/png' : 'video/mp4', buffer: kind === 'image' ? await photo() : videoBytes });
+      await expect(page).toHaveURL(new RegExp(`/app/${kind}$`));
+      await expect(page.getByLabel('Choose operation')).toHaveValue(kind === 'image' ? 'image-watermark' : 'video-watermark');
+      await expect(page.getByText(name, { exact: true })).toBeVisible();
+      if (kind === 'image') await expect(page.locator('.app-entry-notice')).toContainText(/image|compatible/i);
+      else await expect(page.locator('video')).toHaveAttribute('src', /^blob:/);
+      expect(writes).toEqual([]);
+    });
+
+    test('the homepage retains its image entry and no video allowance notice', async ({ page }) => {
+      const writes = await anonymous(page);
+      await page.goto('/');
+      const open = page.locator('#tool').getByRole('link', { name: 'Open workspace' });
+      await expect(open).toHaveAttribute('href', '/app');
+      await open.click();
+      await expect(page.getByLabel('Choose operation')).toHaveValue('image-watermark');
+      await expect(page.getByText(/Video processing uses administrator-allocated/)).toHaveCount(0);
+      await page.getByLabel('Upload file to workspace').setInputFiles({ name: 'homepage-image.png', mimeType: 'image/png', buffer: await photo() });
+      await expect(page).toHaveURL(/\/app\/image$/);
+      await expect(page.getByText('homepage-image.png', { exact: true })).toBeVisible();
+      expect(writes).toEqual([]);
+    });
+  });
+}
