@@ -33,7 +33,7 @@ export function publicNavigation(items: readonly NavigationItem[], entries: read
     if (/^https?:\/\//.test(link.href) || link.href.startsWith('#')) return [cloneLink(link)];
     if (!link.href.startsWith('/') || link.href.startsWith('//')) return [];
     const route = normalizeRoute(link.href);
-    if (knownPageRoutes.includes(route) || route.startsWith('/blog/')) return [cloneLink(link)];
+    if (knownPageRoutes.includes(route) || /^\/blog\/[a-z0-9]+(?:-[a-z0-9]+)*$/.test(route)) return [cloneLink(link)];
     if (!tools.has(route) || seen.has(route)) return [];
     seen.add(route);
     return [{ ...link, href: route }];
@@ -41,6 +41,10 @@ export function publicNavigation(items: readonly NavigationItem[], entries: read
   const navigation = items.flatMap((item): NavigationItem[] => {
     if (item.children && (item.children.length || !item.href)) {
       const children = item.children.flatMap(publicLink);
+      if (!children.length && item.href) {
+        const fallback = publicLink({ label: item.label, href: item.href, ...(item.badge ? { badge: item.badge } : {}) });
+        if (fallback.length) return fallback;
+      }
       const group = { ...item, children };
       groups.add(group);
       return [group];
@@ -55,10 +59,7 @@ export function publicNavigation(items: readonly NavigationItem[], entries: read
     group.children!.push({ label: data.heading, href, ...(data.statusLabel ? { badge: data.statusLabel } : {}) });
     seen.add(href);
   }
-  return navigation.flatMap(item => {
-    if (!groups.has(item) || item.children?.length) return [item];
-    return publicLink({ label: item.label, href: item.href, ...(item.badge ? { badge: item.badge } : {}) });
-  });
+  return navigation.filter(item => !groups.has(item) || item.children?.length);
 }
 
 export function sortBlogEntries<T extends PublishedEntry>(entries: readonly T[]): T[] {

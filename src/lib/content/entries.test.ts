@@ -90,6 +90,22 @@ describe('publicNavigation', () => {
     expect(publicNavigation([first, fallback('/existing/?source=duplicate')], [tool('existing'), tool('private', { draft: true })])).toEqual([first]);
   });
 
+  it('preserves a valid manual fallback label and position before adding missing tools', () => {
+    const items = [
+      { label: 'Guides', href: '/blog' },
+      { label: 'Custom tool', href: '/existing', children: [{ label: 'Draft', href: '/private' }] },
+      { label: 'Pricing', href: '/pricing' },
+    ];
+    expect(publicNavigation(items, [tool('existing'), tool('private', { draft: true })])).toEqual([
+      items[0], { label: 'Custom tool', href: '/existing' }, items[2],
+    ]);
+  });
+
+  it('rejects Blog dot-segments, extra segments, doubled slashes and encoded path shapes', () => {
+    const links = ['/blog/../private?x=1#tool', '/blog/../api/jobs', '/blog//private', '/blog/article/extra', '/blog/.', '/blog/%2e%2e/private', '/blog/article%2fextra'];
+    expect(publicNavigation(links.map(href => ({ label: 'Invalid guide', href })), [])).toEqual([]);
+  });
+
   it('keeps a normal link with a default group label separate without mutating its empty children', () => {
     const link = { label: 'Watermark Removers', href: '/blog', children: [] };
     const before = structuredClone(link);
