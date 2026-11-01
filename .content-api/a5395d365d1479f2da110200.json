@@ -5,7 +5,9 @@
   "actor": "seo-editor-01",
   "baseRevision": "920f304b3772d6b668188bdb654c4876d2981092",
   "createdAt": "2026-11-01T08:38:52.936Z",
-  "entries": [],
+  "entries": [
+    "src/content/blog/t3-acceptance-blog-402b5265.md"
+  ],
   "assets": [
     {
       "path": "/uploads/content-api/a5395d365d1479f2da110200/authorized-source-8cf97f818c9f8b4b.png",
@@ -33,6 +35,10 @@
           "mime": "image/png"
         }
       }
+    },
+    "f3186a345450be8cfab7c15382f0ca6b278d200fe1eac91f26166bd8cff6ea49": {
+      "fingerprint": "76fcdc516cd18d24d9b6e20259165a031a4769a28dd54178c04a223f7fa228ee",
+      "result": {}
     }
   }
 }
