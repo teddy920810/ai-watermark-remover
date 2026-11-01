@@ -21,7 +21,7 @@ describe('required CI risk selection', () => {
     expect(classifyVerification(['src/components/auth/AuthControls.tsx']).mode).toBe('full');
   });
   it('fails closed for missing diffs, executable content, financial, build and mixed scopes', () => {
-    for (const files of [null, [], ['unrecognized.file'], ['src/content/blog/example.mdx'], ['public/uploads/x.svg'], ['src/content/settings/site.json'], ['src/pages/api/example.ts'], ['src/lib/payments/prices.ts'], ['apps/worker/entry.ts'], ['package.json'], ['.github/workflows/ci.yml'], ['.vercelignore'], ['src/content/blog/example.md', 'src/styles/global.css']]) {
+    for (const files of [null, [], ['unrecognized.file'], ['src/content/blog/example.mdx'], ['public/uploads/x.svg'], ['src/content/settings/site.json'], ['src/content/legal/terms.md'], ['src/content/homepage/home.json'], ['src/pages/api/example.ts'], ['src/lib/payments/prices.ts'], ['apps/worker/entry.ts'], ['package.json'], ['.github/workflows/ci.yml'], ['.vercelignore'], ['src/content/blog/example.md', 'src/styles/global.css']]) {
       expect(classifyVerification(files).mode, String(files)).toBe('full');
     }
     expect(classifyVerification(['docs/notes.md', 'src/content/blog/example.md']).mode).toBe('content');

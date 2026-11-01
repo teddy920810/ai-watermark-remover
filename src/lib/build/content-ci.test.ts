@@ -17,8 +17,9 @@ describe('content CI safety gate', () => {
       it(`validates the complete changed entry: ${file}`, () => {
         const record = parseCmsDocument(file, readFileSync(file, 'utf8'));
         const kind = file.startsWith('src/content/blog/') ? 'blog' : 'landing';
+        const entry = { data: record.data, body: record.body ?? '' };
         // Preserve read-only legacy comparison fields; this check never updates a baseline.
-        expect(() => parseEntry(kind, { data: record.data, body: record.body }, String(record.data.slug), record)).not.toThrow();
+        expect(() => parseEntry(kind, entry, String(record.data.slug), entry)).not.toThrow();
       });
     } else if (/^public\/uploads\/.+\.(?:png|jpe?g|webp|gif|avif)$/i.test(file)) {
       it(`decodes the original changed image without rewriting bytes: ${file}`, async () => {

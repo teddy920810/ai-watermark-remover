@@ -14,7 +14,7 @@ export function classifyVerification(files) {
     if (typeof raw !== 'string' || /(^|[/\\])\.\.([/\\]|$)|^[/\\]|[\r\n\0]/.test(raw)) return full('invalid path');
     const file = raw.replaceAll('\\', '/');
     if (/^(?:docs\/.+\.md|README\.md|AGENTS\.md|CONTRIBUTING\.md)$/.test(file)) continue;
-    if (/^src\/content\/(?:(?:blog|legal)\/[^/]+\.md|(?:landing-pages|homepage)\/[^/]+\.json)$/.test(file)
+    if (/^src\/content\/(?:blog\/[^/]+\.md|landing-pages\/[^/]+\.json)$/.test(file)
       || /^public\/uploads\/.+\.(?:png|jpe?g|webp|gif|avif)$/i.test(file)) kinds.add('content');
     else if (/^src\/styles\/(?:global|home-blueprint|home-integration|tool-landing)\.css$/.test(file)) kinds.add('ui');
     else return full(`requires complete verification: ${file}`);

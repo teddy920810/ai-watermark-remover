@@ -81,7 +81,7 @@ Pages CMS 保存到内容审核分支，经受保护 PR 与必需检查后合并
 
 ## 自动化保护
 
-- `.github/workflows/ci.yml`：每次 PR 和 `main` 推送始终运行 `verify` 作业，以事件的 base/head SHA 分类并重新计算实际执行范围；不使用 workflow 路径过滤跳过必需检查。文档只检查 diff；纯 Blog/landing/homepage/legal 与原始栅格图检查 schema、内容测试与变更内容安全；明确的公共样式运行 `check:ui`；其他范围运行依赖审计和完整 `verify`。高风险/未知/混合、空 diff 或读取 diff 失败一律完整验证。源码、MDX、SVG、站点身份设置、基线单独修改和内容 API 协议不进入内容快路径。
+- `.github/workflows/ci.yml`：每次 PR 和 `main` 推送始终运行 `verify` 作业，以事件的 base/head SHA 分类并重新计算实际执行范围；不使用 workflow 路径过滤跳过必需检查。文档只检查 diff；纯 Blog/landing 与原始栅格图检查 schema、内容测试与变更内容安全；明确的公共样式运行 `check:ui`；其他范围运行依赖审计和完整 `verify`。高风险/未知/混合、空 diff 或读取 diff 失败一律完整验证。源码、MDX、SVG、站点身份设置、基线单独修改和内容 API 协议不进入内容快路径。
 - `.github/workflows/build-targets.yml`：同一份变更分类选择 Site、App 和 Worker，生成并验证对应产物。内容变更只选择 Site；Worker 入口只选择 Worker；共享处理代码选择 App 和 Worker；依赖与构建入口选择全部目标。Worker 验证真实打包和七文件上传上下文，不部署或调用 Provider。
 - `.github/workflows/production-smoke.yml`：每天只运行无成本 Public Smoke；手工选择 operation 时才运行会消耗额度的 Functional Smoke。
 - `.github/workflows/cms-content-check.yml`：仅保留显式手动诊断，不再在 main 重复执行已由必需 CI 覆盖的内容同步。
