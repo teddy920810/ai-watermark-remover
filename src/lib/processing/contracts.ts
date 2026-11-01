@@ -1,8 +1,9 @@
 import { z } from 'zod';
+import { durableOperationIds } from '../contracts/operation-catalog';
 import type { ProviderCheckpoint, ProcessingWatermarkProvider } from '../providers/watermark-provider';
 export type { ProviderCheckpoint, ProviderOutcome, ProcessingProviderContext } from '../providers/watermark-provider';
 
-export const operationSchema = z.enum(['image-watermark', 'image-watermark-pro', 'image-refine', 'video-watermark']);
+export const operationSchema = z.enum(durableOperationIds);
 export type ProcessingOperation = z.infer<typeof operationSchema>;
 export const amountSchema = z.number().int().positive().max(Number.MAX_SAFE_INTEGER);
 export const metadataSchema = z.object({

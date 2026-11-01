@@ -16,26 +16,26 @@
       {
         "id": "serum",
         "label": "Serum",
-        "watermark": "watermark",
-        "image": "/uploads/home-blueprint/features/hero-sample-01-serum.png"
+        "image": "/uploads/home-blueprint/features/hero-sample-01-serum.png",
+        "watermark": "watermark"
       },
       {
         "id": "sunset",
         "label": "Sunset",
-        "watermark": "2025.06.18 19:42",
-        "image": "/uploads/home-blueprint/features/hero-sample-02-sunset.png"
+        "image": "/uploads/home-blueprint/features/hero-sample-02-sunset.png",
+        "watermark": "2025.06.18 19:42"
       },
       {
         "id": "tote",
         "label": "Tote bag",
-        "watermark": "VG",
-        "image": "/uploads/home-blueprint/features/hero-sample-03-tote.png"
+        "image": "/uploads/home-blueprint/features/hero-sample-03-tote.png",
+        "watermark": "VG"
       },
       {
         "id": "contract",
         "label": "Contract",
-        "watermark": "Please review",
-        "image": "/uploads/home-blueprint/features/hero-sample-04-contract.png"
+        "image": "/uploads/home-blueprint/features/hero-sample-04-contract.png",
+        "watermark": "Please review"
       }
     ],
     "previewNote": "Interactive illustrations — actual results depend on your image.",
@@ -49,8 +49,8 @@
       "href": "/remove-logo-from-image",
       "image": "/uploads/home-blueprint/results/result-01-logo-hiker.png",
       "imageAlt": "Hiker in a mountain landscape for a branded logo removal comparison",
-      "watermark": "watermark",
-      "cta": "Remove Logo Now →"
+      "cta": "Remove Logo Now →",
+      "watermark": "watermark"
     },
     {
       "icon": "T",
@@ -59,8 +59,8 @@
       "href": "/remove-text-from-image",
       "image": "/uploads/home-blueprint/results/result-02-magazine-model.png",
       "imageAlt": "Fashion model for a magazine-cover text removal comparison",
-      "watermark": "watermark",
-      "cta": "Remove Text Now →"
+      "cta": "Remove Text Now →",
+      "watermark": "watermark"
     },
     {
       "icon": "✦",
@@ -69,8 +69,8 @@
       "href": "/gemini-watermark-remover",
       "image": "/uploads/home-blueprint/results/result-03-gemini-water.png",
       "imageAlt": "Portrait in water for an AI-generated mark removal comparison",
-      "watermark": "watermark",
-      "cta": "Remove Gemini Watermark →"
+      "cta": "Remove Gemini Watermark →",
+      "watermark": "watermark"
     },
     {
       "icon": "◷",
@@ -79,8 +79,8 @@
       "href": "/#tool",
       "image": "/uploads/home-blueprint/results/result-04-date-pyramids.png",
       "imageAlt": "Tourist in front of pyramids for a date stamp removal comparison",
-      "watermark": "2025.06.18 14:32",
       "cta": "Remove Date Stamp →",
+      "watermark": "2025.06.18 14:32",
       "comparisonStyle": "date"
     },
     {
@@ -90,8 +90,8 @@
       "href": "/#tool",
       "image": "/uploads/home-blueprint/results/result-05-signature-invoice.png",
       "imageAlt": "Invoice document for a handwritten signature removal comparison",
-      "watermark": "Avery Collins, Authorized",
       "cta": "Remove Signature →",
+      "watermark": "Avery Collins, Authorized",
       "comparisonStyle": "signature"
     }
   ],

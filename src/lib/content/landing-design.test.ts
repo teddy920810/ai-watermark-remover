@@ -2,6 +2,7 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { parse } from 'yaml';
 import { z } from 'zod';
+import { resolveImagePair } from './image-pair';
 
 const contentRoot = new URL('../../content/landing-pages/', import.meta.url);
 const pages = readdirSync(contentRoot).filter(file => file.endsWith('.json')).map(file => JSON.parse(readFileSync(new URL(file, contentRoot), 'utf8')));
@@ -20,8 +21,8 @@ describe('independent tool landing-page previews', () => {
 
   it('uses the supplied Gemini illustrations without replacing existing feature artwork', () => {
     const gemini = pages.find(page => page.slug === 'gemini-watermark-remover');
-    expect(gemini.heroSamples?.map((sample: { comparison: { style: string } }) => sample.comparison.style)).toEqual(['gemini', 'gemini', 'gemini']);
-    expect(gemini.features.items.slice(0, 3).map((item: { image: string }) => item.image)).toEqual([
+    expect(gemini.heroSamples?.every((sample: Parameters<typeof resolveImagePair>[0]) => !resolveImagePair(sample).afterImage)).toBe(true);
+    expect(gemini.features.items.slice(0, 3).map((item: Parameters<typeof resolveImagePair>[0]) => resolveImagePair(item).image)).toEqual([
       '/uploads/gemini-no-crop.webp',
       '/uploads/gemini-natural-background.webp',
       '/uploads/gemini-easy-online.webp',
@@ -33,8 +34,8 @@ describe('independent tool landing-page previews', () => {
     expect(gemini.features.items).toHaveLength(4);
     expect(gemini.features.items.map((item: { imagePosition: string }) => item.imagePosition)).toEqual(['left', 'right', 'left', 'right']);
     for (const feature of gemini.features.items) {
-      expect(feature.comparison).toMatchObject({ image: expect.any(String), style: 'gemini', watermark: 'GEMINI' });
-      expect(existsSync(new URL(`../../../public${feature.comparison.image}`, import.meta.url))).toBe(true);
+      expect(resolveImagePair(feature)).toEqual({ image: feature.image });
+      expect(existsSync(new URL(`../../../public${feature.image}`, import.meta.url))).toBe(true);
     }
     const privacy = gemini.features.items[3];
     expect(privacy.heading).toBe('Free Online Watermark Removal with Private Processing');
@@ -52,15 +53,15 @@ describe('independent tool landing-page previews', () => {
     }
   });
 
-  it('exposes page-level sample, comparison and related-content controls in CMS', () => {
+  it('exposes page-level sample, optional After and related-content controls in CMS', () => {
     const cms = parse(readFileSync(new URL('../../../.pages.yml', import.meta.url), 'utf8'));
     const fields = cms.content.find((entry: { name: string }) => entry.name === 'landing-pages').fields;
     for (const name of ['heroSamples', 'relatedTools', 'guides']) {
       expect(fields.some((field: { name: string }) => field.name === name)).toBe(true);
     }
-    expect(fields.find((field: { name: string }) => field.name === 'heroSamples').fields.some((field: { name: string }) => field.name === 'comparison')).toBe(true);
+    expect(fields.find((field: { name: string }) => field.name === 'heroSamples').fields.some((field: { name: string }) => field.name === 'afterImage')).toBe(true);
     const featureFields = fields.find((field: { name: string }) => field.name === 'features').fields.find((field: { name: string }) => field.name === 'items').fields;
-    expect(featureFields.some((field: { name: string }) => field.name === 'comparison')).toBe(true);
+    expect(featureFields.some((field: { name: string }) => field.name === 'afterImage')).toBe(true);
   });
 
   it('retains each page’s publication state, processing capability and independent FAQ', () => {
@@ -103,7 +104,7 @@ describe('landing design schema', () => {
     const customized = { image: '/uploads/clean-feature.webp', style: 'gemini' as const, watermark: 'GEMINI' };
     expect(landingComparisonSchema.parse(customized)).toEqual(customized);
     const cms = parse(readFileSync(new URL('../../../.pages.yml', import.meta.url), 'utf8'));
-    expect(cms.components['landing-comparison'].fields.some((field: { name: string }) => field.name === 'image')).toBe(true);
+    expect(cms.components['landing-comparison']).toBeUndefined();
   });
 
   it('restores automatic related content when CMS slug lists are cleared', async () => {

@@ -3,8 +3,8 @@ media:
     label: 静态图片 / Static images
     input: public/uploads
     output: /uploads
-    categories: [image]
-    extensions: [jpg, jpeg, png, webp, gif, svg]
+    categories: [ image ]
+    extensions: [ jpg, jpeg, png, webp, gif, svg ]
     rename: safe
 
 settings:
@@ -30,34 +30,6 @@ actions:
       button: 开始检查
 
 components:
-  landing-comparison:
-    type: object
-    label: 可拖动对比（可选）
-    description: 留空时展示静态图片。真实前后图请填写原图；示意水印只用于已确认的干净底图，不代表真实处理结果。
-    fields:
-      - name: image
-        label: 功能对比干净底图 / Feature after image（可选）
-        type: image
-        description: 仅功能亮点使用。可选择设计稿的干净底图作为对比 After，同时保留原“功能图片”资源。首屏样例仍使用样例本身的图片；单独填本字段不会启用对比，还需配置真实原图或示意叠层。
-        options:
-          media: images
-      - name: beforeImage
-        label: 原图 / Before image（可选）
-        type: image
-        description: 与主图同构图的处理前图片；填写后主图作为 After 展示。
-        options:
-          media: images
-      - name: style
-        label: 示意叠层样式（可选）
-        type: select
-        description: 仅在没有真实原图、且主图为干净底图时选择；不要给已拼接的前后图再次加水印。
-        options:
-          values:
-            - { name: gemini, label: Gemini 标记示意 }
-            - { name: watermark, label: 文字水印示意 }
-      - name: watermark
-        label: 示意水印文字（可选）
-        type: string
   landing-related-content:
     type: object
     label: 关联内容（可选）
@@ -71,67 +43,6 @@ components:
         type: string
         list: true
         description: 只填已发布内容的 slug，不带斜杠。工具模块留空时自动读取可用工具；指南模块留空时读取最新已发布文章。草稿和不存在的条目不会显示。
-  uploader-copy-override:
-    type: object
-    label: 上传组件独立文案（可选）
-    description: 只填写需要自定义的字段；留空时逐项继承“站点设置”中的公共上传组件文案。
-    fields:
-      - name: hero
-        label: 顶部文案
-        type: object
-        fields:
-          - { name: eyebrow, label: 小标题｜SPAN, type: string }
-          - { name: heading, label: 上传组件标题｜H2, type: string }
-          - { name: demoBadge, label: 演示标记｜SPAN, type: string }
-          - { name: demoBadgeTitle, label: 演示标记提示｜TITLE, type: string }
-      - name: dropzone
-        label: 拖拽上传区域
-        type: object
-        fields:
-          - { name: dropLabel, label: 主提示｜STRONG, type: string }
-          - { name: browseLabel, label: 浏览提示｜SPAN, type: string }
-          - { name: formatLabel, label: 支持格式｜SMALL, type: string }
-          - name: maxSizeLabel
-            label: 文件大小提示｜SMALL
-            type: string
-            description: 使用 {maxSize} 代表系统允许的最大 MB 数；留空继承公共文案。
-          - { name: fileInputLabel, label: 文件选择无障碍名称｜ARIA, type: string }
-      - name: preview
-        label: 已选图片与处理过程
-        type: object
-        fields:
-          - name: altTemplate
-            label: 预览图替代文字｜IMG ALT
-            type: string
-            description: 使用 {fileName} 代表已选择的文件名；留空继承公共文案。
-          - { name: processingLabel, label: 处理中说明｜SPAN, type: string }
-          - { name: readyLabel, label: 就绪说明｜SPAN, type: string }
-          - { name: removeButton, label: 开始处理按钮｜BUTTON, type: string }
-          - { name: uploadingButton, label: 上传中按钮｜BUTTON, type: string }
-          - { name: processingButton, label: 处理中按钮｜BUTTON, type: string }
-          - { name: chooseAnotherButton, label: 更换图片按钮｜BUTTON, type: string }
-      - name: result
-        label: 结果区域
-        type: object
-        fields:
-          - { name: originalLabel, label: 原图标签｜FIGCAPTION, type: string }
-          - { name: resultLabel, label: 结果标签｜FIGCAPTION, type: string }
-          - { name: originalAlt, label: 原图替代文字｜IMG ALT, type: string }
-          - { name: resultAlt, label: 结果图替代文字｜IMG ALT, type: string }
-          - { name: demoNote, label: 演示说明｜P, type: text }
-          - { name: downloadButton, label: 下载按钮｜A, type: string }
-          - { name: processAnotherButton, label: 再次处理按钮｜BUTTON, type: string }
-      - name: auth
-        label: Google 登录提示
-        type: object
-        fields:
-          - { name: closeLabel, label: 关闭按钮无障碍名称｜ARIA, type: string }
-          - { name: title, label: 登录标题｜H3, type: string }
-          - { name: description, label: 登录说明｜P, type: text }
-          - { name: connectingButton, label: 连接中按钮｜BUTTON, type: string }
-          - { name: continueButton, label: Google 登录按钮｜BUTTON, type: string }
-          - { name: dismissButton, label: 暂不登录按钮｜BUTTON, type: string }
-      - { name: privacyNote, label: 隐私说明｜P, type: text }
 
 content:
   - name: site-settings
@@ -259,69 +170,6 @@ content:
             label: 链接地址｜HREF（可选）
             type: string
             description: 链接目标；站内链接建议使用 /blog 这样的路径。
-      - name: uploader
-        label: 上传组件 / Image uploader
-        type: object
-        description: 全站公共默认文案；首页或工具页没有单独填写的字段会读取这里。
-        fields:
-          - name: hero
-            label: 顶部文案
-            type: object
-            fields:
-              - { name: eyebrow, label: 小标题｜SPAN, type: string, required: true }
-              - { name: heading, label: 上传组件标题｜H2, type: string, required: true }
-              - { name: demoBadge, label: 演示标记｜SPAN, type: string, required: true }
-              - { name: demoBadgeTitle, label: 演示标记提示｜TITLE, type: string, required: true }
-          - name: dropzone
-            label: 拖拽上传区域
-            type: object
-            fields:
-              - { name: dropLabel, label: 主提示｜STRONG, type: string, required: true }
-              - { name: browseLabel, label: 浏览提示｜SPAN, type: string, required: true }
-              - { name: formatLabel, label: 支持格式｜SMALL, type: string, required: true }
-              - name: maxSizeLabel
-                label: 文件大小提示｜SMALL
-                type: string
-                required: true
-                description: 使用 {maxSize} 代表系统允许的最大 MB 数，例如 up to {maxSize} MB。
-              - { name: fileInputLabel, label: 文件选择无障碍名称｜ARIA, type: string, required: true }
-          - name: preview
-            label: 已选图片与处理过程
-            type: object
-            fields:
-              - name: altTemplate
-                label: 预览图替代文字｜IMG ALT
-                type: string
-                required: true
-                description: 使用 {fileName} 代表已选择的文件名。
-              - { name: processingLabel, label: 处理中说明｜SPAN, type: string, required: true }
-              - { name: readyLabel, label: 就绪说明｜SPAN, type: string, required: true }
-              - { name: removeButton, label: 开始处理按钮｜BUTTON, type: string, required: true }
-              - { name: uploadingButton, label: 上传中按钮｜BUTTON, type: string, required: true }
-              - { name: processingButton, label: 处理中按钮｜BUTTON, type: string, required: true }
-              - { name: chooseAnotherButton, label: 更换图片按钮｜BUTTON, type: string, required: true }
-          - name: result
-            label: 结果区域
-            type: object
-            fields:
-              - { name: originalLabel, label: 原图标签｜FIGCAPTION, type: string, required: true }
-              - { name: resultLabel, label: 结果标签｜FIGCAPTION, type: string, required: true }
-              - { name: originalAlt, label: 原图替代文字｜IMG ALT, type: string, required: true }
-              - { name: resultAlt, label: 结果图替代文字｜IMG ALT, type: string, required: true }
-              - { name: demoNote, label: 演示说明｜P, type: text, required: true }
-              - { name: downloadButton, label: 下载按钮｜A, type: string, required: true }
-              - { name: processAnotherButton, label: 再次处理按钮｜BUTTON, type: string, required: true }
-          - name: auth
-            label: Google 登录提示
-            type: object
-            fields:
-              - { name: closeLabel, label: 关闭按钮无障碍名称｜ARIA, type: string, required: true }
-              - { name: title, label: 登录标题｜H3, type: string, required: true }
-              - { name: description, label: 登录说明｜P, type: text, required: true }
-              - { name: connectingButton, label: 连接中按钮｜BUTTON, type: string, required: true }
-              - { name: continueButton, label: Google 登录按钮｜BUTTON, type: string, required: true }
-              - { name: dismissButton, label: 暂不登录按钮｜BUTTON, type: string, required: true }
-          - { name: privacyNote, label: 隐私说明｜P, type: text, required: true }
       - name: processVisuals
         label: 公共使用步骤配图 / Process visuals
         type: object
@@ -351,8 +199,6 @@ content:
           - { name: eyebrow, label: 模块小标题｜SPAN, type: string, required: true }
           - { name: heading, label: 行动标题｜H2, type: string, required: true }
           - { name: description, label: 行动说明｜P, type: text, required: true }
-          - { name: buttonLabel, label: 按钮文字｜A, type: string, required: true }
-          - { name: buttonHref, label: 按钮链接｜HREF, type: string, required: true }
       - name: header
         label: 页头 / Header
         type: object
@@ -465,7 +311,7 @@ content:
                 type: select
                 required: true
                 options:
-                  values: [always, hourly, daily, weekly, monthly, yearly, never]
+                  values: [ always, hourly, daily, weekly, monthly, yearly, never ]
               - name: priority
                 label: 相对优先级 / PRIORITY
                 type: number
@@ -480,7 +326,7 @@ content:
                 type: select
                 required: true
                 options:
-                  values: [always, hourly, daily, weekly, monthly, yearly, never]
+                  values: [ always, hourly, daily, weekly, monthly, yearly, never ]
               - name: priority
                 label: 相对优先级 / PRIORITY
                 type: number
@@ -495,7 +341,7 @@ content:
                 type: select
                 required: true
                 options:
-                  values: [always, hourly, daily, weekly, monthly, yearly, never]
+                  values: [ always, hourly, daily, weekly, monthly, yearly, never ]
               - name: priority
                 label: 相对优先级 / PRIORITY
                 type: number
@@ -510,7 +356,7 @@ content:
                 type: select
                 required: true
                 options:
-                  values: [always, hourly, daily, weekly, monthly, yearly, never]
+                  values: [ always, hourly, daily, weekly, monthly, yearly, never ]
               - name: priority
                 label: 相对优先级 / PRIORITY
                 type: number
@@ -525,7 +371,7 @@ content:
                 type: select
                 required: true
                 options:
-                  values: [always, hourly, daily, weekly, monthly, yearly, never]
+                  values: [ always, hourly, daily, weekly, monthly, yearly, never ]
               - name: priority
                 label: 相对优先级 / PRIORITY
                 type: number
@@ -554,7 +400,7 @@ content:
             label: 单独更新频率（可选）
             type: select
             options:
-              values: [always, hourly, daily, weekly, monthly, yearly, never]
+              values: [ always, hourly, daily, weekly, monthly, yearly, never ]
           - name: priority
             label: 单独优先级（可选）
             type: number
@@ -704,9 +550,9 @@ content:
       rename: false
       delete: false
     view:
-      fields: [title, slug]
+      fields: [ title, slug ]
       primary: title
-      sort: [title]
+      sort: [ title ]
     fields:
       - name: slug
         label: URL 路径
@@ -767,10 +613,6 @@ content:
         required: true
         options:
           media: images
-      - name: uploader
-        component: uploader-copy-override
-        label: 首页上传组件独立文案（可选）
-        description: 只填写首页需要自定义的字段；留空时逐项继承公共文案。
       - name: hero
         label: 首屏 / Hero
         type: object
@@ -826,14 +668,16 @@ content:
                 label: 样例名称
                 type: string
                 required: true
-              - name: watermark
-                label: 示意水印文字
-                type: string
-                required: true
               - name: image
-                label: 样例图片
+                label: 图片1 / Image 1（单图或 Before）
                 type: image
                 required: true
+                options:
+                  media: images
+              - name: afterImage
+                label: 图片2 / Image 2（可选 After）
+                type: image
+                description: 留空展示单图；两张不同且同构图的图片加载成功后才显示对比。不得使用已画入滑柄或分割线的图片。
                 options:
                   media: images
       - name: process
@@ -885,9 +729,15 @@ content:
                 required: true
                 description: 步骤标题下方的普通说明段落。
               - name: image
-                label: 当前步骤独立配图｜IMG（可选）
+                label: 图片1 / Image 1（单图或 Before）
                 type: image
                 description: 留空时按步骤顺序读取站点设置中的公共步骤配图。
+                options:
+                  media: images
+              - name: afterImage
+                label: 图片2 / Image 2（可选 After）
+                type: image
+                description: 留空展示单图；两张不同且同构图的图片加载成功后才显示对比。不得使用已画入滑柄或分割线的图片。
                 options:
                   media: images
               - name: imageAlt
@@ -947,25 +797,21 @@ content:
             required: true
             description: 大图下方“Explore tool”打开的站内工具页路径。
           - name: image
-            label: Before / After 展示图｜IMG
+            label: 图片1 / Image 1（单图或 Before）
             type: image
             required: true
+            options:
+              media: images
+          - name: afterImage
+            label: 图片2 / Image 2（可选 After）
+            type: image
+            description: 留空展示单图；两张不同且同构图的图片加载成功后才显示对比。不得使用已画入滑柄或分割线的图片。
             options:
               media: images
           - name: imageAlt
             label: 展示图替代文字｜IMG ALT
             type: string
             required: true
-          - name: watermark
-            label: 示意水印文字
-            type: string
-            required: true
-          - name: comparisonStyle
-            label: 示意叠层样式
-            type: select
-            options:
-              values: [watermark, date, signature, laptop]
-            description: watermark 为通用水印；date 为日期；signature 为签名；laptop 将水印限制在笔记本屏幕区域。
           - name: cta
             label: 按钮文字
             type: string
@@ -1028,9 +874,15 @@ content:
                     collapsed: true
                 description: 每一项显示为无序列表条目；留空时会自动识别“功能说明”中的 • 或 ·。
               - name: image
-                label: 功能图片｜IMG
+                label: 图片1 / Image 1（单图或 Before）
                 type: image
                 required: true
+                options:
+                  media: images
+              - name: afterImage
+                label: 图片2 / Image 2（可选 After）
+                type: image
+                description: 留空展示单图；两张不同且同构图的图片加载成功后才显示对比。不得使用已画入滑柄或分割线的图片。
                 options:
                   media: images
               - name: imageAlt
@@ -1047,16 +899,6 @@ content:
                       label: 右侧
                     - name: left
                       label: 左侧
-              - name: watermark
-                label: 示意水印文字
-                type: string
-                required: true
-              - name: comparisonStyle
-                label: 示意叠层样式
-                type: select
-                options:
-                  values: [watermark, date, signature, laptop]
-                description: watermark 为通用水印；date 为日期；signature 为签名；laptop 将水印限制在笔记本屏幕区域。
       - name: privacy
         label: 隐私说明
         type: object
@@ -1238,9 +1080,15 @@ content:
                 type: string
                 required: true
               - name: image
-                label: 图片
+                label: 图片1 / Image 1（单图或 Before）
                 type: image
                 required: true
+                options:
+                  media: images
+              - name: afterImage
+                label: 图片2 / Image 2（可选 After）
+                type: image
+                description: 留空展示单图；两张不同且同构图的图片加载成功后才显示对比。不得使用已画入滑柄或分割线的图片。
                 options:
                   media: images
               - name: alt
@@ -1348,9 +1196,15 @@ content:
                 type: string
                 required: true
               - name: image
-                label: 图片
+                label: 图片1 / Image 1（单图或 Before）
                 type: image
                 required: true
+                options:
+                  media: images
+              - name: afterImage
+                label: 图片2 / Image 2（可选 After）
+                type: image
+                description: 留空展示单图；两张不同且同构图的图片加载成功后才显示对比。不得使用已画入滑柄或分割线的图片。
                 options:
                   media: images
               - name: alt
@@ -1372,7 +1226,7 @@ content:
         cancelable: false
         confirm:
           title: 从标准模板创建文章草稿
-          message: 填写标题和唯一网址；创建成功后刷新列表继续编辑。草稿不会公开。请在 main 分支使用。
+          message: 从main创建草稿审核分支和PR；成功后按工作流摘要切换到新分支继续编辑，审核并通过CI后才发布。
           button: 创建草稿
         fields:
           - { name: title, label: 文章标题, type: text, required: true }
@@ -1382,10 +1236,10 @@ content:
       rename: false
       delete: true
     view:
-      fields: [title, slug, category, publishedAt, draft]
+      fields: [ title, slug, category, publishedAt, draft ]
       primary: title
-      sort: [publishedAt, title]
-      search: [title, description]
+      sort: [ publishedAt, title ]
+      search: [ title, description ]
       default:
         sort: publishedAt
         order: desc
@@ -1501,7 +1355,7 @@ content:
         cancelable: false
         confirm:
           title: 从标准模板创建工具页草稿
-          message: 填写标题和唯一网址；创建成功后刷新列表继续编辑。仅复用已有工具能力，不自动加入导航。请在 main 分支使用。
+          message: 从main创建草稿审核分支和PR；成功后切换到新分支编辑。仅复用已有工具能力，不自动加入导航，审核并通过CI后才发布。
           button: 创建草稿
         fields:
           - { name: title, label: 工具页标题, type: text, required: true }
@@ -1511,10 +1365,10 @@ content:
       rename: false
       delete: true
     view:
-      fields: [title, slug, draft]
+      fields: [ title, slug, draft ]
       primary: title
-      sort: [title]
-      search: [title, slug, description]
+      sort: [ title ]
+      search: [ title, slug, description ]
     fields:
       - name: slug
         label: URL 路径（发布后不要修改）
@@ -1597,18 +1451,18 @@ content:
               message: 使用小写字母、数字和连字符，同一页面不能重复。
           - { name: label, label: 样例名称, type: string, required: true }
           - name: image
-            label: 样例图片 / After image
+            label: 图片1 / Image 1（单图或 Before）
             type: image
             required: true
             options:
               media: images
+          - name: afterImage
+            label: 图片2 / Image 2（可选 After）
+            type: image
+            description: 留空展示单图；两张不同且同构图的图片加载成功后才显示对比。不得使用已画入滑柄或分割线的图片。
+            options:
+              media: images
           - { name: imageAlt, label: 图片替代文字｜IMG ALT, type: string, required: true }
-          - name: comparison
-            component: landing-comparison
-      - name: uploader
-        component: uploader-copy-override
-        label: 当前工具页上传组件独立文案（可选）
-        description: 只填写当前工具页需要自定义的字段；留空时逐项继承公共文案。
       - name: heroActions
         label: Hero 按钮（可选）
         type: object
@@ -1655,7 +1509,7 @@ content:
       - name: cta
         label: 当前工具页结尾 CTA（可选）
         type: object
-        description: 不填写时继承站点公共 CTA；当前工具的按钮可指向 #tool。
+        description: 不填写时继承站点公共内容；Upload file 的动作与文字由产品统一维护。
         fields:
           - name: eyebrow
             label: 小标题
@@ -1666,12 +1520,6 @@ content:
           - name: description
             label: 说明
             type: text
-          - name: buttonLabel
-            label: 按钮文字
-            type: string
-          - name: buttonHref
-            label: 按钮目标
-            type: string
       - name: process
         label: 使用步骤
         type: object
@@ -1717,9 +1565,15 @@ content:
                 required: true
                 description: 步骤标题下方的普通说明段落。
               - name: image
-                label: 当前步骤独立配图｜IMG（可选）
+                label: 图片1 / Image 1（单图或 Before）
                 type: image
                 description: 留空时按步骤顺序读取站点设置中的公共步骤配图。
+                options:
+                  media: images
+              - name: afterImage
+                label: 图片2 / Image 2（可选 After）
+                type: image
+                description: 留空展示单图；两张不同且同构图的图片加载成功后才显示对比。不得使用已画入滑柄或分割线的图片。
                 options:
                   media: images
               - name: imageAlt
@@ -1774,9 +1628,15 @@ content:
                     collapsed: true
                 description: 每一项显示为无序列表条目；留空时会自动识别“功能说明”中的 • 或 ·。
               - name: image
-                label: 功能图片｜IMG
+                label: 图片1 / Image 1（单图或 Before）
                 type: image
                 required: true
+                options:
+                  media: images
+              - name: afterImage
+                label: 图片2 / Image 2（可选 After）
+                type: image
+                description: 留空展示单图；两张不同且同构图的图片加载成功后才显示对比。不得使用已画入滑柄或分割线的图片。
                 options:
                   media: images
               - name: imageAlt
@@ -1792,8 +1652,6 @@ content:
                   values:
                     - { name: right, label: 右侧 }
                     - { name: left, label: 左侧 }
-              - name: comparison
-                component: landing-comparison
       - name: relatedTools
         label: 当前工具页相关工具（可选）
         component: landing-related-content

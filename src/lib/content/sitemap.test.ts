@@ -29,6 +29,7 @@ describe('automatic sitemap', () => {
       { path: '/blog', lastmod: '2026-08-15', changefreq: 'weekly', priority: 0.7 },
       { path: '/privacy', lastmod: '2026-08-15', changefreq: 'yearly', priority: 0.3 },
       { path: '/terms', lastmod: '2026-08-15', changefreq: 'yearly', priority: 0.3 },
+      { path: '/pricing', lastmod: '2026-08-15', changefreq: 'weekly', priority: 0.8 },
       { path: '/blog/published-post', lastmod: '2026-08-15', changefreq: 'monthly', priority: 0.6 },
       { path: '/remove-logo', lastmod: '2026-08-15', changefreq: 'weekly', priority: 0.9 },
     ]);

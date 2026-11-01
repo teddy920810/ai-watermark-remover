@@ -1,6 +1,6 @@
 # Canonical Google account identity
 
-Release progress is tracked in [IMPLEMENTATION_TODO](product/IMPLEMENTATION_TODO.md). Apply `007_google_account_owners.sql` before deploying the new authentication mapping. This document does not assert that the migration or production verification has completed.
+Release progress is tracked in [the refactor ledger](product/REFACTOR_LEDGER.md). Apply `007_google_account_owners.sql` before deploying the new authentication mapping. This document does not assert that the migration or production verification has completed.
 
 The installed Better Auth configuration has no persistent authentication database. Its signed/encrypted stateless session is valid, but its in-memory adapter can generate a different user ID after a cold start and another OAuth login. The existing email identity table is unique by email, so using the new transient ID directly can cause a uniqueness error and split account ownership.
 

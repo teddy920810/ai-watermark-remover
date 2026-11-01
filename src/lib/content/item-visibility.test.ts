@@ -20,13 +20,14 @@ describe('CMS item visibility', () => {
     }
   });
 
-  it('resolves page-specific uploader copy before rendering the uploader island', () => {
+  it('keeps public upload interactions code-owned while preserving page-specific content', () => {
     const homepageSource = readFileSync(new URL('../../pages/index.astro', import.meta.url), 'utf8');
     const landingSource = readFileSync(new URL('../../components/LandingPage.astro', import.meta.url), 'utf8');
 
     for (const source of [homepageSource, landingSource]) {
-      expect(source).toContain('resolveUploaderCopy(');
-      expect(source).toContain('copy={uploaderCopy}');
+      expect(source).toContain('<MediaLauncher');
+      expect(source).not.toContain('copy={uploaderCopy}');
     }
+    expect(landingSource).toContain('pageRecommendation(page)');
   });
 });

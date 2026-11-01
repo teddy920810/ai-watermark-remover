@@ -2,13 +2,17 @@
 import AuthControls from '../../components/auth/AuthControls';
 import CreditCheckout from '../../components/payments/CreditCheckout';
 import { getPaymentConfig, publicPaymentCatalog } from '../../lib/payments/payment-config';
-import { Monitor, ShieldCheck, WalletCards } from '@lucide/astro';
+import { selectCheckoutSku } from '../../components/payments/checkout-selection';
+import { safeReturnPath } from '../../components/payments/payment-client';
 import site from '../../content/settings/site.json';
-import '../../styles/global.css';
+import '../../styles/design-system.css';
 import '../../styles/payments.css';
 
 export const prerender = false;
+Astro.response.headers.set('Cache-Control', 'private, no-store');
 const initialCatalog = publicPaymentCatalog(getPaymentConfig());
+const initialSku = selectCheckoutSku(initialCatalog.packages, Astro.url.searchParams.get('sku'));
+const returnTo = safeReturnPath(Astro.url.searchParams.get('returnTo'));
 const appAsset = (path: string) => import.meta.env.BUILD_TARGET === 'app' ? `/_app-assets/public${path}` : path;
 ---
 <!doctype html>
@@ -24,21 +28,16 @@ const appAsset = (path: string) => import.meta.env.BUILD_TARGET === 'app' ? `/_a
   <body class="credits-page">
     <header class="site-header credits-header">
       <a class="brand" href="/" aria-label={`${site.name} home`}><img class="brand-logo" src={appAsset(site.logo)} alt="" /><span>{site.name}</span></a>
-      <nav aria-label="Pricing navigation"><a href="/app/image">Image workspace</a><a href="#payment-rates-heading">How credits work</a><a href="#orders">Your orders</a></nav>
+      <nav aria-label="Checkout navigation"><a href="/app">Open app</a><a href={`/pricing?returnTo=${encodeURIComponent(returnTo)}`}>Pricing</a><a href="#orders">Your orders</a></nav>
       <div class="header-auth"><AuthControls client:load /></div>
     </header>
     <main class="pricing-page" aria-labelledby="pricing-heading">
       <a class="credits-back" href="/app/image">Back to image workspace</a>
       <div class="pricing-hero">
-        <h1 id="pricing-heading">More images. One simple purchase.</h1>
-        <p class="pricing-intro">One shared balance for watermark removal, background removal, and object removal.</p>
-        <ul class="pricing-assurances" aria-label="Purchase benefits">
-          <li><Monitor size={21} aria-hidden="true" />Work in your browser</li>
-          <li><WalletCards size={21} aria-hidden="true" />One-time purchase</li>
-          <li><ShieldCheck size={21} aria-hidden="true" />No automatic renewal</li>
-        </ul>
+        <h1 id="pricing-heading">Confirm your image credits</h1>
+        <p class="pricing-intro">Review your selected plan, complete payment, and manage your orders.</p>
       </div>
-      <CreditCheckout initialCatalog={initialCatalog} client:load />
+      <CreditCheckout initialCatalog={initialCatalog} initialSku={initialSku} initialReturnTo={returnTo} client:load />
       <div class="pricing-terms">
         <p>One-time payment. No automatic renewal. Purchased image credits have no scheduled expiry, cannot be transferred, and cannot be exchanged for cash. Process only images you are authorized to edit.</p>
         <p>These image credits do not cover PRO, brush refinement, or video processing.</p>

@@ -15,7 +15,7 @@ draft: false
 contentMode: markdown
 bodyHtml: <p></p>
 coverImage: /uploads/how-to-remove-gpt-image-2-5-grain-noise-figure-1.png
-coverAlt: Creator inspecting a grainy sky at 100 percent on a desktop monitor
+coverAlt: "Creator inspecting a grainy sky at 100 percent on a desktop monitor"
 ---
 *Caption: Check smooth areas at normal size and at 100% before changing an image. A fine texture can be a deliberate style choice, but random speckling in a sky or backdrop usually deserves a revision.*
 

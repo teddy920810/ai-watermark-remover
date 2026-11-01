@@ -1,7 +1,8 @@
+import { canvasPoint, writeBinaryMask } from '../../lib/client/canvas-mask';
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState, type PointerEvent } from 'react';
 export interface MaskEditorHandle { exportMask(): Promise<Blob>; clear(): void }
-interface Props { src: string; width: number; height: number; editable: boolean; disabled?: boolean; tool: 'brush' | 'eraser'; brushSize: number; showSelection: boolean; onSelection(hasSelection: boolean): void; onSelectionStart?(): void; undoToken: number }
-export const ImageMaskEditor = forwardRef<MaskEditorHandle, Props>(function ImageMaskEditor({ src, width, height, editable, disabled, tool, brushSize, showSelection, onSelection, onSelectionStart, undoToken }, ref) {
+interface Props { src: string; width: number; height: number; editable: boolean; disabled?: boolean; backgroundColor?: string | null; onPreviewError?(): void; tool: 'brush' | 'eraser'; brushSize: number; showSelection: boolean; onSelection(hasSelection: boolean): void; onSelectionStart?(): void; undoToken: number }
+export const ImageMaskEditor = forwardRef<MaskEditorHandle, Props>(function ImageMaskEditor({ src, width, height, editable, disabled, backgroundColor, onPreviewError, tool, brushSize, showSelection, onSelection, onSelectionStart, undoToken }, ref) {
   const canvas = useRef<HTMLCanvasElement>(null);
   const drawing = useRef(false);
   const history = useRef<ImageData[]>([]);
@@ -16,21 +17,21 @@ export const ImageMaskEditor = forwardRef<MaskEditorHandle, Props>(function Imag
     const output = document.createElement('canvas'); output.width = source.width; output.height = source.height;
     const context = output.getContext('2d'); const sourceContext = source.getContext('2d'); if (!context || !sourceContext) throw new Error('Your browser could not prepare the selection.');
     const selection = sourceContext.getImageData(0, 0, source.width, source.height);
-    const binary = context.createImageData(source.width, source.height); let selected = false;
-    for (let i = 0; i < binary.data.length; i += 4) { const value = selection.data[i + 3] > 0 ? 255 : 0; if (value) selected = true; binary.data[i] = value; binary.data[i + 1] = value; binary.data[i + 2] = value; binary.data[i + 3] = 255; }
+    const binary = context.createImageData(source.width, source.height);
+    const selected = writeBinaryMask(selection.data, binary.data, 0);
     if (!selected) throw new Error('Paint over the watermark you want to remove.');
     context.putImageData(binary, 0, 0);
     return new Promise<Blob>((resolve, reject) => output.toBlob(blob => blob ? resolve(blob) : reject(new Error('The selection could not be prepared.')), 'image/png'));
   } }));
-  function point(event: PointerEvent<HTMLCanvasElement>) { const box = event.currentTarget.getBoundingClientRect(); return { x: (event.clientX - box.left) / box.width * width, y: (event.clientY - box.top) / box.height * height }; }
+  function point(event: PointerEvent<HTMLCanvasElement>) { const box = event.currentTarget.getBoundingClientRect(); return canvasPoint(box, width, height, event.clientX, event.clientY, false); }
   function paint(event: PointerEvent<HTMLCanvasElement>) {
     if (!drawing.current) return; const context = event.currentTarget.getContext('2d'); if (!context) return;
     const current = point(event); const previous = last.current ?? current;
     context.globalCompositeOperation = tool === 'eraser' ? 'destination-out' : 'source-over'; context.strokeStyle = 'rgba(50,106,232,0.45)'; context.fillStyle = context.strokeStyle; context.lineCap = 'round'; context.lineJoin = 'round'; context.lineWidth = brushSize;
     context.beginPath(); context.moveTo(previous.x, previous.y); context.lineTo(current.x, current.y); context.stroke(); context.beginPath(); context.arc(current.x, current.y, brushSize / 2, 0, Math.PI * 2); context.fill(); last.current = current;
   }
-  return <div className="workspace-image-stage" style={{ aspectRatio: `${width || 4}/${height || 3}` }}>
-    <img src={src} alt={editable ? 'Image to refine. Paint over the remaining watermark.' : 'Selected image preview'} draggable={false} onError={() => setImageError(true)} />
+  return <div className="workspace-image-stage" data-transparent={backgroundColor === null ? 'true' : undefined} style={{ backgroundColor: backgroundColor ?? undefined, aspectRatio: `${width || 4}/${height || 3}` }}>
+    <img src={src} alt={editable ? 'Image to refine. Paint over the remaining watermark.' : 'Selected image preview'} draggable={false} onError={() => { setImageError(true); onPreviewError?.(); }} />
     {imageError && <p role="alert" className="workspace-media-error">The preview could not load. Refresh the result link or try downloading.</p>}
     {editable && <canvas ref={canvas} width={width || 1} height={height || 1} aria-label="Watermark refinement selection" style={{ pointerEvents: disabled ? 'none' : 'auto', opacity: showSelection ? 1 : 0 }} onPointerDown={event => {
       if (disabled) return; event.preventDefault(); const context = event.currentTarget.getContext('2d'); if (!context) return; onSelectionStart?.();

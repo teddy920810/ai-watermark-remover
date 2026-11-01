@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import type { Pool, PoolClient } from 'pg';
+import { ensureFreeBenefitAccount } from '../benefits/free-benefits';
 import { amountSchema, ProcessingError } from './contracts';
 import type { Admission, AdmissionHistoryCursor, AdmissionHistoryPage, ChargeStatus, CreditUnit, OutboxMessage, ProcessingFinancialStore, ReserveRequest } from './contracts';
 import { consumePurchasedImageCredit, getPurchasedImageBalance, refundPurchasedImageCredit, reservePurchasedImageCredit } from '../payments/image-credit-wallet';
@@ -177,8 +178,7 @@ export class PostgresProcessingStore implements ProcessingFinancialStore {
   }
   private async ensureAccount(client: PoolClient, ownerId: string): Promise<void> { await client.query('INSERT INTO processing_accounts (owner_id) VALUES ($1) ON CONFLICT (owner_id) DO NOTHING', [ownerId]); }
   private async ensureFree(client: PoolClient, ownerId: string): Promise<void> {
-    const inserted = await client.query('INSERT INTO user_benefits (user_id, balance) VALUES ($1, 1) ON CONFLICT (user_id) DO NOTHING RETURNING user_id', [ownerId]);
-    if (inserted.rows[0]) await client.query("INSERT INTO benefit_ledger (user_id, delta, balance_after, reason, reference_id) VALUES ($1, 1, 1, 'first_use', $1)", [ownerId]);
+    await ensureFreeBenefitAccount(client, ownerId);
   }
   private async lockBalance(client: PoolClient, ownerId: string, unit: CreditUnit): Promise<number> {
     if (unit === 'purchasedImageCredits') {

@@ -70,11 +70,17 @@ describe('CMS template initialization', () => {
 });
 
 describe('publication safeguards', () => {
+  it('shares the valid App entry and reserved route policy with site validation', () => {
+    const record = { path: 'src/content/blog/example.md', data: { slug: 'example' }, body: '[workspace](/app/image?mode=pro) [orders](/app/credits#orders) [pricing](/pricing)' };
+    expect(collectPublicationIssues([record])).toEqual([]);
+    expect(collectPublicationIssues([{ ...record, body: '[unknown](/app/unknown)' }]).join()).toContain('不是已发布页面');
+    expect(collectPublicationIssues([{ path: 'src/content/landing-pages/a.json', data: { slug: 'pricing', draft: true } }]).join()).toContain('保留');
+  });
   it('uses the official action payload contract without interpolating user input into commands', () => {
     const source = readFileSync('.github/workflows/cms-create-draft.yml', 'utf8');
     const workflow = YAML.parse(source);
     expect(workflow.on.workflow_dispatch.inputs.payload).toMatchObject({ required: true, type: 'string' });
-    expect(workflow.permissions).toEqual({ contents: 'write' });
+    expect(workflow.permissions).toEqual({ contents: 'write', 'pull-requests': 'write' });
     expect(workflow.jobs.create.if).toBe("github.ref == 'refs/heads/main'");
     expect(workflow.jobs.create.steps.at(-1)).toMatchObject({
       run: 'node scripts/create-cms-draft.mjs', env: { CMS_ACTION_PAYLOAD: '${{ inputs.payload }}' },

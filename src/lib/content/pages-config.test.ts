@@ -234,32 +234,21 @@ describe('Pages CMS maintenance safeguards', () => {
         expect.objectContaining({ name: 'features', type: 'object' }),
         expect.objectContaining({ name: 'useCaseSection', type: 'object' }),
         expect.objectContaining({ name: 'faq', type: 'object' }),
-        expect.objectContaining({ name: 'uploader', component: 'uploader-copy-override' }),
       ]),
     );
   });
 
-  it('reuses an optional uploader-copy override on the homepage and tool pages', () => {
-    const override = config.components?.['uploader-copy-override'];
-    expect(override).toMatchObject({ type: 'object' });
-    expect(override?.fields?.map((field) => field.name)).toEqual([
-      'hero',
-      'dropzone',
-      'preview',
-      'result',
-      'auth',
-      'privacyNote',
-    ]);
-
-    for (const field of override?.fields ?? []) {
-      expect(field.required).not.toBe(true);
-      for (const child of field.fields ?? []) expect(child.required).not.toBe(true);
+  it('keeps product upload interactions outside CMS while retaining page content and recommendations', () => {
+    for (const name of ['site-settings', 'homepage', 'landing-pages']) {
+      const entry = config.content.find(item => item.name === name);
+      expect(entry).toBeDefined();
+      expect(entry?.fields.some(field => field.name === 'uploader')).toBe(false);
     }
+    expect(config.settings.content.merge).toBe(true);
 
     const landingPages = config.content.find((entry) => entry.name === 'landing-pages');
     expect(landingPages?.fields).toEqual(expect.arrayContaining([
       expect.objectContaining({ name: 'statusLabel', type: 'string' }),
-      expect.objectContaining({ name: 'uploader', component: 'uploader-copy-override' }),
       expect.objectContaining({ name: 'heroActions', type: 'object' }),
       expect.objectContaining({ name: 'scope', type: 'object' }),
       expect.objectContaining({ name: 'cta', type: 'object' }),

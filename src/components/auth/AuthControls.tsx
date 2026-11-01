@@ -151,7 +151,7 @@ export default function AuthControls() {
             <p className="account-balance">
               {benefitError ? 'Purchased image credits unavailable' : benefits ? `Purchased image credits ${benefits.paidBalance ?? 0}` : 'Loading image credits…'}
             </p>
-            <a href="/app/credits">Buy image credits</a>
+            <a href="/pricing">Buy image credits</a>
             {benefitError ? <button type="button" onClick={loadBenefits} disabled={benefitPending}>{benefitPending ? 'Updating…' : 'Retry'}</button> : (
               <button className="account-menu-check-in" type="button" onClick={checkIn} disabled={benefitPending || !benefits || benefits.checkedInToday || balanceFull}>
                 {benefitPending ? 'Updating…' : checkInLabel}

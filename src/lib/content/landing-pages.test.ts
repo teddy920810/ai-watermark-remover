@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
 const landingPageFiles = [
@@ -146,10 +146,11 @@ describe('tool landing-page usage steps', () => {
     expect(page.process.steps).toHaveLength(3);
     expect(page.process.steps.every((step: { image?: string }) => step.image?.startsWith('/uploads/background-remover-'))).toBe(true);
     expect(page.features.items).toHaveLength(3);
-    expect(page.features.items.every((item: { image?: string }) => item.image?.startsWith('/uploads/background-remover-'))).toBe(true);
+    expect(page.features.items.every((item: { image: string }) => existsSync(new URL(`../../../public${item.image}`, import.meta.url)))).toBe(true);
     expect(page.faq.items.length).toBeGreaterThanOrEqual(6);
-    expect(landingPageSource).toContain("page.toolKind === 'background-remover'");
-    expect(landingPageSource).toContain('<BackgroundRemoverUploader');
+    expect(landingPageSource).toContain('recommendation = pageRecommendation(page)');
+    expect(landingPageSource).toContain('<MediaLauncher source={page.slug}');
+    expect(landingPageSource).not.toContain('<BackgroundRemoverUploader');
   });
 
   it('initializes /remove-object with the dedicated full-width mask editor and complete content', () => {
@@ -161,8 +162,9 @@ describe('tool landing-page usage steps', () => {
     expect(page.process.steps).toHaveLength(3);
     expect(page.features.items).toHaveLength(3);
     expect(page.faq.items.length).toBeGreaterThanOrEqual(6);
-    expect(landingPageSource).toContain("page.toolKind === 'object-remover'");
-    expect(landingPageSource).toContain('<ObjectRemoverUploader');
+    expect(landingPageSource).toContain('recommendation = pageRecommendation(page)');
+    expect(landingPageSource).toContain('<MediaLauncher source={page.slug}');
+    expect(landingPageSource).not.toContain('<ObjectRemoverUploader');
   });
 
   it('publishes the ChatGPT image page without claiming to remove provenance signals or text watermarks', () => {

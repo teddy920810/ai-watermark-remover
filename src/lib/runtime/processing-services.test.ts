@@ -2,8 +2,6 @@ import { describe, expect, it, vi } from 'vitest';
 import sharp from 'sharp';
 import { S3Client } from '@aws-sdk/client-s3';
 import * as providerFactory from '../providers/watermark-provider-factory';
-import { R2ObjectStore } from '../r2/r2-object-store';
-import type { WatermarkProvider } from '../providers/watermark-provider';
 import { createProcessingRuntime } from './processing-services';
 import { CloudRunTriggerError, createCloudRunTrigger } from './cloud-run-trigger';
 import type { ProcessingRuntimeConfig } from './processing-services';
@@ -12,6 +10,8 @@ import { MemoryFinance, NOW } from '../processing/test-fixtures';
 import type { UploadRecord } from './media-preflight';
 import type { ProcessingFinancialStore, ProcessingJob } from '../processing/contracts';
 import type { ExecutionTrigger } from './processing-services';
+import { durableOperationIds } from '../contracts/operation-catalog';
+import { readImageProviderConfig } from '../config/image-providers';
 
 async function setup(overrides: Partial<ProcessingRuntimeConfig> = {}) {
   const memory = memoryMediaStore(); const finance = new MemoryFinance(); finance.freeBalances.set('user-1', 1);
@@ -53,47 +53,99 @@ function replaceJob(s: Awaited<ReturnType<typeof setup>>, job: ProcessingJob) {
   s.memory.objects.set(key, { ...stored, bytes: Buffer.from(JSON.stringify(job)), etag: `${stored.etag}-updated` });
 }
 
+
+async function imageRequest(s: Awaited<ReturnType<typeof setup>>, operation: 'background-removal' | 'object-removal', inputArtifactId: string) {
+  if (operation === 'background-removal') return { operation, inputArtifactId };
+  const bytes = await sharp({ create: { width: 8, height: 6, channels: 3, background: '#ffffff' } }).png().toBuffer();
+  const upload = await s.runtime.beginUpload('user-1', { kind: 'mask', contentType: 'image/png', byteSize: bytes.length, inputArtifactId });
+  const record = JSON.parse(Buffer.from(s.memory.objects.get(`processing/uploads/${upload.id}.json`)!.bytes).toString()) as UploadRecord;
+  s.memory.objects.set(record.stagingKey, { bytes, contentType: 'image/png', metadata: {}, etag: 'mask-browser-upload' });
+  await s.runtime.completeUpload('user-1', upload.id);
+  const mask = await s.runtime.runPreflight('user-1', upload.id);
+  return { operation, inputArtifactId, maskArtifactId: mask.artifactId! };
+}
+
 describe('processing runtime assembly', () => {
-  it('composes the legacy and durable delegates through the canonical provider boundary', async () => {
+  describe.each(['background-removal', 'object-removal'] as const)('%s runtime', operation => {
+  it('runs background removal through durable financial admission with its configured fee and PNG output', async () => {
+    const s = await setup({ imageCredits: { enabled: true, environment: 'sandbox', costs: { 'watermark-removal': 100, 'background-removal': 10, 'object-removal': 4 }, priceVersion: 'image-operation-1' } });
+    s.finance.freeBalances.set('user-1', 0); s.finance.imageBalances.set('user-1', 20);
+    try {
+      await s.runtime.completeUpload('user-1', s.upload.id);
+      const input = await s.runtime.runPreflight('user-1', s.upload.id);
+      const quote = await s.runtime.service.quote({ ownerId: 'user-1', ...await imageRequest(s, operation, input.artifactId!) });
+      expect(quote).toMatchObject({ amount: operation === 'object-removal' ? 4 : 10, unit: 'purchasedImageCredits' });
+      const job = await s.runtime.service.submit({ ownerId: 'user-1', quoteId: quote.id, idempotencyKey: 'background-finance' });
+      const result = await s.runtime.runJob(job.id);
+      expect(result).toMatchObject({ status: 'READY', chargeStatus: 'settled' });
+      const projected = await s.runtime.projectJob('user-1', result);
+      expect(projected).toMatchObject({ isDemo: true, result: { format: 'PNG', metadata: { width: 8, height: 6, contentType: 'image/png' }, canRefine: false } });
+      expect(await s.finance.getBalance('user-1', 'purchasedImageCredits')).toBe(operation === 'object-removal' ? 16 : 10);
+      expect(await s.finance.getBalance('user-1')).toBe(100);
+    } finally { await s.runtime.close(); }
+  });
+  it('admits a configured background operation independently of the watermark Provider and marks its own demo status', async () => {
+    const s = await setup({ providerMode: 'dewatermark', apiKey: undefined });
+    try {
+      expect(s.runtime.service.capabilities().find(value => value.operation === operation)?.enabled).toBe(true);
+      expect(s.runtime.service.capabilities().find(value => value.operation === 'image-watermark')?.enabled).toBe(false);
+      await s.runtime.completeUpload('user-1', s.upload.id);
+      const input = await s.runtime.runPreflight('user-1', s.upload.id);
+      const quote = await s.runtime.service.quote({ ownerId: 'user-1', ...await imageRequest(s, operation, input.artifactId!) });
+      expect(await s.runtime.projectQuote('user-1', quote)).toMatchObject({ isDemo: true });
+    } finally { await s.runtime.close(); }
+  });
+  it('recovers an in-flight mock background receipt after configuration changes without a vendor request', async () => {
+    const s = await setup(); let later: ReturnType<typeof createProcessingRuntime> | undefined;
+    const request = vi.fn<typeof fetch>().mockRejectedValue(new Error('A mock attempt must stay mock')); vi.stubGlobal('fetch', request);
+    try {
+      await s.runtime.completeUpload('user-1', s.upload.id); const input = await s.runtime.runPreflight('user-1', s.upload.id);
+      const quote = await s.runtime.service.quote({ ownerId: 'user-1', ...await imageRequest(s, operation, input.artifactId!) });
+      const job = await s.runtime.service.submit({ ownerId: 'user-1', quoteId: quote.id, idempotencyKey: 'mock-background-recovery' });
+      const original = s.memory.send.getMockImplementation()!; let failed = false;
+      s.memory.send.mockImplementation(async command => {
+        if (!failed && command.constructor.name === 'PutObjectCommand' && String((command.input as { Key?: string }).Key).startsWith('processing/attempts/')) { failed = true; throw new Error('Attempt receipt storage interrupted'); }
+        return original(command);
+      });
+      expect(await s.runtime.runJob(job.id)).toMatchObject({ status: 'UNKNOWN', attempt: { checkpoint: { provider: 'mock' } } });
+      later = createProcessingRuntime({ ...s.config, imageProviders: readImageProviderConfig({ REPLICATE_API_TOKEN: 'fixture' }), dependencies: { ...s.config.dependencies, now: () => new Date(Date.parse(NOW) + 61_000) } });
+      const restored = await later.runJob(job.id);
+      expect(restored).toMatchObject({ status: 'READY', chargeStatus: 'settled' });
+      expect(await later.projectJob('user-1', restored)).toMatchObject({ isDemo: true, result: { format: 'PNG' } });
+      expect(request).not.toHaveBeenCalled(); expect(s.finance.settlements).toBe(1);
+    } finally { await s.runtime.close(); await later?.close(); vi.unstubAllGlobals(); }
+  });
+  it('polls an accepted Replicate background prediction after a mock switch without changing its demo or charge identity', async () => {
+    const request = vi.fn<typeof fetch>(); vi.stubGlobal('fetch', request);
+    const imageProviders = readImageProviderConfig({ REPLICATE_API_TOKEN: 'fixture' });
+    const s = await setup({ imageProviders }); let later: ReturnType<typeof createProcessingRuntime> | undefined;
+    try {
+      request.mockResolvedValueOnce(Response.json({ id: 'accepted-background', status: 'processing' }));
+      await s.runtime.completeUpload('user-1', s.upload.id); const input = await s.runtime.runPreflight('user-1', s.upload.id);
+      const quote = await s.runtime.service.quote({ ownerId: 'user-1', ...await imageRequest(s, operation, input.artifactId!) });
+      const job = await s.runtime.service.submit({ ownerId: 'user-1', quoteId: quote.id, idempotencyKey: 'real-background-recovery' });
+      expect(await s.runtime.runJob(job.id)).toMatchObject({ status: 'PROCESSING', attempt: { checkpoint: { provider: 'replicate', providerJobId: 'accepted-background' } } });
+      expect(JSON.parse(String(request.mock.calls[0][1]?.body)).version).toBe(operation === 'object-removal' ? `allenhooo/lama:${imageProviders.REPLICATE_LAMA_MODEL_VERSION}` : `851-labs/background-remover:${imageProviders.REPLICATE_BACKGROUND_MODEL_VERSION}`);
+      request.mockResolvedValueOnce(Response.json({ id: 'accepted-background', status: 'succeeded', output: 'https://replicate.delivery/background.png' })).mockResolvedValueOnce(new Response(s.bytes));
+      later = createProcessingRuntime({ ...s.config, imageProviders: { ...imageProviders, BACKGROUND_REMOVAL_PROVIDER: 'mock', OBJECT_REMOVAL_PROVIDER: 'mock' }, dependencies: { ...s.config.dependencies, now: () => new Date(Date.parse(NOW) + 61_000) } });
+      const restored = await later.runJob(job.id);
+      expect(restored.status).toBe('READY'); expect(await later.projectJob('user-1', restored)).toMatchObject({ isDemo: false, result: { format: 'PNG' } });
+      expect(request.mock.calls.filter(([, init]) => init?.method === 'POST')).toHaveLength(1); expect(s.finance.settlements).toBe(1);
+    } finally { await s.runtime.close(); await later?.close(); vi.unstubAllGlobals(); }
+  });
+  });
+  it('uses only the durable facet without constructing an unused legacy delegate', async () => {
     const compose = vi.spyOn(providerFactory, 'createWatermarkProvider');
-    const copy = vi.spyOn(R2ObjectStore.prototype, 'copyObject').mockResolvedValue(undefined);
     const s = await setup();
     try {
-      expect(compose).toHaveBeenCalledTimes(1);
-      const provider = compose.mock.results[0].value as WatermarkProvider;
-      await expect(provider.remove({ jobId: 'legacy-job', inputKey: 'uploads/source.png' })).resolves.toEqual({ status: 'completed', resultKey: 'results/legacy-job.png' });
-      expect(copy).toHaveBeenCalledWith('uploads/source.png', 'results/legacy-job.png');
-      const submit = vi.spyOn(provider, 'submit');
+      expect(compose).not.toHaveBeenCalled();
       await s.runtime.completeUpload('user-1', s.upload.id);
       const ready = await s.runtime.runPreflight('user-1', s.upload.id);
       const quote = await s.runtime.service.quote({ ownerId: 'user-1', operation: 'image-watermark', inputArtifactId: ready.artifactId! });
       const job = await s.runtime.service.submit({ ownerId: 'user-1', quoteId: quote.id, idempotencyKey: 'canonical-boundary' });
       expect((await s.runtime.runJob(job.id)).status).toBe('READY');
-      expect(submit).toHaveBeenCalledTimes(1);
-    } finally { await s.runtime.close(); compose.mockRestore(); copy.mockRestore(); }
-  });
-  it.each([
-    [{ mode: 'dewatermark' as const }, 'https://platform.dewatermark.ai/api/object_removal/v3/erase_watermark', '4.0', 30_000],
-    [{ mode: 'dewatermark' as const, baseUrl: 'https://legacy-provider.test', predictMode: '3.0' as const, timeoutMs: 12_345 }, 'https://legacy-provider.test/api/object_removal/v3/erase_watermark', '3.0', 12_345],
-  ])('preserves legacy Dewatermark configuration without changing durable provider selection (%j)', async (legacyProvider, endpoint, predictMode, timeoutMs) => {
-    const compose = vi.spyOn(providerFactory, 'createWatermarkProvider');
-    const bytes = await sharp({ create: { width: 2, height: 2, channels: 3, background: '#55aaff' } }).png().toBuffer();
-    const getBytes = vi.spyOn(R2ObjectStore.prototype, 'getBytes').mockResolvedValue(bytes);
-    const putBytes = vi.spyOn(R2ObjectStore.prototype, 'putBytes').mockResolvedValue(undefined);
-    const timeout = vi.spyOn(AbortSignal, 'timeout');
-    const request = vi.fn<typeof fetch>().mockResolvedValue(new Response(JSON.stringify({ edited_image: { image: bytes.toString('base64') } })));
-    vi.stubGlobal('fetch', request);
-    const s = await setup({ apiKey: 'server-only-provider-key', legacyProvider });
-    try {
-      expect(compose).toHaveBeenCalledTimes(1);
-      const provider = compose.mock.results[0].value as WatermarkProvider;
-      await expect(provider.remove({ jobId: 'legacy-job', inputKey: 'uploads/source.png' })).resolves.toEqual({ status: 'completed', resultKey: 'results/legacy-job.jpg' });
-      expect(request).toHaveBeenCalledTimes(1);
-      const [url, init] = request.mock.calls[0];
-      expect(url).toBe(endpoint); expect((init!.body as FormData).get('predict_mode')).toBe(predictMode);
-      expect(timeout).toHaveBeenCalledWith(timeoutMs);
-      expect(s.runtime.service.capabilities().every((capability) => capability.enabled)).toBe(true);
-    } finally { await s.runtime.close(); compose.mockRestore(); getBytes.mockRestore(); putBytes.mockRestore(); timeout.mockRestore(); vi.unstubAllGlobals(); }
+      expect(compose).not.toHaveBeenCalled();
+    } finally { await s.runtime.close(); compose.mockRestore(); }
   });
   it.each(['worker', 'dispatcher'] as const)('clears an expired preflight from durable delivery through the %s without probing or charging', async (path) => {
     const trigger = vi.fn(async () => ({ nextCheckAt: NOW })); const s = await setup({ trigger });
@@ -317,9 +369,9 @@ describe('processing runtime assembly', () => {
     expect(trigger).toHaveBeenCalledWith('preflight', s.upload.id, 'user-1', 'existing-execution');
     expect(retry).toHaveBeenCalledWith('outbox-1', expect.any(String), new Date(Date.parse(NOW) + seconds * 1000).toISOString(), 'dispatch_unavailable');
   });
-  it('keeps real operations disabled without an API key instead of exposing configuration secrets', async () => {
+  it('keeps watermark operations disabled without their key while background availability stays independent', async () => {
     const s = await setup(); const disabled = createProcessingRuntime({ ...s.config, providerMode: 'dewatermark', apiKey: undefined });
-    expect(disabled.service.capabilities().every((c) => !c.enabled)).toBe(true);
+    expect(disabled.service.capabilities().filter(c => !['background-removal', 'object-removal'].includes(c.operation)).every((c) => !c.enabled)).toBe(true);
     await expect(disabled.beginUpload('user-1', { kind: 'video', contentType: 'video/mp4', byteSize: 1 })).rejects.toMatchObject({ code: 'operation_unavailable' });
     await disabled.close();
   });
@@ -352,7 +404,7 @@ describe('processing runtime assembly', () => {
   });
   it('constructs the production SDK adapters without startup requests and supports an explicit global stop', async () => {
     const runtime = createProcessingRuntime({ r2: { endpoint: 'https://unused-r2.invalid', accessKeyId: 'test-access', secretAccessKey: 'server-only-secret', bucket: 'private' }, databaseUrl: 'postgres://unused.invalid/test', providerMode: 'dewatermark', apiKey: 'server-only-provider-key', enabled: false });
-    expect(runtime.service.capabilities()).toHaveLength(4); expect(runtime.service.capabilities().every((c) => !c.enabled)).toBe(true);
+    expect(runtime.service.capabilities().map(c => c.operation)).toEqual(durableOperationIds); expect(runtime.service.capabilities().every((c) => !c.enabled)).toBe(true);
     const publicConfig = JSON.stringify(runtime.service.capabilities()); expect(publicConfig).not.toContain('server-only');
     await runtime.close();
   });

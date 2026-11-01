@@ -13,6 +13,36 @@ async function budget() {
 }
 
 describe('real acceptance budget', () => {
+  it('keeps a five-call ceiling separate from ten authorized processing Credits without resetting history or video allowance', async () => {
+    const { file } = await budget(); const ledger = new AcceptanceBudget(file, { image: 10, video: 5 });
+    for (let i = 0; i < 10; i++) await ledger.reserve('image', `old image ${i}`);
+    for (let i = 0; i < 4; i++) await ledger.reserve('video', `old video ${i}`);
+    const previous = (await ledger.summary()).records;
+    await ledger.authorizeImageCredits({ amount: 10, unit: 'processingCredits', additionalCalls: 5, reason: 'User confirmed ten processing Credits for five release image operations' });
+    await expect(ledger.reserve('image', 'missing exact quote')).rejects.toThrow(/quote|unit/i);
+    const pro = await ledger.reserve('image', 'PRO', { amount: 3, unit: 'processingCredits' });
+    await ledger.finish(pro, { status: 'unknown' });
+    await ledger.reserve('image', 'free image', { amount: 1, unit: 'freeUses' });
+    await expect(ledger.reserve('image', 'wrong wallet', { amount: 1, unit: 'purchasedImageCredits' })).rejects.toThrow(/unit/i);
+    await expect(ledger.reserve('image', 'over budget', { amount: 8, unit: 'processingCredits' })).rejects.toThrow(/credit.*exhausted/i);
+    await ledger.reserve('image', 'remaining paid operation', { amount: 7, unit: 'processingCredits' });
+    await ledger.reserve('image', 'second free image', { amount: 1, unit: 'freeUses' });
+    await ledger.reserve('image', 'third free image', { amount: 1, unit: 'freeUses' });
+    await expect(ledger.reserve('image', 'sixth unapproved call', { amount: 1, unit: 'freeUses' })).rejects.toThrow(/exhausted/i);
+    const summary = await new AcceptanceBudget(file, { image: 15, video: 5 }, { requireCreditBudget: true }).summary();
+    expect(summary.records.slice(0, previous.length)).toEqual(previous);
+    expect(summary.used).toEqual({ image: 15, video: 4 });
+    expect(summary.imageCreditBudget).toMatchObject({ unit: 'processingCredits', limit: 10, reserved: 10 });
+    expect(summary.remaining.video).toBe(1);
+  });
+  it('does not create a fresh expanded ledger or silently re-authorize an active credit budget', async () => {
+    const { file } = await budget();
+    await expect(new AcceptanceBudget(file, { image: 15, video: 5 }, { requireCreditBudget: true }).summary()).rejects.toThrow(/authoriz/i);
+    const ledger = new AcceptanceBudget(file, { image: 1, video: 5 }); await ledger.reserve('image', 'original');
+    await ledger.authorizeImageCredits({ amount: 10, unit: 'processingCredits', additionalCalls: 5, reason: 'Explicit content owner release test budget' });
+    await expect(ledger.authorizeImageCredits({ amount: 10, unit: 'processingCredits', additionalCalls: 5, reason: 'duplicate' })).rejects.toThrow(/already/i);
+    await expect(ledger.authorizeIncrease({ image: 8, video: 5 }, 'legacy call increase')).rejects.toThrow(/credit/i);
+  });
   it('records an explicitly authorized increase to eight image requests without changing the video cap', async () => {
     const { file } = await budget();
     const ledger = new AcceptanceBudget(file);

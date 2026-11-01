@@ -4,10 +4,10 @@ import path from 'node:path';
 import process from 'node:process';
 import { fileURLToPath, pathToFileURL, URL } from 'node:url';
 import { buildWorker, prepareWorkerContext, workerContextFiles } from './build-worker.mjs';
+import { isAppOwnedRoute as isAppPath } from '../src/lib/contracts/route-policy.mjs';
 
 const projectRoot = fileURLToPath(new URL('../', import.meta.url));
 const slash = (value) => value.replaceAll('\\', '/');
-const isAppPath = (value) => /^\/(?:api(?:\/|$)|app(?:\/|$)|auth\/popup$)/.test(value);
 const buildTargets = ['site', 'app', 'worker'];
 
 function resetGeneratedDirectory(root, relative) {
@@ -65,7 +65,7 @@ export function prepareBuildInputs(plan) {
   resetGeneratedDirectory(plan.root, '.vercel/output');
   const settings = JSON.parse(readFileSync(path.join(plan.root, 'src/content/settings/site.json'), 'utf8'));
   const styleAssets = [];
-  for (const css of ['global.css', 'workspace.css']) {
+  for (const css of ['design-system.css', 'workspace.css', 'image-editor.css', 'payments.css']) {
     const filename = path.join(plan.root, 'src/styles', css);
     if (existsSync(filename)) for (const match of readFileSync(filename, 'utf8').matchAll(/url\(["']?(\/(?:uploads|images)\/[^\s)'";]+)["']?\)/g)) styleAssets.push(match[1]);
   }
@@ -87,7 +87,7 @@ export function targetIntegration(plan) {
   const assertModule = (id) => {
     const file = slash(id).split('?')[0];
     if (plan.target === 'site' && (/\/src\/pages\/(?:api|app|auth)\//.test(file)
-      || /\/src\/lib\/(?:auth\.ts|services\.ts|config\/server-env\.ts|runtime\/|processing\/|providers\/|benefits\/postgres-)/.test(file)
+      || /\/src\/lib\/(?:auth\.ts|services\.ts|config\/server-env\.ts|runtime\/|processing\/|providers\/|payments\/|benefits\/postgres-)/.test(file)
       || /\/node_modules\/(?:@aws-sdk\/|pg\/)/.test(file))) throw new Error(`site build imported a server dependency: ${path.basename(file)}`);
   };
   return { name: `watermark-${plan.target}-routes`, assertModule,
@@ -112,15 +112,33 @@ export function targetIntegration(plan) {
   };
 }
 
+export function assertRequiredTargetBuilds(targets, result, planResult) {
+  if (planResult !== 'success' || !Array.isArray(targets) || targets.some(target => !buildTargets.includes(target))) throw new Error('Target selection did not complete safely');
+  if (targets.length ? result !== 'success' : !['skipped', 'success'].includes(result)) throw new Error('Required target artifacts are not verified');
+}
+
 export function classifyTargetChanges(files) {
   const targets = new Set();
   for (const raw of files) {
     const file = slash(raw);
+    if (/\.(?:test|spec|d)\.[cm]?[jt]sx?$/.test(file) || /^(?:tests\/|docs\/)/.test(file) || /\.md$/.test(file) && !file.startsWith('src/content/') || file === '.github/workflows/ci.yml') continue;
     if (/^(?:docs\/|README\.md$|AGENTS\.md$|scripts\/processing-acceptance\.mjs$|scripts\/lib\/acceptance-budget\.mjs$)/.test(file)) continue;
     if (/^(?:apps\/worker\/|scripts\/build-worker)/.test(file)) { targets.add('worker'); continue; }
     if (/^(?:package(?:-lock)?\.json$|scripts\/build-target|\.github\/workflows\/build-targets)/.test(file)) { for (const target of buildTargets) targets.add(target); continue; }
-    if (file === 'scripts/retain-app-assets.mjs') { targets.add('app'); continue; }
-    if (/^(?:src\/styles\/workspace\.css$|src\/layouts\/App)/.test(file)) { targets.add('app'); continue; }
+    if (file === 'scripts/retain-app-assets.mjs') { targets.add('site'); targets.add('app'); continue; }
+    if (file === 'src/pages/pricing.astro') { targets.add('app'); continue; }
+    if (file === 'src/lib/services.ts') { targets.add('app'); continue; }
+    if (/^src\/components\/launcher\/(?:MediaLauncher\.tsx|launcher\.css)$/.test(file)) { targets.add('site'); targets.add('app'); continue; }
+    if (/^src\/components\/uploader\/(?:BackgroundRemoverUploader|ObjectRemoverUploader)\./.test(file)) { targets.add('app'); continue; }
+    if (file === 'src/lib/client/image-display.ts') { targets.add('site'); continue; }
+    if (/^src\/lib\/client\/(?:auth-completion|canvas-mask)\.ts$/.test(file)) { targets.add('app'); continue; }
+    if (/^src\/lib\/client\//.test(file)) { targets.add('site'); targets.add('app'); continue; }
+    if (file === 'src/lib/content/site-settings.ts') { targets.add('site'); targets.add('app'); continue; }
+    if (/^src\/components\/payments\//.test(file)) { targets.add('app'); continue; }
+    if (/^src\/lib\/payments\//.test(file)) { targets.add('app'); targets.add('worker'); continue; }
+    if (/^src\/lib\/contracts\//.test(file)) { for (const target of buildTargets) targets.add(target); continue; }
+    if (/^src\/styles\/(?:global|home-blueprint|home-integration|tool-landing)\.css$/.test(file)) { targets.add('site'); continue; }
+    if (/^(?:src\/styles\/(?:workspace|image-editor|payments)\.css$|src\/layouts\/App)/.test(file)) { targets.add('app'); continue; }
     if (/^(?:astro\.config\.mjs$|src\/styles\/|src\/components\/auth\/|src\/lib\/auth-client|src\/content\/settings\/site\.json$|public\/uploads\/watermarkgemini-logo\.svg$)/.test(file)) { targets.add('site'); targets.add('app'); continue; }
     if (/^(?:apps\/gateway\/)/.test(file)) continue;
     if (/^(?:src\/lib\/(?:runtime\/|processing\/|providers\/|media\/|benefits\/|jobs\/|r2\/|users\/|config\/)|db\/)/.test(file)) { targets.add('app'); targets.add('worker'); continue; }
@@ -152,7 +170,7 @@ export function renderAppSiteProxy(config, { siteOrigin, publicOrigin, appOrigin
   if (config.version !== 3 || !Array.isArray(config.routes)) throw new Error('App Build Output routes are unavailable');
   const legacy = legacyAssetOrigin ? origin(legacyAssetOrigin) : undefined;
   if (legacy && [...applicationOrigins, site].includes(legacy)) throw new Error('Legacy assets must use an immutable origin distinct from public, App and Site sources');
-  const proxy = { src: '^/((?!(?:api|app|auth|_app-assets|_server-islands|_image|_render)(?:/|$)).*)$', dest: `${site}/$1`, transforms: seoTransforms() };
+  const proxy = { src: '^/(?!pricing/?$)((?!(?:api|app|auth|_app-assets|_server-islands|_image|_render)(?:/|$)).*)$', dest: `${site}/$1`, transforms: seoTransforms() };
   const assets = legacy ? [{ src: legacyAstroSource, dest: `${legacy}/_astro/$1`, methods: ['GET', 'HEAD'], transforms: seoTransforms() }] : [];
   return { ...config, routes: [...assets, proxy, ...config.routes.filter((route) => route.src !== proxy.src && route.src !== legacyAstroSource)] };
 }
@@ -178,7 +196,7 @@ export function renderGatewayConfig({ siteOrigin, appOrigin, publicOrigin }) {
     { src: '/(.*)', headers: commonHeaders, continue: true },
     { src: '^/(?:api|app)(?:/.*)?$|^/auth/popup$', headers: { 'Cache-Control': 'private, no-store', 'X-Robots-Tag': 'noindex, nofollow' }, continue: true },
     { src: '^/_(?:app|site)-assets/.*$', headers: { 'Cache-Control': 'public, max-age=31536000, immutable' }, continue: true },
-    { src: '^/((?:api|app)(?:/.*)?|auth/popup|_app-assets/.*)$', dest: `${app}/$1`, transforms: [remove('request.headers', 'x-forwarded-host'), remove('request.headers', 'x-forwarded-proto'), { type: 'request.headers', op: 'set', target: { key: 'x-forwarded-host' }, args: new URL(gateway).host }, { type: 'request.headers', op: 'set', target: { key: 'x-forwarded-proto' }, args: 'https' }] },
+    { src: '^/((?:api|app)(?:/.*)?|pricing/?|auth/popup|_app-assets/.*)$', dest: `${app}/$1`, transforms: [remove('request.headers', 'x-forwarded-host'), remove('request.headers', 'x-forwarded-proto'), { type: 'request.headers', op: 'set', target: { key: 'x-forwarded-host' }, args: new URL(gateway).host }, { type: 'request.headers', op: 'set', target: { key: 'x-forwarded-proto' }, args: 'https' }] },
     // Static route transforms are the documented API, not middleware internals:
     // https://vercel.com/docs/project-configuration/vercel-json#transform-examples
     { src: '^/(.*)$', dest: `${site}/$1`, transforms: seoTransforms() },
@@ -246,6 +264,7 @@ export async function buildTarget(target) {
   const astroPackage = JSON.parse(readFileSync(path.join(projectRoot, 'node_modules/astro/package.json'), 'utf8'));
   const astroBin = typeof astroPackage.bin === 'string' ? astroPackage.bin : astroPackage.bin.astro;
   runNode(path.join(projectRoot, 'node_modules/astro', astroBin), ['build', '--config', slash(path.relative(projectRoot, plan.configFile))], env);
+  if (target === 'site') runNode(path.join(projectRoot, 'scripts/retain-app-assets.mjs'), ['site'], env);
   if (target === 'app') {
     const source = path.join(projectRoot, '.vercel/output');
     if (!existsSync(path.join(source, 'config.json'))) throw new Error('Vercel adapter did not produce app output');
@@ -263,6 +282,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.ar
     const [command, ...args] = process.argv.slice(2);
     if (buildTargets.includes(command)) await buildTarget(command);
     else if (command === 'changes') process.stdout.write(JSON.stringify(classifyTargetChanges(changedFiles(args[0], args[1]) ?? ['package.json'])));
+    else if (command === 'required') assertRequiredTargetBuilds(JSON.parse(process.env.SELECTED_TARGETS ?? 'null'), process.env.TARGET_BUILD_RESULT, process.env.TARGET_PLAN_RESULT);
     else if (command === 'ignore') {
       if (!['site', 'app', 'gateway'].includes(args[0])) throw new Error('Unknown deployment target');
       const files = changedFiles(process.env.VERCEL_GIT_PREVIOUS_SHA, process.env.VERCEL_GIT_COMMIT_SHA);

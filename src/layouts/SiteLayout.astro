@@ -2,6 +2,8 @@
 import '../styles/global.css';
 import ImageFallbackScript from '../components/ImageFallbackScript.astro';
 import AuthControls from '../components/auth/AuthControls';
+import MediaLauncher from '../components/launcher/MediaLauncher';
+import { pageRecommendation } from '../lib/client/media-recommendation';
 import { getCollection } from 'astro:content';
 import { ArrowRight, ChevronDown, Menu, X } from '@lucide/astro';
 import { resolvePublicImageSource } from '../lib/content/image-fallback';
@@ -21,7 +23,9 @@ interface Props {
 const [siteEntry] = await getCollection('siteSettings');
 if (!siteEntry) throw new Error('Site settings CMS content is missing.');
 const site = siteEntry.data;
-const hiddenToolPaths = new Set((await getCollection('landingPages')).filter(({ data }) => data.draft).map(({ data }) => `/${data.slug}`));
+const landingPages = await getCollection('landingPages');
+const hiddenToolPaths = new Set(landingPages.filter(({ data }) => data.draft).map(({ data }) => `/${data.slug}`));
+const intakeRecommendation = pageRecommendation(landingPages.find(({ data }) => `/${data.slug}` === Astro.url.pathname)?.data);
 const navigation = publicNavigation(site.header.navigation, hiddenToolPaths);
 
 const {
@@ -114,7 +118,7 @@ const schemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [defaultS
     <main><slot /></main>
     <section class="site-cta" aria-labelledby="site-cta-heading">
       <div><span class="eyebrow">{cta.eyebrow}</span><h2 id="site-cta-heading">{cta.heading}</h2><p>{cta.description}</p></div>
-      <a class="cta-button" href={cta.buttonHref}>{cta.buttonLabel}<ArrowRight size={18} aria-hidden="true" /></a>
+      <MediaLauncher compact source={Astro.url.pathname} recommendation={intakeRecommendation} client:visible />
     </section>
     <footer class="site-footer">
       <div class="footer-main"><div class="footer-brand"><a class="brand" href="/"><img class="brand-logo" src={siteLogo} alt="" data-image-fallback={siteLogo === site.logo ? undefined : 'true'} /><span>{site.name}</span></a><p>{site.footer.tagline}</p></div>

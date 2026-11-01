@@ -1,0 +1,22 @@
+---
+import ImageDisplay from '../../../../../src/components/ImageDisplay.astro';
+const first = '/uploads/home-blueprint/features/hero-sample-01-serum.png';
+const second = '/uploads/home-blueprint/features/hero-sample-02-sunset.png';
+---
+<html lang="en"><head><title>Image display contract fixture</title><meta name="viewport" content="width=device-width" /></head><body><main>
+  <p>Component mechanics fixture. These unrelated test images do not represent a processing result.</p>
+  <section id="zero"><ImageDisplay alt="No image" /></section>
+  <section id="single"><ImageDisplay image={first} alt="Single image" eager /></section>
+  <section id="before-failed"><ImageDisplay image="/__missing-before.png" afterImage={second} alt="Before failure" eager /></section>
+  <section id="after-failed"><ImageDisplay image={first} afterImage="/__missing-after.png" alt="After failure" eager /></section>
+  <section id="both-failed"><ImageDisplay image="/__missing-before.png" afterImage="/__missing-after.png" alt="Both fail" eager /></section>
+  <section id="unaligned"><ImageDisplay image={first} afterImage="/uploads/home-blueprint/features/feature-01-cream-branded-base.png" alt="Different ratios" eager /></section>
+  <section id="pair"><ImageDisplay image={first} afterImage={second} alt="Pair mechanics" /></section>
+  <section id="cover"><ImageDisplay image={first} afterImage={second} alt="Framed pair mechanics" fit="cover" eager /></section>
+  <section id="after-first"><ImageDisplay image={`${first}?cold-before=1`} afterImage={`${second}?warm-after=1`} alt="After loads first" /></section>
+  <button type="button">Switch sample</button>
+</main></body></html>
+<script>
+  document.querySelector('button')?.addEventListener('click', () => document.querySelector('#pair [data-image-display]')?.dispatchEvent(new Event('image-display:reset')));
+</script>
+<style>body { margin: 16px; font-family: system-ui; } main { max-width: 640px; } section { margin-bottom: 16px; } #cover { height: 240px; }</style>

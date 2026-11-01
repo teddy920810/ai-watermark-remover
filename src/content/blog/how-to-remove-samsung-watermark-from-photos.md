@@ -14,8 +14,8 @@ draft: false
 contentMode: markdown
 bodyHtml: <p></p>
 coverImage: /uploads/how-to-remove-samsung-watermark-from-photos-figure-1.jpg
-coverAlt: Synthetic Samsung-style scenic photo before and after removing model
-  and date watermark. Illustrative example, not a verified removal test.
+coverAlt: "Synthetic Samsung-style scenic photo before and after removing model
+  and date watermark. Illustrative example, not a verified removal test."
 ---
 *Illustrations in this guide are examples, not live product screenshots or verified processing results.*
 

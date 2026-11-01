@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
 const blogPageSource = readFileSync(new URL('../../pages/blog/[slug].astro', import.meta.url), 'utf8');
-const globalCssSource = readFileSync(new URL('../../styles/global.css', import.meta.url), 'utf8');
+const globalCssSource = readFileSync(new URL('../../styles/design-system.css', import.meta.url), 'utf8') + readFileSync(new URL('../../styles/global.css', import.meta.url), 'utf8');
 const pagesConfigSource = readFileSync(new URL('../../../.pages.yml', import.meta.url), 'utf8');
 const pagesGuideSource = readFileSync(new URL('../../../docs/PAGES_CMS_GUIDE.md', import.meta.url), 'utf8');
 const referenceArticleSource = readFileSync(new URL('../../content/blog/remove-moving-watermark-from-video.md', import.meta.url), 'utf8');

@@ -96,13 +96,13 @@ GCP_WORKLOAD_IDENTITY_POOL_PROVIDER_ID
 
 GCP OIDC provider 使用实际 Vercel issuer 模式：team 模式为 `https://oidc.vercel.com/TEAM_SLUG`，并映射 `google.subject=assertion.sub`。信任条件或受限 subject 应锁定目标 team、project 和 production 环境，不能让任意团队或 Preview 获得生产身份。仅对该受限主体授予目标服务账号的 Workload Identity User 权限。[Vercel 官方 GCP 接入](https://vercel.com/docs/oidc/gcp)
 
-本代码采用官方 **custom audience** 示例。GCP provider 选择 **Default audience**，subject token 与 STS 配置使用同一个完整地址：
+本代码保留Vercel **custom audience** supplier，并沿用已接受的STS audience区分。GCP provider选择 **Default audience**；Vercel subject token的自定义audience为HTTPS地址：
 
 ```text
 https://iam.googleapis.com/projects/PROJECT_NUMBER/locations/global/workloadIdentityPools/POOL_ID/providers/PROVIDER_ID
 ```
 
-`GCP_AUDIENCE` 可省略，代码按配置生成；填写时必须精确等于该地址。只允许 `https://vercel.com/TEAM_SLUG` 的旧 Allowed audiences 配置与本模式不匹配。不要为了“等价”写法改动官方初始化对象或 subject token supplier。Token 在请求需要时获取，模块加载、构建和普通公开页面不取 Token。
+Google STS的`audience`使用同一provider的完整资源名，即上例去掉`https:`后的`//iam.googleapis.com/projects/.../providers/...`。两值用途不同，不互换。此处纠正文档，不改认证初始化代码；Vercel当前custom示例与本项目已接受差异见源码注释及回归测试。[Google STS合同](https://docs.cloud.google.com/iam/docs/reference/sts/rest/v1/TopLevel/token)、[Vercel custom audience](https://vercel.com/docs/oidc/gcp#custom-audience)（2026-10-31复核）。`GCP_AUDIENCE`可省略；填写时严格匹配subject token的HTTPS地址。Token按请求获取，模块加载、构建和公开页面不取Token。
 
 Cloud Run 环境中不配置 Vercel 的三项联邦身份字段，也不配置 `GOOGLE_SERVICE_ACCOUNT_JSON`、`GOOGLE_APPLICATION_CREDENTIALS`；使用明确附加的运行服务账号。轮换身份或 Secret 时，先验证对应短期访问与新执行的实际信号，再停用旧入口。
 
@@ -174,7 +174,7 @@ CLI 在本地存在 `.env.local` 时加载该文件，凭据仅用于服务端�
 
 金融恢复控制记录继续保留，防止尚处于 `UNKNOWN` 的任务先失去 R2 状态而无法归还已保留额度。新增 provider metadata、artifact 和 receipt 不再持久化未使用的 `maskBase`、`watermarkMask` 或相关 base64 遮罩内容；SDK 返回契约继续兼容。恢复较旧的含遮罩 receipt 时，重新写入的 private metadata 也只保留 session 和必要标识；旧的不可变 receipt 未被批量改写或删除。
 
-session 仍支持结果有效期内的精修和恢复，四项媒体规则不会自动清除这些 JSON 内容。后续应在财务终态且对应 artifact 到期后，清理或擦除各 receipt、provider metadata、artifact/attempt 中的 session 副本，并处理旧诊断遮罩；该清理不能通过整个控制前缀的一天 TTL 替代。此项仍需独立实施和验证，不能以本次媒体生命周期已配置代替。
+session仍支持结果有效期内的精修和恢复，媒体规则不会清除JSON。当前候选新增`MODE=retention`，默认只读预演；`RETENTION_APPLY=true`还必须提供一致的`RETENTION_PLAN_DIGEST`。仅执行/财务均终态且整组artifact过期、经过恢复缓冲后擦除已知session/旧诊断遮罩字段；UNKNOWN、SAVING/SETTLING、pendingResult、活跃租约及未完成精修继续保护。字段擦除不删除对象或金融依据，不自动定时启用。合同及中断恢复见[过期恢复数据擦除](SENSITIVE_RETENTION.md)；实际dry-run/apply证据在发布台账单列，不能以媒体TTL代替。
 
 先完成项目要求的本地 `release:verify`、数据库迁移、Secret 绑定、私有 R2/CORS、短期身份和定时投递检查。R2 CORS 只放行实际应用 origin 的必要 PUT/GET/HEAD 与 Content-Type；浏览器拿不到桶或 Provider 凭据。确认 API 与 Worker 使用相同数据库/桶，金融迁移 `005_processing_pipeline.sql` 已由授权负责人应用。
 
@@ -191,9 +191,11 @@ npm run test:smoke:processing -- --base-url https://APP_ORIGIN
 npm run test:smoke:processing -- --functional --base-url https://APP_ORIGIN --operation image-watermark --sample "IMAGE_SAMPLE" --expected-amount 1 --expected-unit freeUses --image-limit 8
 ```
 
-PRO / refine / video 分别使用 `image-watermark-pro`、`image-refine`、`video-watermark`；精修还需 `--parent-job`、`--parent-artifact`、`--mask`，视频本地探测需 `--ffprobe`。Cookie 不接受命令行参数，不能进入文档、报告或日志。
+PRO / refine / video 分别使用 `image-watermark-pro`、`image-refine`、`video-watermark`；精修还需 `--parent-job`、`--parent-artifact`、`--mask`，视频本地探测需 `--ffprobe`。背景/物体使用 `background-removal` / `object-removal`，物体必需同尺寸二值PNG的 `--mask`。费用必须逐项确认；背景/物体只能是 `freeUses` 或 `purchasedImageCredits`，脚本核对全部返回余额，要求原尺寸PNG，背景还核对实际透明像素。原JPEG/视频验收规则保持。Cookie 不接受命令行参数，不能进入文档、报告或日志。
 
-所有功能脚本与直连接口诊断共享 `output/acceptance/budget.json`。默认图片上限 5；本次获授权扩展到 8 时需显式 `--image-limit 8` 或 `PROCESSING_ACCEPTANCE_IMAGE_LIMIT=8`，视频仍最多 5。脚本在唯一的创建 job 请求前保留编号，失败和不明确结果也占用预算；预检不算收费请求。不得删账本、换路径或重新运行来绕开预算。
+所有功能脚本与直连接口诊断必须共享当前权威账本；有历史账本时通过`ACCEPTANCE_LEDGER_PATH`指向原文件，不能新建路径恢复默认额度。默认图片调用上限5，既有授权最多10；2026-11-01新增授权明确为10个processingCredits，另限本轮5项图片调用，累计调用上限15，视频仍为原5次且仅剩1次。扩展模式使用`--image-limit 15`，必须读取原账本中的单独Credits授权才能运行，不能仅传更大数字。
+
+预算保留既有14条记录，新窗口分别限制调用次数和已预留processingCredits；免费次数记录为freeUses、不扣此Credits预算，purchasedImageCredits不在本次新增授权内。单次先核对服务端报价和账户现有余额，再在唯一创建job请求前预留对应预算。失败/UNKNOWN也占用调用槽和已预留Credits；不循环重试，不购买或充值。账户测试额度须另有用户明确授权并使用管理员审计工具；2026-11-01用户后续“你直接补足”的单次范围见发布台账，不视作未来发放授权。权威账本与授权证明的本机位置见发布台账，不写入产品运行路径依赖。
 
 验收应留存脱敏 record ID、任务 ID、实际格式/尺寸/时长/音轨信息、报价单位及扣费前后数值，并确认只扣一次。脚本返回 `UNKNOWN`、请求超时或断开后，先按已保存任务与操作键恢复，禁止重复 POST。`READY` 还需实际下载、播放和去水印效果人工检查；图片应检查精修前后版本，视频应检查同步预览、声音与输出。
 

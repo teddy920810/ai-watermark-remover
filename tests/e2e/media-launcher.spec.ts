@@ -20,7 +20,7 @@ async function anonymous(page: Page, limits = capabilities) {
 test('homepage uses one upload action for images and MP4 without a media selector', async ({ page }) => {
   await anonymous(page);
   await page.goto('/');
-  await expect(page.getByRole('button', { name: 'Upload file', exact: true })).toBeEnabled();
+  await expect(page.locator('#tool').getByRole('button', { name: 'Upload file', exact: true })).toBeEnabled();
   await expect(page.locator('.media-launcher .launcher-modes')).toHaveCount(0);
   await expect(page.getByTestId('media-launcher-file')).toHaveAttribute('accept', 'image/jpeg,image/png,image/webp,video/mp4');
   await expect(page.getByTestId('media-launcher-file')).toHaveAccessibleName('Choose an image or MP4 video');
@@ -76,7 +76,7 @@ test('forged and unsupported files fail locally and leave the upload action usab
   await input.setInputFiles({ name: 'fake-image.jpg', mimeType: 'image/jpeg', buffer: videoBytes });
   await expect(page.getByRole('alert')).toContainText('does not match its contents');
   await expect(page).toHaveURL(/\/$/);
-  await expect(page.getByRole('button', { name: 'Upload file', exact: true })).toBeEnabled();
+  await expect(page.locator('#tool').getByRole('button', { name: 'Upload file', exact: true })).toBeEnabled();
   await input.setInputFiles({ name: 'broken.png', mimeType: 'image/png', buffer: Buffer.from('not an image') });
   await expect(page.getByRole('alert')).toContainText('not a supported JPG, PNG, WebP image or MP4 video');
   expect(writes).toEqual([]);
@@ -100,16 +100,16 @@ test('unreachable capability checks do not claim that processing is paused', asy
   await anonymous(page);
   await page.route('**/api/v1/capabilities', route => json(route, { error: 'Unavailable' }, 503));
   await page.goto('/');
-  await expect(page.locator('.media-launcher')).toContainText('availability could not be checked');
-  await expect(page.locator('.media-launcher')).not.toContainText(/processing is paused|processing is temporarily unavailable/i);
-  await expect(page.getByRole('button', { name: 'Upload file', exact: true })).toBeEnabled();
+  await expect(page.locator('#tool .media-launcher')).toContainText('availability could not be checked');
+  await expect(page.locator('#tool .media-launcher')).not.toContainText(/processing is paused|processing is temporarily unavailable/i);
+  await expect(page.locator('#tool').getByRole('button', { name: 'Upload file', exact: true })).toBeEnabled();
 });
 
-test('the video landing page retains its focused MP4 entry', async ({ page }) => {
+test('the video landing page accepts images and MP4 through the common entry', async ({ page }) => {
   await anonymous(page);
   await page.goto('/video-watermark-remover');
   await expect(page.getByTestId('media-launcher-file')).toBeEnabled();
-  await expect(page.getByTestId('media-launcher-file')).toHaveAttribute('accept', 'video/mp4');
-  await expect(page.getByRole('button', { name: 'Upload video', exact: true })).toBeVisible();
-  await expect(page.locator('.launcher-modes')).toBeVisible();
+  await expect(page.getByTestId('media-launcher-file')).toHaveAttribute('accept', 'image/jpeg,image/png,image/webp,video/mp4');
+  await expect(page.locator('#tool').getByRole('button', { name: 'Upload file', exact: true })).toBeVisible();
+  await expect(page.locator('.launcher-modes')).toHaveCount(0);
 });

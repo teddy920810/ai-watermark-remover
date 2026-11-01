@@ -145,21 +145,64 @@
       {
         "label": "Video & Batch Tools",
         "children": [
-          { "label": "Video Watermark Remover", "href": "/video-watermark-remover" },
-          { "label": "Sora Watermark Remover", "href": "/sora-watermark-remover", "badge": "Coming Soon" },
-          { "label": "Veo Watermark Remover", "href": "/veo-watermark-remover", "badge": "Coming Soon" },
-          { "label": "Kling Watermark Remover", "href": "/kling-watermark-remover", "badge": "Coming Soon" },
-          { "label": "TikTok Watermark Remover", "href": "/tiktok-watermark-remover", "badge": "Coming Soon" },
-          { "label": "CapCut Watermark Remover", "href": "/capcut-watermark-remover", "badge": "Coming Soon" },
-          { "label": "Instagram Watermark Remover", "href": "/instagram-watermark-remover", "badge": "Coming Soon" },
-          { "label": "Facebook Watermark Remover", "href": "/facebook-watermark-remover", "badge": "Coming Soon" },
-          { "label": "Remove Subtitle from Video", "href": "/remove-subtitle-from-video", "badge": "Coming Soon" },
-          { "label": "Batch Watermark Remover", "href": "/batch-watermark-remover", "badge": "Coming Soon" }
+          {
+            "label": "Video Watermark Remover",
+            "href": "/video-watermark-remover"
+          },
+          {
+            "label": "Sora Watermark Remover",
+            "href": "/sora-watermark-remover",
+            "badge": "Coming Soon"
+          },
+          {
+            "label": "Veo Watermark Remover",
+            "href": "/veo-watermark-remover",
+            "badge": "Coming Soon"
+          },
+          {
+            "label": "Kling Watermark Remover",
+            "href": "/kling-watermark-remover",
+            "badge": "Coming Soon"
+          },
+          {
+            "label": "TikTok Watermark Remover",
+            "href": "/tiktok-watermark-remover",
+            "badge": "Coming Soon"
+          },
+          {
+            "label": "CapCut Watermark Remover",
+            "href": "/capcut-watermark-remover",
+            "badge": "Coming Soon"
+          },
+          {
+            "label": "Instagram Watermark Remover",
+            "href": "/instagram-watermark-remover",
+            "badge": "Coming Soon"
+          },
+          {
+            "label": "Facebook Watermark Remover",
+            "href": "/facebook-watermark-remover",
+            "badge": "Coming Soon"
+          },
+          {
+            "label": "Remove Subtitle from Video",
+            "href": "/remove-subtitle-from-video",
+            "badge": "Coming Soon"
+          },
+          {
+            "label": "Batch Watermark Remover",
+            "href": "/batch-watermark-remover",
+            "badge": "Coming Soon"
+          }
         ]
       },
       {
         "label": "Guides",
         "href": "/blog"
+      },
+      {
+        "label": "Pricing",
+        "href": "/pricing"
       },
       {
         "label": "How it works",
@@ -173,25 +216,56 @@
       {
         "heading": "Product",
         "links": [
-          { "label": "Watermark remover", "href": "/" },
-          { "label": "Background remover", "href": "/remove-background" },
-          { "label": "Object remover", "href": "/remove-object" },
-          { "label": "Remove logo", "href": "/remove-logo-from-image" },
-          { "label": "Remove text", "href": "/remove-text-from-image" }
+          {
+            "label": "Watermark remover",
+            "href": "/"
+          },
+          {
+            "label": "Background remover",
+            "href": "/remove-background"
+          },
+          {
+            "label": "Object remover",
+            "href": "/remove-object"
+          },
+          {
+            "label": "Remove logo",
+            "href": "/remove-logo-from-image"
+          },
+          {
+            "label": "Remove text",
+            "href": "/remove-text-from-image"
+          }
         ]
       },
       {
         "heading": "Resources",
         "links": [
-          { "label": "Guides", "href": "/blog" },
-          { "label": "How it works", "href": "/#how-it-works" }
+          {
+            "label": "Guides",
+            "href": "/blog"
+          },
+          {
+            "label": "Pricing",
+            "href": "/pricing"
+          },
+          {
+            "label": "How it works",
+            "href": "/#how-it-works"
+          }
         ]
       },
       {
         "heading": "Legal",
         "links": [
-          { "label": "Privacy", "href": "/privacy" },
-          { "label": "Terms", "href": "/terms" }
+          {
+            "label": "Privacy",
+            "href": "/privacy"
+          },
+          {
+            "label": "Terms",
+            "href": "/terms"
+          }
         ]
       }
     ]

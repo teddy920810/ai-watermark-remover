@@ -1,4 +1,5 @@
-import { Pool } from 'pg';
+import type { Pool } from 'pg';
+import { getWebDatabasePool } from './runtime/web-database-pool';
 import { z } from 'zod';
 import { getServerEnv } from './config/server-env';
 import { PostgresBenefitStore } from './benefits/postgres-benefit-store';
@@ -28,12 +29,7 @@ interface AccountServices {
 function createAccountServices(): AccountServices {
   const databaseUrl = z.url().parse(process.env.DATABASE_URL);
   const paymentConfig = getPaymentConfig();
-  const pool = new Pool({
-    connectionString: databaseUrl,
-    max: 3,
-    idleTimeoutMillis: 10_000,
-    connectionTimeoutMillis: 5_000,
-  });
+  const pool = getWebDatabasePool(databaseUrl);
   const benefits = new PostgresBenefitStore(pool, paymentConfig.creditsEnabled, paymentConfig.environment, paymentConfig.imageCosts, paymentConfig.creditsEnabled ? paymentConfig.imageCostVersion : undefined);
   const requests = paymentConfig.creditsEnabled ? new PostgresJobRequestStore(pool, paymentConfig.environment) : undefined;
   return {
@@ -46,7 +42,7 @@ function createAccountServices(): AccountServices {
       if (candidates.length === 0) return;
       // A balance with no pending settlement needs only Postgres. Actual job
       // recovery still requires the media services and must fail if unavailable.
-      await getServices().jobs.recoverUser(userId);
+      await getServices().jobs.recoverUser(userId, candidates);
     },
   };
 }
@@ -65,15 +61,19 @@ function createServices() {
   });
   const jobStore = new R2JobStore(objects);
   const { benefits, requests } = getAccountServices();
-  const provider: LegacyWatermarkProvider = env.WATERMARK_PROVIDER === 'dewatermark'
+  let provider: LegacyWatermarkProvider | undefined;
+  let backgroundProvider: LegacyWatermarkProvider | undefined;
+  let objectProvider: LegacyWatermarkProvider | undefined;
+  const providers = {
+    get 'watermark-removal'() { return (provider ??= env.WATERMARK_PROVIDER === 'dewatermark'
     ? new DewatermarkProvider(objects, {
         apiKey: env.DEWATERMARK_API_KEY as string,
         baseUrl: env.DEWATERMARK_BASE_URL,
         predictMode: env.DEWATERMARK_PREDICT_MODE,
         timeoutMs: env.DEWATERMARK_TIMEOUT_MS,
       })
-    : new MockWatermarkProvider(objects, env.MOCK_PROCESSING_DELAY_MS);
-  const backgroundProvider = env.BACKGROUND_REMOVAL_PROVIDER === 'replicate'
+    : new MockWatermarkProvider(objects, env.MOCK_PROCESSING_DELAY_MS)); },
+    get 'background-removal'() { return (backgroundProvider ??= env.BACKGROUND_REMOVAL_PROVIDER === 'replicate'
     ? new ReplicateBackgroundProvider(objects, {
         apiToken: env.REPLICATE_API_TOKEN as string,
         baseUrl: env.REPLICATE_BASE_URL,
@@ -81,8 +81,8 @@ function createServices() {
         timeoutMs: env.REPLICATE_TIMEOUT_MS,
         waitSeconds: env.REPLICATE_WAIT_SECONDS,
       })
-    : new MockBackgroundProvider(objects, env.MOCK_PROCESSING_DELAY_MS);
-  const objectProvider = env.OBJECT_REMOVAL_PROVIDER === 'replicate'
+    : new MockBackgroundProvider(objects, env.MOCK_PROCESSING_DELAY_MS)); },
+    get 'object-removal'() { return (objectProvider ??= env.OBJECT_REMOVAL_PROVIDER === 'replicate'
     ? new ReplicateObjectProvider(objects, {
         apiToken: env.REPLICATE_API_TOKEN as string,
         baseUrl: env.REPLICATE_BASE_URL,
@@ -90,18 +90,15 @@ function createServices() {
         timeoutMs: env.REPLICATE_TIMEOUT_MS,
         waitSeconds: env.REPLICATE_WAIT_SECONDS,
       })
-    : new MockObjectProvider(objects, env.MOCK_PROCESSING_DELAY_MS);
+    : new MockObjectProvider(objects, env.MOCK_PROCESSING_DELAY_MS)); },
+  };
   return {
     objects,
     benefits,
     jobs: new JobService({
       jobStore,
       objects,
-      providers: {
-        'watermark-removal': provider,
-        'background-removal': backgroundProvider,
-        'object-removal': objectProvider,
-      },
+      providers,
       benefits,
       ...(requests ? { requests } : {}),
     }),

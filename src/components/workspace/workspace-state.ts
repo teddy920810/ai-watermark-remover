@@ -7,7 +7,7 @@ export function canSubmitConfirmation(quote: { expiresAt: string } | null, busy:
 const active = new Set(['PREPARED', 'QUEUED', 'VALIDATING', 'TRANSFERRING', 'SUBMITTING', 'PROCESSING', 'SAVING', 'SETTLING']);
 export function jobIsActive(status: string) { return active.has(status); }
 export function canRefineResult(job: { status: string; operation: string; result?: { canRefine?: boolean } }) {
-  return job.status === 'READY' && job.operation !== 'video-watermark' && job.operation !== 'image-watermark-pro' && job.result?.canRefine === true;
+  return job.status === 'READY' && ['image-watermark', 'image-refine'].includes(job.operation) && job.result?.canRefine === true;
 }
 export function processingLabel(status: string) {
   const labels: Record<string, string> = { PREPARED: 'Preparing your task', QUEUED: 'Waiting to start', VALIDATING: 'Checking your file', TRANSFERRING: 'Preparing the media', SUBMITTING: 'Starting removal', PROCESSING: 'Removing watermarks', SAVING: 'Saving your result', SETTLING: 'Finalizing your result', READY: 'Ready to review', UNKNOWN: 'Checking the processing confirmation', FAILED: 'Processing could not finish', REFUNDED: 'Processing failed · credits returned', EXPIRED: 'This result has expired' };

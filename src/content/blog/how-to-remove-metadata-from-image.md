@@ -2,8 +2,8 @@
 slug: how-to-remove-metadata-from-image
 title: Remove Metadata From an Image Before You Share It
 seoTitle: How to Remove Metadata From an Image Safely
-description: Learn how to remove metadata from an image on Windows, Mac, and with a
-  local privacy-first tool. Check the clean copy before sharing.
+description: Learn how to remove metadata from an image on Windows, Mac, and
+  with a local privacy-first tool. Check the clean copy before sharing.
 publishedAt: 2026-09-13
 updatedAt: 2026-09-13
 readTime: 6 min read
@@ -14,7 +14,7 @@ draft: false
 contentMode: markdown
 bodyHtml: <p></p>
 coverImage: /uploads/how-to-remove-metadata-from-image-figure-1.png
-coverAlt: Person reviewing a clean image copy before sharing.
+coverAlt: "Person reviewing a clean image copy before sharing."
 ---
 To remove metadata from image files, make a clean copy, strip the fields that the sharing risk actually requires you to remove, then inspect the new file before you send or publish it. Image metadata can include capture time, camera and device details, GPS coordinates, editing history, captions, and creator information. Not every image contains every field, and metadata is separate from pixels: removing it does not blur a face, hide text visible in the photo, or change what the picture itself reveals.
 

@@ -8,13 +8,16 @@ import { fileURLToPath, pathToFileURL, URL } from 'node:url';
 
 const mimeTypes = { '.js': 'application/javascript', '.css': 'text/css', '.png': 'image/png', '.svg': 'image/svg+xml', '.webp': 'image/webp', '.woff2': 'font/woff2' };
 
-function validateManifest(manifest) {
+function validateManifest(manifest, target) {
+  const validOrigin = target === 'site'
+    ? manifest?.origin === 'https://ai-watermark-site.vercel.app'
+    : typeof manifest?.origin === 'string' && /^https:\/\/ai-watermark-remover-[a-z0-9]{9}-shiyaos-projects-b1e333f0\.vercel\.app$/.test(manifest.origin);
   if (manifest?.version !== 1 || typeof manifest.origin !== 'string'
-    || !/^https:\/\/ai-watermark-remover-[a-z0-9]{9}-shiyaos-projects-b1e333f0\.vercel\.app$/.test(manifest.origin)
+    || !validOrigin
     || !Array.isArray(manifest.assets) || manifest.assets.length < 1 || manifest.assets.length > 32) throw new Error('Invalid retained App asset manifest');
   const paths = new Set(); let bytes = 0;
   for (const asset of manifest.assets) {
-    if (typeof asset.path !== 'string' || !/^\/_app-assets\/(?:[A-Za-z0-9_][A-Za-z0-9_.-]*\/)*[A-Za-z0-9_][A-Za-z0-9_.-]*$/.test(asset.path)
+    if (typeof asset.path !== 'string' || !new RegExp(`^/_${target}-assets/(?:[A-Za-z0-9_][A-Za-z0-9_.-]*/)*[A-Za-z0-9_][A-Za-z0-9_.-]*$`).test(asset.path)
       || paths.has(asset.path) || !/^[a-f0-9]{64}$/.test(asset.sha256) || !Number.isSafeInteger(asset.byteSize) || asset.byteSize < 1 || asset.byteSize > 5_000_000
       || mimeTypes[path.extname(asset.path)] !== asset.contentType) throw new Error('Invalid retained App asset entry');
     paths.add(asset.path); bytes += asset.byteSize;
@@ -32,8 +35,8 @@ function assertWithin(root, destination) {
 /** Copy reviewed public files into Build Output static, never routes or functions.
  * https://vercel.com/docs/build-output-api/primitives#static-files
  */
-export async function retainAppAssets(staticDirectory, manifest, fetcher = fetch) {
-  validateManifest(manifest);
+async function retainPublicAssets(staticDirectory, manifest, target, fetcher) {
+  validateManifest(manifest, target);
   const root = realpathSync(staticDirectory); let retained = 0; let kept = 0;
   for (const asset of manifest.assets) {
     const destination = path.join(root, asset.path.slice(1)); assertWithin(root, destination);
@@ -65,7 +68,19 @@ export async function retainAppAssets(staticDirectory, manifest, fetcher = fetch
   return { retained, kept };
 }
 
+export function retainAppAssets(staticDirectory, manifest, fetcher = fetch) {
+  return retainPublicAssets(staticDirectory, manifest, 'app', fetcher);
+}
+/** Site's fixed public alias carries hash-pinned bytes forward; unique deployment
+ * URLs remain protected. Never bypass or disable protection to fetch them. */
+export function retainSiteAssets(staticDirectory, manifest, fetcher = fetch) {
+  return retainPublicAssets(staticDirectory, manifest, 'site', fetcher);
+}
+
 if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) {
   const root = fileURLToPath(new URL('../', import.meta.url));
-  await retainAppAssets(path.join(root, '.vercel/output/static'), JSON.parse(readFileSync(path.join(root, 'apps/app/retained-assets.json'), 'utf8')));
+  const target = process.argv[2] ?? 'app';
+  if (!['app', 'site'].includes(target)) throw new Error('Unknown public asset target');
+  const directory = target === 'site' ? 'dist-target/site' : '.vercel/output/static';
+  await retainPublicAssets(path.join(root, directory), JSON.parse(readFileSync(path.join(root, `apps/${target}/retained-assets.json`), 'utf8')), target, fetch);
 }

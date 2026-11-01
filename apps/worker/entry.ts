@@ -2,20 +2,13 @@ import { randomUUID } from 'node:crypto';
 import { resolve } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 import { pathToFileURL } from 'node:url';
-import { z } from 'zod';
 import { cloudRunTriggerFromEnvironment } from '../../src/lib/runtime/cloud-run-trigger';
 import { createProcessingRuntime, type ProcessingRuntime, type ProcessingRuntimeConfig } from '../../src/lib/runtime/processing-services';
 import { imageCreditConfigFromEnvironment } from '../../src/lib/payments/image-credit-config';
+import { readImageProviderConfig } from '../../src/lib/config/image-providers';
 
 type Environment = Record<string, string | undefined>;
-type Mode = 'preflight' | 'process' | 'reconcile' | 'dispatch';
-const legacyProviderEnvironment = z.object({
-  WATERMARK_PROVIDER: z.enum(['mock', 'dewatermark']).default('mock'),
-  DEWATERMARK_BASE_URL: z.url().default('https://platform.dewatermark.ai'),
-  DEWATERMARK_PREDICT_MODE: z.enum(['3.0', '4.0']).default('4.0'),
-  DEWATERMARK_TIMEOUT_MS: z.coerce.number().int().min(1000).max(120_000).default(30_000),
-  MOCK_PROCESSING_DELAY_MS: z.coerce.number().int().min(0).max(5000).default(0),
-});
+type Mode = 'preflight' | 'process' | 'reconcile' | 'dispatch' | 'retention';
 function required(source: Environment, name: string): string {
   const value = source[name];
   if (!value?.trim()) throw new Error(`Missing worker configuration: ${name}`);
@@ -23,7 +16,7 @@ function required(source: Environment, name: string): string {
 }
 function modeFrom(source: Environment): Mode {
   const mode = source.MODE ?? 'dispatch';
-  if (!['preflight', 'process', 'reconcile', 'dispatch'].includes(mode)) throw new Error('Worker mode is invalid');
+  if (!['preflight', 'process', 'reconcile', 'dispatch', 'retention'].includes(mode)) throw new Error('Worker mode is invalid');
   return mode as Mode;
 }
 function positive(source: Environment, name: string, fallback: number): number {
@@ -32,8 +25,6 @@ function positive(source: Environment, name: string, fallback: number): number {
   return value;
 }
 export function workerConfigFromEnvironment(source: Environment): ProcessingRuntimeConfig {
-  const legacy = legacyProviderEnvironment.safeParse(source);
-  if (!legacy.success) throw new Error('Invalid worker configuration: legacy provider');
   const mode = modeFrom(source);
   const databaseUrl = required(source, 'DATABASE_URL');
   const endpoint = source.R2_ENDPOINT ?? (source.R2_ACCOUNT_ID ? `https://${source.R2_ACCOUNT_ID}.r2.cloudflarestorage.com` : required(source, 'R2_ENDPOINT'));
@@ -48,7 +39,8 @@ export function workerConfigFromEnvironment(source: Environment): ProcessingRunt
   return {
     r2: { endpoint, accessKeyId: required(source, 'R2_ACCESS_KEY_ID'), secretAccessKey: required(source, 'R2_SECRET_ACCESS_KEY'), bucket: source.R2_BUCKET ?? 'watermark' },
     databaseUrl, providerMode: providerMode as 'mock' | 'dewatermark', apiKey: source.DEWATERMARK_API_KEY,
-    legacyProvider: { mode: legacy.data.WATERMARK_PROVIDER, baseUrl: legacy.data.DEWATERMARK_BASE_URL, predictMode: legacy.data.DEWATERMARK_PREDICT_MODE, timeoutMs: legacy.data.DEWATERMARK_TIMEOUT_MS, mockDelayMs: legacy.data.MOCK_PROCESSING_DELAY_MS },
+    scope: 'worker',
+    imageProviders: readImageProviderConfig(source),
     ffprobePath: source.FFPROBE_PATH, enabled, priceVersion: source.PROCESSING_PRICE_VERSION ?? 'processing-v1', trigger,
     imageCredits: imageCreditConfigFromEnvironment(source),
   };
@@ -58,7 +50,7 @@ export interface WorkerDependencies {
   now?: () => number;
   sleep?: (milliseconds: number) => Promise<void>;
 }
-export async function runWorker(source: Environment = process.env, dependencies: WorkerDependencies = {}): Promise<{ mode: Mode; status: string; id?: string; continuationRequired?: boolean }> {
+export async function runWorker(source: Environment = process.env, dependencies: WorkerDependencies = {}): Promise<{ mode: Mode; status: string; id?: string; continuationRequired?: boolean; retention?: Awaited<ReturnType<NonNullable<ProcessingRuntime['retainExpired']>>> }> {
   const mode = modeFrom(source);
   const config = workerConfigFromEnvironment(source);
   const maxRunMs = positive(source, 'WORKER_MAX_RUN_MS', 15 * 60_000);
@@ -66,13 +58,20 @@ export async function runWorker(source: Environment = process.env, dependencies:
   const jobId = source.JOB_ID;
   const ownerId = source.OWNER_ID;
   const dispatchId = source.DISPATCH_ID;
-  if (mode !== 'dispatch' && (!jobId || !/^[A-Za-z0-9_-]{1,160}$/.test(jobId) || !ownerId || ownerId.length > 512 || /[\r\n\0]/.test(ownerId))) throw new Error('Worker task and owner identifiers are required');
+  if (!['dispatch', 'retention'].includes(mode) && (!jobId || !/^[A-Za-z0-9_-]{1,160}$/.test(jobId) || !ownerId || ownerId.length > 512 || /[\r\n\0]/.test(ownerId))) throw new Error('Worker task and owner identifiers are required');
+  if (mode === 'retention' && source.RETENTION_APPLY !== undefined && !['true', 'false'].includes(source.RETENTION_APPLY)) throw new Error('Retention apply must be an explicit boolean');
+  if (mode === 'retention' && source.RETENTION_APPLY === 'true' && !/^[a-f0-9]{64}$/.test(source.RETENTION_PLAN_DIGEST ?? '')) throw new Error('Retention apply requires the reviewed plan digest');
   if (dispatchId && !/^[A-Za-z0-9_-]{1,160}$/.test(dispatchId)) throw new Error('Worker dispatch identifier is invalid');
   const runtime = (dependencies.createRuntime ?? createProcessingRuntime)(config);
   const now = dependencies.now ?? Date.now;
   const sleep = dependencies.sleep ?? (async (milliseconds: number) => { await delay(milliseconds); });
   const workerId = `worker-${randomUUID()}`;
   try {
+    if (mode === 'retention') {
+      if (!runtime.retainExpired) throw new Error('Retention maintenance is unavailable');
+      const apply = source.RETENTION_APPLY === 'true';
+      return { mode, status: apply ? 'applied' : 'planned', retention: await runtime.retainExpired({ apply, expectedDigest: source.RETENTION_PLAN_DIGEST }) };
+    }
     if (mode === 'dispatch') { await runtime.dispatch(); return { mode, status: 'dispatched' }; }
     if (mode === 'preflight') { const result = await runtime.runPreflight(ownerId!, jobId!); return { mode, status: result.status, id: result.id }; }
     const deadline = now() + maxRunMs;

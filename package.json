@@ -7,6 +7,7 @@
     "node": "^22.22.3 || ^24.16.0"
   },
   "scripts": {
+    "project:check": "node scripts/workspace-preflight.mjs",
     "dev": "astro dev",
     "prebuild": "npm run images:optimize",
     "build": "astro check && astro build && npm run verify:responsive-images",
@@ -23,6 +24,7 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
+    "test:components": "playwright test --config tests/component/playwright.config.ts",
     "test:smoke:production": "node scripts/production-smoke.mjs",
     "test:smoke:background-removal": "node scripts/production-smoke.mjs --require-auth --operation background-removal",
     "test:smoke:object-removal": "node scripts/production-smoke.mjs --require-auth --operation object-removal",
@@ -42,7 +44,7 @@
     "site:init": "node scripts/initialize-site.mjs",
     "site:validate": "node scripts/validate-site.mjs",
     "verify:deploy": "npm run site:validate && npm run test:coverage && npm run lint:code && npm run build",
-    "verify": "npm run test:coverage && npm run lint:code && npm run build && npm run test:e2e",
+    "verify": "npm run test:coverage && npm run lint:code && npm run build && npm run test:e2e && npm run test:components",
     "release:verify": "npm run audit:dependencies && npm run site:validate && npm run verify"
   },
   "dependencies": {

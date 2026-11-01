@@ -65,7 +65,8 @@ describe('database-only account service boundary', () => {
     const account = getAccountServices();
     await account.recoverUser('signed-in-account');
     const media = getServices();
-    expect(mocks.recoverUser).toHaveBeenCalledExactlyOnceWith('signed-in-account');
+    expect(mocks.recoverUser).toHaveBeenCalledExactlyOnceWith('signed-in-account', [{ ownerId: 'signed-in-account' }]);
+    expect(mocks.recoverable).toHaveBeenCalledExactlyOnceWith('signed-in-account');
     expect(getAccountServices()).toBe(account);
     expect(getServices()).toBe(media);
     expect(media.benefits).toBe(account.benefits);

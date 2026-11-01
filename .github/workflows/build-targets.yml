@@ -45,6 +45,22 @@ jobs:
           path: dist-target/${{ matrix.target }}
           include-hidden-files: true
           retention-days: 3
+  required:
+    name: Required target artifacts
+    if: always()
+    needs: [targets, build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Require every selected target to build successfully
+        run: node scripts/build-target.mjs required
+        env:
+          SELECTED_TARGETS: ${{ needs.targets.outputs.targets }}
+          TARGET_PLAN_RESULT: ${{ needs.targets.result }}
+          TARGET_BUILD_RESULT: ${{ needs.build.result }}
 # Vercel Git projects deploy independently using their target-specific ignoreCommand.
 # Worker selection bundles the real server entry and validates its seven-file upload context; it never deploys.
 # Required CI / verify remains unchanged. This workflow never receives deployment secrets.

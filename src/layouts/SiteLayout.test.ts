@@ -2,9 +2,8 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
 const layoutSource = readFileSync(new URL('./SiteLayout.astro', import.meta.url), 'utf8');
-const globalCss = readFileSync(new URL('../styles/global.css', import.meta.url), 'utf8');
+const globalCss = readFileSync(new URL('../styles/design-system.css', import.meta.url), 'utf8') + readFileSync(new URL('../styles/global.css', import.meta.url), 'utf8');
 const launcherSource = readFileSync(new URL('../components/launcher/MediaLauncher.tsx', import.meta.url), 'utf8');
-const launcherCopySource = readFileSync(new URL('../components/launcher/launcher-copy.ts', import.meta.url), 'utf8');
 const workspaceSource = readFileSync(new URL('../components/workspace/WatermarkWorkspace.tsx', import.meta.url), 'utf8');
 const popupSource = readFileSync(new URL('../pages/auth/popup.astro', import.meta.url), 'utf8');
 const authControlsSource = readFileSync(new URL('../components/auth/AuthControls.tsx', import.meta.url), 'utf8');
@@ -57,7 +56,7 @@ describe('SiteLayout Google Analytics integration', () => {
     const brandSources = [layoutSource, workspaceSource, popupSource].join('\n');
     expect(brandSources).not.toContain('brand-mark');
     expect(layoutSource.match(/<img class="brand-logo"/g)).toHaveLength(2);
-    expect(workspaceSource).toContain('<img className="brand-logo" src={logo}');
+    expect(readFileSync(new URL('../components/workspace/AppShell.tsx', import.meta.url), 'utf8')).toContain('<img className="brand-logo" src={logo}');
     expect(popupSource).toContain('<img class="brand-logo"');
   });
 
@@ -77,12 +76,11 @@ describe('SiteLayout Google Analytics integration', () => {
     expect(layoutSource).not.toContain('type="image/svg+xml"');
   });
 
-  it('uses CMS-managed labels in the active media launcher', () => {
-    expect(launcherCopySource).toContain('copy?.dropzone.dropLabel');
-    expect(launcherCopySource).toContain('copy?.dropzone.browseLabel');
-    expect(launcherCopySource).toContain('copy?.dropzone.fileInputLabel');
-    expect(launcherSource).toContain('<LauncherPrompt kind={kind} copy={copy} />');
-    expect(launcherSource).toContain('aria-label={labels.fileInputLabel}');
+  it('keeps upload purpose and accepted media outside CMS copy overrides', () => {
+    expect(launcherSource).toContain("'Upload file'");
+    expect(launcherSource).toContain('aria-label="Choose an image or MP4 video"');
+    expect(launcherSource).toContain('identifyLauncherMedia(file,');
+    expect(launcherSource).not.toContain('copy?.dropzone');
   });
 
   it('keeps utility and error pages out of search results', () => {
@@ -93,7 +91,11 @@ describe('SiteLayout Google Analytics integration', () => {
 
   it('completes Google sign-in when the OAuth provider severs window.opener', () => {
     expect(workspaceSource).toContain("new BroadcastChannel('clearmark-auth')");
-    expect(workspaceSource).toContain("channel?.addEventListener('message', broadcast)");
+    expect(workspaceSource).toContain('listenForAuthCompletion({');
+    expect(workspaceSource).toContain('once: false');
+    const authCompletion = readFileSync(new URL('../lib/client/auth-completion.ts', import.meta.url), 'utf8');
+    expect(authCompletion).toContain("channel?.addEventListener('message', channelMessage)");
+    expect(authCompletion).toContain('event.origin === target.location.origin');
     expect(workspaceSource).toContain('await authClient.getSession()');
     expect(popupSource).toContain("new BroadcastChannel('clearmark-auth')");
     expect(popupSource).toContain("channel.postMessage({ type: 'clearmark-auth-complete' })");

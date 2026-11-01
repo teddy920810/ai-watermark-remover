@@ -1,6 +1,6 @@
 # Processing credits and admission recovery
 
-Implementation and release progress are tracked in [IMPLEMENTATION_TODO](product/IMPLEMENTATION_TODO.md). This document describes the implemented contracts; it does not assert that a migration, production grant or deployment has been completed.
+Implementation and release progress are tracked in [the refactor ledger](product/REFACTOR_LEDGER.md). This document describes the implemented contracts; it does not assert that a migration, production grant or deployment has been completed.
 
 The private R2 job record is authoritative for processing state. PostgreSQL contains account balances, the credit ledger, admission deduplication and durable delivery coordination. It does not contain provider sessions, result object keys or the job state machine.
 

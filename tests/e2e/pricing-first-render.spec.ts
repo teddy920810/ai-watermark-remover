@@ -15,16 +15,16 @@ test('pricing first render contains the runtime catalog before browser requests'
   const catalog = await catalogResponse.json() as PublicCatalog;
   expect(catalog.packages).toHaveLength(3);
 
-  const response = await request.get('/app/credits');
+  const response = await request.get('/pricing');
   expect(response.status()).toBe(200);
   const html = await response.text();
-  const packagesHtml = html.match(/<fieldset\b[^>]*class="credit-packages"[^>]*>([\s\S]*?)<\/fieldset>/)?.[1] ?? '';
+  const packagesHtml = html.match(/<section\b[^>]*class="credit-packages"[^>]*>([\s\S]*?)<\/section>/)?.[1] ?? '';
   expect(packagesHtml.match(/<article\b/g) ?? []).toHaveLength(catalog.packages.length + 1);
   expect(packagesHtml).toContain('Try for free');
   for (const item of catalog.packages) {
-    const price = new Intl.NumberFormat('en-US', { style: 'currency', currency: item.currency }).format(item.amountCents / 100);
-    expect(packagesHtml).toContain(`id="credit-package-${item.sku}"`);
-    expect(packagesHtml).toContain(`${item.name}: ${item.credits.toLocaleString('en-US')} credits for ${price} ${item.currency}`);
+    expect(packagesHtml).toContain(item.name);
+    expect(packagesHtml).toContain(new Intl.NumberFormat('en-US', {style:'currency',currency:item.currency}).format(item.amountCents/100));
+    expect(packagesHtml).toContain('/app/credits?sku='+item.sku);
   }
   expect(html).not.toContain('Loading payment options');
   expect(html).not.toMatch(/clientSecret|merchantId|webhookId|PAYPAL_CLIENT_SECRET|DATABASE_URL/);
@@ -58,8 +58,8 @@ test('pricing stays in place while catalog and anonymous sign-in checks are dela
   try {
     await page.goto('/app/credits', { waitUntil: 'domcontentloaded' });
     await catalogStarted;
-    const group = page.getByRole('group', { name: 'Choose an image credit package' });
-    await expect(group.locator('.credit-package')).toHaveCount(catalog.packages.length + 1);
+    const review = page.getByRole('region', { name: 'Review your purchase' });
+    await expect(review).toContainText(catalog.packages[0].name);
     const history = page.locator('.payment-history');
     await expect(history).toContainText('Checking sign-in');
     await expect(history).not.toContainText('Sign in to see purchases');
@@ -69,9 +69,9 @@ test('pricing stays in place while catalog and anonymous sign-in checks are dela
     await expect(page.locator('script[src*="paypal.com/sdk/js"]')).toHaveCount(0);
     await expect(page.locator('.paypal-button-container')).toBeHidden();
 
-    const positions = async () => page.locator('.credit-packages, .payment-rates, .payment-review, .pricing-terms').evaluateAll(nodes => nodes.map(node => ({ top: node.getBoundingClientRect().top, height: node.getBoundingClientRect().height })));
+    const positions = async () => page.locator('.payment-review, .pricing-terms').evaluateAll(nodes => nodes.map(node => ({ top: node.getBoundingClientRect().top, height: node.getBoundingClientRect().height })));
     const before = await positions();
-    expect(before).toHaveLength(4);
+    expect(before).toHaveLength(2);
     releaseCatalog();
     releaseAuth();
     await expect(history).toContainText('Sign in to see purchases for your account.');
@@ -83,7 +83,7 @@ test('pricing stays in place while catalog and anonymous sign-in checks are dela
       expect(Math.abs(after[index].top - before[index].top)).toBeLessThanOrEqual(2);
       expect(Math.abs(after[index].height - before[index].height)).toBeLessThanOrEqual(2);
     }
-    await expect(group.locator('input[type="radio"]:checked')).toHaveAttribute('value', catalog.packages[0].sku);
+    await expect(review).toContainText(catalog.packages[0].name);
   } finally {
     releaseCatalog();
     releaseAuth();
@@ -100,8 +100,8 @@ test('enabled SSR waits for client catalog confirmation before PayPal SDK bootst
   const htmlResponse = await request.get('/app/credits');
   expect(htmlResponse.ok()).toBe(true);
   const html = await htmlResponse.text();
-  const packagesHtml = html.match(/<fieldset\b[^>]*class="credit-packages"[^>]*>([\s\S]*?)<\/fieldset>/)?.[1] ?? '';
-  expect(packagesHtml.match(/<article\b/g) ?? []).toHaveLength(catalog.packages.length + 1);
+  expect(html).toContain(catalog.packages[0].name);
+  expect(html).not.toContain('class="credit-packages"');
   expect(html).not.toContain('Loading payment options');
 
   let catalogRequests = 0;
@@ -152,8 +152,9 @@ test('enabled SSR waits for client catalog confirmation before PayPal SDK bootst
   try {
     await page.goto('/app/credits', { waitUntil: 'domcontentloaded' });
     await catalogStarted;
-    const group = page.getByRole('group', { name: 'Choose an image credit package' });
-    await expect(group.locator('.credit-package')).toHaveCount(catalog.packages.length + 1);
+    const review = page.getByRole('region', { name: 'Review your purchase' });
+    await expect(review).toContainText(catalog.packages[0].name);
+    await expect(page.locator('.credit-packages')).toHaveCount(0);
     await expect(page.locator('.payment-history').getByRole('button', { name: 'Refresh orders' })).toBeVisible();
     await expect(page.getByText('Checking payment availability')).toBeVisible();
     await page.evaluate(() => new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
@@ -167,7 +168,8 @@ test('enabled SSR waits for client catalog confirmation before PayPal SDK bootst
     releaseCatalog();
     await expect(page.getByRole('button', { name: 'PayPal bootstrap test checkout' })).toBeVisible();
     await expect(page.getByText('Checking payment availability')).toHaveCount(0);
-    await expect(group.locator('.credit-package')).toHaveCount(catalog.packages.length + 1);
+    await expect(review).toContainText(catalog.packages[0].name);
+    await expect(page.locator('.credit-packages')).toHaveCount(0);
     expect(catalogRequests).toBe(1);
     expect(sdkRequests).toBe(1);
     expect(createRequests).toBe(0);

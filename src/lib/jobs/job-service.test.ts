@@ -394,6 +394,22 @@ describe('JobService', () => {
     expect(deps.providers['watermark-removal'].remove).not.toHaveBeenCalled();
   });
 
+  it('reuses supplied recovery candidates while retaining owner checks and never replaying providers', async () => {
+    const deps = createDurableDependencies();
+    for (const [id, owner] of [['own', 'google-user-1'], ['foreign', 'another-user']]) {
+      await deps.requests.claim(createJob(id, `${inputKey}-${id}`, owner));
+      await deps.benefits.reserve(id, owner);
+      deps.expired.add(id);
+    }
+    const candidates = [...deps.records.values()];
+    deps.requests.recoverable.mockClear();
+    await new JobService(deps).recoverUser('google-user-1', candidates);
+    expect(deps.requests.recoverable).not.toHaveBeenCalled();
+    expect(deps.benefits.refund).toHaveBeenCalledExactlyOnceWith('own', 'google-user-1');
+    expect(deps.records.get('foreign')?.status).toBe('processing');
+    expect(deps.providers['watermark-removal'].remove).not.toHaveBeenCalled();
+  });
+
   it('keeps account recovery a no-op when durable paid processing is disabled', async () => {
     const deps = createDependencies();
     await expect(new JobService(deps).recoverUser('google-user-1')).resolves.toBeUndefined();

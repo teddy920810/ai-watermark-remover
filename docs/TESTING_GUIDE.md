@@ -9,10 +9,11 @@
 | 单元/集成 | `npm test` | 内容 schema、环境变量、API、Job、Provider、R2 命令与安全错误 | 否 |
 | 覆盖率 | `npm run test:coverage` | 核心服务与 API，强制阈值 | 否 |
 | 浏览器 E2E | `npm run test:e2e` | 上传 UI、失败提示、GA page_view、SEO、路由、无障碍 | 否，本地 Astro |
+| 独立图片组件 | `npm run test:components` | 真双图、单图、加载失败、键盘/鼠标/触控和切换复位 | 否，独立本地夹具 |
 | 快速本地检查 | `npm run check:fast` | 内容同步和全部单元测试 | 否 |
 | 内容检查 | `npm run check:content` | CMS/Blog/落地页/图片相关测试和生产 Build | 否 |
 | UI 检查 | `npm run check:ui` | 公共布局相关测试和公共页面 Playwright | 否 |
-| 完整验证 | `npm run verify` | 覆盖率、Lint、Build、E2E | 否 |
+| 完整验证 | `npm run verify` | 覆盖率、Lint、Build、E2E和独立组件浏览器测试 | 否 |
 | 高风险发布检查 | `npm run release:verify` | 依赖审计、站点配置和完整验证 | 否 |
 | 独立目标产物 | `node scripts/build-target.mjs site` / `app` / `worker` | 静态站、App Build Output 或真实 Worker bundle 与上传白名单 | 否 |
 | Public Production Smoke | `npm run test:smoke:production` | 正式域名、静态入口和匿名保护，不触发 Provider | 是，只读 |
@@ -74,8 +75,8 @@ Pages CMS 保存会提交到 `main`，随后触发 GitHub Actions 和 Vercel。�
 
 环境变量或域名变更后先运行无成本的 `npm run test:smoke:production`。R2、CORS、鉴权、Provider 或功能链路变更时，只运行受影响操作的认证功能验收，不用背景移除的结果代替图片去水印或视频验收。
 
-- 背景/物体移除：通过本机环境设置 `SMOKE_SESSION_COOKIE`，运行对应命令一次。
-- 新图片/视频工作区：通过本机环境设置 `PROCESSING_ACCEPTANCE_SESSION_COOKIE`，按 [Worker 部署说明](product/WORKER_DEPLOYMENT.md#发布验收与恢复操作) 确认操作、样本、报价金额/单位和调用预算，再运行 `--functional` 一次。
+- 旧协议背景/物体兼容验收：通过本机环境设置 `SMOKE_SESSION_COOKIE`，仅在需要核实旧API时运行对应旧命令一次；不能代替新客户端v1验收。
+- 新工作区六类操作（含背景/物体）：通过本机环境设置 `PROCESSING_ACCEPTANCE_SESSION_COOKIE`，按 [Worker 部署说明](product/WORKER_DEPLOYMENT.md#发布验收与恢复操作) 确认操作、样本、报价金额/单位和调用预算，再运行 `--functional` 一次。
 - 功能验收会创建临时对象并消耗额度。缺少认证或预算时不得记为通过；提交结果不明确时查询原任务，不重新提交。
 
 ## 自动化保护

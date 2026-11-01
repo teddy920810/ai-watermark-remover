@@ -5,6 +5,7 @@ import { cloudRunTriggerFromEnvironment } from './cloud-run-trigger';
 import { createProcessingRuntime } from './processing-services';
 import type { ProcessingRuntime, ProcessingRuntimeConfig } from './processing-services';
 import { imageCreditConfigFromEnvironment } from '../payments/image-credit-config';
+import { readImageProviderConfig } from '../config/image-providers';
 
 type RuntimeDependencies = {
   factory?: (config: ProcessingRuntimeConfig) => ProcessingRuntime;
@@ -21,7 +22,8 @@ export function createServerProcessingRuntimeAccessor(source: NodeJS.ProcessEnv 
     cached = (dependencies.factory ?? createProcessingRuntime)({
       r2: { endpoint: env.R2_ENDPOINT, accessKeyId: env.R2_ACCESS_KEY_ID, secretAccessKey: env.R2_SECRET_ACCESS_KEY, bucket: env.R2_BUCKET },
       databaseUrl: env.DATABASE_URL, apiKey: env.DEWATERMARK_API_KEY, ffprobePath: env.FFPROBE_PATH,
-      legacyProvider: { mode: env.WATERMARK_PROVIDER, baseUrl: env.DEWATERMARK_BASE_URL, predictMode: env.DEWATERMARK_PREDICT_MODE, timeoutMs: env.DEWATERMARK_TIMEOUT_MS, mockDelayMs: env.MOCK_PROCESSING_DELAY_MS },
+      scope: 'web',
+      imageProviders: readImageProviderConfig(source),
       // Web admission stays closed until it can durably start and monitor work.
       // Worker-side runtimes remain directly runnable without a web trigger.
       providerMode: env.PROCESSING_PROVIDER, enabled: env.PROCESSING_ENABLED && Boolean(trigger), priceVersion: env.PROCESSING_PRICE_VERSION, trigger,

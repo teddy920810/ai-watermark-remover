@@ -14,7 +14,7 @@ Production 环境至少配置 `SITE_URL=https://www.watermarkgemini.com`、所�
 
 Google Cloud OAuth Web Client 必须包含正式回调 `https://www.watermarkgemini.com/api/auth/callback/google`。根域名 `https://watermarkgemini.com` 应使用 308 重定向到 `www`。OAuth 修改部署后必须使用真实测试用户完成一次登录、确认回调成功、会话建立、退出登录和处理任务；仅检查按钮或接口 200 不代表集成完成。
 
-Git 页面应保持仓库连接到 `main`；域名页面应确保根域名为 Production，`www` 以 308 重定向到根域名。正常情况下 Vercel 自动管理 HTTPS 证书。
+Git 页面应保持仓库连接到 `main`；域名页面以 `www.watermarkgemini.com` 为正式站点，根域名以 308 重定向到 `www`。正常情况下 Vercel 自动管理 HTTPS 证书。代码、CI、部署绑定与线上验收分开结清，Ready不代表已通过真实功能验收。
 
 ## Cloudflare R2
 
@@ -22,7 +22,7 @@ Git 页面应保持仓库连接到 `main`；域名页面应确保根域名为 Pr
 
 测试额度只能通过后台命令补充，不提供公共管理接口。先运行 `npm run db:migrate`，再使用 `npm run benefits:grant-test -- --email "测试账号邮箱" --uses 3 --reference "qa-YYYYMMDD-purpose"` 预览变更；确认无误后在同一命令末尾增加 `--apply`。每次补充受 3 次上限约束，使用独立 `test_grant` 账本原因和幂等 reference，重复执行同一 reference 不会重复发放。不要把邮箱、数据库连接或命令输出粘贴到公开 issue。
 
-配置三个生命周期规则，让 `uploads/`、`results/`、`jobs/` 在 1 天后过期。定期确认规则没有被关闭，并轮换长期访问密钥。
+旧链`uploads/`、`results/`、`jobs/`按一天过期。新链只对`processing/staging/`、`processing/inputs/`、`processing/masks/`、`processing/results/`四个独立媒体前缀设置一天Expiration，不能对整个`processing/`设置TTL；jobs、quotes、attempts等恢复控制记录继续保留。实际配置回读与后台删除时间边界见[Worker生命周期规范](product/WORKER_DEPLOYMENT.md#媒体过期与控制记录)。
 
 ## 发布检查
 
@@ -44,7 +44,7 @@ npm run test:smoke:production
 npm run test:smoke:background-removal
 ```
 
-功能 Smoke 会显式创建 `background-removal` 任务，解码结果和下载 PNG、验证存在透明像素，并要求共享额度恰好减少 1。它不输出 Cookie、签名 URL 或对象 Key。失败时不要连续重试，先检查 Production 变量、R2 CORS、Provider、额度账本和 Function Logs。
+上例只验收`background-removal`，不代表普通/PRO/精修/视频或物体移除通过。旧物体API兼容验收使用`test:smoke:object-removal`；六类新客户端的v1操作使用`test:smoke:processing -- --functional`，明确operation、样本、expected-amount和expected-unit。应按原报价检查产物和一次扣费/退款，不能把所有操作都断言为PNG或减一。脚本不输出Cookie、签名URL或对象Key。失败/UNKNOWN先按原任务恢复，不连续收费重试。完整命令与授权预算见[测试指南](TESTING_GUIDE.md)。
 
 ## 常见故障
 

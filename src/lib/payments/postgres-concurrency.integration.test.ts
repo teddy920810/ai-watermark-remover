@@ -8,6 +8,7 @@ import { PostgresJobRequestStore } from '../jobs/postgres-job-request-store';
 import { PostgresProcessingStore } from '../processing/postgres-processing-store';
 import { PostgresPaymentStore } from './postgres-payment-store';
 import { reservePurchasedImageCredit } from './image-credit-wallet';
+import { ensureFreeBenefitAccount } from '../benefits/free-benefits';
 
 // Opt-in only. Credentials are injected by a local operator/ignored runner;
 // ordinary unit tests and CI never connect to a database from this file.
@@ -71,6 +72,7 @@ describe.skipIf(!databaseUrl)('real isolated PostgreSQL payment concurrency', ()
       if (exists.rows.length) throw new Error('The generated QA schema already exists; refusing to reuse it');
       await admin.query(`CREATE SCHEMA "${schema}"`);
       created = true;
+      if (process.env.PAYMENT_TEST_LOG_SCHEMA === 'true') console.info(JSON.stringify({ stage: 'isolated_schema_created', schema }));
     } finally { await admin.end(); }
     pool = new Pool({ connectionString: databaseUrl, max: 6, idleTimeoutMillis: 2_000, connectionTimeoutMillis: 10_000,
       application_name: schema, options: `-c search_path=${schema},pg_catalog -c lock_timeout=15000 -c statement_timeout=30000` });
@@ -94,6 +96,26 @@ describe.skipIf(!databaseUrl)('real isolated PostgreSQL payment concurrency', ()
     await pool.query('TRUNCATE payment_orders,payment_events,payment_adjustments,user_benefits,processing_accounts,processing_admissions,processing_outbox CASCADE');
   }, 30_000);
 
+  it('initializes a fresh owner exactly once across six real concurrent connections', async () => {
+    const freshOwner = `fresh-${randomUUID()}`;
+    const clients = await Promise.all(Array.from({ length: 6 }, () => pool.connect()));
+    try {
+      const pids = await Promise.all(clients.map(client => client.query<{ pid: number }>('SELECT pg_backend_pid() AS pid')));
+      expect(new Set(pids.map(result => result.rows[0].pid)).size).toBe(6);
+      expect((await clients[0].query('SELECT 1 FROM user_benefits WHERE user_id=$1', [freshOwner])).rows).toHaveLength(0);
+      await Promise.all(clients.map(async client => {
+        await client.query('BEGIN');
+        try { await ensureFreeBenefitAccount(client, freshOwner, { touchActivity: true, email: 'fresh-owner@example.test' }); await client.query('COMMIT'); }
+        catch (error) { await client.query('ROLLBACK'); throw error; }
+      }));
+      const account = await clients[0].query('SELECT balance FROM user_benefits WHERE user_id=$1', [freshOwner]);
+      expect(account.rows).toEqual([{ balance: 1 }]);
+      const ledger = await clients[0].query('SELECT delta,balance_after,reason,reference_id FROM benefit_ledger WHERE user_id=$1', [freshOwner]);
+      expect(ledger.rows).toEqual([{ delta: 1, balance_after: 1, reason: 'first_use', reference_id: freshOwner }]);
+      expect((await clients[0].query('SELECT 1 FROM user_benefit_identities WHERE user_id=$1', [freshOwner])).rows).toHaveLength(1);
+    } finally { clients.forEach(client => client.release()); }
+  }, 45_000);
+
   afterAll(async () => {
     if (pool) await pool.end();
     // Only remove the exact unique schema created by this run. Never clean up
@@ -107,6 +129,7 @@ describe.skipIf(!databaseUrl)('real isolated PostgreSQL payment concurrency', ()
       await admin.query(`DROP SCHEMA "${schema}" CASCADE`);
       const remaining = await admin.query('SELECT 1 FROM pg_namespace WHERE nspname=$1', [schema]);
       expect(remaining.rows).toHaveLength(0);
+      if (process.env.PAYMENT_TEST_LOG_SCHEMA === 'true') console.info(JSON.stringify({ stage: 'isolated_schema_removed', schema }));
       created = false;
     } finally { await admin.end(); }
   }, 60_000);

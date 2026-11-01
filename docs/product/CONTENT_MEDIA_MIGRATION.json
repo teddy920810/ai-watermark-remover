@@ -1,0 +1,2466 @@
+{
+  "scope": "Published content and source literals. Draft content excluded; source arrays may conservatively include inactive items. Runtime uploads/results are not public marketing assets.",
+  "reviewed": "Seven contact sheets reviewed: three marketing sheets and four additional published/source-literal sheets. All existing pairs are single composite files, not independent Before/After sources.",
+  "phases": {
+    "classification": "P3",
+    "replacement": "P5 revoked by content owner on 2026-11-01; original references restored",
+    "deletion": "No content deletion authorized; operator/SEO review required"
+  },
+  "items": [
+    {
+      "image": "/uploads/does-chatgpt-watermark-images-figure-1.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/does-chatgpt-watermark-images.md",
+          "line": 17,
+          "image": "/uploads/does-chatgpt-watermark-images-figure-1.png"
+        },
+        {
+          "file": "src/content/blog/does-chatgpt-watermark-images.md",
+          "line": 27,
+          "image": "/uploads/does-chatgpt-watermark-images-figure-1.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/does-chatgpt-watermark-images-figure-2.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/does-chatgpt-watermark-images.md",
+          "line": 51,
+          "image": "/uploads/does-chatgpt-watermark-images-figure-2.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/does-chatgpt-watermark-images-figure-3.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/does-chatgpt-watermark-images.md",
+          "line": 116,
+          "image": "/uploads/does-chatgpt-watermark-images-figure-3.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/how-to-remove-date-stamp-from-photo-figure-1.jpg",
+      "classification": "baked-controls-replace",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-date-stamp-from-photo.md",
+          "line": 16,
+          "image": "/uploads/how-to-remove-date-stamp-from-photo-figure-1.jpg"
+        }
+      ],
+      "review": {
+        "status": "operator-seo-pending",
+        "reference": "original-restored",
+        "reason": "Original pixels retained, including baked controls; replacement needs content-owner authorization."
+      }
+    },
+    {
+      "image": "/uploads/how-to-remove-date-stamp-from-photo-figure-2.jpg",
+      "classification": "baked-controls-replace",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-date-stamp-from-photo.md",
+          "line": 79,
+          "image": "/uploads/how-to-remove-date-stamp-from-photo-figure-2.jpg"
+        }
+      ],
+      "review": {
+        "status": "operator-seo-pending",
+        "reference": "original-restored",
+        "reason": "Original pixels retained, including baked controls; replacement needs content-owner authorization."
+      }
+    },
+    {
+      "image": "/uploads/how-to-remove-date-stamp-from-photo-figure-3.jpg",
+      "classification": "baked-controls-replace",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-date-stamp-from-photo.md",
+          "line": 111,
+          "image": "/uploads/how-to-remove-date-stamp-from-photo-figure-3.jpg"
+        }
+      ],
+      "review": {
+        "status": "operator-seo-pending",
+        "reference": "original-restored",
+        "reason": "Original pixels retained, including baked controls; replacement needs content-owner authorization."
+      }
+    },
+    {
+      "image": "/uploads/how-to-remove-date-stamp-from-photo-figure-4.jpg",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-date-stamp-from-photo.md",
+          "line": 159,
+          "image": "/uploads/how-to-remove-date-stamp-from-photo-figure-4.jpg"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/how-to-remove-gamma-watermark-figure-1.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-gamma-watermark.md",
+          "line": 31,
+          "image": "/uploads/how-to-remove-gamma-watermark-figure-1.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/how-to-remove-gamma-watermark-figure-2.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-gamma-watermark.md",
+          "line": 68,
+          "image": "/uploads/how-to-remove-gamma-watermark-figure-2.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/how-to-remove-gamma-watermark-figure-3.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-gamma-watermark.md",
+          "line": 93,
+          "image": "/uploads/how-to-remove-gamma-watermark-figure-3.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/how-to-remove-gamma-watermark-figure-4.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-gamma-watermark.md",
+          "line": 161,
+          "image": "/uploads/how-to-remove-gamma-watermark-figure-4.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/how-to-remove-gamma-watermark-figure-5.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-gamma-watermark.md",
+          "line": 189,
+          "image": "/uploads/how-to-remove-gamma-watermark-figure-5.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/how-to-remove-gpt-image-2-5-grain-noise-figure-1.png",
+      "classification": "baked-controls-replace",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-gpt-image-2-5-grain-noise.md",
+          "line": 17,
+          "image": "/uploads/how-to-remove-gpt-image-2-5-grain-noise-figure-1.png"
+        }
+      ],
+      "review": {
+        "status": "operator-seo-pending",
+        "reference": "original-restored",
+        "reason": "Original pixels retained, including baked controls; replacement needs content-owner authorization."
+      }
+    },
+    {
+      "image": "/uploads/how-to-remove-gpt-image-2-5-grain-noise-figure-2.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-gpt-image-2-5-grain-noise.md",
+          "line": 56,
+          "image": "/uploads/how-to-remove-gpt-image-2-5-grain-noise-figure-2.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/how-to-remove-gpt-image-2-5-grain-noise-figure-3.png",
+      "classification": "baked-controls-replace",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-gpt-image-2-5-grain-noise.md",
+          "line": 84,
+          "image": "/uploads/how-to-remove-gpt-image-2-5-grain-noise-figure-3.png"
+        }
+      ],
+      "review": {
+        "status": "operator-seo-pending",
+        "reference": "original-restored",
+        "reason": "Original pixels retained, including baked controls; replacement needs content-owner authorization."
+      }
+    },
+    {
+      "image": "/uploads/how-to-remove-gpt-image-2-5-grain-noise-figure-4.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-gpt-image-2-5-grain-noise.md",
+          "line": 105,
+          "image": "/uploads/how-to-remove-gpt-image-2-5-grain-noise-figure-4.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/how-to-remove-grok-watermark-figure-1.png",
+      "classification": "baked-controls-replace",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-grok-watermark.md",
+          "line": 28,
+          "image": "/uploads/how-to-remove-grok-watermark-figure-1.png"
+        }
+      ],
+      "review": {
+        "status": "operator-seo-pending",
+        "reference": "original-restored",
+        "reason": "Original pixels retained, including baked controls; replacement needs content-owner authorization."
+      }
+    },
+    {
+      "image": "/uploads/how-to-remove-grok-watermark-figure-2.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-grok-watermark.md",
+          "line": 97,
+          "image": "/uploads/how-to-remove-grok-watermark-figure-2.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/how-to-remove-grok-watermark-figure-3.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-grok-watermark.md",
+          "line": 143,
+          "image": "/uploads/how-to-remove-grok-watermark-figure-3.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/how-to-remove-instagram-watermark-figure-1.jpg",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-instagram-watermark.md",
+          "line": 17,
+          "image": "/uploads/how-to-remove-instagram-watermark-figure-1.jpg"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/how-to-remove-instagram-watermark-figure-2.jpg",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-instagram-watermark.md",
+          "line": 33,
+          "image": "/uploads/how-to-remove-instagram-watermark-figure-2.jpg"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/how-to-remove-instagram-watermark-figure-3.jpg",
+      "classification": "baked-controls-replace",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-instagram-watermark.md",
+          "line": 39,
+          "image": "/uploads/how-to-remove-instagram-watermark-figure-3.jpg"
+        }
+      ],
+      "review": {
+        "status": "operator-seo-pending",
+        "reference": "original-restored",
+        "reason": "Original pixels retained, including baked controls; replacement needs content-owner authorization."
+      }
+    },
+    {
+      "image": "/uploads/how-to-remove-instagram-watermark-figure-4.jpg",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-instagram-watermark.md",
+          "line": 47,
+          "image": "/uploads/how-to-remove-instagram-watermark-figure-4.jpg"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/how-to-remove-instagram-watermark-figure-5.jpg",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-instagram-watermark.md",
+          "line": 65,
+          "image": "/uploads/how-to-remove-instagram-watermark-figure-5.jpg"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/how-to-remove-instagram-watermark-figure-6.jpg",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-instagram-watermark.md",
+          "line": 71,
+          "image": "/uploads/how-to-remove-instagram-watermark-figure-6.jpg"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/how-to-remove-instagram-watermark-figure-7.jpg",
+      "classification": "baked-controls-replace",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-instagram-watermark.md",
+          "line": 77,
+          "image": "/uploads/how-to-remove-instagram-watermark-figure-7.jpg"
+        }
+      ],
+      "review": {
+        "status": "operator-seo-pending",
+        "reference": "original-restored",
+        "reason": "Original pixels retained, including baked controls; replacement needs content-owner authorization."
+      }
+    },
+    {
+      "image": "/uploads/how-to-remove-instagram-watermark-figure-8.jpg",
+      "classification": "baked-controls-replace",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-instagram-watermark.md",
+          "line": 83,
+          "image": "/uploads/how-to-remove-instagram-watermark-figure-8.jpg"
+        }
+      ],
+      "review": {
+        "status": "operator-seo-pending",
+        "reference": "original-restored",
+        "reason": "Original pixels retained, including baked controls; replacement needs content-owner authorization."
+      }
+    },
+    {
+      "image": "/uploads/how-to-remove-instagram-watermark-figure-9.jpg",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-instagram-watermark.md",
+          "line": 91,
+          "image": "/uploads/how-to-remove-instagram-watermark-figure-9.jpg"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/how-to-remove-instagram-watermark-figure-10.jpg",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-instagram-watermark.md",
+          "line": 97,
+          "image": "/uploads/how-to-remove-instagram-watermark-figure-10.jpg"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/how-to-remove-instagram-watermark-figure-11.jpg",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-instagram-watermark.md",
+          "line": 103,
+          "image": "/uploads/how-to-remove-instagram-watermark-figure-11.jpg"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/how-to-remove-instagram-watermark-figure-12.jpg",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-instagram-watermark.md",
+          "line": 115,
+          "image": "/uploads/how-to-remove-instagram-watermark-figure-12.jpg"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/how-to-remove-instagram-watermark-figure-13.jpg",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-instagram-watermark.md",
+          "line": 123,
+          "image": "/uploads/how-to-remove-instagram-watermark-figure-13.jpg"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/how-to-remove-instagram-watermark-figure-14.jpg",
+      "classification": "baked-controls-replace",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-instagram-watermark.md",
+          "line": 135,
+          "image": "/uploads/how-to-remove-instagram-watermark-figure-14.jpg"
+        }
+      ],
+      "review": {
+        "status": "operator-seo-pending",
+        "reference": "original-restored",
+        "reason": "Original pixels retained, including baked controls; replacement needs content-owner authorization."
+      }
+    },
+    {
+      "image": "/uploads/how-to-remove-instagram-watermark-figure-15.jpg",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-instagram-watermark.md",
+          "line": 141,
+          "image": "/uploads/how-to-remove-instagram-watermark-figure-15.jpg"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/how-to-remove-instagram-watermark-figure-16.jpg",
+      "classification": "baked-controls-replace",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-instagram-watermark.md",
+          "line": 154,
+          "image": "/uploads/how-to-remove-instagram-watermark-figure-16.jpg"
+        }
+      ],
+      "review": {
+        "status": "operator-seo-pending",
+        "reference": "original-restored",
+        "reason": "Original pixels retained, including baked controls; replacement needs content-owner authorization."
+      }
+    },
+    {
+      "image": "/uploads/how-to-remove-instagram-watermark-figure-17.jpg",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-instagram-watermark.md",
+          "line": 170,
+          "image": "/uploads/how-to-remove-instagram-watermark-figure-17.jpg"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/how-to-remove-instagram-watermark-figure-18.jpg",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-instagram-watermark.md",
+          "line": 196,
+          "image": "/uploads/how-to-remove-instagram-watermark-figure-18.jpg"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/how-to-remove-metadata-from-image-figure-1.png",
+      "classification": "baked-controls-replace",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-metadata-from-image.md",
+          "line": 16,
+          "image": "/uploads/how-to-remove-metadata-from-image-figure-1.png"
+        },
+        {
+          "file": "src/content/blog/how-to-remove-metadata-from-image.md",
+          "line": 23,
+          "image": "/uploads/how-to-remove-metadata-from-image-figure-1.png"
+        }
+      ],
+      "review": {
+        "status": "operator-seo-pending",
+        "reference": "original-restored",
+        "reason": "Original pixels retained, including baked controls; replacement needs content-owner authorization."
+      }
+    },
+    {
+      "image": "/uploads/how-to-remove-metadata-from-image-figure-2.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-metadata-from-image.md",
+          "line": 47,
+          "image": "/uploads/how-to-remove-metadata-from-image-figure-2.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/how-to-remove-metadata-from-image-figure-3.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-metadata-from-image.md",
+          "line": 87,
+          "image": "/uploads/how-to-remove-metadata-from-image-figure-3.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/how-to-remove-notebooklm-watermark-figure-1.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-notebooklm-watermark.md",
+          "line": 30,
+          "image": "/uploads/how-to-remove-notebooklm-watermark-figure-1.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/how-to-remove-notebooklm-watermark-figure-2.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-notebooklm-watermark.md",
+          "line": 77,
+          "image": "/uploads/how-to-remove-notebooklm-watermark-figure-2.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/how-to-remove-notebooklm-watermark-figure-3.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-notebooklm-watermark.md",
+          "line": 104,
+          "image": "/uploads/how-to-remove-notebooklm-watermark-figure-3.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/how-to-remove-notebooklm-watermark-figure-4.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-notebooklm-watermark.md",
+          "line": 179,
+          "image": "/uploads/how-to-remove-notebooklm-watermark-figure-4.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/how-to-remove-notebooklm-watermark-figure-5.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-notebooklm-watermark.md",
+          "line": 205,
+          "image": "/uploads/how-to-remove-notebooklm-watermark-figure-5.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/how-to-remove-samsung-watermark-from-photos-figure-1.jpg",
+      "classification": "baked-controls-replace",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-samsung-watermark-from-photos.md",
+          "line": 16,
+          "image": "/uploads/how-to-remove-samsung-watermark-from-photos-figure-1.jpg"
+        }
+      ],
+      "review": {
+        "status": "operator-seo-pending",
+        "reference": "original-restored",
+        "reason": "Original pixels retained, including baked controls; replacement needs content-owner authorization."
+      }
+    },
+    {
+      "image": "/uploads/how-to-remove-samsung-watermark-from-photos-figure-2.jpg",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-samsung-watermark-from-photos.md",
+          "line": 32,
+          "image": "/uploads/how-to-remove-samsung-watermark-from-photos-figure-2.jpg"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/how-to-remove-samsung-watermark-from-photos-figure-3.jpg",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-samsung-watermark-from-photos.md",
+          "line": 46,
+          "image": "/uploads/how-to-remove-samsung-watermark-from-photos-figure-3.jpg"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/how-to-remove-samsung-watermark-from-photos-figure-4.jpg",
+      "classification": "baked-controls-replace",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-samsung-watermark-from-photos.md",
+          "line": 52,
+          "image": "/uploads/how-to-remove-samsung-watermark-from-photos-figure-4.jpg"
+        }
+      ],
+      "review": {
+        "status": "operator-seo-pending",
+        "reference": "original-restored",
+        "reason": "Original pixels retained, including baked controls; replacement needs content-owner authorization."
+      }
+    },
+    {
+      "image": "/uploads/how-to-remove-samsung-watermark-from-photos-figure-5.jpg",
+      "classification": "baked-controls-replace",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-samsung-watermark-from-photos.md",
+          "line": 64,
+          "image": "/uploads/how-to-remove-samsung-watermark-from-photos-figure-5.jpg"
+        }
+      ],
+      "review": {
+        "status": "operator-seo-pending",
+        "reference": "original-restored",
+        "reason": "Original pixels retained, including baked controls; replacement needs content-owner authorization."
+      }
+    },
+    {
+      "image": "/uploads/how-to-remove-samsung-watermark-from-photos-figure-6.jpg",
+      "classification": "baked-controls-replace",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-samsung-watermark-from-photos.md",
+          "line": 80,
+          "image": "/uploads/how-to-remove-samsung-watermark-from-photos-figure-6.jpg"
+        }
+      ],
+      "review": {
+        "status": "operator-seo-pending",
+        "reference": "original-restored",
+        "reason": "Original pixels retained, including baked controls; replacement needs content-owner authorization."
+      }
+    },
+    {
+      "image": "/uploads/how-to-remove-samsung-watermark-from-photos-figure-7.jpg",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-samsung-watermark-from-photos.md",
+          "line": 86,
+          "image": "/uploads/how-to-remove-samsung-watermark-from-photos-figure-7.jpg"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/how-to-remove-samsung-watermark-from-photos-figure-8.jpg",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-samsung-watermark-from-photos.md",
+          "line": 96,
+          "image": "/uploads/how-to-remove-samsung-watermark-from-photos-figure-8.jpg"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/how-to-remove-samsung-watermark-from-photos-figure-9.jpg",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-samsung-watermark-from-photos.md",
+          "line": 124,
+          "image": "/uploads/how-to-remove-samsung-watermark-from-photos-figure-9.jpg"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/how-to-remove-samsung-watermark-from-photos-figure-10.jpg",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-samsung-watermark-from-photos.md",
+          "line": 130,
+          "image": "/uploads/how-to-remove-samsung-watermark-from-photos-figure-10.jpg"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/how-to-remove-samsung-watermark-from-photos-figure-11.jpg",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-samsung-watermark-from-photos.md",
+          "line": 146,
+          "image": "/uploads/how-to-remove-samsung-watermark-from-photos-figure-11.jpg"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/how-to-remove-samsung-watermark-from-photos-figure-12.jpg",
+      "classification": "baked-controls-replace",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-samsung-watermark-from-photos.md",
+          "line": 160,
+          "image": "/uploads/how-to-remove-samsung-watermark-from-photos-figure-12.jpg"
+        }
+      ],
+      "review": {
+        "status": "operator-seo-pending",
+        "reference": "original-restored",
+        "reason": "Original pixels retained, including baked controls; replacement needs content-owner authorization."
+      }
+    },
+    {
+      "image": "/uploads/how-to-remove-samsung-watermark-from-photos-figure-13.jpg",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-samsung-watermark-from-photos.md",
+          "line": 168,
+          "image": "/uploads/how-to-remove-samsung-watermark-from-photos-figure-13.jpg"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/how-to-remove-samsung-watermark-from-photos-figure-14.jpg",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-samsung-watermark-from-photos.md",
+          "line": 182,
+          "image": "/uploads/how-to-remove-samsung-watermark-from-photos-figure-14.jpg"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/how-to-remove-samsung-watermark-from-photos-figure-15.jpg",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-samsung-watermark-from-photos.md",
+          "line": 198,
+          "image": "/uploads/how-to-remove-samsung-watermark-from-photos-figure-15.jpg"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/how-to-remove-watermark-from-gif-figure-1.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-watermark-from-gif.md",
+          "line": 28,
+          "image": "/uploads/how-to-remove-watermark-from-gif-figure-1.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/how-to-remove-watermark-from-gif-figure-2.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-watermark-from-gif.md",
+          "line": 67,
+          "image": "/uploads/how-to-remove-watermark-from-gif-figure-2.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/how-to-remove-watermark-from-gif-figure-3.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-watermark-from-gif.md",
+          "line": 109,
+          "image": "/uploads/how-to-remove-watermark-from-gif-figure-3.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/how-to-remove-watermark-from-gif-figure-4.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-watermark-from-gif.md",
+          "line": 135,
+          "image": "/uploads/how-to-remove-watermark-from-gif-figure-4.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/how-to-remove-watermark-from-gif-figure-5.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-watermark-from-gif.md",
+          "line": 152,
+          "image": "/uploads/how-to-remove-watermark-from-gif-figure-5.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/how-to-remove-tiktok-watermark-figure-1.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-watermark-tiktok.md",
+          "line": 17,
+          "image": "/uploads/how-to-remove-tiktok-watermark-figure-1.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/how-to-remove-tiktok-watermark-figure-2.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-watermark-tiktok.md",
+          "line": 63,
+          "image": "/uploads/how-to-remove-tiktok-watermark-figure-2.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/how-to-remove-tiktok-watermark-figure-3.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-watermark-tiktok.md",
+          "line": 83,
+          "image": "/uploads/how-to-remove-tiktok-watermark-figure-3.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/how-to-remove-tiktok-watermark-figure-4.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-remove-watermark-tiktok.md",
+          "line": 143,
+          "image": "/uploads/how-to-remove-tiktok-watermark-figure-4.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/how-to-turn-off-gemini-watermark-figure-1.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-turn-off-gemini-watermark.md",
+          "line": 17,
+          "image": "/uploads/how-to-turn-off-gemini-watermark-figure-1.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/how-to-turn-off-gemini-watermark-figure-2.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-turn-off-gemini-watermark.md",
+          "line": 83,
+          "image": "/uploads/how-to-turn-off-gemini-watermark-figure-2.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/how-to-turn-off-gemini-watermark-figure-3.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/how-to-turn-off-gemini-watermark.md",
+          "line": 151,
+          "image": "/uploads/how-to-turn-off-gemini-watermark-figure-3.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/moving-watermark-situation.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/remove-moving-watermark-from-video.md",
+          "line": 25,
+          "image": "/uploads/moving-watermark-situation.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/moving-watermark-methods-compared.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/remove-moving-watermark-from-video.md",
+          "line": 47,
+          "image": "/uploads/moving-watermark-methods-compared.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/remove-moving-watermark-from-original-object.png",
+      "classification": "baked-controls-replace",
+      "references": [
+        {
+          "file": "src/content/blog/remove-moving-watermark-from-video.md",
+          "line": 73,
+          "image": "/uploads/remove-moving-watermark-from-original-object.png"
+        }
+      ],
+      "review": {
+        "status": "operator-seo-pending",
+        "reference": "original-restored",
+        "reason": "Original pixels retained, including baked controls; replacement needs content-owner authorization."
+      }
+    },
+    {
+      "image": "/uploads/crop-watermark.png",
+      "classification": "baked-controls-replace",
+      "references": [
+        {
+          "file": "src/content/blog/remove-moving-watermark-from-video.md",
+          "line": 105,
+          "image": "/uploads/crop-watermark.png"
+        }
+      ],
+      "review": {
+        "status": "operator-seo-pending",
+        "reference": "original-restored",
+        "reason": "Original pixels retained, including baked controls; replacement needs content-owner authorization."
+      }
+    },
+    {
+      "image": "/uploads/track-the-moving-watermark.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/remove-moving-watermark-from-video.md",
+          "line": 131,
+          "image": "/uploads/track-the-moving-watermark.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/temporal-repair-for-moving-watermark.png",
+      "classification": "baked-controls-replace",
+      "references": [
+        {
+          "file": "src/content/blog/remove-moving-watermark-from-video.md",
+          "line": 157,
+          "image": "/uploads/temporal-repair-for-moving-watermark.png"
+        }
+      ],
+      "review": {
+        "status": "operator-seo-pending",
+        "reference": "original-restored",
+        "reason": "Original pixels retained, including baked controls; replacement needs content-owner authorization."
+      }
+    },
+    {
+      "image": "/uploads/replace-the-shot-for-moving-watermark.png",
+      "classification": "baked-controls-replace",
+      "references": [
+        {
+          "file": "src/content/blog/remove-moving-watermark-from-video.md",
+          "line": 173,
+          "image": "/uploads/replace-the-shot-for-moving-watermark.png"
+        }
+      ],
+      "review": {
+        "status": "operator-seo-pending",
+        "reference": "original-restored",
+        "reason": "Original pixels retained, including baked controls; replacement needs content-owner authorization."
+      }
+    },
+    {
+      "image": "/uploads/temporal-qa-before-the-final-export.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/remove-moving-watermark-from-video.md",
+          "line": 203,
+          "image": "/uploads/temporal-qa-before-the-final-export.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/watermarkgemini-workflow-for-moving-watermark.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/blog/remove-moving-watermark-from-video.md",
+          "line": 224,
+          "image": "/uploads/watermarkgemini-workflow-for-moving-watermark.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/og-card.svg",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/homepage/home.json",
+          "line": 4,
+          "image": "/uploads/og-card.svg"
+        },
+        {
+          "file": "src/content/settings/images.json",
+          "line": 9,
+          "image": "/uploads/og-card.svg"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/home-blueprint/features/hero-sample-01-serum.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/homepage/home.json",
+          "line": 20,
+          "image": "/uploads/home-blueprint/features/hero-sample-01-serum.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/home-blueprint/features/hero-sample-02-sunset.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/homepage/home.json",
+          "line": 26,
+          "image": "/uploads/home-blueprint/features/hero-sample-02-sunset.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/home-blueprint/features/hero-sample-03-tote.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/homepage/home.json",
+          "line": 32,
+          "image": "/uploads/home-blueprint/features/hero-sample-03-tote.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/home-blueprint/features/hero-sample-04-contract.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/homepage/home.json",
+          "line": 38,
+          "image": "/uploads/home-blueprint/features/hero-sample-04-contract.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/home-blueprint/results/result-01-logo-hiker.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/homepage/home.json",
+          "line": 50,
+          "image": "/uploads/home-blueprint/results/result-01-logo-hiker.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/home-blueprint/results/result-02-magazine-model.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/homepage/home.json",
+          "line": 60,
+          "image": "/uploads/home-blueprint/results/result-02-magazine-model.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/home-blueprint/results/result-03-gemini-water.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/homepage/home.json",
+          "line": 70,
+          "image": "/uploads/home-blueprint/results/result-03-gemini-water.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/home-blueprint/results/result-04-date-pyramids.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/homepage/home.json",
+          "line": 80,
+          "image": "/uploads/home-blueprint/results/result-04-date-pyramids.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/home-blueprint/results/result-05-signature-invoice.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/homepage/home.json",
+          "line": 91,
+          "image": "/uploads/home-blueprint/results/result-05-signature-invoice.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/home-blueprint/features/feature-01-cream-branded-base.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/homepage/home.json",
+          "line": 182,
+          "image": "/uploads/home-blueprint/features/feature-01-cream-branded-base.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/home-blueprint/features/feature-02-date-base.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/homepage/home.json",
+          "line": 193,
+          "image": "/uploads/home-blueprint/features/feature-02-date-base.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/home-blueprint/features/feature-03-travel-clean-base.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/homepage/home.json",
+          "line": 211,
+          "image": "/uploads/home-blueprint/features/feature-03-travel-clean-base.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/home-blueprint/features/feature-04-laptop-clean-base.png",
+      "classification": "baked-controls-replace",
+      "references": [
+        {
+          "file": "src/content/homepage/home.json",
+          "line": 227,
+          "image": "/uploads/home-blueprint/features/feature-04-laptop-clean-base.png"
+        }
+      ],
+      "review": {
+        "status": "operator-seo-pending",
+        "reference": "original-restored",
+        "reason": "Original pixels retained, including baked controls; replacement needs content-owner authorization."
+      }
+    },
+    {
+      "image": "/uploads/home-blueprint/audiences/creator-photo-studio.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/homepage/home.json",
+          "line": 297,
+          "image": "/uploads/home-blueprint/audiences/creator-photo-studio.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/home-blueprint/audiences/marketer-office-meeting.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/homepage/home.json",
+          "line": 306,
+          "image": "/uploads/home-blueprint/audiences/marketer-office-meeting.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/home-blueprint/audiences/educator-classroom-lesson.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/homepage/home.json",
+          "line": 315,
+          "image": "/uploads/home-blueprint/audiences/educator-classroom-lesson.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/home-blueprint/testimonials/emily-carter.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/homepage/home.json",
+          "line": 331,
+          "image": "/uploads/home-blueprint/testimonials/emily-carter.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/home-blueprint/testimonials/daniel-brooks.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/homepage/home.json",
+          "line": 338,
+          "image": "/uploads/home-blueprint/testimonials/daniel-brooks.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/home-blueprint/testimonials/sophia-martinez.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/homepage/home.json",
+          "line": 345,
+          "image": "/uploads/home-blueprint/testimonials/sophia-martinez.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/home-blueprint/testimonials/michael-chen.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/homepage/home.json",
+          "line": 352,
+          "image": "/uploads/home-blueprint/testimonials/michael-chen.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/home-blueprint/testimonials/olivia-bennett.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/homepage/home.json",
+          "line": 359,
+          "image": "/uploads/home-blueprint/testimonials/olivia-bennett.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/home-blueprint/testimonials/ethan-walker.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/homepage/home.json",
+          "line": 366,
+          "image": "/uploads/home-blueprint/testimonials/ethan-walker.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/home-blueprint/testimonials/rachel-kim.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/homepage/home.json",
+          "line": 373,
+          "image": "/uploads/home-blueprint/testimonials/rachel-kim.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/home-blueprint/testimonials/james-wilson.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/homepage/home.json",
+          "line": 380,
+          "image": "/uploads/home-blueprint/testimonials/james-wilson.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/home-blueprint/tool-cards/card-01-background-lamp.png",
+      "classification": "baked-controls-replace",
+      "references": [
+        {
+          "file": "src/content/homepage/home.json",
+          "line": 393,
+          "image": "/uploads/home-blueprint/tool-cards/card-01-background-lamp.png"
+        }
+      ],
+      "review": {
+        "status": "operator-seo-pending",
+        "reference": "original-restored",
+        "reason": "Original pixels retained, including baked controls; replacement needs content-owner authorization."
+      }
+    },
+    {
+      "image": "/uploads/home-blueprint/tool-cards/card-02-object-living-room.png",
+      "classification": "baked-controls-replace",
+      "references": [
+        {
+          "file": "src/content/homepage/home.json",
+          "line": 401,
+          "image": "/uploads/home-blueprint/tool-cards/card-02-object-living-room.png"
+        }
+      ],
+      "review": {
+        "status": "operator-seo-pending",
+        "reference": "original-restored",
+        "reason": "Original pixels retained, including baked controls; replacement needs content-owner authorization."
+      }
+    },
+    {
+      "image": "/uploads/home-blueprint/tool-cards/card-03-text-coastal-car.png",
+      "classification": "baked-controls-replace",
+      "references": [
+        {
+          "file": "src/content/homepage/home.json",
+          "line": 409,
+          "image": "/uploads/home-blueprint/tool-cards/card-03-text-coastal-car.png"
+        }
+      ],
+      "review": {
+        "status": "operator-seo-pending",
+        "reference": "original-restored",
+        "reason": "Original pixels retained, including baked controls; replacement needs content-owner authorization."
+      }
+    },
+    {
+      "image": "/uploads/home-blueprint/tool-cards/card-04-logo-hiking-bottle.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/homepage/home.json",
+          "line": 417,
+          "image": "/uploads/home-blueprint/tool-cards/card-04-logo-hiking-bottle.png"
+        },
+        {
+          "file": "src/content/landing-pages/remove-logo-from-image.json",
+          "line": 130,
+          "image": "/uploads/home-blueprint/tool-cards/card-04-logo-hiking-bottle.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/home-blueprint/tool-cards/card-05-ai-watermark-tablet.png",
+      "classification": "baked-controls-replace",
+      "references": [
+        {
+          "file": "src/content/homepage/home.json",
+          "line": 425,
+          "image": "/uploads/home-blueprint/tool-cards/card-05-ai-watermark-tablet.png"
+        }
+      ],
+      "review": {
+        "status": "operator-seo-pending",
+        "reference": "original-restored",
+        "reason": "Original pixels retained, including baked controls; replacement needs content-owner authorization."
+      }
+    },
+    {
+      "image": "/uploads/home-blueprint/tool-cards/card-06-gemini-watermark-greenhouse.png",
+      "classification": "baked-controls-replace",
+      "references": [
+        {
+          "file": "src/content/homepage/home.json",
+          "line": 433,
+          "image": "/uploads/home-blueprint/tool-cards/card-06-gemini-watermark-greenhouse.png"
+        }
+      ],
+      "review": {
+        "status": "operator-seo-pending",
+        "reference": "original-restored",
+        "reason": "Original pixels retained, including baked controls; replacement needs content-owner authorization."
+      }
+    },
+    {
+      "image": "/uploads/home-blueprint/tool-cards/card-07-date-stamp-picnic.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/homepage/home.json",
+          "line": 441,
+          "image": "/uploads/home-blueprint/tool-cards/card-07-date-stamp-picnic.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/home-blueprint/tool-cards/card-08-signature-architecture.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/homepage/home.json",
+          "line": 449,
+          "image": "/uploads/home-blueprint/tool-cards/card-08-signature-architecture.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/workflow-upload-step.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/landing-pages/batch-watermark-remover.json",
+          "line": 37,
+          "image": "/uploads/workflow-upload-step.png"
+        },
+        {
+          "file": "src/content/landing-pages/facebook-watermark-remover.json",
+          "line": 37,
+          "image": "/uploads/workflow-upload-step.png"
+        },
+        {
+          "file": "src/content/landing-pages/grok-watermark-remover.json",
+          "line": 35,
+          "image": "/uploads/workflow-upload-step.png"
+        },
+        {
+          "file": "src/content/landing-pages/instagram-watermark-remover.json",
+          "line": 37,
+          "image": "/uploads/workflow-upload-step.png"
+        },
+        {
+          "file": "src/content/landing-pages/kling-watermark-remover.json",
+          "line": 73,
+          "image": "/uploads/workflow-upload-step.png"
+        },
+        {
+          "file": "src/content/landing-pages/notebooklm-watermark-remover.json",
+          "line": 35,
+          "image": "/uploads/workflow-upload-step.png"
+        },
+        {
+          "file": "src/content/landing-pages/remove-subtitle-from-video.json",
+          "line": 37,
+          "image": "/uploads/workflow-upload-step.png"
+        },
+        {
+          "file": "src/content/landing-pages/shutterstock-watermark-remover.json",
+          "line": 35,
+          "image": "/uploads/workflow-upload-step.png"
+        },
+        {
+          "file": "src/content/settings/site.json",
+          "line": 68,
+          "image": "/uploads/workflow-upload-step.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/workflow-ai-detection-step.png",
+      "classification": "baked-controls-replace",
+      "references": [
+        {
+          "file": "src/content/landing-pages/batch-watermark-remover.json",
+          "line": 43,
+          "image": "/uploads/workflow-ai-detection-step.png"
+        },
+        {
+          "file": "src/content/landing-pages/facebook-watermark-remover.json",
+          "line": 43,
+          "image": "/uploads/workflow-ai-detection-step.png"
+        },
+        {
+          "file": "src/content/landing-pages/grok-watermark-remover.json",
+          "line": 41,
+          "image": "/uploads/workflow-ai-detection-step.png"
+        },
+        {
+          "file": "src/content/landing-pages/instagram-watermark-remover.json",
+          "line": 43,
+          "image": "/uploads/workflow-ai-detection-step.png"
+        },
+        {
+          "file": "src/content/landing-pages/kling-watermark-remover.json",
+          "line": 79,
+          "image": "/uploads/workflow-ai-detection-step.png"
+        },
+        {
+          "file": "src/content/landing-pages/notebooklm-watermark-remover.json",
+          "line": 41,
+          "image": "/uploads/workflow-ai-detection-step.png"
+        },
+        {
+          "file": "src/content/landing-pages/remove-subtitle-from-video.json",
+          "line": 43,
+          "image": "/uploads/workflow-ai-detection-step.png"
+        },
+        {
+          "file": "src/content/landing-pages/shutterstock-watermark-remover.json",
+          "line": 41,
+          "image": "/uploads/workflow-ai-detection-step.png"
+        },
+        {
+          "file": "src/content/settings/site.json",
+          "line": 72,
+          "image": "/uploads/workflow-ai-detection-step.png"
+        }
+      ],
+      "review": {
+        "status": "operator-seo-pending",
+        "reference": "original-restored",
+        "reason": "Original pixels retained, including baked controls; replacement needs content-owner authorization."
+      }
+    },
+    {
+      "image": "/uploads/workflow-download-step.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/landing-pages/batch-watermark-remover.json",
+          "line": 49,
+          "image": "/uploads/workflow-download-step.png"
+        },
+        {
+          "file": "src/content/landing-pages/facebook-watermark-remover.json",
+          "line": 49,
+          "image": "/uploads/workflow-download-step.png"
+        },
+        {
+          "file": "src/content/landing-pages/grok-watermark-remover.json",
+          "line": 47,
+          "image": "/uploads/workflow-download-step.png"
+        },
+        {
+          "file": "src/content/landing-pages/instagram-watermark-remover.json",
+          "line": 49,
+          "image": "/uploads/workflow-download-step.png"
+        },
+        {
+          "file": "src/content/landing-pages/kling-watermark-remover.json",
+          "line": 85,
+          "image": "/uploads/workflow-download-step.png"
+        },
+        {
+          "file": "src/content/landing-pages/notebooklm-watermark-remover.json",
+          "line": 47,
+          "image": "/uploads/workflow-download-step.png"
+        },
+        {
+          "file": "src/content/landing-pages/remove-subtitle-from-video.json",
+          "line": 49,
+          "image": "/uploads/workflow-download-step.png"
+        },
+        {
+          "file": "src/content/landing-pages/shutterstock-watermark-remover.json",
+          "line": 47,
+          "image": "/uploads/workflow-download-step.png"
+        },
+        {
+          "file": "src/content/settings/site.json",
+          "line": 76,
+          "image": "/uploads/workflow-download-step.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/capcut-operations-feature-1.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/landing-pages/capcut-watermark-remover.json",
+          "line": 34,
+          "image": "/uploads/capcut-operations-feature-1.png"
+        },
+        {
+          "file": "src/content/landing-pages/capcut-watermark-remover.json",
+          "line": 107,
+          "image": "/uploads/capcut-operations-feature-1.png"
+        },
+        {
+          "file": "src/content/landing-pages/capcut-watermark-remover.json",
+          "line": 141,
+          "image": "/uploads/capcut-operations-feature-1.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/capcut-operations-feature-2.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/landing-pages/capcut-watermark-remover.json",
+          "line": 41,
+          "image": "/uploads/capcut-operations-feature-2.png"
+        },
+        {
+          "file": "src/content/landing-pages/capcut-watermark-remover.json",
+          "line": 116,
+          "image": "/uploads/capcut-operations-feature-2.png"
+        },
+        {
+          "file": "src/content/landing-pages/capcut-watermark-remover.json",
+          "line": 147,
+          "image": "/uploads/capcut-operations-feature-2.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/capcut-operations-feature-3.png",
+      "classification": "baked-controls-replace",
+      "references": [
+        {
+          "file": "src/content/landing-pages/capcut-watermark-remover.json",
+          "line": 48,
+          "image": "/uploads/capcut-operations-feature-3.png"
+        },
+        {
+          "file": "src/content/landing-pages/capcut-watermark-remover.json",
+          "line": 125,
+          "image": "/uploads/capcut-operations-feature-3.png"
+        },
+        {
+          "file": "src/content/landing-pages/capcut-watermark-remover.json",
+          "line": 153,
+          "image": "/uploads/capcut-operations-feature-3.png"
+        }
+      ],
+      "review": {
+        "status": "operator-seo-pending",
+        "reference": "original-restored",
+        "reason": "Original pixels retained, including baked controls; replacement needs content-owner authorization."
+      }
+    },
+    {
+      "image": "/uploads/chatgpt-feature-01-visible-overlay-review.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/landing-pages/chatgpt-watermark-remover.json",
+          "line": 99,
+          "image": "/uploads/chatgpt-feature-01-visible-overlay-review.png"
+        },
+        {
+          "file": "src/content/landing-pages/chatgpt-watermark-remover.json",
+          "line": 151,
+          "image": "/uploads/chatgpt-feature-01-visible-overlay-review.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/chatgpt-feature-02-authorized-image-scenarios.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/landing-pages/chatgpt-watermark-remover.json",
+          "line": 107,
+          "image": "/uploads/chatgpt-feature-02-authorized-image-scenarios.png"
+        },
+        {
+          "file": "src/content/landing-pages/chatgpt-watermark-remover.json",
+          "line": 157,
+          "image": "/uploads/chatgpt-feature-02-authorized-image-scenarios.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/chatgpt-feature-03-result-review-before-download.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/landing-pages/chatgpt-watermark-remover.json",
+          "line": 115,
+          "image": "/uploads/chatgpt-feature-03-result-review-before-download.png"
+        },
+        {
+          "file": "src/content/landing-pages/chatgpt-watermark-remover.json",
+          "line": 163,
+          "image": "/uploads/chatgpt-feature-03-result-review-before-download.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/gemini-no-crop.webp",
+      "classification": "baked-controls-replace",
+      "references": [
+        {
+          "file": "src/content/landing-pages/gemini-watermark-remover.json",
+          "line": 96,
+          "image": "/uploads/gemini-no-crop.webp"
+        }
+      ],
+      "review": {
+        "status": "operator-seo-pending",
+        "reference": "original-restored",
+        "reason": "Original pixels retained, including baked controls; replacement needs content-owner authorization."
+      }
+    },
+    {
+      "image": "/uploads/tool-landing-v16/gemini-travel.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/landing-pages/gemini-watermark-remover.json",
+          "line": 100,
+          "image": "/uploads/tool-landing-v16/gemini-travel.png"
+        },
+        {
+          "file": "src/content/landing-pages/gemini-watermark-remover.json",
+          "line": 160,
+          "image": "/uploads/tool-landing-v16/gemini-travel.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/gemini-natural-background.webp",
+      "classification": "baked-controls-replace",
+      "references": [
+        {
+          "file": "src/content/landing-pages/gemini-watermark-remover.json",
+          "line": 109,
+          "image": "/uploads/gemini-natural-background.webp"
+        }
+      ],
+      "review": {
+        "status": "operator-seo-pending",
+        "reference": "original-restored",
+        "reason": "Original pixels retained, including baked controls; replacement needs content-owner authorization."
+      }
+    },
+    {
+      "image": "/uploads/tool-landing-v16/gemini-texture.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/landing-pages/gemini-watermark-remover.json",
+          "line": 113,
+          "image": "/uploads/tool-landing-v16/gemini-texture.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/gemini-easy-online.webp",
+      "classification": "baked-controls-replace",
+      "references": [
+        {
+          "file": "src/content/landing-pages/gemini-watermark-remover.json",
+          "line": 122,
+          "image": "/uploads/gemini-easy-online.webp"
+        }
+      ],
+      "review": {
+        "status": "operator-seo-pending",
+        "reference": "original-restored",
+        "reason": "Original pixels retained, including baked controls; replacement needs content-owner authorization."
+      }
+    },
+    {
+      "image": "/uploads/tool-landing-v16/gemini-laptop.png",
+      "classification": "baked-controls-replace",
+      "references": [
+        {
+          "file": "src/content/landing-pages/gemini-watermark-remover.json",
+          "line": 126,
+          "image": "/uploads/tool-landing-v16/gemini-laptop.png"
+        }
+      ],
+      "review": {
+        "status": "operator-seo-pending",
+        "reference": "original-restored",
+        "reason": "Original pixels retained, including baked controls; replacement needs content-owner authorization."
+      }
+    },
+    {
+      "image": "/uploads/tool-landing-v16/gemini-private.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/landing-pages/gemini-watermark-remover.json",
+          "line": 135,
+          "image": "/uploads/tool-landing-v16/gemini-private.png"
+        },
+        {
+          "file": "src/content/landing-pages/gemini-watermark-remover.json",
+          "line": 139,
+          "image": "/uploads/tool-landing-v16/gemini-private.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/tool-landing-v16/gemini-water.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/landing-pages/gemini-watermark-remover.json",
+          "line": 150,
+          "image": "/uploads/tool-landing-v16/gemini-water.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/tool-landing-v16/gemini-serum.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/landing-pages/gemini-watermark-remover.json",
+          "line": 170,
+          "image": "/uploads/tool-landing-v16/gemini-serum.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/remove-gemini-watermark-4.png",
+      "classification": "baked-controls-replace",
+      "references": [
+        {
+          "file": "src/content/landing-pages/pdf-watermark-remover.json",
+          "line": 93,
+          "image": "/uploads/remove-gemini-watermark-4.png"
+        },
+        {
+          "file": "src/content/landing-pages/pdf-watermark-remover.json",
+          "line": 121,
+          "image": "/uploads/remove-gemini-watermark-4.png"
+        }
+      ],
+      "review": {
+        "status": "operator-seo-pending",
+        "reference": "original-restored",
+        "reason": "Original pixels retained, including baked controls; replacement needs content-owner authorization."
+      }
+    },
+    {
+      "image": "/uploads/remove-logo-from-image-3.png",
+      "classification": "baked-controls-replace",
+      "references": [
+        {
+          "file": "src/content/landing-pages/pdf-watermark-remover.json",
+          "line": 102,
+          "image": "/uploads/remove-logo-from-image-3.png"
+        },
+        {
+          "file": "src/content/landing-pages/pdf-watermark-remover.json",
+          "line": 127,
+          "image": "/uploads/remove-logo-from-image-3.png"
+        }
+      ],
+      "review": {
+        "status": "operator-seo-pending",
+        "reference": "original-restored",
+        "reason": "Original pixels retained, including baked controls; replacement needs content-owner authorization."
+      }
+    },
+    {
+      "image": "/uploads/remove-text-from-image-3.png",
+      "classification": "baked-controls-replace",
+      "references": [
+        {
+          "file": "src/content/landing-pages/pdf-watermark-remover.json",
+          "line": 111,
+          "image": "/uploads/remove-text-from-image-3.png"
+        },
+        {
+          "file": "src/content/landing-pages/pdf-watermark-remover.json",
+          "line": 133,
+          "image": "/uploads/remove-text-from-image-3.png"
+        }
+      ],
+      "review": {
+        "status": "operator-seo-pending",
+        "reference": "original-restored",
+        "reason": "Original pixels retained, including baked controls; replacement needs content-owner authorization."
+      }
+    },
+    {
+      "image": "/uploads/background-remover-upload.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/landing-pages/remove-background.json",
+          "line": 68,
+          "image": "/uploads/background-remover-upload.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/background-remover-ai-cutout.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/landing-pages/remove-background.json",
+          "line": 75,
+          "image": "/uploads/background-remover-ai-cutout.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/background-remover-download.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/landing-pages/remove-background.json",
+          "line": 82,
+          "image": "/uploads/background-remover-download.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/background-remover-product-photo.png",
+      "classification": "baked-controls-replace",
+      "references": [
+        {
+          "file": "src/content/landing-pages/remove-background.json",
+          "line": 102,
+          "image": "/uploads/background-remover-product-photo.png"
+        },
+        {
+          "file": "src/content/landing-pages/remove-background.json",
+          "line": 182,
+          "image": "/uploads/background-remover-product-photo.png"
+        }
+      ],
+      "review": {
+        "status": "operator-seo-pending",
+        "reference": "original-restored",
+        "reason": "Original pixels retained, including baked controls; replacement needs content-owner authorization."
+      }
+    },
+    {
+      "image": "/uploads/background-remover-hair-detail.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/landing-pages/remove-background.json",
+          "line": 116,
+          "image": "/uploads/background-remover-hair-detail.png"
+        },
+        {
+          "file": "src/content/landing-pages/remove-background.json",
+          "line": 188,
+          "image": "/uploads/background-remover-hair-detail.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/background-remover-background-colors.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/landing-pages/remove-background.json",
+          "line": 130,
+          "image": "/uploads/background-remover-background-colors.png"
+        },
+        {
+          "file": "src/content/landing-pages/remove-background.json",
+          "line": 194,
+          "image": "/uploads/background-remover-background-colors.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/remove-logo-from-product-image.webp",
+      "classification": "baked-controls-replace",
+      "references": [
+        {
+          "file": "src/content/landing-pages/remove-logo-from-image.json",
+          "line": 90,
+          "image": "/uploads/remove-logo-from-product-image.webp"
+        },
+        {
+          "file": "src/content/landing-pages/remove-logo-from-image.json",
+          "line": 118,
+          "image": "/uploads/remove-logo-from-product-image.webp"
+        }
+      ],
+      "review": {
+        "status": "operator-seo-pending",
+        "reference": "original-restored",
+        "reason": "Original pixels retained, including baked controls; replacement needs content-owner authorization."
+      }
+    },
+    {
+      "image": "/uploads/remove-logo-from-image-without-blur.webp",
+      "classification": "baked-controls-replace",
+      "references": [
+        {
+          "file": "src/content/landing-pages/remove-logo-from-image.json",
+          "line": 99,
+          "image": "/uploads/remove-logo-from-image-without-blur.webp"
+        },
+        {
+          "file": "src/content/landing-pages/remove-logo-from-image.json",
+          "line": 124,
+          "image": "/uploads/remove-logo-from-image-without-blur.webp"
+        }
+      ],
+      "review": {
+        "status": "operator-seo-pending",
+        "reference": "original-restored",
+        "reason": "Original pixels retained, including baked controls; replacement needs content-owner authorization."
+      }
+    },
+    {
+      "image": "/uploads/ai-logo-remover-detailed-product-surfaces.webp",
+      "classification": "missing-fallback",
+      "references": [
+        {
+          "file": "src/content/landing-pages/remove-logo-from-image.json",
+          "line": 108,
+          "image": "/uploads/ai-logo-remover-detailed-product-surfaces.webp"
+        }
+      ],
+      "review": {
+        "status": "operator-seo-pending",
+        "reference": "original-restored",
+        "reason": "Original source was already missing; retain fallback until operator supplies the asset."
+      }
+    },
+    {
+      "image": "/uploads/object-remover-upload.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/landing-pages/remove-object.json",
+          "line": 68,
+          "image": "/uploads/object-remover-upload.png"
+        },
+        {
+          "file": "src/content/landing-pages/remove-object.json",
+          "line": 98,
+          "image": "/uploads/object-remover-upload.png"
+        },
+        {
+          "file": "src/content/landing-pages/remove-object.json",
+          "line": 143,
+          "image": "/uploads/object-remover-upload.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/object-remover-mask.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/landing-pages/remove-object.json",
+          "line": 75,
+          "image": "/uploads/object-remover-mask.png"
+        },
+        {
+          "file": "src/content/landing-pages/remove-object.json",
+          "line": 108,
+          "image": "/uploads/object-remover-mask.png"
+        },
+        {
+          "file": "src/content/landing-pages/remove-object.json",
+          "line": 149,
+          "image": "/uploads/object-remover-mask.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/object-remover-result.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/landing-pages/remove-object.json",
+          "line": 82,
+          "image": "/uploads/object-remover-result.png"
+        },
+        {
+          "file": "src/content/landing-pages/remove-object.json",
+          "line": 118,
+          "image": "/uploads/object-remover-result.png"
+        },
+        {
+          "file": "src/content/landing-pages/remove-object.json",
+          "line": 155,
+          "image": "/uploads/object-remover-result.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/preserve-background-final.webp",
+      "classification": "baked-controls-replace",
+      "references": [
+        {
+          "file": "src/content/landing-pages/remove-text-from-image.json",
+          "line": 88,
+          "image": "/uploads/preserve-background-final.webp"
+        },
+        {
+          "file": "src/content/landing-pages/remove-text-from-image.json",
+          "line": 114,
+          "image": "/uploads/preserve-background-final.webp"
+        }
+      ],
+      "review": {
+        "status": "operator-seo-pending",
+        "reference": "original-restored",
+        "reason": "Original pixels retained, including baked controls; replacement needs content-owner authorization."
+      }
+    },
+    {
+      "image": "/uploads/three-text-removal-scenes-final.webp",
+      "classification": "baked-controls-replace",
+      "references": [
+        {
+          "file": "src/content/landing-pages/remove-text-from-image.json",
+          "line": 96,
+          "image": "/uploads/three-text-removal-scenes-final.webp"
+        },
+        {
+          "file": "src/content/landing-pages/remove-text-from-image.json",
+          "line": 120,
+          "image": "/uploads/three-text-removal-scenes-final.webp"
+        }
+      ],
+      "review": {
+        "status": "operator-seo-pending",
+        "reference": "original-restored",
+        "reason": "Original pixels retained, including baked controls; replacement needs content-owner authorization."
+      }
+    },
+    {
+      "image": "/uploads/online-easy-no-white-border-final.webp",
+      "classification": "baked-controls-replace",
+      "references": [
+        {
+          "file": "src/content/landing-pages/remove-text-from-image.json",
+          "line": 104,
+          "image": "/uploads/online-easy-no-white-border-final.webp"
+        },
+        {
+          "file": "src/content/landing-pages/remove-text-from-image.json",
+          "line": 126,
+          "image": "/uploads/online-easy-no-white-border-final.webp"
+        }
+      ],
+      "review": {
+        "status": "operator-seo-pending",
+        "reference": "original-restored",
+        "reason": "Original pixels retained, including baked controls; replacement needs content-owner authorization."
+      }
+    },
+    {
+      "image": "/uploads/remove-gemini-watermark-3.png",
+      "classification": "baked-controls-replace",
+      "references": [
+        {
+          "file": "src/content/landing-pages/sora-watermark-remover.json",
+          "line": 102,
+          "image": "/uploads/remove-gemini-watermark-3.png"
+        },
+        {
+          "file": "src/content/landing-pages/sora-watermark-remover.json",
+          "line": 130,
+          "image": "/uploads/remove-gemini-watermark-3.png"
+        }
+      ],
+      "review": {
+        "status": "operator-seo-pending",
+        "reference": "original-restored",
+        "reason": "Original pixels retained, including baked controls; replacement needs content-owner authorization."
+      }
+    },
+    {
+      "image": "/uploads/remove-logo-from-image-2.png",
+      "classification": "baked-controls-replace",
+      "references": [
+        {
+          "file": "src/content/landing-pages/sora-watermark-remover.json",
+          "line": 111,
+          "image": "/uploads/remove-logo-from-image-2.png"
+        },
+        {
+          "file": "src/content/landing-pages/sora-watermark-remover.json",
+          "line": 136,
+          "image": "/uploads/remove-logo-from-image-2.png"
+        }
+      ],
+      "review": {
+        "status": "operator-seo-pending",
+        "reference": "original-restored",
+        "reason": "Original pixels retained, including baked controls; replacement needs content-owner authorization."
+      }
+    },
+    {
+      "image": "/uploads/remove-text-from-image-2.png",
+      "classification": "baked-controls-replace",
+      "references": [
+        {
+          "file": "src/content/landing-pages/sora-watermark-remover.json",
+          "line": 120,
+          "image": "/uploads/remove-text-from-image-2.png"
+        },
+        {
+          "file": "src/content/landing-pages/sora-watermark-remover.json",
+          "line": 142,
+          "image": "/uploads/remove-text-from-image-2.png"
+        }
+      ],
+      "review": {
+        "status": "operator-seo-pending",
+        "reference": "original-restored",
+        "reason": "Original pixels retained, including baked controls; replacement needs content-owner authorization."
+      }
+    },
+    {
+      "image": "/uploads/remove-gemini-watermark-5.png",
+      "classification": "baked-controls-replace",
+      "references": [
+        {
+          "file": "src/content/landing-pages/tiktok-watermark-remover.json",
+          "line": 99,
+          "image": "/uploads/remove-gemini-watermark-5.png"
+        },
+        {
+          "file": "src/content/landing-pages/tiktok-watermark-remover.json",
+          "line": 127,
+          "image": "/uploads/remove-gemini-watermark-5.png"
+        }
+      ],
+      "review": {
+        "status": "operator-seo-pending",
+        "reference": "original-restored",
+        "reason": "Original pixels retained, including baked controls; replacement needs content-owner authorization."
+      }
+    },
+    {
+      "image": "/uploads/remove-logo-from-image-4.png",
+      "classification": "baked-controls-replace",
+      "references": [
+        {
+          "file": "src/content/landing-pages/tiktok-watermark-remover.json",
+          "line": 108,
+          "image": "/uploads/remove-logo-from-image-4.png"
+        },
+        {
+          "file": "src/content/landing-pages/tiktok-watermark-remover.json",
+          "line": 133,
+          "image": "/uploads/remove-logo-from-image-4.png"
+        }
+      ],
+      "review": {
+        "status": "operator-seo-pending",
+        "reference": "original-restored",
+        "reason": "Original pixels retained, including baked controls; replacement needs content-owner authorization."
+      }
+    },
+    {
+      "image": "/uploads/remove-text-from-image-4.png",
+      "classification": "baked-controls-replace",
+      "references": [
+        {
+          "file": "src/content/landing-pages/tiktok-watermark-remover.json",
+          "line": 117,
+          "image": "/uploads/remove-text-from-image-4.png"
+        },
+        {
+          "file": "src/content/landing-pages/tiktok-watermark-remover.json",
+          "line": 139,
+          "image": "/uploads/remove-text-from-image-4.png"
+        }
+      ],
+      "review": {
+        "status": "operator-seo-pending",
+        "reference": "original-restored",
+        "reason": "Original pixels retained, including baked controls; replacement needs content-owner authorization."
+      }
+    },
+    {
+      "image": "/uploads/remove-gemini-watermark.png",
+      "classification": "baked-controls-replace",
+      "references": [
+        {
+          "file": "src/content/landing-pages/veo-watermark-remover.json",
+          "line": 99,
+          "image": "/uploads/remove-gemini-watermark.png"
+        },
+        {
+          "file": "src/content/landing-pages/veo-watermark-remover.json",
+          "line": 127,
+          "image": "/uploads/remove-gemini-watermark.png"
+        }
+      ],
+      "review": {
+        "status": "operator-seo-pending",
+        "reference": "original-restored",
+        "reason": "Original pixels retained, including baked controls; replacement needs content-owner authorization."
+      }
+    },
+    {
+      "image": "/uploads/remove-logo-from-image.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/landing-pages/veo-watermark-remover.json",
+          "line": 108,
+          "image": "/uploads/remove-logo-from-image.png"
+        },
+        {
+          "file": "src/content/landing-pages/veo-watermark-remover.json",
+          "line": 133,
+          "image": "/uploads/remove-logo-from-image.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/remove-text-from-image.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/landing-pages/veo-watermark-remover.json",
+          "line": 117,
+          "image": "/uploads/remove-text-from-image.png"
+        },
+        {
+          "file": "src/content/landing-pages/veo-watermark-remover.json",
+          "line": 139,
+          "image": "/uploads/remove-text-from-image.png"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/remove-gemini-watermark-2.png",
+      "classification": "baked-controls-replace",
+      "references": [
+        {
+          "file": "src/content/landing-pages/video-watermark-remover.json",
+          "line": 105,
+          "image": "/uploads/remove-gemini-watermark-2.png"
+        },
+        {
+          "file": "src/content/landing-pages/video-watermark-remover.json",
+          "line": 133,
+          "image": "/uploads/remove-gemini-watermark-2.png"
+        }
+      ],
+      "review": {
+        "status": "operator-seo-pending",
+        "reference": "original-restored",
+        "reason": "Original pixels retained, including baked controls; replacement needs content-owner authorization."
+      }
+    },
+    {
+      "image": "/uploads/remove-logo-from-image-1.png",
+      "classification": "baked-controls-replace",
+      "references": [
+        {
+          "file": "src/content/landing-pages/video-watermark-remover.json",
+          "line": 114,
+          "image": "/uploads/remove-logo-from-image-1.png"
+        },
+        {
+          "file": "src/content/landing-pages/video-watermark-remover.json",
+          "line": 139,
+          "image": "/uploads/remove-logo-from-image-1.png"
+        }
+      ],
+      "review": {
+        "status": "operator-seo-pending",
+        "reference": "original-restored",
+        "reason": "Original pixels retained, including baked controls; replacement needs content-owner authorization."
+      }
+    },
+    {
+      "image": "/uploads/remove-text-from-image-1.png",
+      "classification": "baked-controls-replace",
+      "references": [
+        {
+          "file": "src/content/landing-pages/video-watermark-remover.json",
+          "line": 123,
+          "image": "/uploads/remove-text-from-image-1.png"
+        },
+        {
+          "file": "src/content/landing-pages/video-watermark-remover.json",
+          "line": 145,
+          "image": "/uploads/remove-text-from-image-1.png"
+        }
+      ],
+      "review": {
+        "status": "operator-seo-pending",
+        "reference": "original-restored",
+        "reason": "Original pixels retained, including baked controls; replacement needs content-owner authorization."
+      }
+    },
+    {
+      "image": "/uploads/watermarkgemin-share.webp",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/settings/blog.json",
+          "line": 4,
+          "image": "/uploads/watermarkgemin-share.webp"
+        },
+        {
+          "file": "src/content/settings/site.json",
+          "line": 10,
+          "image": "/uploads/watermarkgemin-share.webp"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/watermarkgemini-logo.svg",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/content/settings/images.json",
+          "line": 4,
+          "image": "/uploads/watermarkgemini-logo.svg"
+        },
+        {
+          "file": "src/content/settings/site.json",
+          "line": 6,
+          "image": "/uploads/watermarkgemini-logo.svg"
+        },
+        {
+          "file": "src/content/settings/site.json",
+          "line": 9,
+          "image": "/uploads/watermarkgemini-logo.svg"
+        }
+      ]
+    },
+    {
+      "image": "/images/image-placeholder.svg",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/lib/content/image-fallback-constants.ts",
+          "line": 1,
+          "image": "/images/image-placeholder.svg"
+        }
+      ]
+    },
+    {
+      "image": "/uploads/background-remover-transparency-grid.png",
+      "classification": "single-image",
+      "references": [
+        {
+          "file": "src/styles/global.css",
+          "line": 69,
+          "image": "/uploads/background-remover-transparency-grid.png"
+        }
+      ]
+    }
+  ],
+  "replacementStatus": {
+    "phase": "2026-11-01 user-requested rollback",
+    "replacements": 0,
+    "revokedReplacements": 53,
+    "originalFilesDeleted": 0,
+    "truePairsInvented": 0,
+    "owner": "operator/SEO",
+    "note": "Original content restored against 574ad43. Engineering may change rendering mechanics but may not change image paths/names, alt, example notes or prose without explicit content-owner authorization. P3 reference line numbers are historical."
+  }
+}

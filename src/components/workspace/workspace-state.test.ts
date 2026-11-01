@@ -29,6 +29,7 @@ describe('workspace processing safeguards', () => {
     expect(canRefineResult({ status: 'READY', operation: 'image-watermark', result: { canRefine: true } })).toBe(true);
     expect(canRefineResult({ status: 'READY', operation: 'image-watermark-pro', result: { canRefine: false } })).toBe(false);
     expect(canRefineResult({ status: 'READY', operation: 'video-watermark', result: { canRefine: true } })).toBe(false);
+    expect(canRefineResult({ status: 'READY', operation: 'background-removal', result: { canRefine: true } })).toBe(false);
     expect(canRefineResult({ status: 'FAILED', operation: 'image-watermark', result: { canRefine: true } })).toBe(false);
   });
 });

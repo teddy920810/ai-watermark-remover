@@ -1,8 +1,30 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { createProcessingRuntime } from './processing-services';
 import { MemoryFinance } from '../processing/test-fixtures';
 
 describe('purchased image allowances in the workspace account response', () => {
+  it('reuses only this response summary, including zero, and reads fresh balances on the next call', async () => {
+    const finance = new MemoryFinance();
+    const read = vi.spyOn(finance, 'getBalance').mockImplementation(async (_owner, unit = 'processingCredits') => {
+      if (unit !== 'processingCredits') throw new Error('Purchased balance was already read in this summary');
+      return 100;
+    });
+    let paidBalance = 0;
+    const getSummary = vi.fn(async () => ({ balance: 1, cap: 3, dailyReward: 1, checkedInToday: false, paidBalance }));
+    const runtime = createProcessingRuntime({
+      r2: { endpoint: 'https://unused.test', accessKeyId: 'fixture', secretAccessKey: 'fixture', bucket: 'fixture' },
+      databaseUrl: 'postgres://unused.test/fixture', providerMode: 'mock', enabled: false,
+      imageCredits: { enabled: true, environment: 'sandbox' }, dependencies: { finance, benefits: { getSummary } },
+    });
+    try {
+      expect(await runtime.balances('user-1', 'person@example.test')).toEqual({ freeUses: 1, purchasedImageCredits: 0, processingCredits: 100 });
+      paidBalance = 5;
+      expect(await runtime.balances('user-1', 'person@example.test')).toEqual({ freeUses: 1, purchasedImageCredits: 5, processingCredits: 100 });
+      expect(getSummary).toHaveBeenCalledTimes(2);
+      expect(getSummary).toHaveBeenLastCalledWith('user-1', 'person@example.test');
+      expect(read).toHaveBeenCalledTimes(2);
+    } finally { await runtime.close(); }
+  });
   it('rejects a directly constructed Live wallet without a priced contract', () => {
     expect(() => createProcessingRuntime({ r2: { endpoint: 'https://unused.test', accessKeyId: 'fixture', secretAccessKey: 'fixture', bucket: 'fixture' }, databaseUrl: 'postgres://unused.test/fixture', providerMode: 'mock', enabled: false, imageCredits: { enabled: true, environment: 'live' } })).toThrow('operation prices');
   });

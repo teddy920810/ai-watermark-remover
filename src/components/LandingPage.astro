@@ -1,15 +1,13 @@
 ---
 import MediaLauncher from './launcher/MediaLauncher';
-import BackgroundRemoverUploader from './uploader/BackgroundRemoverUploader';
-import ObjectRemoverUploader from './uploader/ObjectRemoverUploader';
 import ResponsiveImage from './ResponsiveImage.astro';
-import LandingComparison from './LandingComparison.astro';
+import ImageDisplay from './ImageDisplay.astro';
 import SiteLayout from '../layouts/SiteLayout.astro';
 import { getCollection, type CollectionEntry } from 'astro:content';
 import { splitFeatureCopy } from '../lib/content/feature-copy';
 import { visibleItems } from '../lib/content/item-visibility';
-import { resolvePublicImageSource } from '../lib/content/image-fallback';
-import { resolveUploaderCopy } from '../lib/content/site-settings';
+import { resolveImagePair } from '../lib/content/image-pair';
+import { pageRecommendation } from '../lib/client/media-recommendation';
 import { publicLandingEntries, sortBlogEntries } from '../lib/content/entries';
 import { availableRelatedToolEntries } from '../lib/content/landing-design';
 import { ArrowRight, CircleCheck, Dot, Plus } from '@lucide/astro';
@@ -20,14 +18,13 @@ const { page } = Astro.props;
 const [siteEntry] = await getCollection('siteSettings');
 if (!siteEntry) throw new Error('Site settings CMS content is missing.');
 const site = siteEntry.data;
-const siteLogo = resolvePublicImageSource(site.logo);
-const uploaderCopy = resolveUploaderCopy(site.uploader, page.uploader);
+const recommendation = pageRecommendation(page);
 const fallbackSamples = visibleItems(page.features?.items ?? []).slice(0, 3).map((item, index) => ({
-  id: `preview-${index + 1}`, label: item.heading, image: item.image, imageAlt: item.imageAlt, comparison: item.comparison,
+  id: `preview-${index + 1}`, label: item.heading, image: item.image, afterImage: item.afterImage, imageAlt: item.imageAlt, comparison: item.comparison,
 }));
-const samples = page.heroSamples ?? (fallbackSamples.length ? fallbackSamples : site.processVisuals.map((visual, index) => ({
-  id: `preview-${index + 1}`, label: `Workflow step ${index + 1}`, ...visual, comparison: undefined,
-})));
+const samples = (page.heroSamples ?? (fallbackSamples.length ? fallbackSamples : site.processVisuals.map((visual, index) => ({
+  id: `preview-${index + 1}`, label: `Workflow step ${index + 1}`, ...visual, afterImage: undefined, comparison: undefined,
+})))).map(sample => { const pair = resolveImagePair(sample); return { ...sample, image: pair.image ?? sample.image, afterImage: pair.afterImage }; });
 const [homepage] = await getCollection('homepage');
 const publicPages = publicLandingEntries(await getCollection('landingPages'));
 const publishedPaths = new Set(availableRelatedToolEntries(publicPages).map(({ data }) => '/' + data.slug));
@@ -52,6 +49,7 @@ const cta = { ...site.cta, ...page.cta, buttonHref: page.cta?.buttonHref ?? '#to
 const features = page.features;
 const featureItems = visibleItems(features?.items ?? []).map((item) => ({
   ...item,
+  ...resolveImagePair(item),
   copy: splitFeatureCopy(item.description, item.listItems),
 }));
 const visibleFaqItems = visibleItems(page.faq.items);
@@ -77,23 +75,17 @@ const faqSchema = visibleFaqItems.length > 0 ? {
         <h1>{headingParts.length > 1 ? <>{headingParts[0]} – <em>{headingParts.slice(1).join(' – ')}</em></> : page.heading}</h1>
         <p class="hero-intro">{page.intro}</p>
         <ul class="hero-points">{page.benefits.map((benefit) => <li><CircleCheck size={15} stroke-width={2.5} aria-hidden="true" />{benefit}</li>)}</ul>
-        {page.heroActions && <div class="hero-actions">{page.heroActions.map((action, index) => <a class={index === 0 ? 'cta-button' : 'text-link'} href={action.href}>{action.label}</a>)}</div>}
+        {page.heroActions && <div class="hero-actions">{page.heroActions.map((action, index) => /^(?:\/?#tool|\/app(?:\/|\?|$))/.test(action.href) ? <MediaLauncher compact source={page.slug} recommendation={recommendation} client:load /> : <a class={index === 0 ? 'cta-button' : 'text-link'} href={action.href}>{action.label}</a>)}</div>}
       </div>
       <div class="hero-workbench">
         {samples.length > 0 && <div class="hero-preview" aria-label="Example previews">
           {samples.map((sample, index) => <div data-landing-preview hidden={index !== 0}>
-            {sample.comparison
-              ? <LandingComparison image={sample.comparison.image ?? sample.image} alt={sample.imageAlt} comparison={sample.comparison} sampleId={sample.id} eager={index === 0} />
-              : <div class="landing-sample-image"><ResponsiveImage src={sample.image} alt={sample.imageAlt} sizes="(max-width: 900px) calc(100vw - 40px), 640px" loading={index === 0 ? 'eager' : 'lazy'} fetchpriority={index === 0 ? 'high' : undefined} /></div>}
+            <div class="landing-sample-image"><ImageDisplay fit="cover" image={sample.image} afterImage={sample.afterImage} alt={sample.imageAlt} eager={index === 0} /></div>
           </div>)}
-          <div class="hero-samples" aria-label="Choose an example preview">{samples.map((sample, index) => <button class="hero-sample" type="button" data-landing-sample aria-pressed={index === 0} aria-label={`Preview ${sample.label}`}><ResponsiveImage src={sample.comparison?.image ?? sample.image} alt="" sizes="72px" /></button>)}</div>
+          <div class="hero-samples" aria-label="Choose an example preview">{samples.map((sample, index) => <button class="hero-sample" type="button" data-landing-sample aria-pressed={index === 0} aria-label={`Preview ${sample.label}`}><ResponsiveImage src={sample.image} alt="" sizes="72px" /></button>)}</div>
         </div>}
         <div id="tool" class="hero-tool">
-        {page.toolKind === 'background-remover'
-          ? <BackgroundRemoverUploader logo={siteLogo} siteName={site.name} copy={uploaderCopy} client:load />
-          : page.toolKind === 'object-remover'
-            ? <ObjectRemoverUploader logo={siteLogo} siteName={site.name} copy={uploaderCopy} client:load />
-            : <MediaLauncher kind={page.toolKind === 'video-watermark-remover' ? 'video' : 'image'} source={page.slug} copy={uploaderCopy} client:load />}
+        <MediaLauncher source={page.slug} recommendation={recommendation} client:load />
       </div>
       </div>
     </div>
@@ -104,7 +96,7 @@ const faqSchema = visibleFaqItems.length > 0 ? {
     <div class="steps step-grid">
       {page.process.steps.map((step, index) => {
         const visual = site.processVisuals[index];
-        return <article class="step-card"><div class="process-step-media"><ResponsiveImage src={step.image ?? visual.image} alt={step.imageAlt ?? visual.imageAlt} sizes="(max-width: 900px) calc(100vw - 40px), 400px" /></div><div class="process-step-copy"><span class="step-number">{step.number}</span><h3>{step.title}</h3><p>{step.description}</p></div></article>;
+        return <article class="step-card"><div class="process-step-media"><ImageDisplay fit="cover" image={step.image ?? visual.image} afterImage={step.afterImage} alt={step.imageAlt ?? visual.imageAlt} sizes="(max-width: 900px) calc(100vw - 40px), 400px" /></div><div class="process-step-copy"><span class="step-number">{step.number}</span><h3>{step.title}</h3><p>{step.description}</p></div></article>;
       })}
     </div>
   </section>
@@ -113,8 +105,8 @@ const faqSchema = visibleFaqItems.length > 0 ? {
     <section class="features features-section landing-features-section section-shell" aria-labelledby="features-heading">
       <div class="section-heading"><span class="eyebrow">{features.eyebrow}</span><h2 id="features-heading">{features.heading}</h2><p>{features.intro}</p></div>
       <div class="feature-list">
-        {featureItems.map((item, index) => <article class:list={{ 'feature-row': true, 'feature-item': true, 'is-image-left': item.imagePosition === 'left', reverse: item.imagePosition === 'right' }}>
-          <div class="feature-media">{item.comparison ? <LandingComparison image={item.comparison.image ?? item.image} alt={item.imageAlt} comparison={item.comparison} sampleId={`feature-${index + 1}`} /> : <ResponsiveImage src={item.image} alt={item.imageAlt} sizes="(max-width: 900px) calc(100vw - 40px), 540px" />}</div>
+        {featureItems.map(item => <article class:list={{ 'feature-row': true, 'feature-item': true, 'is-image-left': item.imagePosition === 'left', reverse: item.imagePosition === 'right' }}>
+          <div class="feature-media"><ImageDisplay fit="cover" image={item.image} afterImage={item.afterImage} alt={item.imageAlt} sizes="(max-width: 900px) calc(100vw - 40px), 540px" /></div>
           <div class="feature-copy"><span class="eyebrow">{item.eyebrow}</span><h3>{item.heading}</h3><p>{item.copy.description}</p>{item.copy.listItems.length > 0 && <ul class="feature-list-items">{item.copy.listItems.map((listItem) => <li>{listItem}</li>)}</ul>}</div>
         </article>)}
       </div>

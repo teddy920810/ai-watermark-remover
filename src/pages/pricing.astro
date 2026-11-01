@@ -1,0 +1,36 @@
+---
+import CreditCatalog from '../components/payments/CreditCatalog';
+import { safeReturnPath } from '../components/payments/payment-client';
+import { getPaymentConfig, publicPaymentCatalog } from '../lib/payments/payment-config';
+import { Monitor, ShieldCheck, WalletCards } from '@lucide/astro';
+import site from '../content/settings/site.json';
+import '../styles/design-system.css';
+import '../styles/payments.css';
+
+export const prerender = false;
+Astro.response.headers.set('Cache-Control', 'no-store');
+const catalog = publicPaymentCatalog(getPaymentConfig());
+const returnTo = safeReturnPath(Astro.url.searchParams.get('returnTo'));
+const appAsset = (path: string) => import.meta.env.BUILD_TARGET === 'app' ? `/_app-assets/public${path}` : path;
+---
+<!doctype html>
+<html lang={site.locale}>
+  <head>
+    <meta charset="UTF-8" /><meta name="viewport" content="width=device-width" />
+    <title>Pricing | {site.name}</title><meta name="description" content="Compare image credit packages and operation costs. One-time purchases, no automatic renewal." />
+    <link rel="canonical" href={new URL('/pricing', site.canonicalOrigin)} /><link rel="icon" href={appAsset(site.favicon)} />
+  </head>
+  <body class="credits-page">
+    <header class="site-header credits-header">
+      <a class="brand" href="/" aria-label={`${site.name} home`}><img class="brand-logo" src={appAsset(site.logo)} alt="" /><span>{site.name}</span></a>
+      <nav aria-label="Pricing navigation"><a href="/app">Open app</a><a href="#payment-rates-heading">How credits work</a><a href="/app/credits#orders">Your orders</a></nav>
+    </header>
+    <main class="pricing-page" aria-labelledby="pricing-heading">
+      <div class="pricing-hero"><h1 id="pricing-heading">More images. One simple purchase.</h1><p class="pricing-intro">One shared balance for watermark removal, background removal, and object removal.</p>
+        <ul class="pricing-assurances" aria-label="Purchase benefits"><li><Monitor size={21} aria-hidden="true" />Work in your browser</li><li><WalletCards size={21} aria-hidden="true" />One-time purchase</li><li><ShieldCheck size={21} aria-hidden="true" />No automatic renewal</li></ul>
+      </div>
+      <CreditCatalog catalog={catalog} returnTo={returnTo} />
+      <div class="pricing-terms"><p>Purchased image credits have no scheduled expiry, cannot be transferred, and cannot be exchanged for cash. Process only images you are authorized to edit.</p><p>These image credits do not cover PRO, brush refinement, or video processing.</p><p>Image files and results are temporary. Download your results promptly. For purchase refunds, contact support with your order number before using the credits; used or disputed orders require review.</p><p>Read our <a href="/terms">Terms</a> and <a href="/privacy">Privacy Policy</a> before buying.</p></div>
+    </main>
+  </body>
+</html>
