@@ -13,5 +13,6 @@
 - 产物按操作区分：耐久水印图片JPEG/视频MP4/背景RGBA PNG/物体原尺寸PNG；保留原尺寸/透明语义、视频时长/音轨检查、原结果版本及精修关系。真实效果和真实费用单列验收，mock不代表生产能力。
 - App入口与image/video兼容深链共用AppWorkspaceLayout/AppShell；六类新操作沿同一耐久协调，物体选区与精修各自保留绘画政策；旧接口在途记录继续恢复。操作选择、文件归属和静态加载/错误壳见[工作区规范](product/APP_WORKSPACE.md)，本地代码迁移与真实Provider/生产迁移验收分别记录。
 - 公开模板与页尾CTA使用MediaLauncher；App选择/拖入复用字节识别、限制与本地草稿基础。CMS只提供现有工具类型/状态推荐，已接受任务优先；不兼容或未开放来源明确提示。背景/物体编辑器和图片价格客户端现仅由App消费，公共入口由两个Web目标共用，见[文件入口](product/FILE_INTAKE.md)。
+- [运营内容 API](CONTENT_API.md)由App的`/api/content/v1`承接，服务端内容Token与单仓库凭据分开；纯内容schema由Astro与API共用。草稿、原字节公共素材、幂等与批准审计持久到Git内容分支，经具体差异批准、独立基线、受保护PR/必需CI发布。Site只提供静态内容与id/digest发布证明；不读取内容凭据，用户R2/权益/Provider不进入内容服务。
 
 兼容登记和退场条件见[兼容清单](COMPATIBILITY.md)，规范分类见[总索引](INDEX.md)。新的媒体类型包括音频必须另定义真实操作、产物、费用和验收，当前不开放音频处理。

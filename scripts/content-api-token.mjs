@@ -1,0 +1,14 @@
+import { randomBytes, createHash } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
+import { existsSync, mkdirSync, writeFileSync, lstatSync } from 'node:fs';
+import { resolve, dirname } from 'node:path';
+import process from 'node:process';
+const output = resolve(process.cwd(), '.secrets/content-api-token.txt');
+execFileSync('git', ['check-ignore', output], { stdio: 'pipe' });
+if (existsSync(dirname(output)) && lstatSync(dirname(output)).isSymbolicLink()) throw new Error('Secret directory must not be a symlink.');
+mkdirSync(dirname(output), { recursive: true, mode: 0o700 });
+const token = randomBytes(32).toString('base64url');
+writeFileSync(output, token + '\n', { flag: 'wx', mode: 0o600 });
+const digest = createHash('sha256').update(token).digest('hex');
+writeFileSync(output + '.sha256', digest + '\n', { flag: 'wx', mode: 0o600 });
+process.stdout.write('Created ignored .secrets/content-api-token.txt and its .sha256 file. Token was not printed. Store and deliver the token through a password manager.\n');

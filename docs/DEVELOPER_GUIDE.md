@@ -62,6 +62,8 @@ npm run db:migrate
 
 ## 内容模型
 
+SEO 运营 Agent 的服务端入口与部署前置见 [内容 API](CONTENT_API.md)。API 和 Astro 共用 `src/lib/content/entry-schemas.ts`；模板仍取自 `cms-templates/`，纯文档解析/发布规则位于 `scripts/lib/cms-*`。内容/运营素材持久到 Git 内容分支，不能写部署临时磁盘或借用用户 R2 上传接口。内容 Token 与仓库专用凭据分开，部署到 App；Site 只生成静态页面和不含秘密的发布 digest 证明。
+
 正式 PayPal 图片 Credits 的配置、批次账本、退款来源和 Web/Worker 发布顺序见 [PayPal 发布说明](PAYPAL_LIVE_RELEASE.md)。启用前先执行新增支付迁移，再更新支持 `purchasedImageCredits` 的既有 Worker，最后开启 Web 的已购额度与新收款；不要把旧 Sandbox 身份切换或测试部署覆盖到当前正式架构。运行中的已接受任务按原预留金额结算；暂停新购买时保留已购额度开关与明确的操作费率。
 
 - 博客 schema：`src/content.config.ts`，文件位于 `src/content/blog/`。
@@ -108,4 +110,6 @@ npm run release:verify   # 高风险改动：依赖审计 + 站点校验 + 完�
 Pages CMS在内容分支保存，经受保护PR与必需CI后进入`main`；模板工作流只创建审核分支和草稿PR。推送前执行`git fetch origin main`检查分歧；如远端领先，先安全rebase/merge，禁止force push。合并后Vercel按目标独立发布。
 
 原内容独立基线不自动随CMS保存更新。受保护的既有内容需要内容负责人先明确授权具体PR差异，维护者再运行`node scripts/update-content-baseline.mjs --approval APPROVED_PR_URL EXACT_CONTENT_PATH`，把fixture变化一并提交原PR审阅。该命令只更新测试预期，不改内容；填写PR链接本身不授予内容修改权限。新建草稿仍受草稿、模板文本、URL和图片检查约束。
+
+获授内容权限的运营 Token 持有人也可通过内容 API 的显式 review 操作批准当前 digest 对应的具体差异；服务端记录 PR 审计评论，只同步本次批准涉及的既有基线记录，并把内容、素材、基线留在同一 PR 供审阅。普通保存不更新基线，后续编辑撤销批准；发布前再核对批准评论、素材哈希与基线范围。研发验收草稿不等于内容负责人批准，不能因此改动既有内容值。
 

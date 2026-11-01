@@ -1,15 +1,11 @@
-import { imagePairFields, validateImagePair } from './lib/content/image-pair';
+import { blogEntrySchema, landingEntrySchema } from './lib/content/entry-schemas';
 import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
-import { z } from 'zod';
 import { fileURLToPath } from 'node:url';
 import { assertCmsPublication } from '../scripts/cms-publication.mjs';
-import { publishedAtSchema } from './lib/content/published-date';
 import { homepageSchema } from './lib/content/homepage';
-import { landingComparisonSchema, landingDesignFields } from './lib/content/landing-design';
-import { siteCtaSchema, siteSettingsSchema, uploaderCopyOverrideSchema } from './lib/content/site-settings';
+import { siteSettingsSchema } from './lib/content/site-settings';
 import { imageSettingsSchema } from './lib/content/image-metadata';
-import { trustedHtmlSchema } from './lib/content/trusted-html';
 import { sitemapSettingsSchema } from './lib/content/sitemap-settings';
 import {
   blogIndexSettingsSchema,
@@ -55,105 +51,14 @@ const homepage = defineCollection({
   schema: homepageSchema,
 });
 
-const blogEntrySchema = z.object({
-    templateVersion: z.literal(1).optional(),
-    slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
-    title: z.string().min(1),
-    seoTitle: z.string().min(1).optional(),
-    description: z.string().min(1),
-    publishedAt: publishedAtSchema,
-    updatedAt: publishedAtSchema.optional(),
-    readTime: z.string().min(1),
-    coverImage: z.string().min(1).optional(),
-    coverAlt: z.string().min(1).optional(),
-    author: z.string().min(1).optional(),
-    category: z.string().min(1).optional(),
-    contentMode: z.enum(['markdown', 'html']).default('markdown'),
-    bodyHtml: trustedHtmlSchema.optional(),
-    featured: z.boolean().default(false),
-    draft: z.boolean().default(false),
-  }).superRefine((post, context) => {
-    if (post.contentMode === 'html' && !post.bodyHtml) {
-      context.addIssue({ code: 'custom', path: ['bodyHtml'], message: 'HTML content is required in HTML mode.' });
-    }
-  });
-
 const blog = defineCollection({
   loader: glob({ base: './src/content/blog', pattern: '**/*.{md,mdx}' }),
   schema: blogEntrySchema,
 });
 
-const faqItem = z.object({
-  enabled: z.boolean().default(true),
-  question: z.string().min(1),
-  answer: z.string().min(1),
-});
-
-const landingFeatureItemSchema = z.object({
-  enabled: z.boolean().default(true),
-  eyebrow: z.string().min(1),
-  heading: z.string().min(1),
-  description: z.string().min(1),
-  listItems: z.array(z.string().min(1)).default([]),
-  image: z.string().min(1),
-  afterImage: imagePairFields.afterImage,
-  imageAlt: z.string().min(1),
-  imagePosition: z.enum(['left', 'right']).default('right'),
-  comparison: landingComparisonSchema.optional(),
-}).superRefine(validateImagePair);
-
-const landingFeaturesSchema = z.object({
-  eyebrow: z.string().min(1),
-  heading: z.string().min(1),
-  intro: z.string().min(1),
-  items: z.array(landingFeatureItemSchema).min(1),
-});
-
 const landingPages = defineCollection({
   loader: glob({ base: './src/content/landing-pages', pattern: '**/*.json' }),
-  schema: z.object({
-    ...landingDesignFields,
-    templateVersion: z.literal(1).optional(),
-    slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
-    draft: z.boolean().default(false),
-    toolKind: z.enum(['watermark-remover', 'video-watermark-remover', 'background-remover', 'object-remover']).default('watermark-remover'),
-    title: z.string().min(1),
-    description: z.string().min(1),
-    eyebrow: z.string().min(1),
-    statusLabel: z.string().min(1).optional(),
-    heading: z.string().min(1),
-    intro: z.string().min(1),
-    benefits: z.array(z.string().min(1)).min(1),
-    heroActions: z.array(z.object({ label: z.string().min(1), href: z.string().min(1) })).min(1).max(2).optional(),
-    uploader: uploaderCopyOverrideSchema.optional(),
-    process: z.object({
-      eyebrow: z.string().min(1),
-      heading: z.string().min(1),
-      intro: z.string().min(1),
-      steps: z.array(z.object({
-        number: z.string().min(1),
-        title: z.string().min(1),
-        description: z.string().min(1),
-        image: z.string().min(1).optional(),
-        afterImage: imagePairFields.afterImage,
-        imageAlt: z.string().min(1).optional(),
-      }).superRefine(validateImagePair)).length(3),
-    }),
-    features: landingFeaturesSchema.optional(),
-    scope: z.object({
-      eyebrow: z.string().min(1),
-      heading: z.string().min(1),
-      intro: z.string().min(1),
-      items: z.array(z.object({ heading: z.string().min(1), description: z.string().min(1) })).min(1),
-    }).optional(),
-    cta: siteCtaSchema.optional(),
-    faq: z.object({
-      eyebrow: z.string().min(1),
-      heading: z.string().min(1),
-      intro: z.string().min(1),
-      items: z.array(faqItem).min(1),
-    }),
-  }),
+  schema: landingEntrySchema,
 });
 
 export const collections = {
