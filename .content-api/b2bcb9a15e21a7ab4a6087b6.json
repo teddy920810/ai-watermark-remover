@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "id": "b2bcb9a15e21a7ab4a6087b6",
+  "title": "R3-T2 protected isolated draft CI acceptance",
+  "actor": "seo-editor-01",
+  "baseRevision": "69fcdc9c1c9384d4d943f83c9928506c552af83a",
+  "createdAt": "2026-11-01T15:08:01.623Z",
+  "entries": [],
+  "assets": [],
+  "events": {
+    "760accde7ae82620a5900ba72e278bf4cf87df977c797cf123ec8a803e651930": {
+      "fingerprint": "86013bc940882793f6d0fae6999ff7c6b33dba324d5b18d4702c999b21ad6e35",
+      "result": {}
+    }
+  }
+}
