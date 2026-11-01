@@ -6,7 +6,7 @@ eyebrow: Privacy
 heading: Privacy Policy
 ---
 
-Last updated: October 31, 2026
+Last updated: November 2, 2026
 
 This policy explains what WatermarkGemini collects, why it is used, how long it is kept and the choices available to you. It covers our website, Google sign-in, and image and video tools. Our [Terms of Use](/terms) explain permitted use and processing allowances.
 
@@ -28,9 +28,17 @@ Uploaded images, videos, selection masks and results use private storage. We als
 
 ## Payments
 
+New purchases are currently paused. Payment checkout is available only when enabled; existing order, balance and refund records continue to be handled as described here.
+
 PayPal processes checkout and payment authentication under its [Privacy Statement](https://www.paypal.com/us/legalhub/paypal/privacy-full). We do not collect your payment-card details or PayPal password. PayPal may receive technical browser and transaction information when its checkout components load or you interact with them.
 
 Our service retains the Google account's order association, purchased package, amount, currency, PayPal order and capture identifiers, payment status, verified event identifiers, refund or dispute references, and purchased image-credit balance adjustments. These records support fulfillment, payment reconciliation, refunds, fraud prevention and account support. Payment and allowance records may be retained longer than temporary media for these purposes and applicable obligations; they are not automatically removed with uploaded files. We do not use the PayPal buyer's email to move a purchase to a different Google account.
+
+## Published site content
+
+Authorized editors can submit website articles and public assets through Pages CMS or the content API. Git stores submitted text, original images and publication audit records, including editor identifiers, approval references and content or asset digests. Drafts and assets persist in review branches; saving a draft or receiving an asset path does not mean a website page is already published. Publication requires review, the protected main branch and deployment.
+
+This public repository and its history may make submitted content and audit records accessible independently of website publication. They are separate from private processing uploads and do not follow the temporary-media policy of about 24 hours. Removing a current file does not automatically erase repository history or copies held by others. Do not submit private or sensitive files as website assets. Contact us about content that needs review or removal.
 
 ## Processing providers and infrastructure
 
