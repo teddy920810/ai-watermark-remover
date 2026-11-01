@@ -46,7 +46,7 @@ describe('SiteLayout Google Analytics integration', () => {
     expect(layoutSource).toContain('child.badge && <span class="nav-status-badge">');
     expect(globalCss).not.toContain('.nav-badge {');
     expect(globalCss).toContain('.nav-dropdown:hover .nav-dropdown-panel');
-    expect(globalCss).toContain('.nav-dropdown:has(:focus-visible) .nav-dropdown-panel');
+    expect(globalCss).toContain('.nav-dropdown:has(:where(.nav-dropdown-panel) :focus-visible) .nav-dropdown-panel');
     expect(globalCss).toContain('pointer-events: none');
     expect(globalCss).toContain('.site-header nav > a, .nav-dropdown-trigger { font-weight: 750; }');
     expect(globalCss).not.toMatch(/\.nav-dropdown-trigger\s*\{[^}]*font:\s*inherit/);

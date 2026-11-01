@@ -1,6 +1,7 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { siteSettingsSchema } from './site-settings';
+import { publicNavigation } from './entries';
 
 const settings = JSON.parse(
   readFileSync(new URL('../../content/settings/site.json', import.meta.url), 'utf8'),
@@ -57,10 +58,11 @@ describe('site settings CMS content', () => {
   });
 
   it('lists every tool exactly once and marks only unopened tools Coming Soon', () => {
-    const children = siteSettingsSchema.parse(settings).header.navigation.flatMap((item) => item.children);
     const directory = new URL('../../content/landing-pages/', import.meta.url);
-    for (const filename of readdirSync(directory).filter((file) => file.endsWith('.json'))) {
-      const page = JSON.parse(readFileSync(new URL(filename, directory), 'utf8'));
+    const entries = readdirSync(directory).filter(file => file.endsWith('.json'))
+      .map(filename => ({ data: JSON.parse(readFileSync(new URL(filename, directory), 'utf8')) }));
+    const children = publicNavigation(siteSettingsSchema.parse(settings).header.navigation, entries).flatMap(item => item.children ?? []);
+    for (const { data: page } of entries) {
       if (page.draft) continue;
       const matches = children.filter((link) => link.href === `/${page.slug}`);
       expect(matches, page.slug).toHaveLength(1);

@@ -24,9 +24,8 @@ const [siteEntry] = await getCollection('siteSettings');
 if (!siteEntry) throw new Error('Site settings CMS content is missing.');
 const site = siteEntry.data;
 const landingPages = await getCollection('landingPages');
-const hiddenToolPaths = new Set(landingPages.filter(({ data }) => data.draft).map(({ data }) => `/${data.slug}`));
 const intakeRecommendation = pageRecommendation(landingPages.find(({ data }) => `/${data.slug}` === Astro.url.pathname)?.data);
-const navigation = publicNavigation(site.header.navigation, hiddenToolPaths);
+const navigation = publicNavigation(site.header.navigation, landingPages);
 
 const {
   title = site.defaultTitle,
@@ -160,8 +159,10 @@ const schemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [defaultS
 
       document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape') {
+          const trigger = document.activeElement?.closest('.nav-dropdown')?.querySelector<HTMLButtonElement>('[data-nav-dropdown-trigger]');
           closeMenu();
-          menuToggle?.focus();
+          if (menuToggle?.getClientRects().length) menuToggle.focus();
+          else trigger?.focus();
         }
       });
       document.addEventListener('click', (event) => {

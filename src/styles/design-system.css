@@ -38,7 +38,7 @@
 .nav-dropdown-panel a:hover, .nav-dropdown-panel a:focus-visible { color: var(--brand-blue-text); background: var(--brand-soft); }
 .nav-dropdown:hover .nav-dropdown-trigger, .nav-dropdown:has(:focus-visible) .nav-dropdown-trigger { color: var(--brand-blue-text); }
 .nav-dropdown:hover .nav-chevron, .nav-dropdown:has(:focus-visible) .nav-chevron, .nav-dropdown.is-open .nav-chevron { transform: rotate(180deg); }
-.nav-dropdown:hover .nav-dropdown-panel, .nav-dropdown:has(:focus-visible) .nav-dropdown-panel { visibility: visible; opacity: 1; pointer-events: auto; transform: translate(-50%, 0); }
+.nav-dropdown:hover .nav-dropdown-panel, .nav-dropdown:has(:where(.nav-dropdown-panel) :focus-visible) .nav-dropdown-panel { visibility: visible; opacity: 1; pointer-events: auto; transform: translate(-50%, 0); }
 .nav-dropdown.is-open .nav-dropdown-panel { visibility: visible; opacity: 1; pointer-events: auto; transform: translate(-50%, 0); }
 .mobile-menu-toggle { width: 42px; height: 42px; padding: 0; display: none; align-items: center; justify-content: center; border: 1px solid var(--line); border-radius: 11px; color: var(--brand-navy); background: var(--card); cursor: pointer; }
 .menu-close-icon { display: none; }
@@ -98,7 +98,7 @@
   .site-header:where(:not(.workspace-header)) nav > a:hover, .site-header:where(:not(.workspace-header)) .nav-dropdown-trigger:hover { background: var(--brand-soft); }
   .site-header:where(:not(.workspace-header)) .nav-dropdown-panel { min-width: 0; padding: 2px 10px 8px 22px; position: static; display: none; visibility: visible; opacity: 1; pointer-events: auto; border: 0; background: transparent; box-shadow: none; transform: none; transition: none; }
   .site-header:where(:not(.workspace-header)) .nav-dropdown::before { display: none; }
-  .site-header:where(:not(.workspace-header)) .nav-dropdown:hover .nav-dropdown-panel, .site-header:where(:not(.workspace-header)) .nav-dropdown:has(:focus-visible) .nav-dropdown-panel { display: none; transform: none; }
+  .site-header:where(:not(.workspace-header)) .nav-dropdown:hover .nav-dropdown-panel, .site-header:where(:not(.workspace-header)) .nav-dropdown:has(:where(.nav-dropdown-panel) :focus-visible) .nav-dropdown-panel { display: none; transform: none; }
   .site-header:where(:not(.workspace-header)) .nav-dropdown.is-open .nav-dropdown-panel { display: grid; transform: none; }
 }
 

@@ -13,8 +13,9 @@ describe('prior Site asset preservation', () => {
   it('pins the currently published Site graph without changing its source bytes', () => {
     const value = JSON.parse(readFileSync(new URL('../../../apps/site/retained-assets.json', import.meta.url), 'utf8'));
     expect(value.origin).toBe(manifest.origin);
-    expect(value.assets).toHaveLength(14);
+    expect(value.assets).toHaveLength(15);
     expect(value.assets).toEqual(expect.arrayContaining([
+      { path: '/_site-assets/SiteLayout.DC_BbFoR.css', sha256: 'f5bc3d52487c868e06e912292a079e4cf79dcd450bebd4544c655f7d2ee44688', byteSize: 53441, contentType: 'text/css' },
       expect.objectContaining({ path: '/_site-assets/AuthControls.B9oav8Sw.js', sha256: 'c409759a0cb830d5a865fb9fbb9d49469a10f79aad00463ebb8540327b6ff646' }),
       expect.objectContaining({ path: '/_site-assets/MediaLauncher.DdIUGJ0w.js', sha256: '5f1d49566aa772de961c270740867a37c0f57c8386e451466c4850c9c5aac6ff' }),
       expect.objectContaining({ path: '/_site-assets/index.c43oQ-O6.css', sha256: 'c9aa53d86b5430716b365cd6afb7c91c30d6f6a88153a1ecbd9d1482a1195db0' }),

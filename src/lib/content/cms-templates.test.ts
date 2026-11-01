@@ -120,8 +120,12 @@ describe('publication safeguards', () => {
     const entries = [{ data: { slug: 'public' } }, { data: { slug: 'soon', statusLabel: 'Coming Soon' } }, { data: { slug: 'private', draft: true } }];
     expect(publicLandingEntries(entries)).toHaveLength(2);
     const nav = [{ label: 'Tools', href: '', children: [{ label: 'Secret', href: '/private?x=1' }, { label: 'Soon', href: '/soon' }] }, { label: 'Secret', href: '/private/' }];
-    expect(publicNavigation(nav, new Set(['/private']))).toEqual([{ ...nav[0], children: [{ label: 'Soon', href: '/soon' }] }]);
-    expect(publicNavigation([{ label: 'Empty', href: '', children: [{ label: 'Secret', href: '/private' }] }], new Set(['/private']))).toEqual([]);
+    const landing = entries.map(entry => ({ data: { heading: entry.data.slug, ...entry.data } }));
+    expect(publicNavigation(nav, landing)).toEqual([
+      { ...nav[0], children: [{ label: 'Soon', href: '/soon' }] },
+      { label: 'Watermark Removers', href: '', children: [{ label: 'public', href: '/public' }] },
+    ]);
+    expect(publicNavigation([{ label: 'Empty', href: '', children: [{ label: 'Secret', href: '/private' }] }], landing.filter(entry => entry.data.draft))).toEqual([]);
     const paths = buildSitemapEntries({ posts: [], landingPages: entries.map((entry) => entry.data), settings: sitemapSettings as Parameters<typeof buildSitemapEntries>[0]['settings'] }).map((entry) => entry.path);
     expect(paths).not.toContain('/private');
     expect(paths).toContain('/soon');
