@@ -343,7 +343,7 @@ export default function WatermarkWorkspace({ kind, logo, siteName, initialMode =
   }
   function startRefinement() { if (editingLocked || !job || !canRefineResult(job)) return; invalidateQuote(); setRefining(true); setHasSelection(false); setSelectionEditing(false); setView('result'); setError(''); }
   function cancelRefinement() { if (editingLocked) return; invalidateQuote(); setRefining(false); mask.current?.clear(); setHasSelection(false); setSelectionEditing(false); }
-  function selectRecent(next: PublicJob) { if (editingLocked) return; viewGeneration.current += 1; stopPreparation(); invalidateQuote(); acceptJob(next); setFile(null); setLocalUrl(''); setLocalMetadata(null); setRefining(false); setHasSelection(false); setSelectionEditing(false); setView('result'); setError(''); window.history.replaceState({}, '', `/app/${kind}?job=${encodeURIComponent(next.id)}`); void refreshCurrentJob(next.id).catch(cause => setError(displayError(cause))); }
+  function selectRecent(next: PublicJob) { if (editingLocked) return; viewGeneration.current += 1; stopPreparation(); invalidateQuote(); acceptJob(next); setFile(null); setLocalUrl(''); setLocalMetadata(null); setMediaRevision(value => value + 1); setRefining(false); setHasSelection(false); setSelectionEditing(false); setView('result'); setError(''); window.history.replaceState({}, '', `/app/${kind}?job=${encodeURIComponent(next.id)}`); void refreshCurrentJob(next.id).catch(cause => setError(displayError(cause))); }
   const resultSrc = job?.result?.previewUrl;
   const imageSrc = refining ? resultSrc ?? previewUrl : readyResult && view !== 'original' ? resultSrc ?? previewUrl : previewUrl;
   const recent = jobs.filter(value => (value.operation === 'video-watermark') === (kind === 'video'));

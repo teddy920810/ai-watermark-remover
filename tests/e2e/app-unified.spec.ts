@@ -119,3 +119,38 @@ test('initial object sign-in retains its selection, waits for a quote and does n
   await expect(page.locator('[data-app-shell]')).toBeVisible(); await expect(page.getByText('background-source.png',{exact:true})).toHaveCount(0);
   expect(state.submissions).toBe(1); expect(state.oldRequests).toBe(0);
 });
+
+test('switching same-size recent object sources clears painted pixels and undo history', async ({ page }) => {
+  const image = await sharp({ create: { width: 160, height: 120, channels: 3, background: '#95bbaa' } }).png().toBuffer();
+  const jobs = ['first', 'second'].map(id => ({ id, operation: 'object-removal', status: 'FAILED', input: { id: `${id}-source`, role: 'source', previewUrl: `/fixture/${id}.png`, metadata: { kind: 'image', contentType: 'image/png', width: 160, height: 120, byteSize: image.length }, expiresAt: new Date(Date.now() + 3600000).toISOString() }, charge: { status: 'refunded', amount: 1, unit: 'freeUses' }, createdAt: new Date().toISOString() }));
+  let submissions = 0;
+  await page.route('**/api/auth/get-session', route => route.fulfill({ json: { user: { id: 'mask-owner' }, session: { id: 'mask-session' } } }));
+  await page.route('**/api/v1/**', route => {
+    const path = new URL(route.request().url()).pathname;
+    if (path.endsWith('/capabilities')) return route.fulfill({ json: { operations: [{ operation: 'object-removal', enabled: true, acceptedTypes: ['image/png'], maxBytes: 10485760 }] } });
+    if (path.endsWith('/me')) return route.fulfill({ json: { freeUses: 2, purchasedImageCredits: 0, processingCredits: 0 } });
+    if (path.endsWith('/jobs')) {
+      if (route.request().method() === 'POST') submissions++;
+      return route.fulfill({ json: { jobs } });
+    }
+    const job = jobs.find(value => path.endsWith(`/jobs/${value.id}`));
+    return job ? route.fulfill({ json: job }) : route.fulfill({ status: 503, json: { error: 'Quote preparation unavailable in this selection-only test' } });
+  });
+  await page.route('**/fixture/*.png', route => route.fulfill({ contentType: 'image/png', body: image }));
+  await page.goto('/app?job=first');
+  const canvas = page.getByLabel('Object removal mask canvas');
+  await expect(canvas).toBeVisible();
+  const paint = async (fraction: number) => { const box = (await canvas.boundingBox())!; await page.mouse.move(box.x + box.width * fraction, box.y + box.height * .5); await page.mouse.down(); await page.mouse.move(box.x + box.width * (fraction + .02), box.y + box.height * .5); await page.mouse.up(); };
+  const paintedPixels = () => canvas.evaluate((value: HTMLCanvasElement) => value.getContext('2d')!.getImageData(0, 0, value.width, value.height).data.filter((alpha, index) => index % 4 === 3 && alpha > 0).length);
+  await paint(.2);
+  await expect.poll(paintedPixels).toBeGreaterThan(0);
+  await expect(page.getByRole('button', { name: 'Undo', exact: true })).toBeEnabled();
+  await page.locator('.workspace-recent button').nth(1).click();
+  await expect(page.locator('.object-editor-stage img')).toHaveAttribute('src', '/fixture/second.png');
+  await expect.poll(paintedPixels).toBe(0);
+  await expect(page.getByRole('button', { name: 'Undo', exact: true })).toBeDisabled();
+  await paint(.8);
+  await expect.poll(paintedPixels).toBeGreaterThan(0);
+  expect(await canvas.evaluate((value: HTMLCanvasElement) => value.getContext('2d')!.getImageData(32, 60, 1, 1).data[3])).toBe(0);
+  expect(submissions).toBe(0);
+});

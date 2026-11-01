@@ -260,3 +260,11 @@
 - 冻结前额外复核擦除来源：缺失精修parent、跨归属媒体key或仍有效的显式job窗口必须整组保护，已有独立红绿。当前源代码全量1247项通过、10外部skip；覆盖率statements84.66/branches82.73/functions86.57/lines91.32，完整Lint及Build/46份响应图HTML通过，类型0error/0warning/6既有hints。首轮ESLint边界测试5秒冷启动超时已保留，一次限制单元并发后通过；不把超时计作功能断言通过。UI未变，沿用133个唯一E2E及4个组件绿测。[最终代码门禁](../../output/refactor-release-2026-11-01/final-code-gates.json)。
 
 仓库PR/CI、Linux实际产物、三目标部署、真实OAuth、逐操作Provider/产物/余额及生产smoke仍待结清。图片原值、原费用、金融与UNKNOWN恢复、旧API和历史资源继续保护；无关其他聊天目录不构成产品发布阻塞。
+
+### 固定候选与独立审查补修（2026-11-01）
+
+- 候选83a4bc582014d4a0b01ade4cac6fd693c40052fa已推送并建立[PR #98](https://github.com/teddy920810/ai-watermark-remover/pull/98)。原27个内容记录的提交态语义校验通过，public资产无改动；MVP原件与归档Git blob均为61c900777dc64cd9c0d17669fa8fd2e03994e790。14个CMS文件仅Git换行/状态缓存差异，git diff HEAD无内容差异。
+- 该候选Linux完整CI及Site/App/Worker独立产物均成功。PR合并预览211e0f5f586d3e7a605810c4f38181f3c689924c与候选tree一致。Worker ZIP digest为2234434e17a90d349608fd64f2006e1ad91f39c1a409765d8c1e6170ad444f64，严格七文件上下文经Cloud Build fe6982eb-da1e-4e61-b3d6-e5e6b12c3374构建成功，镜像digest aec7597aac8f1854a54680e8437a4dfbf973973e33bf71e6a139aea51a22eda8；尚未切换生产。
+- 自动独立审查发现：同尺寸不同历史物体任务切换时，旧笔迹/撤销记录残留。新增真实canvas红测复现，再仅使显式历史任务切换推进媒体revision；签名URL刷新不推进revision。15项共同入口/物体登录/报价/余额/手机及新选区用例通过。后续UI门禁与新head CI单列，不据旧head通过直接合并。
+- 用户已在专用浏览器完成真实Google登录，get-session与生产账户读取有效。三类余额原均0；用户随后直接授权“你直接补足”。使用既有管理员账本工具先dry-run再为该唯一账号发放7个processingCredits（图片5、现有3.018秒视频2）及2次freeUses（背景/物体各1），原已购图片Credits保持0。审计reference为acceptance-20261101-refactor-six-ops与acceptance-20261101-refactor-images；回读为7/2/0，未启用购买。此授权取代先前“不发放账户额度”的本轮准备边界，图片10处理Credits预算、5次新图片槽和1次剩余视频槽仍不变。
+- 最新部署/功能验收状态与不可公开凭据分开保存在忽略目录output/refactor-release-2026-11-01；实际完成前不宣称上线验收结清。
