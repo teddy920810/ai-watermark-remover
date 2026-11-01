@@ -91,7 +91,7 @@ npm run check:ui         # 布局、全局样式、公共 UI
 npm run release:verify   # API、安全、构建链、依赖或其他高风险改动
 ```
 
-PR 的 GitHub CI 始终运行完整 `npm run verify`，它是合并 `main` 的必需门禁。低风险改动无需在本地和 CI 重复执行同一套全量检查。首次在本机运行 E2E 前执行 `npx playwright install chromium`。`npm run test:smoke:production` 只检查公开入口和匿名保护，不上传文件或调用 Provider。真实处理验收使用对应的认证功能命令，会写入临时资源并消耗额度，必须按已确认的预算运行一次；命令选择见 [测试与质量指南](docs/TESTING_GUIDE.md)。
+PR 的 GitHub CI 保持 `CI / verify` 与 `Required target artifacts` 必需门禁，按明确允许名单选择文档、内容、公共样式或完整验证；未知、混合、App/API、鉴权、金融、Provider 和构建链仍运行完整 `npm run verify`。内容检查保留 schema、内容安全、独立基线和 Site 产物，不运行无关支付/Worker 套件。首次在本机运行 E2E 前执行 `npx playwright install chromium`。`npm run test:smoke:production` 只检查公开入口和匿名保护，不上传文件或调用 Provider。真实处理验收使用对应的认证功能命令，会写入临时资源并消耗额度，必须按已确认的预算运行一次；命令选择见 [测试与质量指南](docs/TESTING_GUIDE.md)。
 
 测试分层、CI、失败处理和共创者操作说明见 [测试与质量指南](docs/TESTING_GUIDE.md)。不要提交 `.env.local`、R2 密钥、`S3-info.txt`、构建输出或本地测试截图。
 

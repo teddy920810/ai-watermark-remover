@@ -15,16 +15,25 @@ concurrency:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    env:
+      BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+      HEAD_SHA: ${{ github.sha }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
+      - id: plan
+        run: node scripts/ci-plan.mjs plan
       - run: npm ci
-      - run: npm run audit:dependencies
+        if: steps.plan.outputs.mode != 'docs'
       - run: npx playwright install --with-deps chromium
-      - run: npm run verify
+        if: steps.plan.outputs.browser == 'true'
+      - name: Run selected verification (full mode runs npm run verify)
+        run: npm run ci:verify
       - name: Upload E2E failure evidence
         if: failure()
         uses: actions/upload-artifact@v4

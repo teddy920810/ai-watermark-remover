@@ -7,15 +7,12 @@ on:
         description: Pages CMS action payload
         required: false
         type: string
-  push:
-    branches: [main]
-    paths:
-      - '.pages.yml'
-      - 'src/content/**'
-      - 'public/uploads/**'
 
 permissions:
   contents: read
+
+# PR/main content validation now runs in the always-present CI / verify job.
+# Keep only the explicit Pages CMS diagnostic action; no duplicate main sync.
 
 concurrency:
   group: cms-content-check-${{ github.ref }}

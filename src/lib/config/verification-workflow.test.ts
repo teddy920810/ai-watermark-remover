@@ -18,8 +18,9 @@ describe('risk-based verification workflow', () => {
     });
   });
 
-  it('keeps full CI verification while allowing scoped local checks', () => {
-    expect(agents).toContain('CI 中的 `npm run verify` 是合并 `main` 的必需门禁');
+  it('keeps stable required CI while allowing scoped checks for known low-risk changes', () => {
+    expect(agents).toContain('`CI / verify` 和 `Required target artifacts`');
+    expect(agents).toContain('未知或混合范围运行完整 `npm run verify`');
     expect(agents).toContain('低风险改动不要求在本地与 CI 重复运行完整 `npm run verify`');
     expect(testingGuide).toContain('1 个正向页面和 1 个负向页面');
     expect(contributing).toContain('根据改动范围选择本地检查');
