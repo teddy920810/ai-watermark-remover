@@ -110,6 +110,8 @@ Markdown 不接受 raw HTML、MDX import/export 或可执行组件。图片支�
 
 `published` 表示 Site 已包含该批准版本，条目的公开与否仍由 `entryVisibility` 中的 draft 决定；不能据此声称草稿页面已公开，也不是编辑事实/SEO效果或图片真实性的保证。仍需检查所有改动页面和素材 URL 的真实 HTTP，以及公开内容代表模板桌面/移动显示。Site 证明只公开 id/digest，不公开审批说明、身份或 Token。Git 分支被维护者在合并后删除时，状态通过 main 审计和 merge revision 恢复读取。
 
+若 GitHub 已合并的 REST 响应未提供有效合并提交号，服务端读取同仓库、同 PR 的官方 [GraphQL `mergeCommit.oid`](https://docs.github.com/en/graphql/reference/pulls#pullrequest)。GraphQL 未提供有效合并号时返回 503 `MERGE_REVISION_UNAVAILABLE`（仓库请求不可用仍为 `GITHUB_UNAVAILABLE`），保留原变更供重试；不把当前 main 推断为历史合并版本，不重建分支。
+
 ## Node 完整调用示例
 
 以下保存为本机忽略目录的脚本，用 Node 22/24 执行。Token 从受保护文件读取，不放进参数或打印。示例创建**未发布草稿**，上传图片、引用、校验并保留恢复信息；不会自动批准示例内容。

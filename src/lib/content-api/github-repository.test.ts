@@ -2,6 +2,26 @@ import { describe, expect, it, vi } from 'vitest';
 import { GitHubContentRepository } from './github-repository';
 const revision = 'a'.repeat(40);
 describe('GitHub content persistence contract', () => {
+  it.each([undefined, null, 'invalid'])('recovers the exact merged revision from GraphQL when REST returns %s', async mergeRevision => {
+    const mergedRevision = 'f'.repeat(40);
+    const request = vi.fn(async (url: string | URL | Request) => new Response(JSON.stringify(String(url).endsWith('/graphql')
+      ? { data: { repository: { pullRequest: { merged: true, mergeCommit: { oid: mergedRevision } } } } }
+      : { number: 103, html_url: 'https://github.com/teddy920810/ai-watermark-remover/pull/103', state: 'closed', merged: true, merge_commit_sha: mergeRevision, base: { ref: 'main' }, head: { sha: revision, ref: 'codex/content-abcdefabcdefabcdefabcdef', repo: { full_name: 'teddy920810/ai-watermark-remover' } } })));
+    expect((await new GitHubContentRepository('test-only-token', request).getPull(103)).mergeRevision).toBe(mergedRevision);
+    const init = (request.mock.calls[1] as unknown as [string, RequestInit])[1];
+    expect(JSON.parse(String(init.body))).toMatchObject({ variables: { number: 103 } });
+  });
+  it.each([null, { merged: false, mergeCommit: { oid: revision } }, { merged: true, mergeCommit: { oid: 'invalid' } }])('fails closed without an authoritative merged revision: %j', async pullRequest => {
+    const request = vi.fn(async (url: string | URL | Request) => new Response(JSON.stringify(String(url).endsWith('/graphql')
+      ? { data: { repository: { pullRequest } } }
+      : { number: 103, html_url: 'https://github.com/teddy920810/ai-watermark-remover/pull/103', state: 'closed', merged: true, base: { ref: 'main' }, head: { sha: revision, repo: { full_name: 'teddy920810/ai-watermark-remover' } } })));
+    await expect(new GitHubContentRepository('test-only-token', request).getPull(103)).rejects.toMatchObject({ status: 503, code: 'MERGE_REVISION_UNAVAILABLE' });
+  });
+  it.each([false, true])('preserves the REST fast path when merged=%s and a valid revision is available', async merged => {
+    const request = vi.fn(async () => new Response(JSON.stringify({ number: 103, html_url: 'https://github.com/teddy920810/ai-watermark-remover/pull/103', state: merged ? 'closed' : 'open', merged, merge_commit_sha: revision, base: { ref: 'main' }, head: { sha: revision, repo: { full_name: 'teddy920810/ai-watermark-remover' } } })));
+    expect((await new GitHubContentRepository('test-only-token', request).getPull(103)).mergeRevision).toBe(revision);
+    expect(request).toHaveBeenCalledTimes(1);
+  });
   it('reads public Checks without the content write credential and requires the requested exact SHA', async () => {
     const request = vi.fn(async () => new Response(JSON.stringify({ check_runs: [
       { name: 'verify', head_sha: revision, status: 'completed', conclusion: 'success', app: { id: 15368 } },
