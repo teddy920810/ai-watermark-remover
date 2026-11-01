@@ -24,7 +24,7 @@ class MemoryRepository implements ContentRepository {
   async verifyApproval(_number: number, _reference: string, digest: string) { return this.comments.some(c => c.includes(`Digest: ${digest}\n`)); }
   async merge(_number: number, head: string) { this.pull = { ...this.pull!, merged: true, state: 'closed', head, mergeRevision: 'f'.repeat(40) }; return 'f'.repeat(40); }
   async checks() { return [{ name: 'verify', success: true, appId: 15368 }, { name: 'Required target artifacts', success: true, appId: 15368 }]; }
-  async changedFiles() { return [...(await this.snapshot(this.pull!.branch!)).files.keys()]; }
+  async changedFiles() { const main = (await this.snapshot('main')).files; return [...(await this.snapshot(this.pull!.branch!)).files].filter(([path, bytes]) => !main.get(path)?.equals(bytes)).map(([path]) => path); }
 }
 function harness() {
   const repository = new MemoryRepository();
@@ -74,11 +74,32 @@ describe('content-only Agent API', () => {
   it('blocks publication placeholders and makes approval bind to an exact review digest', async () => {
     const { call } = harness(); const change = await (await call('/changes', 'POST', { title: 'Review checks' })).json();
     const template = await (await call('/templates/blog')).json();
-    const saved = await (await call(`/changes/${change.id}/entries/blog/review-check`, 'PUT', { data: { ...template.data, slug: 'review-check' }, body: 'Draft text' }, change.revision, 'save-12345678')).json();
+    const saved = await (await call(`/changes/${change.id}/entries/blog/review-check`, 'PUT', { data: { ...template.data, slug: 'review-check', draft: false }, body: 'Draft text' }, change.revision, 'save-12345678')).json();
     const validation = await (await call(`/changes/${change.id}/validate`, 'POST', {}, saved.revision, 'validate-12345678')).json();
     expect(validation.publishable).toBe(false); expect(validation.issues.length).toBeGreaterThan(0);
     expect((await call(`/changes/${change.id}/review`, 'POST', { digest: 'wrong', approval: 'I approve this exact content difference.' }, saved.revision, 'review-12345678')).status).toBe(409);
     expect((await call(`/changes/${change.id}/publish`, 'POST', {}, saved.revision, 'publish-12345678')).status).toBe(409);
+  });
+  it('preserves explicit draft visibility and exact bytes through protected review and merge for both content kinds', async () => {
+    const { call, repository } = harness();
+    repository.refs.get('main')!.files.set('public/uploads/background-remover-product-photo.png', Buffer.from('existing asset'));
+    let change = await (await call('/changes', 'POST', { title: 'Protected draft release fixture' })).json();
+    for (const kind of ['blog', 'landing']) {
+      const document = JSON.parse(readFileSync(`docs/examples/content-api/${kind}.json`, 'utf8'));
+      document.data.slug = `protected-draft-${kind}`;
+      if (kind === 'blog') document.body = '## Protected draft\n\nThis fixture must remain unpublished after its protected release.';
+      change = await (await call(`/changes/${change.id}/entries/${kind}/${document.data.slug}`, 'PUT', document, change.revision, `draft-entry-${kind}`)).json();
+    }
+    const before = await repository.snapshot(`codex/content-${change.id}`);
+    const response = await call(`/changes/${change.id}/review`, 'POST', { digest: change.digest, approval: 'Approved only for a protected draft release; both entries must remain unpublished.' }, change.revision, 'draft-review-123');
+    expect(response.status).toBe(200); change = await response.json();
+    const reviewed = await repository.snapshot(`codex/content-${change.id}`);
+    for (const path of change.entries) expect(reviewed.files.get(path)).toEqual(before.files.get(path));
+    expect(change.entryVisibility).toEqual(change.entries.map((path: string) => ({ path, draft: true })));
+    const merged = await call(`/changes/${change.id}/publish`, 'POST', {}, change.revision, 'draft-publish-123');
+    expect(merged.status).toBe(202);
+    expect((await merged.json()).entryVisibility).toEqual(change.entryVisibility);
+    expect(repository.pull!.merged).toBe(true);
   });
   it('uploads original bytes, binds exact content approval, and requires trusted checks before protected merge', async () => {
     const { call, repository } = harness();

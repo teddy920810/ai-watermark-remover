@@ -69,7 +69,7 @@ describe('recoverable content API acceptance CLI', () => {
   it('executes the documented Node example and resumes a failed upload with its persisted key', async () => {
     const files = await fixture(); const backend = await api({ uploadFailsOnce: true });
     const guide = await readFile('docs/CONTENT_API.md', 'utf8');
-    const block = [...guide.matchAll(/```js\n([\s\S]*?)```/g)][0][1];
+    const block = [...guide.matchAll(/```js\r?\n([\s\S]*?)```/g)][0][1];
     const executable = join(files.root, 'documented-example.mjs');
     await writeFile(executable, block.replace('https://www.watermarkgemini.com/api/content/v1', backend.origin + '/api/content/v1'));
     await mkdir(join(files.root, '.secrets')); await writeFile(join(files.root, '.secrets', 'content-api-token.txt'), token);

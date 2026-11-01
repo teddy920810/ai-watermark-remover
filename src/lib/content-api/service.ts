@@ -33,13 +33,14 @@ function candidate(snapshot: ContentSnapshot, change: Change) {
   for (const path of change.entries) {
     if (!contentPath(path)) fail(409, 'INVALID_CHANGE', 'Change contains an unsupported path.');
     const source = snapshot.files.get(path); if (!source) fail(409, 'INVALID_CHANGE', 'A change entry is missing.');
-    const entry = readEntry(path, source); entry.data.draft = false; entries.set(path, serialize(path, entry));
+    entries.set(path, source);
   }
   const digest = hash(JSON.stringify([...entries].map(([path, bytes]) => [path, hash(bytes)]).concat(change.assets.map(a => [a.path, a.sha256])).sort(([a], [b]) => a.localeCompare(b))));
   return { entries, digest };
 }
 function view(snapshot: ContentSnapshot, change: Change) {
-  return { id: change.id, title: change.title, revision: snapshot.revision, baseRevision: change.baseRevision, state: change.approval ? 'approved' : 'draft', digest: candidate(snapshot, change).digest, entries: change.entries, assets: change.assets, pullRequest: change.pull ? `https://github.com/teddy920810/ai-watermark-remover/pull/${change.pull}` : null, approval: change.approval ?? null };
+  const proposed = candidate(snapshot, change);
+  return { id: change.id, title: change.title, revision: snapshot.revision, baseRevision: change.baseRevision, state: change.approval ? 'approved' : 'draft', digest: proposed.digest, entries: change.entries, entryVisibility: [...proposed.entries].map(([path, bytes]) => ({ path, draft: readEntry(path, bytes).data.draft === true })), assets: change.assets, pullRequest: change.pull ? `https://github.com/teddy920810/ai-watermark-remover/pull/${change.pull}` : null, approval: change.approval ?? null };
 }
 function tokenValid(request: Request, config: ContentApiConfig) {
   const match = /^Bearer ([A-Za-z0-9_-]{32,256})$/.exec(request.headers.get('authorization') ?? '');

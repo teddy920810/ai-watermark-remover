@@ -46,7 +46,7 @@
 | POST `/changes/{id}/assets` | `{"name":"photo.png","mime":"image/png","base64":"..."}` | 更新后的变更对象和 `asset:{path,sha256,width,height,bytes,mime}` |
 | GET `/changes/{id}/assets/{返回路径的文件名}` | 读取该变更的原始素材字节，含未发布素材 | 正确图片 MIME，私有缓存策略；需要 token |
 | POST `/changes/{id}/validate` | `{}`；校验拟发布版本，不改草稿字段 | `publishable`, `issues`, `digest`, `revision` |
-| POST `/changes/{id}/review` | `{"digest":"读取到的当前digest","approval":"内容负责人批准这些具体差异的说明，20–2000字符"}` | 更新变更、PR URL、批准审计引用；拟发布记录改为 `draft:false` |
+| POST `/changes/{id}/review` | `{"digest":"读取到的当前digest","approval":"内容负责人批准这些具体差异的说明，20–2000字符"}` | 更新变更、PR URL、批准审计引用；保留每条记录的 `draft` 值和内容字节 |
 | POST `/changes/{id}/publish` | `{}`；在精确批准和必需 CI 成功后请求保护合并 | 202 和当前状态；保护规则、冲突或检查未通过时拒绝 |
 
 首版无删除/URL 重命名接口、任意分支/路径参数、远程 URL 抓图、R2 预签名上传或管理权限接口。一个变更集可以包含多篇内容，但批准覆盖整个变更集的当前 digest。
@@ -94,6 +94,8 @@ Markdown 不接受 raw HTML、MDX import/export 或可执行组件。图片支�
 
 保存不批准内容。内容负责人先读取分支记录、下载素材、检查差异和事实，再读取 digest 并提交明确批准说明。review 会把 digest、具体路径和图片哈希、actor、源 revision 记入 PR 评论；只为这些已批准的既有保护记录同步独立基线，fixture 差异和内容在同一 PR 中供审阅。新建草稿不重写全站基线，研发验收不批准原有 SEO 内容修改。继续保留独立 `seo-content-ownership` 测试。
 
+审核与合并保留明确的 `draft` 值。要公开真实运营内容，先完整 PUT 将获授权的记录设为 `draft:false`，再读取新 digest 审核。`draft:true` 也可经过受保护 PR、CI 和合并发布到 Site，但保持无公开页面、无 sitemap 收录。响应的 `entryVisibility:[{path,draft}]` 表示逐条可见性；验收草稿必须始终为 true。
+
 任何后续编辑使批准失效。publish 再检查批准评论、素材真实哈希、基线只能包含本次批准差异、PR 只含本变更允许路径，以及相同 head 上 GitHub Actions app 15368 的 `verify` 与 `Required target artifacts` 成功。调用 GitHub PR merge 时固定 head，不直接写 main、不 force、不关闭保护。GitHub 仍可因分支落后、待解决讨论等拒绝合并；不能用 API 绕过。
 
 | state | 含义与下一步 |
@@ -106,7 +108,7 @@ Markdown 不接受 raw HTML、MDX import/export 或可执行组件。图片支�
 | `merged-awaiting-deployment` | 已合并，但没有核实到公共 Site 的对应发布证明 |
 | `published` | PR 已合并且公共 `/content-publications.json` 含本次 id/digest，证明 Site 产物已包含本次批准 |
 
-`published` 不是编辑事实/SEO效果或图片真实性的保证；仍需检查所有改动页面和素材 URL 的真实 HTTP，以及代表模板桌面/移动显示。Site 证明只公开 id/digest，不公开审批说明、身份或 Token。Git 分支被维护者在合并后删除时，状态通过 main 审计和 merge revision 恢复读取。
+`published` 表示 Site 已包含该批准版本，条目的公开与否仍由 `entryVisibility` 中的 draft 决定；不能据此声称草稿页面已公开，也不是编辑事实/SEO效果或图片真实性的保证。仍需检查所有改动页面和素材 URL 的真实 HTTP，以及公开内容代表模板桌面/移动显示。Site 证明只公开 id/digest，不公开审批说明、身份或 Token。Git 分支被维护者在合并后删除时，状态通过 main 审计和 merge revision 恢复读取。
 
 ## Node 完整调用示例
 
@@ -184,7 +186,9 @@ console.log({ id: change.id, revision: change.revision, publishable: validation.
 
 ```js
 change = await api(`/changes/${change.id}`);
-// 仅当内容负责人确已审阅这些具体差异后执行；不得批准文档示例或验收草稿。
+// 仅对获授权的真实运营稿，先完整 PUT {...document,data:{...document.data,draft:false}}，
+// 并采用新的稳定 key；保留原草稿时无需此步。重新读取 change 获取新 digest。
+// 仅当内容负责人确已审阅这些具体差异后执行；文档示例不得转为公开内容。
 change = await api(`/changes/${change.id}/review`, 'POST', {
   digest: change.digest,
   approval: '内容负责人已审阅本次具体正文、SEO字段、素材与alt差异，并批准此digest对应版本。',
@@ -232,6 +236,6 @@ node scripts/content-api-smoke.mjs --token-file .secrets/content-api-token.txt -
 node scripts/content-api-smoke.mjs --token-file .secrets/content-api-token.txt --write-draft --image public/uploads/background-remover-product-photo.png --out output/content-api-draft-smoke.json
 ```
 
-第二条创建隔离未发布草稿和原字节素材，核对跨请求持久读取与下载哈希；不调用 review/publish、不发真实文章、不触发 Provider 或处理扣费。真实 PR/CI/部署链另按发布证据核验，不把这条草稿检查或 Mock 当作真实内容已经发布。
+第二条创建隔离未发布草稿和原字节素材，核对跨请求持久读取与下载哈希；不调用 review/publish、不发真实文章、不触发 Provider 或处理扣费。真实 PR/CI/部署链另按发布证据核验：可仅批准保持 `draft:true` 的隔离条目，等待受保护 CI 后合并，核对公共 manifest 和素材原字节，并确认草稿 URL 404、sitemap 无收录。不能把单独的草稿检查或 Mock 当作真实保护发布通过。
 
 写验收会在首个远程请求前准备并检查恢复文件；`--out` 未传时默认 `output/content-api-draft-smoke.json`。创建成功立即记 id/revision，各阶段保存进度，失败时原 key 与 pending 请求保留。断网/上传失败后以**相同 origin、image 和 --out** 重跑，复用原草稿而非另建；输出目录不可写则不会先创建 Git 分支。不要删除恢复记录“重跑”来掩盖 UNKNOWN；更换输入或目标需新记录，并保留原分支供人工恢复/清理。
