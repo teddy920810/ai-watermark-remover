@@ -8,6 +8,7 @@
   },
   "scripts": {
     "project:check": "node scripts/workspace-preflight.mjs",
+    "ci:verify": "node scripts/ci-plan.mjs run",
     "dev": "astro dev",
     "prebuild": "npm run images:optimize",
     "build": "astro check && astro build && npm run verify:responsive-images",

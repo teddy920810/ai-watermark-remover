@@ -64,7 +64,7 @@
 - 所有行为改动都先运行能够证明目标行为的红测，再做最小修改并运行定向绿测。
 - 低风险改动不要求在本地与 CI 重复运行完整 `npm run verify`。按范围选择：普通小改运行 `npm run check:fast`；CMS、Blog、落地页或图片内容运行 `npm run check:content`；布局、全局样式和公共 UI 运行 `npm run check:ui`。
 - API、鉴权、R2、Provider、安全响应头、构建链、依赖、CI、全局配置，或任何范围不确定/定向检查失败的改动，必须在本地运行 `npm run release:verify`。
-- CI 中的 `npm run verify` 是合并 `main` 的必需门禁；低风险 PR 可以依赖 CI 完成唯一一次全量覆盖率、Lint、Build 和 E2E，不得在 CI 未通过时合并。
+- `CI / verify` 和 `Required target artifacts` 是合并 `main` 的稳定必需门禁，保持严格更新与可信 GitHub Actions 来源。CI 按 `scripts/ci-plan.mjs` 的明确允许名单选择 docs/content/ui/full；未知或混合范围运行完整 `npm run verify`，不降低覆盖率或安全阈值。门禁未通过不得合并。
 - 生产验证按改动范围抽查：数据约束自动检查全部改动记录；视觉改动至少检查桌面/移动代表模板，并包含 1 个正向页面和 1 个负向页面；所有改动 URL 做只读 HTTP 检查。
 - 鉴权、对象归属、安全和第三方真实信号不能用抽查代替；仅当改动涉及生产环境、域名、R2、CORS 或认证业务链路时运行会写真实资源的 Production Smoke。
 
@@ -73,7 +73,7 @@
 - 每次只选择覆盖实际风险的最小充分门禁；不要叠加运行范围重合的 `check:fast`、`check:content`、`check:ui`、独立 Build 和 `release:verify`。
 - 低风险 UI/CSS 修改的本地流程止于：定向红测、最小修改、定向绿测、一次 `npm run check:ui`，再对一个代表页面做桌面/移动检查，并检查一个不应受影响的负向区域。
 - `check:ui` 已通过时，不再额外运行 `check:fast`、`check:content`、独立 Build 或 `release:verify`；仅当范围扩大、定向检查失败或出现新的风险信号时升级门禁。
-- 合并 `main` 的低风险改动由 CI 唯一执行一次完整 `npm run verify`；本地不重复全量覆盖率、Lint、Build 和 E2E。
+- 合并 `main` 的低风险改动由 CI 执行对应范围检查，独立目标门禁生成实际选中产物；本地不重复全量覆盖率、Lint、Build 和 E2E。CI/分类器/构建链调整自身始终属于高风险，过渡 PR 仍通过完整验证。
 - 标准门禁因端口、进程或平台问题无法运行时，先进行一次安全的冲突排查；仍无法运行时使用覆盖缺失范围的等价替代验证并明确限制，不重复执行已经充分覆盖的验证。
 - 共享 CSS 或公共组件修改只抽查受影响的代表模板，不把所有引用共享资源的路由都视为改动 URL；只有内容、路由或数据记录实际变化时才逐一检查对应 URL。
 - 未受本次改动影响的发布门禁标记为 `not applicable`，不要为了将其标记为 `passed` 而额外验证。域名、证书、OAuth、R2、CORS、Provider 和 Production Smoke 仅在改动直接涉及对应范围时验证。

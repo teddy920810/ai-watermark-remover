@@ -7,7 +7,7 @@
 3. 不要提交 `.env.local`、访问密钥、`S3-info.txt` 或用户上传图片。
 4. Git 提交邮箱应关联你的 GitHub/Vercel 账号，否则 Vercel 可能阻止部署。
 
-Pages CMS 会直接向 `main` 写入内容提交。因此长时间开发期间，应在提交前再次执行 `git fetch origin main`，发现远端更新后先 rebase 或合并，禁止强制推送覆盖内容编辑的提交。
+Pages CMS 内容通过审核分支、受保护 PR 与必需 CI 进入 `main`。因此长时间开发期间，应在提交前再次执行 `git fetch origin main`，发现远端更新后先 rebase 或合并，禁止强制推送覆盖内容编辑的提交。
 
 ## 开发流程
 
@@ -15,7 +15,7 @@ Pages CMS 会直接向 `main` 写入内容提交。因此长时间开发期间�
 
 1. 添加或更新测试，并确认测试因目标行为尚未实现而失败。
 2. 实现最小改动使测试通过。
-3. 根据改动范围选择本地检查；PR CI 负责统一执行完整全量检查。
+3. 根据改动范围选择本地检查；PR CI 负责按明确风险范围执行稳定必需检查。
 
 ```sh
 npm run check:fast       # 普通小改
@@ -24,7 +24,7 @@ npm run check:ui         # 布局、全局样式、公共 UI
 npm run release:verify   # API、安全、依赖、构建与 CI 等高风险改动
 ```
 
-PR CI 中的 `verify` 包含覆盖率、Lint、生产构建和浏览器 E2E，并且必须通过后才能合并 `main`。首次运行浏览器测试前执行 `npx playwright install chromium`。内容修改使用 `check:content` 在本地验证 schema、SEO 路由和生产构建，无需与 CI 重复运行完整 `verify`。
+PR CI 保持 `verify` 与 `Required target artifacts` 必需上下文；明确低风险内容采用内容检查与 Site 产物，未知/混合/高风险采用包含覆盖率、Lint、生产构建和浏览器 E2E 的完整验证，必须通过后才能合并 `main`。首次运行浏览器测试前执行 `npx playwright install chromium`。内容修改使用 `check:content` 在本地验证 schema、SEO 路由和生产构建，无需与 CI 重复运行完整 `verify`。
 
 测试职责：
 
@@ -58,7 +58,7 @@ GA、支付、登录、Cloud SDK、Consent 等第三方初始化片段属于“�
 ## 提交前检查
 
 - 工作区不存在密钥和临时文件。
-- 本地按AGENTS只选一次覆盖实际风险的门禁；main合并依赖CI完整`npm run verify`成功，不在低风险本地重复全量检查。
+- 本地按AGENTS只选一次覆盖实际风险的门禁；main合并依赖稳定必需CI成功，高风险仍完整运行`npm run verify`，不在低风险本地重复全量检查。
 - 本地检查目标页面及 `/404`、`/robots.txt`、`/sitemap.xml`。
 - 已同步远端 `main`，没有覆盖 Pages CMS 新提交。
 - 第三方集成使用官方原始片段，并已验证平台侧真实事件或明确记录未验证项。

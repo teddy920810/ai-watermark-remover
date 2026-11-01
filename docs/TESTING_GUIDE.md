@@ -35,7 +35,7 @@ npm run verify
 
 ### Pages CMS 内容编辑
 
-Pages CMS 保存会提交到 `main`，随后触发 GitHub Actions 和 Vercel。内容编辑不需要在本地运行测试，但必须等待：
+Pages CMS 保存到内容审核分支，经受保护 PR 与必需检查后合并 `main`，随后由 Vercel 按目标发布。内容编辑不需要在本地运行测试，但必须等待：
 
 1. GitHub Actions 的 **CI / verify** 成功。
 2. Vercel Production 状态变成 **Ready**。
@@ -45,7 +45,7 @@ Pages CMS 保存会提交到 `main`，随后触发 GitHub Actions 和 Vercel。�
 
 ### 开发者
 
-行为变更遵循 TDD：先添加会因目标行为缺失而失败的测试，再做最小实现并运行定向绿测。之后根据改动范围选择本地检查；PR CI 的完整 `verify` 必须成功后才能合并。第三方集成必须验证真实信号，不能只检查脚本存在。
+行为变更遵循 TDD：先添加会因目标行为缺失而失败的测试，再做最小实现并运行定向绿测。之后根据改动范围选择本地检查；PR CI 的稳定必需检查必须成功后才能合并；分类与执行明细见下方自动化保护。第三方集成必须验证真实信号，不能只检查脚本存在。
 
 ## 动态验证矩阵
 
@@ -58,7 +58,7 @@ Pages CMS 保存会提交到 `main`，随后触发 GitHub Actions 和 Vercel。�
 | 依赖、构建、CI、全局配置 | `release:verify` | 核对 CI、Vercel 和相应运行时结果 |
 | 域名、OAuth、第三方集成 | `release:verify` + 专项测试 | 必须验证真实端到端信号 |
 
-低风险改动不需要在本地和 CI 重复运行完整 `verify`；完整全量门禁统一由 PR CI 执行。若改动范围不确定、定向检查失败、跨越多个风险类别，升级到 `release:verify`。
+低风险改动不需要在本地和 CI 重复运行完整 `verify`；CI 根据明确允许名单选择最小充分门禁。若改动范围不确定、定向检查失败、跨越多个风险类别，升级到 `release:verify`。
 
 `verify` 和 `verify:deploy` 先执行 `lint:code`，类型检查由随后 `build` 中的一次 `astro check` 承担。单独执行 `lint` 或 `build` 仍会检查类型。独立目标产物验证检查不同的路由、依赖和运行环境边界，不能用组合站点 Build 代替；仅构建受影响的目标，且同一工作区的 Astro 构建必须串行。
 
@@ -81,9 +81,11 @@ Pages CMS 保存会提交到 `main`，随后触发 GitHub Actions 和 Vercel。�
 
 ## 自动化保护
 
-- `.github/workflows/ci.yml`：每次 PR 和 `main` 推送运行完整 `verify`；这是合并 `main` 的统一全量门禁。
+- `.github/workflows/ci.yml`：每次 PR 和 `main` 推送始终运行 `verify` 作业，以事件的 base/head SHA 分类并重新计算实际执行范围；不使用 workflow 路径过滤跳过必需检查。文档只检查 diff；纯 Blog/landing/homepage/legal 与原始栅格图检查 schema、内容测试与变更内容安全；明确的公共样式运行 `check:ui`；其他范围运行依赖审计和完整 `verify`。高风险/未知/混合、空 diff 或读取 diff 失败一律完整验证。源码、MDX、SVG、站点身份设置、基线单独修改和内容 API 协议不进入内容快路径。
 - `.github/workflows/build-targets.yml`：同一份变更分类选择 Site、App 和 Worker，生成并验证对应产物。内容变更只选择 Site；Worker 入口只选择 Worker；共享处理代码选择 App 和 Worker；依赖与构建入口选择全部目标。Worker 验证真实打包和七文件上传上下文，不部署或调用 Provider。
 - `.github/workflows/production-smoke.yml`：每天只运行无成本 Public Smoke；手工选择 operation 时才运行会消耗额度的 Functional Smoke。
+- `.github/workflows/cms-content-check.yml`：仅保留显式手动诊断，不再在 main 重复执行已由必需 CI 覆盖的内容同步。
+- 内容 lane 的 `content-ci.test.ts` 对实际变更的 Blog/landing 复用内容 API 的安全解析，对栅格图做原始字节解码；原内容基线保持独立，普通保存不批准基线。删除、草稿、URL、引用与保留 slug 仍由现有 schema/发布规则检查。
 - App 和 Site 由 Vercel Git 集成分别执行 `apps/app/vercel.json`、`apps/site/vercel.json` 的目标构建，并按变更范围跳过无关目标。根目录 `vercel.json` 的 `verify:deploy` 仅供保留的组合构建使用，不是当前独立发布的默认命令。
 - 独立构建与 Worker 的产物验证见 [部署目标](../apps/DEPLOYMENT_TARGETS.md)。产物验证不执行部署，也不使用生产凭据；构建成功不能代替生产版本和真实处理验收。
 - 覆盖率门槛：核心代码 lines/functions/statements ≥ 80%，branches ≥ 70%。当前结果应高于最低线，不能通过降低阈值掩盖缺失测试。

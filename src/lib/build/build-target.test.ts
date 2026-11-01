@@ -23,6 +23,9 @@ function fixture() {
 afterEach(() => { for (const directory of directories.splice(0)) rmSync(directory, { recursive: true, force: true }); });
 
 describe('independent build targets', () => {
+  it('revalidates every packaging target for ignore and otherwise unknown input changes', () => {
+    for (const file of ['.gitignore', '.vercelignore', 'unknown-runtime.js']) expect(classifyTargetChanges([file])).toEqual(['site', 'app', 'worker']);
+  });
   it('keeps legacy service assembly App-only while shared durable resources reach App and Worker', () => {
     expect(classifyTargetChanges(['src/lib/services.ts'])).toEqual(['app']);
     expect(classifyTargetChanges(['src/lib/runtime/web-database-pool.ts', 'src/lib/benefits/free-benefits.ts'])).toEqual(['app', 'worker']);

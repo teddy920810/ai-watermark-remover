@@ -127,7 +127,7 @@ export function classifyTargetChanges(files) {
     if (file === 'src/lib/content/entry-schemas.ts' || /^scripts\/lib\/(?:cms-document|cms-publication-policy|content-baseline)\./.test(file)) { targets.add('site'); targets.add('app'); continue; }
     if (/^(?:docs\/|README\.md$|AGENTS\.md$|scripts\/processing-acceptance\.mjs$|scripts\/lib\/acceptance-budget\.mjs$)/.test(file)) continue;
     if (/^(?:apps\/worker\/|scripts\/build-worker)/.test(file)) { targets.add('worker'); continue; }
-    if (/^(?:package(?:-lock)?\.json$|scripts\/build-target|\.github\/workflows\/build-targets)/.test(file)) { for (const target of buildTargets) targets.add(target); continue; }
+    if (/^(?:package(?:-lock)?\.json$|\.gitignore$|\.vercelignore$|scripts\/build-target|\.github\/workflows\/build-targets)/.test(file)) { for (const target of buildTargets) targets.add(target); continue; }
     if (file === 'scripts/retain-app-assets.mjs') { targets.add('site'); targets.add('app'); continue; }
     if (file === 'src/pages/pricing.astro') { targets.add('app'); continue; }
     if (file === 'src/lib/services.ts') { targets.add('app'); continue; }
@@ -147,7 +147,8 @@ export function classifyTargetChanges(files) {
     if (/^(?:src\/lib\/(?:runtime\/|processing\/|providers\/|media\/|benefits\/|jobs\/|r2\/|users\/|config\/)|db\/)/.test(file)) { targets.add('app'); targets.add('worker'); continue; }
     if (/^(?:apps\/app\/|src\/pages\/(?:app|api|auth)\/|src\/components\/workspace\/|src\/lib\/(?:api\/|auth\.ts))/.test(file)) { targets.add('app'); continue; }
     if (/^(?:apps\/site\/|src\/content|src\/pages\/|src\/components\/|src\/layouts\/|src\/lib\/content\/|public\/|\.pages\.yml$|scripts\/(?:cms-|optimize-images|verify-responsive))/.test(file)) { targets.add('site'); continue; }
-    if (/^(?:src\/|scripts\/|\.github\/|tsconfig|vite|vercel\.json)/.test(file)) for (const target of buildTargets) targets.add(target);
+    // Unrecognized inputs must never silently select no deployment artifacts.
+    for (const target of buildTargets) targets.add(target);
   }
   return buildTargets.filter((target) => targets.has(target));
 }

@@ -20,4 +20,8 @@ output/
 .tools/
 .secrets/
 .site-init-backup/
+# Local recovery archives and editor/system sidecars are never deployment inputs.
+*.bundle
+.DS_Store
+Thumbs.db
 *.log

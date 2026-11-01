@@ -54,19 +54,21 @@ describe('project baseline configuration', () => {
     const workflow = readProjectFile('.github/workflows/ci.yml');
     const packageJson = JSON.parse(readProjectFile('package.json')) as { scripts: Record<string, string> };
     expect(workflow).toContain('cancel-in-progress: true');
-    expect(workflow).toContain('npm run audit:dependencies');
+    expect(workflow).toContain('npm run ci:verify');
+    expect(readProjectFile('scripts/ci-plan.mjs')).toContain("['audit:dependencies', 'verify']");
     expect(workflow).toContain('actions/upload-artifact@v4');
     expect(workflow).toContain('if: failure()');
     expect(workflow).toContain('test-results/');
     expect(packageJson.scripts['audit:dependencies']).toBe('npm audit --audit-level=high');
   });
 
-  it('validates Pages CMS saves directly on main', () => {
+  it('retains explicit CMS diagnostics while required CI validates protected PR and main changes', () => {
     const workflow = readProjectFile('.github/workflows/cms-content-check.yml');
     const packageJson = JSON.parse(readProjectFile('package.json')) as { scripts: Record<string, string> };
 
     expect(workflow).toContain('workflow_dispatch:');
-    expect(workflow).toContain('branches: [main]');
+    expect(workflow).not.toContain('  push:');
+    expect(readProjectFile('.github/workflows/ci.yml')).toContain('branches: [main]');
     expect(workflow).toContain('npm run content:validate');
     expect(packageJson.scripts['content:validate']).toBe('astro sync');
   });
