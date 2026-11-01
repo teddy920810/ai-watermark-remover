@@ -18,6 +18,7 @@ describe('required CI risk selection', () => {
   });
   it('permits only known public styles in the UI lane', () => {
     expect(classifyVerification(['src/styles/tool-landing.css']).mode).toBe('ui');
+    expect(verificationCommands('ui')).toEqual(['images:optimize', 'check:ui']);
     expect(classifyVerification(['src/components/auth/AuthControls.tsx']).mode).toBe('full');
   });
   it('fails closed for missing diffs, executable content, financial, build and mixed scopes', () => {

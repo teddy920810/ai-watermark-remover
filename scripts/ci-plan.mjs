@@ -27,7 +27,7 @@ export function classifyVerification(files) {
 export function verificationCommands(mode) {
   if (mode === 'docs') return [];
   if (mode === 'content') return ['content:validate', 'test -- src/lib/content src/lib/build/content-ci.test.ts'];
-  if (mode === 'ui') return ['check:ui'];
+  if (mode === 'ui') return ['images:optimize', 'check:ui'];
   if (mode === 'full') return ['audit:dependencies', 'verify'];
   throw new Error('Unknown verification mode');
 }
