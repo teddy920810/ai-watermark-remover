@@ -10,7 +10,11 @@
     "contentMode": "markdown",
     "featured": false,
     "draft": true,
-    "templateVersion": 1
+    "templateVersion": 1,
+    "seoTitle": "Unpublished content API example",
+    "updatedAt": "2026-11-01",
+    "author": "Content editor",
+    "category": "Editorial examples"
   },
   "body": "## Overview\n\nThis document is an unpublished API example. Replace the example with reviewed editorial content before requesting publication.\n\n## Image reference\n\n![A product photograph from the existing tool example](/uploads/background-remover-product-photo.png)\n\n## Related tool\n\n[Open the background removal tool](/remove-background).\n"
 }

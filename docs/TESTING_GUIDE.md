@@ -85,7 +85,9 @@ Pages CMS 保存到内容审核分支，经受保护 PR 与必需检查后合并
 - `.github/workflows/build-targets.yml`：同一份变更分类选择 Site、App 和 Worker，生成并验证对应产物。内容变更只选择 Site；Worker 入口只选择 Worker；共享处理代码选择 App 和 Worker；依赖与构建入口选择全部目标。Worker 验证真实打包和七文件上传上下文，不部署或调用 Provider。
 - `.github/workflows/production-smoke.yml`：每天只运行无成本 Public Smoke；手工选择 operation 时才运行会消耗额度的 Functional Smoke。
 - `.github/workflows/cms-content-check.yml`：仅保留显式手动诊断，不再在 main 重复执行已由必需 CI 覆盖的内容同步。
-- 内容 lane 的 `content-ci.test.ts` 对实际变更的 Blog/landing 复用内容 API 的安全解析，对栅格图做原始字节解码；原内容基线保持独立，普通保存不批准基线。删除、草稿、URL、引用与保留 slug 仍由现有 schema/发布规则检查。
+- 内容 lane 的 `content-ci.test.ts` 从事件固定 base/head Git 对象读取实际变更，以真实 base 记录检查只读 legacy comparison，不能用候选与自身比较；对栅格图做原始字节解码，API 素材额外核对记录的尺寸、格式和限制。草稿、URL、引用与保留 slug 仍由全内容 schema/发布规则和 Site 构建检查，坏 JSON 可能阻断整站。
+- 单个 `.content-api/{id}.json` 仅在严格结构、真实 Git 普通文件、逐项内容/素材闭包、字节哈希和重算 digest 均匹配时随内容进入同一 lane。预安装分类只使用 Node 内建模块；安装后内容安全/图片解码仍必须成功。删除、rename、symlink、额外路径、多个审计、无法读取、未知或混合范围升级完整检查。实际执行重新核对同一事件 SHA 对，不信任 label、actor 或自报检查结果。
+- 独立内容基线与其保护记录继续使用完整检查；不为追求快路径豁免基线。审计里的批准文本仅是记录，不能替代内容负责人具体差异审阅、API 发布验证或受保护 main；本阶段不改变 Token 权限、审批或 required context。
 - App 和 Site 由 Vercel Git 集成分别执行 `apps/app/vercel.json`、`apps/site/vercel.json` 的目标构建，并按变更范围跳过无关目标。根目录 `vercel.json` 的 `verify:deploy` 仅供保留的组合构建使用，不是当前独立发布的默认命令。
 - 独立构建与 Worker 的产物验证见 [部署目标](../apps/DEPLOYMENT_TARGETS.md)。产物验证不执行部署，也不使用生产凭据；构建成功不能代替生产版本和真实处理验收。
 - 覆盖率门槛：核心代码 lines/functions/statements ≥ 80%，branches ≥ 70%。当前结果应高于最低线，不能通过降低阈值掩盖缺失测试。

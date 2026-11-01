@@ -1,0 +1,21 @@
+{
+  "data": {
+    "slug": "operator-html-draft-example",
+    "title": "Operator draft example",
+    "description": "An unpublished example demonstrating a valid content API document.",
+    "publishedAt": "2026-11-01",
+    "readTime": "2 min read",
+    "coverImage": "/uploads/background-remover-product-photo.png",
+    "coverAlt": "A product photograph used in the existing background removal example",
+    "contentMode": "html",
+    "featured": false,
+    "draft": true,
+    "templateVersion": 1,
+    "seoTitle": "Unpublished content API example",
+    "updatedAt": "2026-11-01",
+    "author": "Content editor",
+    "category": "Editorial examples",
+    "bodyHtml": "<h2>Editorial draft</h2><p>This example remains unpublished.</p><figure><img src=\"/uploads/background-remover-product-photo.png\" alt=\"A product photograph used in the existing background removal example\" width=\"1536\" height=\"1024\" loading=\"lazy\"><figcaption>A reviewed static source image.</figcaption></figure><p><a href=\"/remove-background\">Open the published tool</a></p><table><thead><tr><th>Step</th><th>Action</th></tr></thead><tbody><tr><td>1</td><td>Review the source</td></tr></tbody></table>"
+  },
+  "body": ""
+}
