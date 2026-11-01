@@ -57,6 +57,36 @@ test('all tools remain reachable in the desktop and mobile header with honest av
   }
 });
 
+for (const width of [1440, 390]) test(`keyboard closes the navigation and returns visible focus at ${width}px`, async ({ page }) => {
+  await page.setViewportSize({ width, height: 844 });
+  await page.goto('/video-watermark-remover');
+  await page.mouse.move(width - 5, 830);
+  const nav = page.locator('#site-navigation');
+  const menu = page.getByRole('button', { name: 'Open navigation' });
+  if (width === 390) { await menu.focus(); await page.keyboard.press('Space'); }
+  const trigger = nav.locator('[data-nav-dropdown-trigger]').filter({ hasText: 'Video & Batch Tools' });
+  await trigger.focus(); await page.keyboard.press('Enter');
+  await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+  const video = nav.getByRole('link', { name: 'Video Watermark Remover', exact: true });
+  await expect(video).toBeVisible();
+  await page.keyboard.press('Tab'); await expect(video).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+  await expect(video).toBeHidden();
+  if (width === 390) {
+    await expect(menu).toBeFocused(); await expect(menu).toHaveAttribute('aria-expanded', 'false');
+    await page.keyboard.press('Space'); await trigger.focus();
+  } else await expect(trigger).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+  await expect(video).toBeVisible();
+  await page.keyboard.press('Tab'); await expect(video).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(nav.getByRole('link', { name: 'Sora Watermark Remover Coming Soon', exact: true })).toBeFocused();
+  await page.mouse.click(width - 5, 830);
+  await expect(video).toBeHidden();
+});
+
 test('critical public routes and SEO files are available', async ({ page, request }) => {
   for (const path of ['/', '/blog', '/privacy', '/robots.txt', '/sitemap.xml']) {
     const response = await request.get(path);
