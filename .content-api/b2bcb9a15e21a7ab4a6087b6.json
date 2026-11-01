@@ -44,6 +44,17 @@
     "ee570311ca0a10cfd8aba1d2b385c544c7a16ffd8f936cd87b8d89fcc3b95d5d": {
       "fingerprint": "d5cc6fb40d171e89d05b13e36b523e9c4613f42003f8c00f49bd90ff0456db1a",
       "result": {}
+    },
+    "28657d0fbc0d2663561795406df3073b36c3d931214d0158b6775eb21fa2b68f": {
+      "fingerprint": "2436c289598d1fec4ccbda9cc04dd8ddcd2aaf45b9f2ba9ebfc071c3cc14a69f",
+      "result": {}
     }
+  },
+  "pull": 110,
+  "approval": {
+    "digest": "00e51bd708bb609380228ce39866aae47e6fce6424fe360bb4acb62acdecdbf7",
+    "actor": "seo-editor-01",
+    "reference": "https://github.com/teddy920810/ai-watermark-remover/pull/110#issuecomment-6559855455",
+    "note": "Authorized technical acceptance only: preserve both existing isolated fixtures as draft:true; approve only these original-byte asset references and this exact digest. No public SEO or protected baseline change."
   }
 }
