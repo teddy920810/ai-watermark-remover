@@ -1,6 +1,6 @@
 # Shared file intake
 
-Status: P5 locally verified. The stage ledger records verification and release gates; no deployment or real Provider acceptance is implied.
+Status: current implementation contract. PR98 deployment and real operation acceptance are recorded in the [refactor ledger](./REFACTOR_LEDGER.md); the later video-entry delivery is recorded in [release records](./RELEASE_READINESS.md). Local fixtures and production evidence remain separate, and later changes require their own applicable verification.
 
 Public pages prepare files locally and hand them to the same App. The homepage, all published tool pages, upload actions in their copy, and the site conversion banner use `MediaLauncher`. Its button is always **Upload file** and its picker/drop target accepts supported JPG, PNG, WebP and MP4 files. The file determines media type; visitors do not choose an Image/Video mode first. Audio and other containers are rejected locally.
 
@@ -20,4 +20,4 @@ CMS owns public titles, descriptions, steps, FAQs, images, ordering, links and t
 
 Public marketing images use [ImageDisplay](./IMAGE_DISPLAY.md): one image is static; a genuine independent Before/After pair may show the shared comparison. On 2026-11-01 the user revoked all 53 P5 replacement mappings: original image references, alt and the homepage example note are restored against 574ad43. The [manifest](./CONTENT_MEDIA_MIGRATION.json) records operator/SEO pending asset review. Engineering owns display mechanics and cannot change content without explicit authorization. No Before source was invented and no bitmap was edited; baked controls remain original pixels, while the already missing original asset keeps normal fallback.
 
-Local verification covers every published primary entry, footer selection, incompatible/unavailable recommendations, App pick/drop, accepted-task replacement races, separate credit balances and unchanged operation-level output/recovery tests. Browser fixtures simulate sessions and Providers; authenticated production validation remains a separate later gate.
+Local verification covers every published primary entry, footer selection, incompatible/unavailable recommendations, App pick/drop, accepted-task replacement races, separate credit balances and unchanged operation-level output/recovery tests. Browser fixtures simulate sessions and Providers; authenticated production validation is a separate gate tied to the deployed version and authorized budget, as recorded in the release evidence.
