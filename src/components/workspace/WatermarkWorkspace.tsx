@@ -1,14 +1,23 @@
-import { useCallback, useEffect, useRef, useState, type ChangeEvent } from 'react';
-import { ArrowLeft, ArrowRight, Brush, CloudUpload, Download, Eraser, FileImage, Image as ImageIcon, Info, LoaderCircle, LockKeyhole, Menu, Plus, RefreshCw, RotateCcw, Undo2, UserRound, Video, X, ZoomIn, ZoomOut } from 'lucide-react';
+import { AppShell } from './AppShell';
+import { WorkspaceAccount } from './WorkspaceAccount';
+import { appOperationPath } from './app-entry';
+import type { ProductOperation } from '../../lib/contracts/operation-catalog';
+import { listenForAuthCompletion } from '../../lib/client/auth-completion';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { ArrowLeft, ArrowRight, Brush, CloudUpload, Download, Eraser, FileImage, Info, LoaderCircle, LockKeyhole, RefreshCw, RotateCcw, Undo2, Video, X, ZoomIn, ZoomOut } from 'lucide-react';
 import { authClient } from '../auth/auth-client';
-import { cleanExpiredMediaDrafts, clearMediaDrafts, deleteMediaDraft, readMediaDraft, saveMediaDraft, validateLocalMedia, type MediaDraft, type MediaKind } from '../../lib/client/media-drafts';
+import { imageCreditPurchaseHref } from '../payments/BuyCreditsLink';
+import { cleanExpiredMediaDrafts, clearMediaDrafts, deleteMediaDraft, readMediaDraft, saveMediaDraft, workspacePath, type MediaDraft, type MediaKind } from '../../lib/client/media-drafts';
+import { identifyLauncherMedia } from '../../lib/client/media-identification';
 import { ImageMaskEditor, type MaskEditorHandle } from './ImageMaskEditor';
+import { ObjectMaskEditor } from './ObjectMaskEditor';
+import { BackgroundOptions, downloadWithBackground, TRANSPARENT_BACKGROUND, type BackgroundChoice } from './BackgroundOptions';
 import { VideoEditor } from './VideoEditor';
 import { canConfirmQuote, canRefineResult, canSubmitConfirmation, creditLabel, jobIsActive, processingLabel } from './workspace-state';
 import { displayError, WorkspaceApiError, workspaceApi, type Capability, type MediaMetadata, type Operation, type PublicArtifact, type PublicBalances, type PublicJob, type PublicQuote, type PublicUpload } from './workspace-api';
 import '../../styles/payments.css';
 
-interface Props { kind: MediaKind; logo: string; siteName: string }
+interface Props { kind: MediaKind; logo: string; siteName: string; initialMode?: 'standard' | 'pro'; initialOperation?: 'background-removal' | 'object-removal'; onResolvedKind?(kind: MediaKind): void }
 const uploadPointer = (kind: MediaKind) => `watermarkgemini:upload:${kind}`;
 const confirmationPointer = (kind: MediaKind) => `watermarkgemini:confirmation:${kind}`;
 const delay = (milliseconds: number) => new Promise(resolve => setTimeout(resolve, milliseconds));
@@ -21,25 +30,29 @@ function readLocalMetadata(file: File, kind: MediaKind): Promise<MediaMetadata> 
     else { const video = document.createElement('video'); video.preload = 'metadata'; video.onloadedmetadata = () => { const metadata: MediaMetadata = { kind, contentType: file.type, byteSize: file.size, width: video.videoWidth, height: video.videoHeight, durationSeconds: video.duration }; URL.revokeObjectURL(url); video.removeAttribute('src'); video.load(); if (!Number.isFinite(metadata.durationSeconds) || !metadata.width || !metadata.height) reject(new Error('This MP4 could not be opened.')); else resolve(metadata); }; video.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Your browser could not preview this MP4. Choose a compatible video.')); }; video.src = url; }
   });
 }
-export default function WatermarkWorkspace({ kind, logo, siteName }: Props) {
+export default function WatermarkWorkspace({ kind, logo, siteName, initialMode = 'standard', initialOperation, onResolvedKind }: Props) {
   const { data: session, isPending: sessionPending, refetch: refetchSession } = authClient.useSession();
   const [capabilities, setCapabilities] = useState<Capability[]>([]); const [capabilityError, setCapabilityError] = useState(false);
   const [balance, setBalance] = useState<PublicBalances | null>(null);
   const [file, setFile] = useState<File | null>(null); const [draft, setDraft] = useState<MediaDraft | null>(null); const [localUrl, setLocalUrl] = useState(''); const [localMetadata, setLocalMetadata] = useState<MediaMetadata | null>(null); const [pendingUpload, setPendingUpload] = useState(false); const [mediaRevision, setMediaRevision] = useState(0);
   const [inputArtifact, setInputArtifact] = useState<PublicArtifact | null>(null); const [job, setJob] = useState<PublicJob | null>(null); const [jobs, setJobs] = useState<PublicJob[]>([]);
-  const [mode, setMode] = useState<'standard' | 'pro'>('standard'); const [fixedArea, setFixedArea] = useState(false); const [refining, setRefining] = useState(false);
+  const [mode, setMode] = useState<'standard' | 'pro' | 'background' | 'object'>(initialOperation === 'object-removal' ? 'object' : initialOperation === 'background-removal' ? 'background' : initialMode); const [fixedArea, setFixedArea] = useState(false); const [refining, setRefining] = useState(false);
+  const [selectedBackground, setSelectedBackground] = useState<BackgroundChoice>(TRANSPARENT_BACKGROUND);
   const [quote, setQuote] = useState<PublicQuote | null>(null); const [busy, setBusy] = useState(''); const [error, setError] = useState(''); const [notice, setNotice] = useState(''); const [uploadProgress, setUploadProgress] = useState(0);
   const [tool, setTool] = useState<'brush' | 'eraser'>('brush'); const [brushSize, setBrushSize] = useState(36); const [showSelection, setShowSelection] = useState(true); const [hasSelection, setHasSelection] = useState(false); const [undoToken, setUndoToken] = useState(0);
-  const [view, setView] = useState<'original' | 'result' | 'compare'>('original'); const [zoom, setZoom] = useState(100); const [menuOpen, setMenuOpen] = useState(false); const [loadingDraft, setLoadingDraft] = useState(true); const [uncertainSubmission, setUncertainSubmission] = useState(false);
+  const [view, setView] = useState<'original' | 'result' | 'compare'>('original'); const [zoom, setZoom] = useState(100); const [loadingDraft, setLoadingDraft] = useState(true); const [uncertainSubmission, setUncertainSubmission] = useState(false);
   const [accountReady, setAccountReady] = useState(false); const [needsSignIn, setNeedsSignIn] = useState(false);
   const [preparationStatus, setPreparationStatus] = useState(''); const [preparationFailed, setPreparationFailed] = useState(false); const [preparationAttempt, setPreparationAttempt] = useState(0);
   const [quoteStatus, setQuoteStatus] = useState(''); const [quoteFailed, setQuoteFailed] = useState(false); const [quoteAttempt, setQuoteAttempt] = useState(0);
   const [selectionRevision, setSelectionRevision] = useState(0); const [selectionEditing, setSelectionEditing] = useState(false);
   const input = useRef<HTMLInputElement>(null); const downloadLink = useRef<HTMLAnchorElement>(null); const mask = useRef<MaskEditorHandle>(null); const submitLock = useRef(false); const requests = useRef(new Set<XMLHttpRequest>()); const currentQuoteKey = useRef<{ quoteId: string; key: string; scope?: string } | null>(null);
   const uploadGeneration = useRef(0); const quoteGeneration = useRef(0); const viewGeneration = useRef(0); const readingFile = useRef(false); const restartUpload = useRef(false);
+  const automaticPreviewRefresh = useRef(new Set<string>());
   const preparedMask = useRef<{ scope: string; artifact: PublicArtifact } | null>(null);
   const ownerId = session?.user?.id; const activeOwner = useRef(ownerId); activeOwner.current = ownerId;
-  const operation: Operation = refining ? 'image-refine' : kind === 'video' ? 'video-watermark' : mode === 'pro' ? 'image-watermark-pro' : 'image-watermark';
+  const operation: Operation = refining ? 'image-refine' : kind === 'video' ? 'video-watermark' : mode === 'object' ? 'object-removal' : mode === 'background' ? 'background-removal' : mode === 'pro' ? 'image-watermark-pro' : 'image-watermark';
+  const backgroundOperation = operation === 'background-removal';
+  const objectOperation = operation === 'object-removal';
   const capability = capabilities.find(value => value.operation === operation);
   const currentArtifact = refining && job?.result ? job.result : inputArtifact;
   const metadata = currentArtifact?.metadata ?? localMetadata;
@@ -50,8 +63,8 @@ export default function WatermarkWorkspace({ kind, logo, siteName }: Props) {
   const canOperate = capability?.enabled === true;
   const quoteBalance = quote ? quote.unit === 'purchasedImageCredits' && balance ? balance.purchasedImageCredits ?? 0 : balance?.[quote.unit] : undefined;
   const balanceInsufficient = !!quote && quoteBalance !== undefined && quoteBalance < quote.amount;
-  const editingLocked = !!busy || uncertainSubmission;
-  const needsMask = refining || kind === 'video' && fixedArea;
+  const editingLocked = !!busy || uncertainSubmission || processing || job?.status === 'UNKNOWN';
+  const needsMask = objectOperation || refining || kind === 'video' && fixedArea;
   const parentJobId = refining ? job?.id : undefined;
   const quoteScope = JSON.stringify([ownerId, currentArtifact?.id, operation, parentJobId, needsMask, selectionRevision]);
   const activeQuoteScope = useRef(quoteScope); activeQuoteScope.current = quoteScope;
@@ -80,7 +93,8 @@ export default function WatermarkWorkspace({ kind, logo, siteName }: Props) {
     return () => { window.removeEventListener('focus', refresh); window.removeEventListener('benefits:changed', refresh); };
   }, [ownerId, refreshAccount]);
   const refreshJobs = useCallback(async () => { if (!ownerId) return; const response = await workspaceApi<{ jobs: PublicJob[] }>('/jobs'); if (activeOwner.current === ownerId) setJobs(response.jobs); return response.jobs; }, [ownerId]);
-  function acceptJob(next: PublicJob) { setJob(next); if (next.input) setInputArtifact(next.input); if (next.operation === 'image-watermark-pro') setMode('pro'); else if (next.operation === 'image-watermark') setMode('standard'); setJobs(previous => [next, ...previous.filter(value => value.id !== next.id)]); }
+  function acceptJob(next: PublicJob) { onResolvedKind?.(next.operation === 'video-watermark' ? 'video' : 'image'); setJob(next); if (next.input) setInputArtifact(next.input); if (next.operation === 'image-watermark-pro') setMode('pro'); else if (next.operation === 'object-removal') setMode('object'); else if (next.operation === 'background-removal') setMode('background'); else if (next.operation === 'image-watermark' || next.operation === 'image-refine') setMode('standard'); setJobs(previous => [next, ...previous.filter(value => value.id !== next.id)]); }
+  useEffect(() => setSelectedBackground(TRANSPARENT_BACKGROUND), [job?.id]);
   const refreshCurrentJob = useCallback(async (id: string) => { const revision = viewGeneration.current; const owner = activeOwner.current; const next = await workspaceApi<PublicJob>(`/jobs/${encodeURIComponent(id)}`); if (revision === viewGeneration.current && owner === activeOwner.current) acceptJob(next); return next; }, []);
   useEffect(() => {
     let cancelled = false;
@@ -90,7 +104,7 @@ export default function WatermarkWorkspace({ kind, logo, siteName }: Props) {
         const pending = sessionStorage.getItem(confirmationPointer(kind));
         if (pending) { const saved = JSON.parse(pending) as { quote: PublicQuote; key: string }; if (saved.quote?.id && saved.key) { currentQuoteKey.current = { quoteId: saved.quote.id, key: saved.key }; setQuote(saved.quote); setUncertainSubmission(true); } }
         await cleanExpiredMediaDrafts();
-        const existing = await readMediaDraft(kind);
+        const existing = await readMediaDraft(kind, ownerId);
         if (!cancelled && existing) { setDraft(existing); setFile(existing.file); setLocalUrl(URL.createObjectURL(existing.file)); const info = await readLocalMetadata(existing.file, kind); if (!cancelled) setLocalMetadata(info); }
       } catch (cause) { if (!cancelled) setNotice(displayError(cause)); }
       finally { if (!cancelled) setLoadingDraft(false); }
@@ -112,14 +126,18 @@ export default function WatermarkWorkspace({ kind, logo, siteName }: Props) {
     const timeout = setTimeout(() => { void refreshCurrentJob(job.id).then(() => refreshAccount()).catch(() => setNotice('Connection interrupted. Your task remains saved. Use Refresh status to reconnect.')); }, job.status === 'UNKNOWN' ? 15000 : 3000);
     return () => clearTimeout(timeout);
   }, [job, session?.user, refreshCurrentJob, refreshAccount]);
-  useEffect(() => {
-    const complete = async (data: unknown) => { if ((data as { type?: string })?.type !== 'clearmark-auth-complete') return; const confirmed = await authClient.getSession(); if (!confirmed.data?.user) { setError('Google sign-in could not be confirmed. Please try again.'); return; } await refetchSession(); setNeedsSignIn(false); setPreparationAttempt(value => value + 1); setQuoteAttempt(value => value + 1); setNotice('Signed in. We will prepare your file automatically. Click the processing button when you are ready.'); };
-    const handler = (event: MessageEvent) => { if (event.origin === window.location.origin) void complete(event.data); };
-    const channel = typeof BroadcastChannel === 'undefined' ? null : new BroadcastChannel('clearmark-auth');
-    const broadcast = (event: MessageEvent) => void complete(event.data);
-    window.addEventListener('message', handler); channel?.addEventListener('message', broadcast);
-    return () => { window.removeEventListener('message', handler); channel?.close(); };
-  }, [refetchSession]);
+  useEffect(() => listenForAuthCompletion({
+    target: window,
+    channel: typeof BroadcastChannel === 'undefined' ? null : new BroadcastChannel('clearmark-auth'),
+    once: false,
+    confirm: async () => Boolean((await authClient.getSession()).data?.user),
+    onRejected: () => setError('Google sign-in could not be confirmed. Please try again.'),
+    onConfirmed: async () => {
+      await refetchSession(); setNeedsSignIn(false);
+      setPreparationAttempt(value => value + 1); setQuoteAttempt(value => value + 1);
+      setNotice('Signed in. We will prepare your file automatically. Click the processing button when you are ready.');
+    },
+  }), [refetchSession]);
 
   useEffect(() => {
     if (!ownerId || !accountReady || loadingDraft || uncertainSubmission || needsSignIn || inputArtifact || job || (!file && !sessionStorage.getItem(uploadPointer(kind)))) return;
@@ -192,11 +210,33 @@ export default function WatermarkWorkspace({ kind, logo, siteName }: Props) {
     return () => { cancelled = true; clearTimeout(timeout); };
   }, [ownerId, accountReady, loadingDraft, currentArtifact?.id, operation, parentJobId, canOperate, processing, readyResult, refining, failedRefinement, needsMask, hasSelection, selectionEditing, selectionRevision, quoteScope, quoteAttempt, uncertainSubmission, needsSignIn]);
 
-  async function chooseFile(event: ChangeEvent<HTMLInputElement>) {
-    const next = event.target.files?.[0]; event.target.value = ''; if (!next) return;
-    if (submitLock.current || uncertainSubmission || processing || readingFile.current) return;
-    const validation = validateLocalMedia(next, kind, capabilities.find(value => value.operation === (kind === 'video' ? 'video-watermark' : 'image-watermark'))?.maxBytes);
-    if (!validation.ok) { setError(validation.message); return; }
+  async function chooseFile(picked?: File) {
+    if (!picked) return;
+    if (submitLock.current || uncertainSubmission || processing || job?.status === 'UNKNOWN' || readingFile.current) return;
+    readingFile.current = true;
+    setBusy('Opening your file');
+    const intakeGeneration = uploadGeneration.current;
+    const intakeIsCurrent = () => intakeGeneration === uploadGeneration.current && ownerId === activeOwner.current && !submitLock.current;
+    const identified = await identifyLauncherMedia(picked, {
+      image: capabilities.find(value => value.operation === 'image-watermark')?.maxBytes,
+      video: capabilities.find(value => value.operation === 'video-watermark')?.maxBytes,
+    });
+    if (!intakeIsCurrent()) { readingFile.current = false; setBusy(''); return; }
+    if (!identified.ok) { setError(identified.message); readingFile.current = false; setBusy(''); return; }
+    const next = identified.file;
+    if (identified.kind !== kind) {
+      readingFile.current = true; setBusy('Opening your file'); setError('');
+      try {
+        const metadata = await readLocalMetadata(next, identified.kind);
+        if (!intakeIsCurrent()) return;
+        if (identified.kind === 'video' && (metadata.durationSeconds ?? 0) > 540) throw new Error('Choose an MP4 no longer than 9 minutes.');
+        await saveMediaDraft(next, identified.kind, '/app', ownerId, { operation });
+        if (!intakeIsCurrent()) return;
+        window.location.assign(workspacePath(identified.kind));
+      } catch (cause) { setError(displayError(cause)); }
+      finally { readingFile.current = false; setBusy(''); }
+      return;
+    }
     readingFile.current = true; const revision = ++viewGeneration.current; stopPreparation(); invalidateQuote();
     setBusy('Opening your file'); setError(''); setNotice('');
     try {
@@ -204,13 +244,23 @@ export default function WatermarkWorkspace({ kind, logo, siteName }: Props) {
       if (revision !== viewGeneration.current) return;
       if (kind === 'video' && (info.durationSeconds ?? 0) > 540) throw new Error('Choose an MP4 no longer than 9 minutes.');
       let stored: MediaDraft | null = null;
-      try { stored = await saveMediaDraft(next, kind, '/app'); } catch { setNotice('This browser cannot keep a recovery draft. Keep this tab open until your file is uploaded.'); }
+      try { stored = await saveMediaDraft(next, kind, '/app', ownerId); } catch { setNotice('This browser cannot keep a recovery draft. Keep this tab open until your file is uploaded.'); }
       if (draft && draft.id !== stored?.id) await deleteMediaDraft(draft.id, kind).catch(() => {});
       setDraft(stored); setFile(next); setLocalUrl(URL.createObjectURL(next)); setLocalMetadata(info); setInputArtifact(null); setJob(null); setRefining(false); setHasSelection(false); setSelectionEditing(false); setView('original'); setPendingUpload(false); setMediaRevision(value => value + 1); restartUpload.current = false;
-      sessionStorage.removeItem(uploadPointer(kind)); window.history.replaceState({}, '', `/app/${kind}`);
+      sessionStorage.removeItem(uploadPointer(kind)); window.history.replaceState({}, '', kind === 'image' && mode !== 'standard' ? appOperationPath(mode === 'object' ? 'object-removal' : mode === 'background' ? 'background-removal' : 'image-watermark-pro') : `/app/${kind}`);
     } catch (cause) { if (revision === viewGeneration.current) { setError(displayError(cause)); setPreparationAttempt(value => value + 1); setQuoteAttempt(value => value + 1); } }
     finally { readingFile.current = false; setBusy(''); }
   }
+  useEffect(() => {
+    if (!backgroundOperation && !objectOperation) return;
+    function paste(event: ClipboardEvent) {
+      if (editingLocked || (event.target as HTMLElement | null)?.closest?.('input, textarea, [contenteditable="true"]')) return;
+      const image = [...(event.clipboardData?.items ?? [])].find(item => item.type.startsWith('image/'))?.getAsFile();
+      if (image) { event.preventDefault(); void chooseFile(image); }
+    }
+    document.addEventListener('paste', paste);
+    return () => document.removeEventListener('paste', paste);
+  }, [backgroundOperation, objectOperation, editingLocked, chooseFile]);
   async function signIn() {
     setError('');
     const popup = window.open('about:blank', 'clearmark-google-auth', 'popup=yes,width=520,height=680');
@@ -288,7 +338,7 @@ export default function WatermarkWorkspace({ kind, logo, siteName }: Props) {
   }
   async function download() {
     if (!job || busy) return; setBusy('Preparing your download'); setError('');
-    try { const signed = await workspaceApi<{ url: string; expiresAt: string }>(`/jobs/${encodeURIComponent(job.id)}/download`); const anchor = downloadLink.current; if (!anchor) throw new Error('The download could not start. Please try again.'); anchor.href = signed.url; anchor.download = kind === 'video' ? 'watermark-removed-video.mp4' : 'watermark-removed-image.jpg'; anchor.click(); }
+    try { const signed = await workspaceApi<{ url: string; expiresAt: string; filename?: string }>(`/jobs/${encodeURIComponent(job.id)}/download`); if (job.operation === 'background-removal' && selectedBackground.color) { await downloadWithBackground(signed.url, selectedBackground.color); return; } const anchor = downloadLink.current; if (!anchor) throw new Error('The download could not start. Please try again.'); anchor.href = signed.url; anchor.download = signed.filename ?? (kind === 'video' ? 'watermark-removed-video.mp4' : job.result?.metadata.contentType === 'image/png' ? job.operation === 'object-removal' ? 'object-removed-image.png' : 'background-removed-image.png' : 'watermark-removed-image.jpg'); anchor.click(); }
     catch (cause) { setError(displayError(cause)); if (cause instanceof WorkspaceApiError && cause.status === 410) setJob(previous => previous ? { ...previous, status: 'EXPIRED' } : previous); } finally { setBusy(''); }
   }
   function startRefinement() { if (editingLocked || !job || !canRefineResult(job)) return; invalidateQuote(); setRefining(true); setHasSelection(false); setSelectionEditing(false); setView('result'); setError(''); }
@@ -297,60 +347,85 @@ export default function WatermarkWorkspace({ kind, logo, siteName }: Props) {
   const resultSrc = job?.result?.previewUrl;
   const imageSrc = refining ? resultSrc ?? previewUrl : readyResult && view !== 'original' ? resultSrc ?? previewUrl : previewUrl;
   const recent = jobs.filter(value => (value.operation === 'video-watermark') === (kind === 'video'));
-  const actionLabel = refining ? 'Refine image' : 'Remove watermarks';
+  const actionLabel = refining ? 'Refine image' : objectOperation ? 'Remove object' : backgroundOperation ? 'Remove background' : 'Remove watermarks';
   const submissionDisabled = !canSubmitConfirmation(quote, !!busy, balanceInsufficient || quoteBalance === undefined, uncertainSubmission) || !uncertainSubmission && (!!preparationStatus || !!quoteStatus || selectionEditing || needsMask && !hasSelection || !canOperate);
   const actionBlock = <div className="workspace-action-block">
     {(preparationStatus || quoteStatus) && <p className="workspace-preparation-status" role="status" aria-live="polite"><LoaderCircle className="workspace-spinner" size={17} />{preparationStatus || quoteStatus}</p>}
     {preparationStatus === 'Uploading your file' && <progress aria-label="File upload progress" max={100} value={uploadProgress} />}
     {quote && <div className="workspace-inline-quote" aria-label="Processing cost"><strong>{creditLabel(quote.amount, quote.unit)}</strong><dl><div><dt>Your balance</dt><dd>{quoteBalance === undefined ? 'Checking…' : creditLabel(quoteBalance, quote.unit)}</dd></div><div><dt>Output</dt><dd>{quote.expectedOutput.format ?? (kind === 'video' ? 'MP4' : 'JPG')}{quote.expectedOutput.width ? ` · ${quote.expectedOutput.width} × ${quote.expectedOutput.height}` : ''}</dd></div></dl></div>}
     {balanceInsufficient && !uncertainSubmission && <p className="workspace-error" role="alert">You do not have enough {quote?.unit === 'freeUses' ? 'free image uses' : quote?.unit === 'purchasedImageCredits' ? 'purchased image credits' : 'processing credits'}. No processing has started.{quote?.unit === 'processingCredits' ? ' Ask an administrator to allocate processing credits.' : ''}</p>}
-    {kind === 'image' && mode === 'standard' && !refining && balanceInsufficient && !uncertainSubmission && <p className="workspace-small"><a className="workspace-image-use-link" href="/app/credits?returnTo=%2Fapp%2Fimage" target="_blank" rel="noopener noreferrer">Buy image credits</a> in a new tab, then return to this image.</p>}
+    {kind === 'image' && mode !== 'pro' && !refining && balanceInsufficient && !uncertainSubmission && <p className="workspace-small"><a className="workspace-image-use-link" href={imageCreditPurchaseHref()} target="_blank" rel="noopener noreferrer">Buy image credits</a> in a new tab, then return to this image.</p>}
     {uncertainSubmission && <p className="workspace-small">Check the same submission to recover its confirmation. This does not create another charge.</p>}
-    {needsMask && !hasSelection && !uncertainSubmission && !preparationStatus && <p className="workspace-small">{refining ? 'Paint over the remaining watermark.' : 'Draw an area over the watermark.'} The cost will update automatically.</p>}
+    {needsMask && !hasSelection && !uncertainSubmission && !preparationStatus && <p className="workspace-small">{refining ? 'Paint over the remaining watermark.' : objectOperation ? 'Brush or lasso over the object.' : 'Draw an area over the watermark.'} The cost will update automatically.</p>}
     <button className="button button-primary" type="button" onClick={() => void (!session?.user || needsSignIn ? signIn() : confirmProcessing())} disabled={!session?.user || needsSignIn ? !!busy || sessionPending : submissionDisabled}>{busy ? <LoaderCircle className="workspace-spinner" size={18} /> : refining ? <Brush size={18} /> : <ArrowRight size={18} />}{busy || (!session?.user || needsSignIn ? 'Sign in to continue' : uncertainSubmission ? 'Check submission' : quote ? `${actionLabel} · ${creditLabel(quote.amount, quote.unit)}` : actionLabel)}</button>
     {(preparationFailed || quoteFailed) && !uncertainSubmission && !needsSignIn && <button className="button button-ghost" type="button" onClick={retryPreparation} disabled={editingLocked}><RefreshCw size={16} />Try again</button>}
-    {!uncertainSubmission && <p className="workspace-small">File checks are automatic and use no credits. Credits are reserved only when you click {refining ? 'Refine image' : 'Remove watermarks'}.</p>}
+    {!uncertainSubmission && <p className="workspace-small">File checks are automatic and use no credits. Credits are reserved only when you click {actionLabel}.</p>}
   </div>;
 
-  return <div className="watermark-workspace">
+  async function selectOperation(next: ProductOperation) {
+    if (editingLocked || processing || job?.status === 'UNKNOWN') return;
+    if (next === 'image-refine') { startRefinement(); return; }
+    if (next === 'image-watermark' || next === 'image-watermark-pro' || next === 'background-removal' || next === 'object-removal') {
+      invalidateQuote(); setRefining(false); setMode(next === 'object-removal' ? 'object' : next === 'background-removal' ? 'background' : next === 'image-watermark-pro' ? 'pro' : 'standard');
+      setJob(null); setHasSelection(false); setSelectionEditing(false); setError('');
+      window.history.replaceState({}, '', appOperationPath(next)); return;
+    }
+    if (next === operation) return;
+    setBusy('Opening operation'); setError('');
+    try {
+      let source = file;
+      if (!source && inputArtifact?.previewUrl) {
+        const response = await fetch(inputArtifact.previewUrl);
+        if (!response.ok) throw new Error('The original file could not be reopened. Choose it again to use another operation.');
+        const blob = await response.blob();
+        source = new File([blob], kind === 'image' ? 'original-image' : 'original-video.mp4', { type: blob.type });
+      }
+      if (source) await saveMediaDraft(source, kind, '/app', ownerId);
+      window.location.assign(appOperationPath(next));
+    } catch (cause) { setError(displayError(cause)); setBusy(''); }
+  }
+  return <AppShell kind={kind} logo={logo} siteName={siteName} operation={operation}
+    disabledOperations={(['image-watermark-pro', 'background-removal', 'object-removal'] as const).filter(operation => !capabilities.find(value => value.operation === operation)?.enabled)}
+    locked={editingLocked || processing || job?.status === 'UNKNOWN'}
+    canRefine={Boolean(job && canRefineResult(job) && capabilities.find(value => value.operation === 'image-refine')?.enabled)}
+    onOperation={next => void selectOperation(next)}
+    onFileDrop={file => void chooseFile(file)}
+    account={<WorkspaceAccount user={session?.user} pending={sessionPending} signIn={signIn} signOut={signOut} />}
+    sidebar={<><h2>Recent work</h2>{!session?.user ? <p>Sign in to restore your recent tasks.</p> : recent.length === 0 ? <p>Your completed and in-progress tasks will appear here.</p> : <ul>{recent.map(value => <li key={value.id}><button type="button" className={job?.id === value.id ? 'is-selected' : ''} onClick={() => selectRecent(value)} disabled={!!busy || uncertainSubmission}>{value.input?.previewUrl && kind === 'image' ? <img src={value.input.previewUrl} alt="" /> : kind === 'video' ? <Video size={24} /> : <FileImage size={24} />}<span><strong>{value.operation === 'object-removal' ? 'Remove object' : value.operation === 'background-removal' ? 'Remove background' : value.operation === 'image-refine' ? 'Image refinement' : kind === 'video' ? 'Video removal' : 'Image removal'}</strong><small>{processingLabel(value.status)}</small></span></button></li>)}</ul>}<p className="workspace-retention"><LockKeyhole size={15} />Temporary files · download before expiry.</p></>}>
     <a ref={downloadLink} className="sr-only" tabIndex={-1} aria-hidden="true">Download current result</a>
-    <header className="site-header workspace-header"><a className="brand" href="/"><img className="brand-logo" src={logo} alt="" /><span>{siteName}</span></a><nav className="workspace-mode-nav" aria-label="Media workspace"><a href="/app/image" aria-current={kind === 'image' ? 'page' : undefined}><ImageIcon size={18} />Image</a><a href="/app/video" aria-current={kind === 'video' ? 'page' : undefined}><Video size={18} />Video</a></nav><div className="workspace-header-actions">{session?.user ? <button className="workspace-account" type="button" onClick={() => void signOut()} title="Sign out and clear local drafts">{session.user.image ? <img src={session.user.image} alt="" referrerPolicy="no-referrer" /> : <UserRound size={22} aria-hidden="true" />}<span>Sign out</span></button> : <button type="button" className="header-cta" disabled={sessionPending} onClick={() => void signIn()}>Sign in with Google</button>}<button className="workspace-menu-button" aria-label="Open menu" aria-expanded={menuOpen} type="button" onClick={() => setMenuOpen(value => !value)}>{menuOpen ? <X size={20} /> : <Menu size={20} />}</button></div>{menuOpen && <nav className="workspace-menu"><a href="/">Back to website</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a></nav>}</header>
-    <div className="workspace-layout">
-      <aside className="workspace-recent"><h2>Recent work</h2><button className="button button-primary" type="button" onClick={() => input.current?.click()} disabled={!!busy || processing || uncertainSubmission}><Plus size={18} />Upload {kind}</button>{!session?.user ? <p>Sign in to restore your recent tasks.</p> : recent.length === 0 ? <p>Your completed and in-progress tasks will appear here.</p> : <ul>{recent.map(value => <li key={value.id}><button type="button" className={job?.id === value.id ? 'is-selected' : ''} onClick={() => selectRecent(value)} disabled={!!busy || uncertainSubmission}>{value.input?.previewUrl && kind === 'image' ? <img src={value.input.previewUrl} alt="" /> : kind === 'video' ? <Video size={24} /> : <FileImage size={24} />}<span><strong>{value.operation === 'image-refine' ? 'Image refinement' : kind === 'video' ? 'Video removal' : 'Image removal'}</strong><small>{processingLabel(value.status)}</small></span></button></li>)}</ul>}<p className="workspace-retention"><LockKeyhole size={15} />Temporary files · download before expiry.</p></aside>
-      <main className="workspace-main">
+
         <a className="workspace-back" href={kind === 'image' ? '/#tool' : '/video-watermark-remover'}><ArrowLeft size={16} />Back to website</a>
-        <div className="workspace-title"><div><h1>{refining ? 'Refine your image' : kind === 'video' ? 'Remove video watermarks' : 'Remove image watermarks'}</h1><p>{refining ? 'Paint only over the remaining watermark. Your previous version stays available.' : readyResult ? 'Check the result before downloading.' : kind === 'video' ? 'Choose a video, adjust the area if needed, and remove watermarks in one click.' : 'Choose an image. We check the file and show its cost automatically.'}</p></div>{balance && <div className="workspace-balances">{kind === 'image' && <><span>{balance.freeUses} free image uses</span><span>Purchased image credits {balance.purchasedImageCredits ?? 0} · Standard only</span></>}<span>{balance.processingCredits} processing credits</span>{kind === 'image' && mode === 'standard' && !refining && <a className="workspace-image-use-link" href="/app/credits?returnTo=%2Fapp%2Fimage" target="_blank" rel="noopener noreferrer">Buy image credits</a>}</div>}</div>
-        <input className="sr-only" ref={input} type="file" aria-label={`Upload ${kind} to workspace`} accept={kind === 'video' ? 'video/mp4' : 'image/jpeg,image/png,image/webp'} onChange={event => void chooseFile(event)} />
+        <div className="workspace-title"><div><h1>{refining ? 'Refine your image' : objectOperation ? 'Remove object' : backgroundOperation ? 'Remove background' : kind === 'video' ? 'Remove video watermarks' : 'Remove image watermarks'}</h1><p>{refining ? 'Paint only over the remaining watermark. Your previous version stays available.' : readyResult ? 'Check the result before downloading.' : kind === 'video' ? 'Choose a video, adjust the area if needed, and remove watermarks in one click.' : 'Choose an image. We check the file and show its cost automatically.'}</p></div>{balance && <div className="workspace-balances">{kind === 'image' && <><span>{balance.freeUses} free image uses</span><span>Purchased image credits {balance.purchasedImageCredits ?? 0} · Standard, background and object</span></>}<span>{balance.processingCredits} processing credits</span>{kind === 'image' && mode === 'standard' && !refining && <a className="workspace-image-use-link" href={imageCreditPurchaseHref()} target="_blank" rel="noopener noreferrer">Buy image credits</a>}</div>}</div>
+        <input className="sr-only" ref={input} type="file" aria-label="Upload file to workspace" disabled={editingLocked} accept="image/jpeg,image/png,image/webp,video/mp4" onChange={event => { const file = event.target.files?.[0]; event.target.value = ''; void chooseFile(file); }} />
         {error && <div className="workspace-error" role="alert"><Info size={18} /><p>{error}</p><button type="button" aria-label="Dismiss error" onClick={() => setError('')}><X size={17} /></button></div>}
         {notice && <div className="workspace-notice" role="status"><Info size={17} /><p>{notice}</p><button type="button" aria-label="Dismiss message" onClick={() => setNotice('')}><X size={16} /></button></div>}
+        {!canOperate && capabilities.length > 0 && <p className="workspace-notice" role="status">{capability?.reason ?? 'This operation is unavailable. Your file is retained; choose another operation.'}</p>}
         {capabilityError && <div className="workspace-notice">Processing availability could not be loaded.<button type="button" onClick={() => void refreshCapabilities()}>Try again</button></div>}
-        {loadingDraft ? <div className="workspace-empty"><LoaderCircle className="workspace-spinner" size={28} /><p>Opening your workspace…</p></div> : !selectedMedia && !uncertainSubmission && !pendingUpload && !preparationStatus && !preparationFailed ? <div className="workspace-empty"><CloudUpload size={42} /><h2>Choose your {kind}</h2><p>{kind === 'image' ? 'JPG, PNG or WebP · up to 10 MB · output JPG' : 'MP4 · 24 fps · up to 9 minutes · up to 100 MB'}</p><button className="button button-primary" type="button" onClick={() => input.current?.click()}><CloudUpload size={20} />Upload {kind}</button><small>File checks are automatic. You choose when to process.</small></div> : <>
+        {loadingDraft ? <div className="workspace-empty"><LoaderCircle className="workspace-spinner" size={28} /><p>Opening your workspace…</p></div> : !selectedMedia && !uncertainSubmission && !pendingUpload && !preparationStatus && !preparationFailed ? <div className="workspace-empty"><CloudUpload size={42} /><h2>Choose a file</h2><p>JPG, PNG or WebP · up to 10 MB<br />MP4 · 24 fps · up to 9 minutes · 100 MB</p><button className="button button-primary" type="button" onClick={() => input.current?.click()}><CloudUpload size={20} />Upload file</button><small>File checks are automatic. You choose when to process.</small></div> : <>
           <div className={`workspace-editor-grid ${refining ? 'is-refining' : ''}`}>
             {refining && <div className="workspace-tools" aria-label="Refinement tools"><button type="button" aria-pressed={tool === 'brush'} onClick={() => setTool('brush')} disabled={editingLocked}><Brush size={22} />Brush</button><button type="button" aria-pressed={tool === 'eraser'} onClick={() => setTool('eraser')} disabled={editingLocked}><Eraser size={22} />Eraser</button><button type="button" onClick={() => { selectionStarted(); setUndoToken(value => value + 1); }} disabled={editingLocked}><Undo2 size={22} />Undo</button><button type="button" onClick={() => mask.current?.clear()} disabled={editingLocked}><RotateCcw size={22} />Clear</button></div>}
             <section className="workspace-stage-panel" aria-label="Media editor">
               {kind === 'image' && <div className="workspace-stage-toolbar"><div className="workspace-view-tabs" aria-label="Image view">{(['original', 'result', 'compare'] as const).map(value => <button key={value} type="button" aria-pressed={view === value} disabled={!readyResult || refining} onClick={() => setView(value)}>{value[0].toUpperCase() + value.slice(1)}</button>)}</div><div className="workspace-zoom"><button type="button" aria-label="Zoom out" onClick={() => setZoom(value => Math.max(50, value - 25))}><ZoomOut size={17} /></button><span>{zoom}%</span><button type="button" aria-label="Zoom in" onClick={() => setZoom(value => Math.min(300, value + 25))}><ZoomIn size={17} /></button><button type="button" onClick={() => setZoom(100)}>Fit</button></div></div>}
-              {kind === 'image' && metadata && <div className={`workspace-image-scroll ${view === 'compare' && readyResult && !refining ? 'is-comparing' : ''}`}><div style={{ width: zoom === 100 ? '100%' : `${zoom}%`, minWidth: zoom === 100 ? undefined : `${zoom}%` }}>{view === 'compare' && readyResult && !refining ? <div className="workspace-image-comparison"><figure><figcaption>Original</figcaption><img src={previewUrl} alt="Original image" /></figure><figure><figcaption>Result</figcaption><img src={resultSrc} alt="Watermark removal result" /></figure></div> : <ImageMaskEditor key={`${currentArtifact?.id ?? draft?.id ?? 'local'}:${refining}`} ref={mask} src={imageSrc} width={refining ? job?.result?.metadata.width ?? metadata.width : metadata.width} height={refining ? job?.result?.metadata.height ?? metadata.height : metadata.height} editable={refining} disabled={editingLocked} tool={tool} brushSize={brushSize} showSelection={showSelection} onSelection={selectionChanged} onSelectionStart={selectionStarted} undoToken={undoToken} />}</div></div>}
+              {kind === 'image' && metadata && <div className={`workspace-image-scroll ${view === 'compare' && readyResult && !refining ? 'is-comparing' : ''}`}><div style={{ width: zoom === 100 ? '100%' : `${zoom}%`, minWidth: zoom === 100 ? undefined : `${zoom}%` }}>{view === 'compare' && readyResult && !refining ? <div className="workspace-image-comparison"><figure><figcaption>Original</figcaption><img src={previewUrl} alt="Original image" /></figure><figure><figcaption>Result</figcaption><img src={resultSrc} alt="Watermark removal result" /></figure></div> : objectOperation && !readyResult ? <ObjectMaskEditor ref={mask} src={localUrl || previewUrl} width={metadata.width} height={metadata.height} revision={mediaRevision} disabled={editingLocked} onSelection={selectionChanged} onSelectionStart={selectionStarted} /> : <ImageMaskEditor key={`${currentArtifact?.id ?? draft?.id ?? 'local'}:${refining}`} ref={mask} src={imageSrc} width={refining ? job?.result?.metadata.width ?? metadata.width : metadata.width} height={refining ? job?.result?.metadata.height ?? metadata.height : metadata.height} editable={refining} backgroundColor={backgroundOperation && readyResult && view !== 'original' ? selectedBackground.color : undefined} onPreviewError={backgroundOperation && readyResult && view === 'result' && job ? () => { if (automaticPreviewRefresh.current.has(job.id)) return; automaticPreviewRefresh.current.add(job.id); void refreshCurrentJob(job.id).catch(cause => setError(displayError(cause))); } : undefined} disabled={editingLocked} tool={tool} brushSize={brushSize} showSelection={showSelection} onSelection={selectionChanged} onSelectionStart={selectionStarted} undoToken={undoToken} />}</div></div>}
               {kind === 'video' && metadata && <VideoEditor key={`${job?.id ?? mediaRevision}:${readyResult}`} ref={mask} src={previewUrl} resultSrc={readyResult ? resultSrc : undefined} width={metadata.width} height={metadata.height} duration={metadata.durationSeconds} fixedArea={fixedArea && !readyResult && !processing} disabled={editingLocked} onSelection={selectionChanged} onSelectionStart={selectionStarted} />}
               <div className="workspace-file-info"><span>{file?.name ?? (kind === 'image' ? 'Image' : 'Video')}</span><span>{currentArtifact ? artifactInfo(currentArtifact) : metadata ? `${metadata.width} × ${metadata.height}${metadata.durationSeconds ? ` · ${metadata.durationSeconds.toFixed(1)} sec` : ''} · Local preview` : ''}</span></div>
               {readyResult && <p className="workspace-media-caption">{artifactInfo(job?.result)}{job?.result?.metadata.kind === 'video' ? ` · ${job.result.metadata.hasAudio ? 'Audio present' : 'No audio track'}` : ''}{job?.isDemo ? ' · Test result from Mock Provider' : ''}</p>}
               {readyResult && recent.length > 1 && <div className="workspace-versions"><span>Previous versions</span>{recent.filter(value => value.status === 'READY' && value.id !== job?.id && (value.id === job?.parentJobId || value.parentJobId === job?.id || value.parentJobId === job?.parentJobId && !!job?.parentJobId)).map(value => <button type="button" key={value.id} onClick={() => selectRecent(value)}>{value.result?.previewUrl && kind === 'image' && <img src={value.result.previewUrl} alt="" />}<span>Result · {new Date(value.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span></button>)}</div>}
             </section>
             <aside className="workspace-controls">
-              {uncertainSubmission ? <><h2>Check your saved submission</h2>{actionBlock}</> : refining ? <><h2>Refine selected area</h2><p>Paint only over the watermark.</p><label className="workspace-range-label">Brush size <span>{brushSize} px</span><input type="range" min={4} max={160} value={brushSize} onChange={event => setBrushSize(Number(event.target.value))} disabled={editingLocked} /></label><label className="workspace-switch">Show selection<input type="checkbox" checked={showSelection} onChange={event => setShowSelection(event.target.checked)} disabled={editingLocked} /></label>{actionBlock}<button className="workspace-text-button" type="button" onClick={cancelRefinement} disabled={editingLocked}>Keep current version</button></> : processing || job?.status === 'UNKNOWN' ? <><h2>{processingLabel(job?.status ?? '')}</h2>{processing && <LoaderCircle className="workspace-spinner" size={30} />}{typeof job?.progress === 'number' && job.status === 'PROCESSING' ? <><progress aria-label="Provider processing progress" max={1} value={job.progress} /><p>{Math.round(job.progress * 100)}%</p></> : <p>{job?.status === 'UNKNOWN' ? 'The provider has not confirmed this request. We are checking it. Do not start it again.' : 'You can leave this page and return to this task from Recent work.'}</p>}<button className="button button-ghost" type="button" onClick={() => job && void refreshCurrentJob(job.id).catch(cause => setError(displayError(cause)))}><RefreshCw size={17} />Refresh status</button><p className="workspace-small">{job?.charge ? `${creditLabel(job.charge.amount, job.charge.unit)} · ${job.charge.status}` : ''}</p></> : readyResult ? <><h2>Download result</h2><p>{artifactInfo(job?.result)}</p><button className="button button-primary" type="button" onClick={() => void download()} disabled={!!busy}><Download size={19} />{busy === 'Preparing your download' ? 'Preparing…' : `Download ${kind === 'video' ? 'video' : 'JPG'}`}</button>{job?.result?.expiresAt && <p className="workspace-small">Available until {new Date(job.result.expiresAt).toLocaleString()}</p>}<button className="button button-ghost" type="button" disabled={!!busy} onClick={() => job && void refreshCurrentJob(job.id).catch(cause => setError(displayError(cause)))}><RefreshCw size={16} />Refresh preview link</button>{kind === 'image' && job && canRefineResult(job) && <button className="workspace-text-button" type="button" onClick={startRefinement} disabled={!capabilities.find(value => value.operation === 'image-refine')?.enabled}><Brush size={17} />Refine remaining marks</button>}{kind === 'video' && <button className="workspace-text-button" type="button" onClick={() => { if (editingLocked) return; invalidateQuote(); setJob(null); setHasSelection(false); setFixedArea(true); mask.current?.clear(); window.history.replaceState({}, '', '/app/video'); }} disabled={editingLocked}><RefreshCw size={17} />Adjust area & process again</button>}<p className="workspace-small">Each new processing task shows its cost on the button.</p></> : <>
-                <h2>{kind === 'video' ? 'Choose what to remove' : 'Choose cleanup quality'}</h2>
-                {kind === 'video' ? <><label className="workspace-radio"><input type="radio" name="video-mode" checked={!fixedArea} onChange={() => { if (editingLocked) return; invalidateQuote(); setFixedArea(false); mask.current?.clear(); }} disabled={editingLocked} /><span><strong>Automatic detection</strong><small>Let AI find visible watermarks.</small></span></label><label className="workspace-radio"><input type="radio" name="video-mode" checked={fixedArea} onChange={() => { if (editingLocked) return; invalidateQuote(); setFixedArea(true); }} disabled={editingLocked} /><span><strong>Fixed area</strong><small>For watermarks that stay in one place.</small></span></label><p className="workspace-small">The area applies to the entire video. Moving-watermark tracking is not supported.</p></> : <><label className="workspace-radio"><input type="radio" name="image-mode" checked={mode === 'standard'} onChange={() => { if (editingLocked) return; invalidateQuote(); setMode('standard'); setError(''); }} disabled={editingLocked} /><span><strong>Standard</strong><small>Automatic cleanup · free uses first, then purchased image credits.</small></span></label><label className="workspace-radio"><input type="radio" name="image-mode" checked={mode === 'pro'} onChange={() => { if (editingLocked) return; invalidateQuote(); setMode('pro'); setError(''); }} disabled={editingLocked || !capabilities.find(value => value.operation === 'image-watermark-pro')?.enabled} /><span><strong>PRO</strong><small>Higher-quality model · administrator processing credits. Purchased image credits do not apply. {capabilities.find(value => value.operation === 'image-watermark-pro')?.enabled ? '' : 'Currently unavailable.'}</small></span></label><p className="workspace-small">Output JPG. Transparency is flattened to white. Prepare an image with its longest edge at 6000 px or less.</p></>}
+              {uncertainSubmission ? <><h2>Check your saved submission</h2>{actionBlock}</> : refining ? <><h2>Refine selected area</h2><p>Paint only over the watermark.</p><label className="workspace-range-label">Brush size <span>{brushSize} px</span><input type="range" min={4} max={160} value={brushSize} onChange={event => setBrushSize(Number(event.target.value))} disabled={editingLocked} /></label><label className="workspace-switch">Show selection<input type="checkbox" checked={showSelection} onChange={event => setShowSelection(event.target.checked)} disabled={editingLocked} /></label>{actionBlock}<button className="workspace-text-button" type="button" onClick={cancelRefinement} disabled={editingLocked}>Keep current version</button></> : processing || job?.status === 'UNKNOWN' ? <><h2>{processingLabel(job?.status ?? '')}</h2>{processing && <LoaderCircle className="workspace-spinner" size={30} />}{typeof job?.progress === 'number' && job.status === 'PROCESSING' ? <><progress aria-label="Provider processing progress" max={1} value={job.progress} /><p>{Math.round(job.progress * 100)}%</p></> : <p>{job?.status === 'UNKNOWN' ? 'The provider has not confirmed this request. We are checking it. Do not start it again.' : 'You can leave this page and return to this task from Recent work.'}</p>}<button className="button button-ghost" type="button" onClick={() => job && void refreshCurrentJob(job.id).catch(cause => setError(displayError(cause)))}><RefreshCw size={17} />Refresh status</button><p className="workspace-small">{job?.charge ? `${creditLabel(job.charge.amount, job.charge.unit)} · ${job.charge.status}` : ''}</p></> : readyResult ? <><h2>Download result</h2><p>{artifactInfo(job?.result)}</p>{backgroundOperation && <BackgroundOptions selected={selectedBackground} onChange={setSelectedBackground} disabled={!!busy} />}<button className="button button-primary" type="button" onClick={() => void download()} disabled={!!busy}><Download size={19} />{busy === 'Preparing your download' ? 'Preparing…' : `Download ${kind === 'video' ? 'video' : job?.result?.format ?? 'JPG'}`}</button>{job?.result?.expiresAt && <p className="workspace-small">Available until {new Date(job.result.expiresAt).toLocaleString()}</p>}<button className="button button-ghost" type="button" disabled={!!busy} onClick={() => job && void refreshCurrentJob(job.id).catch(cause => setError(displayError(cause)))}><RefreshCw size={16} />Refresh preview link</button>{kind === 'image' && job && canRefineResult(job) && <button className="workspace-text-button" type="button" onClick={startRefinement} disabled={!capabilities.find(value => value.operation === 'image-refine')?.enabled}><Brush size={17} />Refine remaining marks</button>}{kind === 'video' && <button className="workspace-text-button" type="button" onClick={() => { if (editingLocked) return; invalidateQuote(); setJob(null); setHasSelection(false); setFixedArea(true); mask.current?.clear(); window.history.replaceState({}, '', '/app/video'); }} disabled={editingLocked}><RefreshCw size={17} />Adjust area & process again</button>}<p className="workspace-small">Each new processing task shows its cost on the button.</p></> : <>
+                <h2>{kind === 'video' ? 'Choose what to remove' : 'Processing details'}</h2>
+                {kind === 'video' ? <><label className="workspace-radio"><input type="radio" name="video-mode" checked={!fixedArea} onChange={() => { if (editingLocked) return; invalidateQuote(); setFixedArea(false); mask.current?.clear(); }} disabled={editingLocked} /><span><strong>Automatic detection</strong><small>Let AI find visible watermarks.</small></span></label><label className="workspace-radio"><input type="radio" name="video-mode" checked={fixedArea} onChange={() => { if (editingLocked) return; invalidateQuote(); setFixedArea(true); }} disabled={editingLocked} /><span><strong>Fixed area</strong><small>For watermarks that stay in one place.</small></span></label><p className="workspace-small">The area applies to the entire video. Moving-watermark tracking is not supported.</p></> : <><p className="workspace-small">{mode === 'pro' ? 'PRO uses administrator processing credits. Purchased image credits do not apply.' : backgroundOperation || objectOperation ? 'Uses free image uses first, then purchased image credits. Administrator processing credits do not apply.' : 'Standard uses free image uses first, then purchased image credits.'}</p><p className="workspace-small">{objectOperation ? 'Output full-resolution PNG. Paint or lasso the object before processing.' : backgroundOperation ? 'Output transparent PNG. Background color changes are local and use no credits.' : 'Output JPG. Transparency is flattened to white. Prepare an image with its longest edge at 6000 px or less.'}</p></>}
                 {!failedRefinement && actionBlock}
                 {failedRefinement && <p className="workspace-small">Open your previous version in Recent work to refine it again.</p>}
                 {capability && !canOperate && <p className="workspace-small">{capability.reason ?? 'This operation is not available yet. Your file has not been processed.'}</p>}
                 {job && ['FAILED', 'REFUNDED', 'EXPIRED'].includes(job.status) && <div className="workspace-task-failure"><h3>{processingLabel(job.status)}</h3><p>{job.error}</p><p>{job.charge.status === 'refunded' ? 'Your reserved credits were returned.' : `Credit status: ${job.charge.status}.`}</p>{job.status === 'EXPIRED' && <p>Choose the original file to prepare a new task.</p>}</div>}
               </>}
-              {!processing && !uncertainSubmission && <button className="workspace-replace" type="button" onClick={() => input.current?.click()} disabled={!!busy}><CloudUpload size={16} />Replace {kind}</button>}
+              {!processing && !uncertainSubmission && <button className="workspace-replace" type="button" onClick={() => input.current?.click()} disabled={editingLocked}><CloudUpload size={16} />Upload file</button>}
               {file && !inputArtifact && !processing && !uncertainSubmission && <button className="workspace-text-button" type="button" onClick={() => void discardDraft()} disabled={!!busy}>Discard local draft</button>}
             </aside>
           </div>
         </>}
-      </main>
-    </div>
 
-  </div>;
+  </AppShell>;
 }

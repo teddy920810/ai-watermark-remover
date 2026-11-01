@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
+import { durableOperationIds } from '../contracts/operation-catalog';
 import { createServerProcessingRuntimeAccessor, createServerProcessingHandler } from './server-processing-runtime';
-import type { ProcessingRuntime } from './processing-services';
+import type { ProcessingRuntime, ProcessingRuntimeConfig } from './processing-services';
 
 const source = { R2_ACCESS_KEY_ID: 'access', R2_SECRET_ACCESS_KEY: 'private', R2_ENDPOINT: 'https://r2.test', DATABASE_URL: 'postgres://db.test/database', BETTER_AUTH_URL: 'https://www.example.test', PROCESSING_ENABLED: 'true', PROCESSING_PROVIDER: 'mock' };
 function runtime() { return { service: { capabilities: () => [{ operation: 'image-watermark', enabled: true }] }, balances: vi.fn(async () => ({ freeUses: 1, processingCredits: 0 })), beginUpload: vi.fn(async () => ({ id: 'upload' })) } as unknown as ProcessingRuntime; }
@@ -11,9 +12,10 @@ describe('server processing runtime boundary', () => {
     expect(factory).toHaveBeenCalledWith(expect.objectContaining({ imageCredits: expect.objectContaining({ enabled: true, environment: 'live', costs: { 'watermark-removal': 3, 'background-removal': 2, 'object-removal': 4 }, priceVersion: 'image-test-1' }) }));
   });
   it('keeps legacy provider settings separate from the durable provider switch', () => {
-    const factory = vi.fn(runtime);
+    const factory = vi.fn<(config: ProcessingRuntimeConfig) => ProcessingRuntime>(runtime);
     createServerProcessingRuntimeAccessor({ ...source, WATERMARK_PROVIDER: 'dewatermark', DEWATERMARK_API_KEY: 'private-key', DEWATERMARK_BASE_URL: 'https://legacy.test', DEWATERMARK_PREDICT_MODE: '3.0', DEWATERMARK_TIMEOUT_MS: '12000', MOCK_PROCESSING_DELAY_MS: '25' }, { factory })();
-    expect(factory).toHaveBeenCalledWith(expect.objectContaining({ providerMode: 'mock', legacyProvider: { mode: 'dewatermark', baseUrl: 'https://legacy.test', predictMode: '3.0', timeoutMs: 12000, mockDelayMs: 25 } }));
+    expect(factory).toHaveBeenCalledWith(expect.objectContaining({ scope: 'web', providerMode: 'mock' }));
+    expect(factory.mock.calls[0][0]).not.toHaveProperty('legacyProvider');
   });
   it('caches only on first use and passes server-only environment and dispatcher to the Node factory', () => {
     const factory = vi.fn(runtime); const trigger = vi.fn(); const resolveTrigger = vi.fn(() => trigger);
@@ -39,7 +41,7 @@ describe('server processing runtime boundary', () => {
     const handler = createServerProcessingHandler({ source, getRuntime, loadSession });
     const response = await handler(new Request('https://www.example.test/api/v1/capabilities'));
     expect(response.status).toBe(200);
-    const body = await response.json(); expect(body.operations).toHaveLength(4); expect(body.operations.every((operation: { enabled: boolean }) => !operation.enabled)).toBe(true);
+    const body = await response.json(); expect(body.operations.map((value: { operation: string }) => value.operation)).toEqual(durableOperationIds); expect(body.operations.every((operation: { enabled: boolean }) => !operation.enabled)).toBe(true);
     expect(loadSession).not.toHaveBeenCalled(); await getRuntime().close();
   });
   it('accepts localhost only as the explicit local HTTP origin', async () => {

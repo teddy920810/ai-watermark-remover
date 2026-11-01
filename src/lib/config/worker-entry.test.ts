@@ -10,11 +10,23 @@ function runtimeFixture() {
     runJob: vi.fn(async () => { job = { ...job, status: 'READY' }; return job; }),
     runPreflight: vi.fn().mockResolvedValue({ status: 'ready', id: 'upload-1' }),
     dispatch: vi.fn().mockResolvedValue(undefined), close: vi.fn().mockResolvedValue(undefined),
+    retainExpired: vi.fn().mockResolvedValue({ inspectedJobs: 1, eligibleJobs: 1, redactedRecords: 0, skippedJobs: 0, digest: 'a'.repeat(64), groups: 1 }),
   };
   return { runtime, factory: vi.fn(() => runtime as unknown as ProcessingRuntime), setJob: (value: Partial<typeof job>) => { job = { ...job, ...value }; } };
 }
 
 describe('standalone processing worker entry', () => {
+  it('runs retention as a read-only plan without a task owner, dispatch or Provider execution', async () => {
+    const s = runtimeFixture();
+    expect(await runWorker({ ...environment, MODE: 'retention', JOB_ID: undefined, OWNER_ID: undefined }, { createRuntime: s.factory })).toMatchObject({ mode: 'retention', status: 'planned' });
+    expect(s.runtime.retainExpired).toHaveBeenCalledWith({ apply: false, expectedDigest: undefined });
+    expect(s.runtime.runJob).not.toHaveBeenCalled(); expect(s.runtime.dispatch).not.toHaveBeenCalled(); expect(s.runtime.close).toHaveBeenCalled();
+  });
+  it('requires an exact reviewed retention digest before any apply runtime is opened', async () => {
+    const s = runtimeFixture();
+    await expect(runWorker({ ...environment, MODE: 'retention', RETENTION_APPLY: 'true' }, { createRuntime: s.factory })).rejects.toThrow(/digest/i);
+    expect(s.factory).not.toHaveBeenCalled();
+  });
   it('passes the image-purchase environment to settlement without requiring PayPal secrets', () => {
     const config = workerConfigFromEnvironment({ ...environment, PAYPAL_CREDITS_ENABLED: 'true', PAYPAL_ENVIRONMENT: 'live', PAYPAL_IMAGE_COSTS_JSON: JSON.stringify({ 'watermark-removal': 3, 'background-removal': 2, 'object-removal': 4 }), PAYPAL_IMAGE_COST_VERSION: 'image-test-1' });
     expect(config).toMatchObject({ imageCredits: { enabled: true, environment: 'live', costs: { 'watermark-removal': 3, 'background-removal': 2, 'object-removal': 4 }, priceVersion: 'image-test-1' } });
@@ -30,8 +42,10 @@ describe('standalone processing worker entry', () => {
     expect(await runWorker({ ...environment, DISPATCH_ID: 'dispatch-old' }, { createRuntime: s.factory })).toMatchObject({ status: 'superseded' });
     expect(s.runtime.runJob).not.toHaveBeenCalled(); expect(s.runtime.close).toHaveBeenCalled();
   });
-  it('carries the independent legacy provider configuration to the canonical runtime', () => {
-    expect(workerConfigFromEnvironment({ ...environment, WATERMARK_PROVIDER: 'dewatermark', DEWATERMARK_BASE_URL: 'https://legacy.test', DEWATERMARK_PREDICT_MODE: '3.0', DEWATERMARK_TIMEOUT_MS: '12000', MOCK_PROCESSING_DELAY_MS: '25' })).toMatchObject({ providerMode: 'mock', legacyProvider: { mode: 'dewatermark', baseUrl: 'https://legacy.test', predictMode: '3.0', timeoutMs: 12000, mockDelayMs: 25 } });
+  it('passes only the Worker facet while leaving old-protocol provider settings with JobService', () => {
+    const config = workerConfigFromEnvironment({ ...environment, WATERMARK_PROVIDER: 'dewatermark', DEWATERMARK_BASE_URL: 'https://legacy.test', DEWATERMARK_PREDICT_MODE: '3.0', DEWATERMARK_TIMEOUT_MS: '12000', MOCK_PROCESSING_DELAY_MS: '25' });
+    expect(config).toMatchObject({ scope: 'worker', providerMode: 'mock' });
+    expect(config).not.toHaveProperty('legacyProvider');
   });
   it('validates environment before opening services and never embeds private values in configuration errors', async () => {
     const factory = vi.fn();

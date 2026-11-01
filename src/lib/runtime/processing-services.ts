@@ -1,5 +1,5 @@
 import { createHash, randomUUID } from 'node:crypto';
-import { GetObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { GetObjectCommand, ListObjectsV2Command, S3Client } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { Pool } from 'pg';
 import type { ProcessingApiRuntime, UploadDeclaration } from '../api/processing-handler';
@@ -14,19 +14,21 @@ import { ProcessingService } from '../processing/processing-service';
 import { ProcessingWorker } from '../processing/processing-worker';
 import { R2ProcessingJobStore, R2ProcessingQuoteStore, S3ConditionalJsonStore } from '../processing/r2-processing-store';
 import { DewatermarkClient } from '../providers/dewatermark-client';
-import { DewatermarkProvider } from '../providers/dewatermark-provider';
-import { MockWatermarkProvider } from '../providers/mock-provider';
-import { createWatermarkProvider } from '../providers/watermark-provider-factory';
-import type { LegacyWatermarkProvider, ProcessingProviderContext, ProcessingWatermarkProvider, ProviderOutcome, WatermarkProvider } from '../providers/watermark-provider';
-import { R2ObjectStore } from '../r2/r2-object-store';
+import type { ProcessingProviderContext, ProcessingWatermarkProvider, ProviderOutcome } from '../providers/watermark-provider';
 import { CloudRunTriggerError, cloudRunDispatchDiagnostic } from './cloud-run-trigger';
 import { MediaPreflight } from './media-preflight';
 import type { UploadRecord } from './media-preflight';
-import { mediaKey, PrivateMediaStore, SITE_MAX_IMAGE_BYTES, SITE_MAX_VIDEO_BYTES } from './private-media-store';
+import { mediaKey, PrivateMediaStore, SITE_MAX_VIDEO_BYTES } from './private-media-store';
 import { ProcessingProvider } from './processing-provider';
 import { PublicProcessingProjection } from './public-projection';
 import type { PublicUpload, PublicUploadTicket } from '../contracts/processing-public';
 import type { ImageCreditCosts } from '../payments/image-credit-prices';
+import { durableCapabilities } from '../contracts/operation-catalog';
+import { getWebDatabasePool } from './web-database-pool';
+import sharp from 'sharp';
+import type { ImageProviderConfig } from '../config/image-providers';
+import { ReplicateImageProvider } from './replicate-image-provider';
+import { SensitiveRetention } from '../processing/sensitive-retention';
 export type { PublicUpload } from '../contracts/processing-public';
 
 export type ExecutionTrigger = (action: 'process' | 'reconcile' | 'preflight', id: string, ownerId: string, existingExecutionRef?: string, dispatchId?: string) => Promise<{ executionRef?: string; nextCheckAt: string; terminal?: boolean }>;
@@ -36,8 +38,8 @@ export interface ProcessingRuntimeConfig {
   apiKey?: string;
   ffprobePath?: string;
   providerMode: 'mock' | 'dewatermark';
-  /** Legacy remove settings remain independent from the durable provider mode. */
-  legacyProvider?: { mode: 'mock' | 'dewatermark'; baseUrl?: string; predictMode?: '3.0' | '4.0'; timeoutMs?: number; mockDelayMs?: number };
+  scope?: 'web' | 'worker';
+  imageProviders?: ImageProviderConfig;
   enabled?: boolean;
   priceVersion?: string;
   imageCredits?: { enabled: boolean; environment: 'sandbox' | 'live'; costs?: ImageCreditCosts; priceVersion?: string };
@@ -63,6 +65,7 @@ export interface ProcessingRuntime extends ProcessingApiRuntime {
   download(ownerId: string, id: string): ReturnType<PublicProcessingProjection['download']>;
   runJob(jobId: string, workerId?: string, dispatchId?: string): Promise<ProcessingJob>;
   runPreflight(ownerId: string, id: string): Promise<PublicUpload>;
+  retainExpired?: SensitiveRetention['run'];
   close(): Promise<void>;
 }
 
@@ -73,16 +76,19 @@ class MockPrivateProcessingProvider implements ProcessingWatermarkProvider {
   async submit(context: ProcessingProviderContext): Promise<ProviderOutcome> {
     const existing = await this.media.getJson<ProcessingArtifact>(this.receipt(context));
     if (existing) return this.recover(existing);
+    if (['background-removal', 'object-removal'].includes(context.job.operation)) await context.checkpoint({ provider: 'mock' });
     await context.heartbeat();
     await this.media.verifyStored(context.input);
     if (context.mask) await this.media.verifyStored(context.mask);
     let bytes = await this.media.getBytes(context.input.key, context.input.metadata.kind === 'video' ? SITE_MAX_VIDEO_BYTES : 48 * 1024 * 1024);
-    if (context.input.metadata.kind === 'image') bytes = (await prepareImageForProvider(bytes, { maxBytes: 48 * 1024 * 1024 })).bytes;
+    if (context.input.metadata.kind === 'image') bytes = ['background-removal', 'object-removal'].includes(context.job.operation)
+      ? await sharp(bytes).rotate().ensureAlpha().png().toBuffer()
+      : (await prepareImageForProvider(bytes, { maxBytes: 48 * 1024 * 1024 })).bytes;
     const metadata = await this.media.inspectBytes(bytes, context.input.metadata.kind);
     const id = this.id(); const created = this.now();
     const artifact: ProcessingArtifact = { id, ownerId: context.job.ownerId, key: mediaKey('result', context.job.ownerId, id, metadata.contentType),
       role: 'result', sealed: true, sha256: createHash('sha256').update(bytes).digest('hex'), metadata, parentArtifactId: context.input.id,
-      ...(metadata.kind === 'image' && context.job.operation !== 'image-watermark-pro' ? { providerSessionId: `mock-${id}` } : {}),
+      ...(metadata.kind === 'image' && ['image-watermark', 'image-refine'].includes(context.job.operation) ? { providerSessionId: `mock-${id}` } : {}),
       createdAt: created.toISOString(), expiresAt: new Date(created.getTime() + 24 * 60 * 60_000).toISOString() };
     await this.media.putBytes(artifact.key, bytes, metadata.contentType, { 'owner-id': artifact.ownerId, 'artifact-id': artifact.id }, true);
     await this.media.putJson(this.receipt(context), artifact, true);
@@ -101,11 +107,12 @@ export function createProcessingRuntime(config: ProcessingRuntimeConfig): Proces
   if (config.imageCredits?.enabled && config.imageCredits.environment === 'live' && (!config.imageCredits.costs || !config.imageCredits.priceVersion)) throw new Error('Live image-credit operation prices are required');
   const deps = config.dependencies ?? {};
   const now = deps.now ?? (() => new Date()); const id = deps.id ?? randomUUID;
+  const pool = deps.pool ?? (config.scope === 'web' ? getWebDatabasePool(config.databaseUrl) : new Pool({ connectionString: config.databaseUrl }));
+  const ownsPool = !deps.pool && config.scope !== 'web';
   // Presigning a browser PUT has no body yet. SDK default CRC32 would bind its
   // empty body, rejecting the actual upload. R2 sealing still verifies SHA-256.
   // https://docs.aws.amazon.com/sdkref/latest/guide/feature-dataintegrity.html
   const client = deps.client ?? new S3Client({ endpoint: config.r2.endpoint, region: 'auto', forcePathStyle: true, requestChecksumCalculation: 'WHEN_REQUIRED', credentials: { accessKeyId: config.r2.accessKeyId, secretAccessKey: config.r2.secretAccessKey } });
-  const pool = deps.pool ?? new Pool({ connectionString: config.databaseUrl });
   const finance = deps.finance ?? new PostgresProcessingStore(pool, { imageCreditsEnabled: config.imageCredits?.enabled, paymentEnvironment: config.imageCredits?.environment ?? 'sandbox' });
   const benefits = deps.benefits ?? new PostgresBenefitStore(pool, config.imageCredits?.enabled ?? false, config.imageCredits?.environment ?? 'sandbox', config.imageCredits?.costs);
   const media = new PrivateMediaStore({ client, bucket: config.r2.bucket, ffprobePath: config.ffprobePath, signUrl: deps.signUrl, now });
@@ -114,14 +121,16 @@ export function createProcessingRuntime(config: ProcessingRuntimeConfig): Proces
   const recovery = new ProcessingDispatchRecovery({ jobs, finance, now, id });
   const preflight = new MediaPreflight({ media, ffprobePath: config.ffprobePath, now, id });
   const available = config.enabled !== false && (config.providerMode === 'mock' || Boolean(config.apiKey?.trim()));
+  const backgroundMode = config.imageProviders?.BACKGROUND_REMOVAL_PROVIDER ?? 'mock';
+  const objectMode = config.imageProviders?.OBJECT_REMOVAL_PROVIDER ?? 'mock';
   const reason = 'Processing is not configured. Your existing files and account allowance are retained.';
-  const capabilities: OperationCapability[] = [
-    { operation: 'image-watermark', enabled: available, acceptedTypes: ['image/jpeg', 'image/png', 'image/webp'], maxBytes: SITE_MAX_IMAGE_BYTES },
-    { operation: 'image-watermark-pro', enabled: available, acceptedTypes: ['image/jpeg', 'image/png', 'image/webp'], maxBytes: SITE_MAX_IMAGE_BYTES },
-    { operation: 'image-refine', enabled: available, acceptedTypes: ['image/jpeg'], maxBytes: 48 * 1024 * 1024 },
-    { operation: 'video-watermark', enabled: available, acceptedTypes: ['video/mp4'], maxBytes: SITE_MAX_VIDEO_BYTES, maxDurationSeconds: 540, requiredFps: 24 },
-  ].map((capability) => ({ ...capability, ...(!available ? { reason } : {}) })) as OperationCapability[];
-  const core = new ProcessingService({ jobs, artifacts: media, quotes, finance, capabilities, purchasedImageCreditsEnabled: config.imageCredits?.enabled, purchasedImageCreditCost: config.imageCredits?.costs?.['watermark-removal'], imageCreditPriceVersion: config.imageCredits?.priceVersion,
+  const capabilities: OperationCapability[] = durableCapabilities(available, reason).map(capability => {
+    if (!['background-removal', 'object-removal'].includes(capability.operation)) return capability;
+    const mode = capability.operation === 'object-removal' ? objectMode : backgroundMode;
+    const enabled = config.enabled !== false && (mode === 'mock' || Boolean(config.imageProviders?.REPLICATE_API_TOKEN?.trim()));
+    return { ...capability, enabled, reason: enabled ? undefined : reason };
+  });
+  const core = new ProcessingService({ jobs, artifacts: media, quotes, finance, capabilities, purchasedImageCreditsEnabled: config.imageCredits?.enabled, purchasedImageCreditCost: config.imageCredits?.costs?.['watermark-removal'], imageCreditCosts: config.imageCredits?.costs, imageCreditPriceVersion: config.imageCredits?.priceVersion,
     inspector: { inspect: async (owner, artifactId) => { const a = await media.get(artifactId); if (!a || a.ownerId !== owner) throw new ProcessingError('artifact_not_found', 'Validated input was not found', 404); return a; } },
     prices: { version: config.priceVersion ?? 'processing-v1', amount: (operation, input) => operation === 'image-watermark-pro' ? 3 : operation === 'video-watermark' ? Math.ceil(input.durationSeconds! * 0.5) : 1 }, now, id });
   const service: ProcessingApiRuntime['service'] = {
@@ -133,17 +142,26 @@ export function createProcessingRuntime(config: ProcessingRuntimeConfig): Proces
     submit: async () => { throw new DefinitiveProviderError('Provider configuration is unavailable before processing'); },
     poll: async () => { throw new Error('Provider configuration is required to reconcile the existing operation'); },
   };
-  const processing = deps.provider ?? (config.providerMode === 'mock' ? new MockPrivateProcessingProvider(media, now, id) : config.apiKey?.trim() ? new ProcessingProvider({ client: new DewatermarkClient({ apiKey: config.apiKey }), media, ffprobePath: config.ffprobePath, now, id }) : unavailableProvider);
-  const legacyConfig = config.legacyProvider;
-  const legacy: LegacyWatermarkProvider = legacyConfig?.mode === 'dewatermark'
-    ? config.apiKey?.trim() ? new DewatermarkProvider(new R2ObjectStore(config.r2), {
-        apiKey: config.apiKey, baseUrl: legacyConfig.baseUrl ?? 'https://platform.dewatermark.ai',
-        predictMode: legacyConfig.predictMode ?? '4.0', timeoutMs: legacyConfig.timeoutMs ?? 30_000,
-      }) : { remove: async () => { throw new Error('Legacy provider configuration is unavailable before processing'); } }
-    : new MockWatermarkProvider(new R2ObjectStore(config.r2), legacyConfig?.mockDelayMs ?? 0);
-  const provider: WatermarkProvider = createWatermarkProvider(legacy, processing);
-  const worker = new ProcessingWorker({ jobs, artifacts: media, finance, provider, now, id });
-  const projection = new PublicProcessingProjection({ media, now, isDemo: config.providerMode === 'mock', refinementEnabled: available,
+  let worker: ProcessingWorker | undefined;
+  function executionWorker() {
+    if (worker) return worker;
+    let mock: ProcessingWatermarkProvider | undefined; let watermark: ProcessingWatermarkProvider | undefined;
+    const imageAdapters: Partial<Record<'background-removal' | 'object-removal', ProcessingWatermarkProvider>> = {};
+    const mockProvider = () => (mock ??= new MockPrivateProcessingProvider(media, now, id));
+    function selected(context: ProcessingProviderContext) {
+      if (deps.provider) return deps.provider;
+      const operation = context.job.operation;
+      if (operation !== 'background-removal' && operation !== 'object-removal') return (watermark ??= config.providerMode === 'mock' ? mockProvider() : config.apiKey?.trim() ? new ProcessingProvider({ client: new DewatermarkClient({ apiKey: config.apiKey }), media, ffprobePath: config.ffprobePath, now, id }) : unavailableProvider);
+      const mode = context.job.attempt?.checkpoint?.provider ?? (operation === 'object-removal' ? objectMode : backgroundMode);
+      if (mode === 'mock') return mockProvider();
+      const image = config.imageProviders;
+      return (imageAdapters[operation] ??= image?.REPLICATE_API_TOKEN ? new ReplicateImageProvider({ media, operation, config: { apiToken: image.REPLICATE_API_TOKEN, baseUrl: image.REPLICATE_BASE_URL, modelVersion: operation === 'object-removal' ? image.REPLICATE_LAMA_MODEL_VERSION : image.REPLICATE_BACKGROUND_MODEL_VERSION, timeoutMs: image.REPLICATE_TIMEOUT_MS, waitSeconds: image.REPLICATE_WAIT_SECONDS }, now, id }) : unavailableProvider);
+    }
+    const provider: ProcessingWatermarkProvider = { submit: context => selected(context).submit(context), poll: context => selected(context).poll(context) };
+    return (worker = new ProcessingWorker({ jobs, artifacts: media, finance, provider, now, id }));
+  }
+  let closing: Promise<void> | undefined;
+  const projection = new PublicProcessingProjection({ media, now, isDemoFor: operation => operation === 'object-removal' ? objectMode === 'mock' : operation === 'background-removal' ? backgroundMode === 'mock' : config.providerMode === 'mock', refinementEnabled: available,
     signPreview: (artifact, seconds) => (deps.signUrl ?? getSignedUrl)(client, new GetObjectCommand({ Bucket: config.r2.bucket, Key: artifact.key, ResponseContentDisposition: 'inline', ResponseCacheControl: 'private, no-store' }), { expiresIn: seconds }) });
   const projectUpload = async (owner: string, record: UploadRecord): Promise<PublicUpload> => {
     const artifact = record.artifactId ? await media.get(record.artifactId) : null;
@@ -156,7 +174,7 @@ export function createProcessingRuntime(config: ProcessingRuntimeConfig): Proces
   const runtime: ProcessingRuntime = {
     service,
     async beginUpload(owner, declaration) {
-      const allowed = declaration.kind === 'video' ? capabilities.find((c) => c.operation === 'video-watermark')?.enabled : declaration.kind === 'mask' ? capabilities.some((c) => c.enabled && ['image-refine', 'video-watermark'].includes(c.operation)) : capabilities.some((c) => c.enabled && c.operation.startsWith('image-'));
+      const allowed = declaration.kind === 'video' ? capabilities.find((c) => c.operation === 'video-watermark')?.enabled : declaration.kind === 'mask' ? capabilities.some((c) => c.enabled && ['image-refine', 'video-watermark', 'object-removal'].includes(c.operation)) : capabilities.some((c) => c.enabled && c.acceptedTypes.some(type => type.startsWith('image/')));
       if (!allowed) throw new ProcessingError('operation_unavailable', reason, 503);
       const upload = await preflight.createUpload(owner, declaration);
       return { ...await projectUpload(owner, upload.upload), uploadUrl: upload.uploadUrl, method: 'PUT', headers: { 'Content-Type': declaration.contentType } };
@@ -172,9 +190,35 @@ export function createProcessingRuntime(config: ProcessingRuntimeConfig): Proces
     },
     async getUpload(owner, uploadId) { return projectUpload(owner, await preflight.getUpload(owner, uploadId)); },
     projectJob: (owner, job) => projection.job(owner, job), projectQuote: (owner, quote) => projection.quote(owner, quote),
-    async balances(owner, email) { const legacy = await benefits.getSummary(owner, email); return { freeUses: legacy.balance, processingCredits: await finance.getBalance(owner), ...(config.imageCredits?.enabled ? { purchasedImageCredits: await finance.getBalance(owner, 'purchasedImageCredits') } : {}) }; },
+    async balances(owner, email) { const legacy = await benefits.getSummary(owner, email); return { freeUses: legacy.balance, processingCredits: await finance.getBalance(owner), ...(config.imageCredits?.enabled ? { purchasedImageCredits: legacy.paidBalance ?? await finance.getBalance(owner, 'purchasedImageCredits') } : {}) }; },
     async download(owner, jobId) { return projection.download(owner, await core.get(owner, jobId)); },
-    async runJob(jobId, workerId = `worker-${id()}`, dispatchId) { return worker.run(jobId, workerId, dispatchId); },
+    async runJob(jobId, workerId = `worker-${id()}`, dispatchId) { return executionWorker().run(jobId, workerId, dispatchId); },
+    async retainExpired(options) {
+      let readBytes = 0;
+      const retention = new SensitiveRetention({ finance, now, objects: {
+        async list(prefix) {
+          const keys: string[] = []; let token: string | undefined;
+          do {
+            const page = await client.send(new ListObjectsV2Command({ Bucket: config.r2.bucket, Prefix: prefix, MaxKeys: 250, ContinuationToken: token }));
+            for (const object of page.Contents ?? []) {
+              if (!object.Key?.startsWith(prefix) || !object.Key.endsWith('.json')) throw new Error('Retention inventory contains an invalid control key');
+              keys.push(object.Key);
+            }
+            if (keys.length > 2000 || page.IsTruncated && (!page.NextContinuationToken || page.NextContinuationToken === token)) throw new Error('Retention inventory exceeds a safe complete scan');
+            token = page.IsTruncated ? page.NextContinuationToken : undefined;
+          } while (token);
+          return keys.sort();
+        },
+        async get<T>(key: string) {
+          const record = await media.getVersionedJson<T>(key, 48 * 1024 * 1024 + 65_536);
+          if (record) readBytes += Buffer.byteLength(JSON.stringify(record.value));
+          if (readBytes > 128 * 1024 * 1024) throw new Error('Retention inventory exceeds the safe byte limit');
+          return record;
+        },
+        update: (key, version, value) => media.compareAndSwapJson(key, version, value),
+      } });
+      return retention.run(options);
+    },
     async runPreflight(owner, uploadId) {
       const record = await preflight.getUploadForWorker(owner, uploadId);
       if (record.status === 'expired') { await finance.completeOutbox(uploadId); return projectUpload(owner, record); }
@@ -235,7 +279,12 @@ export function createProcessingRuntime(config: ProcessingRuntimeConfig): Proces
         }
       }
     },
-    async close() { if (!deps.pool) await pool.end(); if (!deps.client) client.destroy(); },
+    close() {
+      return (closing ??= (async () => {
+        try { if (ownsPool) await pool.end(); }
+        finally { if (!deps.client) client.destroy(); }
+      })());
+    },
   };
   return runtime;
 }

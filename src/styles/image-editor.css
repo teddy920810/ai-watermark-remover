@@ -1,0 +1,32 @@
+/* App image output and selection controls. Public marketing styles do not own these rules. */
+.workspace-image-options .background-swatch.is-transparent { background-color: #fff; background-image: url('/uploads/background-remover-transparency-grid.png'); background-repeat: repeat; background-size: 42px 42px; }
+.workspace-image-options .background-color-panel { overflow: hidden; border: 1px solid var(--line); border-radius: 16px; background: #fff; }
+.workspace-image-options .background-color-heading { min-height: 58px; padding: 0 16px; display: flex; align-items: center; gap: 9px; border-bottom: 1px solid var(--line); color: var(--brand-navy); }
+.workspace-image-options .background-color-heading svg { color: var(--brand-blue); }
+.workspace-image-options .background-color-heading h3 { margin: 0; font: 700 .94rem/1.3 var(--font-display); }
+.workspace-image-options .background-swatches { display: grid; grid-template-columns: repeat(5, 34px); gap: 10px; }
+.workspace-image-options .background-swatch { width: 34px; height: 34px; padding: 0; border: 2px solid #fff; border-radius: 50%; box-shadow: 0 0 0 1px #d9e0ec; cursor: pointer; transition: transform .16s ease, box-shadow .16s ease; }
+.workspace-image-options .background-swatch:hover { transform: translateY(-1px); }
+.workspace-image-options .background-swatch.is-selected { box-shadow: 0 0 0 3px #fff, 0 0 0 5px var(--brand-blue); }
+.workspace-image-options .background-swatch.is-transparent { background-size: 12px 12px; }
+.workspace-image-options .object-editor-stage { min-width: 0; overflow: hidden; position: relative; justify-self: center; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 16px; background: #eef3fb; }
+.workspace-image-options .object-editor-stage > img { display: block; width: 100%; height: 100%; object-fit: contain; user-select: none; }
+.workspace-image-options .object-editor-stage > canvas { width: 100%; height: 100%; position: absolute; inset: 0; cursor: crosshair; touch-action: none; }
+.workspace-image-options.object-selection .object-editor-stage { width: 100%; }
+.workspace-image-options .object-selection-tools { padding: 16px 0; }
+.workspace-image-options .object-selection-tools > p { margin: 16px 0 0; color: var(--muted); font-size: .76rem; line-height: 1.55; }
+.workspace-image-options .object-tool-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.workspace-image-options .object-tool-grid button { min-height: 76px; padding: 10px 5px; display: grid; place-items: center; gap: 6px; border: 1px solid var(--line); border-radius: 11px; color: #46536d; background: #fff; font: inherit; font-size: .72rem; font-weight: 760; cursor: pointer; }
+.workspace-image-options .object-tool-grid button:hover, .workspace-image-options .object-tool-grid button.is-selected { border-color: #2563eb; color: #1d4ed8; background: #eff6ff; box-shadow: inset 0 0 0 1px rgba(37, 99, 235, .08); }
+.workspace-image-options .object-brush-size { margin-top: 22px; display: grid; gap: 10px; color: #526077; font-size: .76rem; font-weight: 760; }
+.workspace-image-options .object-brush-size input { width: 100%; accent-color: #2563eb; }
+.workspace-image-options .object-history-actions { margin-top: 18px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.workspace-image-options .object-history-actions button { min-height: 39px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid var(--line); border-radius: 9px; color: #42516c; background: #fff; font: inherit; font-size: .72rem; font-weight: 740; cursor: pointer; }
+.workspace-image-options .object-history-actions button:disabled { opacity: .45; cursor: default; }
+
+@media (max-width: 900px) {
+  .workspace-image-options .background-color-panel { max-width: none; }
+}.workspace-image-options{min-width:0}
+.workspace-image-options .custom-color-control, .workspace-image-options .preset-color-group { padding: 17px 16px 0; display: grid; gap: 10px; color: var(--muted); font-size: .75rem; font-weight: 700; }
+.workspace-image-options .custom-color-control input { width: 46px; height: 38px; padding: 3px; border: 1px solid var(--line); border-radius: 10px; background: #fff; cursor: pointer; }
+.workspace-image-options .preset-color-group { padding-bottom: 18px; }

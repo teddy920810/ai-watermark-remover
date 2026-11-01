@@ -1,5 +1,7 @@
 # AI Watermark 开发方案：功能与 SEO 独立架构
 
+> 决策背景 / ADR：本文保留 2026-10-24 的研究与实施约束，其中“当前”和预算按当时语境阅读。现行运行事实见[当前架构](../CURRENT_ARCHITECTURE.md)，本轮状态只看[正式台账](REFACTOR_LEDGER.md)；T0–T11 的 TODO 链接保留为历史证据。
+
 版本：2026-10-24，架构决策与实施约束。依据：[图片、视频产品规划与交互设计](PROCESSING_PRODUCT_DESIGN.md)。当前实现、真实测试、迁移和发布门禁统一记录在 [IMPLEMENTATION_TODO](IMPLEMENTATION_TODO.md)。文中初始调研结论标明为基线，不代表当前仍未实施；本文也不以设计或本地测试代替生产验收。
 
 ## 1. 建议采用的方案

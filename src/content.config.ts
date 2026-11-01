@@ -1,3 +1,4 @@
+import { imagePairFields, validateImagePair } from './lib/content/image-pair';
 import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'zod';
@@ -95,10 +96,11 @@ const landingFeatureItemSchema = z.object({
   description: z.string().min(1),
   listItems: z.array(z.string().min(1)).default([]),
   image: z.string().min(1),
+  afterImage: imagePairFields.afterImage,
   imageAlt: z.string().min(1),
   imagePosition: z.enum(['left', 'right']).default('right'),
   comparison: landingComparisonSchema.optional(),
-});
+}).superRefine(validateImagePair);
 
 const landingFeaturesSchema = z.object({
   eyebrow: z.string().min(1),
@@ -133,8 +135,9 @@ const landingPages = defineCollection({
         title: z.string().min(1),
         description: z.string().min(1),
         image: z.string().min(1).optional(),
+        afterImage: imagePairFields.afterImage,
         imageAlt: z.string().min(1).optional(),
-      })).length(3),
+      }).superRefine(validateImagePair)).length(3),
     }),
     features: landingFeaturesSchema.optional(),
     scope: z.object({

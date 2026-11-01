@@ -14,8 +14,8 @@ draft: false
 contentMode: markdown
 bodyHtml: <p></p>
 coverImage: /uploads/how-to-remove-date-stamp-from-photo-figure-1.jpg
-coverAlt: Illustration of a photograph with a visible corner date stamp and
-  options for preserving or cropping the scene.
+coverAlt: "Illustration of a photograph with a visible corner date stamp and
+  options for preserving or cropping the scene."
 ---
 *Figure 1. A date printed on the picture is part of the pixels. Choose a method based on whether the marked corner is expendable.*
 

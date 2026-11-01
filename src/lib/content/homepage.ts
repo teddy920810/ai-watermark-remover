@@ -1,3 +1,4 @@
+import { imagePairFields, validateImagePair } from './image-pair';
 import { z } from 'zod';
 import { uploaderCopyOverrideSchema } from './site-settings';
 
@@ -5,20 +6,22 @@ const homeLink = z.string().regex(/^\/(?!\/)[^\s]*$/, 'Use a site-relative link'
 const sampleSchema = z.object({
   id: z.string().regex(/^[a-z0-9-]+$/),
   label: z.string().min(1),
-  watermark: z.string(),
+  watermark: z.string().optional(),
   image: z.string().min(1),
-});
+  afterImage: imagePairFields.afterImage,
+}).superRefine(validateImagePair);
 const sectionCopy = { heading: z.string().min(1), intro: z.string().min(1) };
-const comparisonStyle = z.enum(['watermark', 'date', 'signature', 'laptop']).default('watermark');
+const comparisonStyle = z.enum(['watermark', 'date', 'signature', 'laptop']).optional();
 const audienceSchema = z.object({
   title: z.string().min(1),
   copy: z.string().min(1),
   cta: z.string().min(1),
   href: homeLink,
   image: z.string().min(1),
+  afterImage: imagePairFields.afterImage,
   alt: z.string(),
   tone: z.enum(['blue', 'purple', 'mint']),
-});
+}).superRefine(validateImagePair);
 const reviewSchema = z.object({
   quote: z.string().min(1),
   name: z.string().min(1),
@@ -32,28 +35,31 @@ const toolCardSchema = z.object({
   copy: z.string().min(1),
   href: homeLink,
   image: z.string().min(1),
+  afterImage: imagePairFields.afterImage,
   alt: z.string(),
-});
+}).superRefine(validateImagePair);
 
 const linkedCardSchema = z.object({
   icon: z.string().min(1),
   title: z.string().min(1),
   description: z.string().min(1),
   href: z.string().min(1),
-  watermark: z.string().default('watermark'),
+  watermark: z.string().optional(),
   comparisonStyle,
   cta: z.string().default('Explore tool →'),
   image: z.string().min(1),
+  afterImage: imagePairFields.afterImage,
   imageAlt: z.string().min(1),
-});
+}).superRefine(validateImagePair);
 
 const stepSchema = z.object({
   number: z.string().min(1),
   title: z.string().min(1),
   description: z.string().min(1),
   image: z.string().min(1).optional(),
+  afterImage: imagePairFields.afterImage,
   imageAlt: z.string().min(1).optional(),
-});
+}).superRefine(validateImagePair);
 
 const featureSchema = z.object({
   icon: z.string().min(1),
@@ -68,11 +74,12 @@ const homepageFeatureSchema = z.object({
   description: z.string().min(1),
   listItems: z.array(z.string().min(1)).default([]),
   image: z.string().min(1),
+  afterImage: imagePairFields.afterImage,
   imageAlt: z.string().min(1),
   imagePosition: z.enum(['left', 'right']),
-  watermark: z.string().default('watermark'),
+  watermark: z.string().optional(),
   comparisonStyle,
-});
+}).superRefine(validateImagePair);
 
 const faqItemSchema = z.object({
   enabled: z.boolean().default(true),

@@ -1,6 +1,7 @@
 import { z } from 'zod';
+import { legacyOperationIds } from '../contracts/operation-catalog';
 
-export const processingOperationSchema = z.enum(['watermark-removal', 'background-removal', 'object-removal']);
+export const processingOperationSchema = z.enum(legacyOperationIds);
 export type ProcessingOperation = z.infer<typeof processingOperationSchema>;
 export type JobStatus = 'processing' | 'completed' | 'failed';
 

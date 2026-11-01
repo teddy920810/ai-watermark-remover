@@ -2,9 +2,11 @@ import { describe, expect, it } from 'vitest';
 import { operationSchema, metadataSchema, amountSchema } from './contracts';
 
 describe('processing contracts', () => {
-  it('separates the four operations from legacy free-use operations', () => {
+  it('accepts all migrated operations while rejecting the old watermark alias in v1', () => {
     expect(operationSchema.parse('image-refine')).toBe('image-refine');
-    expect(operationSchema.safeParse('object-removal').success).toBe(false);
+    expect(operationSchema.parse('object-removal')).toBe('object-removal');
+    expect(operationSchema.parse('background-removal')).toBe('background-removal');
+    expect(operationSchema.safeParse('watermark-removal').success).toBe(false);
   });
 
   it('requires finite integer processing credits and measured positive metadata', () => {

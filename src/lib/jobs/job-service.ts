@@ -196,9 +196,9 @@ export class JobService {
     if (maskKey && maskKey !== inputKey) await this.cleanupInput(maskKey);
   }
 
-  async recoverUser(ownerId: string): Promise<void> {
+  async recoverUser(ownerId: string, suppliedCandidates?: readonly JobRequest[]): Promise<void> {
     if (!this.dependencies.requests) return;
-    const candidates = await this.dependencies.requests.recoverable(ownerId);
+    const candidates = suppliedCandidates ?? await this.dependencies.requests.recoverable(ownerId);
     let failed = false;
     for (const request of candidates.slice(0, 20)) {
       if (request.ownerId !== ownerId) continue;

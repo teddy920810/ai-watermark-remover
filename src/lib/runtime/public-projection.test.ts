@@ -16,6 +16,13 @@ function setup() {
 }
 
 describe('public processing projection', () => {
+  it.each(['background-removal', 'object-removal'] as const)('keeps the %s PNG filename when issuing a fresh download', async operation => {
+    const s = setup(); const result = { ...artifact, key: mediaKey('result', 'user-1', 'a-1', 'image/png'), metadata: { ...artifact.metadata, contentType: 'image/png' } };
+    s.media.get.mockResolvedValue(result); s.media.head.mockResolvedValue({ byteSize: 1000, contentType: 'image/png', metadata: { 'owner-id': 'user-1', 'artifact-id': 'a-1' } });
+    const filename = operation === 'object-removal' ? 'object-removed-image.png' : 'background-removed-image.png';
+    expect(await s.projection.download('user-1', { ...job, operation })).toMatchObject({ filename });
+    expect(s.media.createDownloadUrl).toHaveBeenCalledWith(result.key, filename, 300);
+  });
   it('preserves every public alias while excluding private execution and financial records', async () => {
     const s = setup();
     const publicArtifact = await s.projection.artifact('user-1', artifact);

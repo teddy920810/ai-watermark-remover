@@ -1,4 +1,4 @@
-const reservedLandingSlugs = new Set(['api', 'auth', 'blog', 'privacy', 'robots.txt', 'sitemap.xml', 'terms']);
+import { knownPageRoutes, reservedToolSlugs as reservedLandingSlugs } from '../src/lib/contracts/route-policy.mjs';
 
 function envValue(source, key) {
   return source.match(new RegExp(`^${key}=(.*)$`, 'm'))?.[1]?.trim() ?? '';
@@ -44,7 +44,7 @@ function collectSiteValidation(input) {
   duplicateBlogSlugs.forEach((slug) => issues.push(`Blog slug ${slug} is duplicated.`));
 
   const allowedRoutes = new Set([
-    '/', '/blog', '/privacy', '/terms',
+    ...knownPageRoutes,
     ...input.landingSlugs.map((slug) => `/${slug}`),
     ...input.blogSlugs.map((slug) => `/blog/${slug}`),
   ]);

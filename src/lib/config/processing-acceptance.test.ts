@@ -15,27 +15,27 @@ async function fixture() {
   const samplePath = join(directory, 'sample.jpg'); await writeFile(samplePath, sample);
   return { directory, sample, samplePath, ledgerPath: join(directory, 'budget.json'), reportDir: join(directory, 'reports') };
 }
-function site(sample: Uint8Array, options: { status?: string; lostSubmit?: boolean; balanceAfter?: number; invalidDownload?: boolean; video?: boolean; parent?: boolean; incorrectCharge?: boolean } = {}) {
+function site(sample: Uint8Array, options: { status?: string; lostSubmit?: boolean; balanceAfter?: number; invalidDownload?: boolean; video?: boolean; parent?: boolean; incorrectCharge?: boolean; png?: boolean; purchased?: boolean; unrelatedDebit?: boolean; downloadSample?: Uint8Array } = {}) {
   let submitted = false;
   let uploadNumber = 0;
-  const metadata = { kind: options.video ? 'video' : 'image', contentType: options.video ? 'video/mp4' : 'image/jpeg', width: 4, height: 2, byteSize: sample.byteLength, ...(options.video ? { durationSeconds: 2, fps: 24, hasAudio: true } : {}) };
+  const metadata = { kind: options.video ? 'video' : 'image', contentType: options.video ? 'video/mp4' : options.png ? 'image/png' : 'image/jpeg', width: 4, height: 2, byteSize: sample.byteLength, ...(options.video ? { durationSeconds: 2, fps: 24, hasAudio: true } : {}) };
   const fetcher = vi.fn(async (url: string | URL | Request, init?: RequestInit) => {
     const address = new URL(String(url));
     const route = address.pathname;
     if (address.hostname.endsWith('r2.cloudflarestorage.com')) {
       if (init?.method === 'PUT') return new Response(null, { status: 200 });
-      return new Response(options.invalidDownload ? new Uint8Array([1, 2, 3]) : new Uint8Array(sample), { headers: { 'Content-Type': metadata.contentType } });
+      return new Response(options.invalidDownload ? new Uint8Array([1, 2, 3]) : new Uint8Array(options.downloadSample ?? sample), { headers: { 'Content-Type': metadata.contentType } });
     }
     if (['/', '/robots.txt', '/sitemap.xml'].includes(route)) return new Response('public');
     if (route === '/api/v1/capabilities') return Response.json({ operations: [] });
-    if (route === '/api/v1/me') return Response.json({ freeUses: submitted && !options.video && !options.parent ? options.balanceAfter ?? 2 : 3, processingCredits: submitted && (options.video || options.parent) ? options.balanceAfter ?? 99 : 100 });
+    if (route === '/api/v1/me') return Response.json({ freeUses: submitted && !options.video && !options.parent && !options.purchased ? options.balanceAfter ?? 2 : 3, processingCredits: submitted && (options.video || options.parent || options.unrelatedDebit) ? options.balanceAfter ?? 99 : 100, ...(options.purchased ? { purchasedImageCredits: submitted ? 90 : 100 } : {}) });
     if (route === '/api/v1/uploads' && init?.method === 'POST') return Response.json({ id: `upload-${++uploadNumber}`, status: 'created', uploadUrl: 'https://account.r2.cloudflarestorage.com/private/input?X-Amz-Signature=private-upload' });
     if (/^\/api\/v1\/uploads\/upload-\d\/complete$/.test(route)) return Response.json({ status: 'validating' }, { status: 202 });
     if (/^\/api\/v1\/uploads\/upload-\d$/.test(route)) return Response.json({ id: 'upload-1', status: 'ready', artifact: { id: 'artifact-1', metadata } });
-    if (route === '/api/v1/quotes') return Response.json({ id: 'quote-1', amount: 1, unit: options.video || options.parent ? 'processingCredits' : 'freeUses', isDemo: false, expectedOutput: metadata });
+    if (route === '/api/v1/quotes') return Response.json({ id: 'quote-1', amount: options.purchased ? 10 : 1, unit: options.purchased ? 'purchasedImageCredits' : options.video || options.parent ? 'processingCredits' : 'freeUses', isDemo: false, expectedOutput: metadata });
     if (route === '/api/v1/jobs' && init?.method === 'POST') { submitted = true; if (options.lostSubmit) throw new Error('private session=value; private signed URL'); return Response.json({ id: 'job-1', status: 'QUEUED' }, { status: 201 }); }
     if (route === '/api/v1/jobs/parent-1') return Response.json({ id: 'parent-1', status: 'READY', isDemo: false, result: { id: 'parent-result', canRefine: true, metadata } });
-    if (route === '/api/v1/jobs/job-1') return Response.json({ id: 'job-1', status: options.status ?? 'READY', charge: { status: 'settled', amount: options.incorrectCharge ? 2 : 1, unit: options.video || options.parent ? 'processingCredits' : 'freeUses' }, isDemo: false, result: { id: 'result-1', metadata } });
+    if (route === '/api/v1/jobs/job-1') return Response.json({ id: 'job-1', status: options.status ?? 'READY', charge: { status: 'settled', amount: options.incorrectCharge ? 2 : options.purchased ? 10 : 1, unit: options.purchased ? 'purchasedImageCredits' : options.video || options.parent ? 'processingCredits' : 'freeUses' }, isDemo: false, result: { id: 'result-1', metadata } });
     if (route === '/api/v1/jobs/job-1/download') return Response.json({ url: 'https://account.r2.cloudflarestorage.com/private/result?X-Amz-Signature=private-download' });
     throw new Error(`Unexpected test route ${route}`);
   });
@@ -45,6 +45,35 @@ const environment = { PROCESSING_ACCEPTANCE_SESSION_COOKIE: 'session=private' };
 const base = { baseUrl: 'https://example.test', operation: 'image-watermark', functional: true, expectedAmount: 1, expectedUnit: 'freeUses', pollIntervalMs: 1, maxWaitMs: 10 };
 
 describe('authenticated v1 processing acceptance runner', () => {
+  it.each(['background-removal', 'object-removal'])('accepts real %s PNG through one image budget slot and one purchased debit', async operation => {
+    const state = await fixture();
+    const sample = await sharp({ create: { width: 4, height: 2, channels: 4, background: '#5577aa00' } }).png().toBuffer();
+    await writeFile(state.samplePath, sample);
+    const maskPath = join(state.directory, 'object-mask.png');
+    await writeFile(maskPath, await sharp(Buffer.from([255,0,0,0,0,0,0,0]), {raw:{width:4,height:2,channels:1}}).png().toBuffer());
+    const fetcher = site(sample, { png: true, purchased: true });
+    const result = await runProcessingAcceptance({ ...base, ...state, operation, expectedAmount: 10, expectedUnit: 'purchasedImageCredits', ...(operation === 'object-removal' ? {maskPath} : {}) }, {environment, fetcher});
+    expect(result).toMatchObject({status:'passed',operation,creditsBefore:100,creditsAfter:90,artifact:{format:'png',width:4,height:2}});
+    expect((await new AcceptanceBudget(state.ledgerPath).summary()).used).toEqual({image:1,video:0});
+    const submissions=fetcher.mock.calls.filter(([url,init])=>String(url).endsWith('/api/v1/jobs')&&init?.method==='POST'); expect(submissions).toHaveLength(1);
+    if(operation === 'object-removal') {
+      const uploads=fetcher.mock.calls.filter(([url,init])=>String(url).endsWith('/api/v1/uploads')&&init?.method==='POST');
+      expect(JSON.parse(String(uploads[1][1]?.body))).toMatchObject({kind:'mask',inputArtifactId:'artifact-1'});
+      const quote=fetcher.mock.calls.find(([url])=>String(url).endsWith('/api/v1/quotes'));
+      expect(JSON.parse(String(quote?.[1]?.body))).toMatchObject({operation,maskArtifactId:'artifact-1'});
+    }
+  });
+  it('refuses an object run without its selection, and background output without transparency', async () => {
+    const state=await fixture(); const fetcher=site(state.sample);
+    await expect(runProcessingAcceptance({...base,...state,operation:'object-removal'},{environment,fetcher})).rejects.toMatchObject({code:'configuration'});
+    expect(fetcher.mock.calls.some(([url,init])=>String(url).endsWith('/api/v1/jobs')&&init?.method==='POST')).toBe(false);
+    const opaque=await sharp({create:{width:4,height:2,channels:3,background:'#ffffff'}}).png().toBuffer(); await writeFile(state.samplePath,opaque);
+    await expect(runProcessingAcceptance({...base,...state,operation:'background-removal'},{environment,fetcher:site(opaque,{png:true})})).rejects.toMatchObject({code:'artifact_invalid'});
+  });
+  it('rejects an unrelated administrator debit during purchased PNG acceptance', async () => {
+    const state=await fixture();const sample=await sharp({create:{width:4,height:2,channels:4,background:'#ffffff00'}}).png().toBuffer();await writeFile(state.samplePath,sample);
+    await expect(runProcessingAcceptance({...base,...state,operation:'background-removal',expectedAmount:10,expectedUnit:'purchasedImageCredits'},{environment,fetcher:site(sample,{png:true,purchased:true,unrelatedDebit:true})})).rejects.toMatchObject({code:'credit_invariant'});
+  });
   it('defaults to public-only even when a session exists and never reserves a processing slot', async () => {
     const fetcher = site(new Uint8Array());
     const result = await runProcessingAcceptance({ baseUrl: 'https://example.test' }, { environment, fetcher });
@@ -191,7 +220,16 @@ describe('authenticated v1 processing acceptance runner', () => {
     await expect(runProcessingAcceptance(options, { environment: env, fetcher: exhaustedFetcher })).rejects.toMatchObject({ code: 'budget_exhausted' });
     expect(exhaustedFetcher).not.toHaveBeenCalled();
   });
-  it('rejects image limits above the explicit supported maximum before any network request', async () => {
+  it('passes the exact server quote into the image credit authorization without spending paid Credits for a free use', async () => {
+    const state = await fixture(); const budget = new AcceptanceBudget(state.ledgerPath, { image: 1, video: 5 });
+    await budget.reserve('image', 'original authorized call');
+    await budget.authorizeImageCredits({ amount: 10, unit: 'processingCredits', additionalCalls: 5, reason: 'User approved processing Credits for the release checks' });
+    await runProcessingAcceptance({ ...base, ...state, imageLimit: 6 }, { environment, fetcher: site(state.sample) });
+    const summary = await budget.summary();
+    expect(summary.imageCreditBudget).toMatchObject({ unit: 'processingCredits', reserved: 0 });
+    expect(summary.records.at(-1)).toMatchObject({ status: 'passed', creditUnit: 'freeUses', quotedAmount: 1, reservedCredits: 0 });
+  });
+  it('rejects an unapproved expanded image limit before any network request', async () => {
     const state = await fixture(); const fetcher = vi.fn();
     await expect(runProcessingAcceptance({ ...base, ...state, imageLimit: 11 }, { environment, fetcher })).rejects.toMatchObject({ code: 'budget_authorization' });
     expect(fetcher).not.toHaveBeenCalled();

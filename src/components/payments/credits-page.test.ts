@@ -9,6 +9,7 @@ describe('private image-use purchase route', () => {
     const site = createBuildPlan(root, 'site').routes.map(route => route.pattern);
     expect(app).toContain('/app/credits');
     expect(site).not.toContain('/app/credits');
-    expect([...app, ...site]).not.toContain('/pricing');
+    expect(app).toContain('/pricing');
+    expect(site).not.toContain('/pricing');
   });
 });

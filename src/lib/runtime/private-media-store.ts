@@ -9,8 +9,8 @@ import { inspectImage } from '../media/image';
 import { probeVideo } from '../media/video';
 import { metadataSchema, ProcessingError, type MediaMetadata, type ProcessingArtifact, type ProcessingArtifactStore } from '../processing/contracts';
 
-export const SITE_MAX_VIDEO_BYTES = 100 * 1024 * 1024;
-export const SITE_MAX_IMAGE_BYTES = 10 * 1024 * 1024;
+export { VIDEO_MAX_BYTES as SITE_MAX_VIDEO_BYTES, IMAGE_MAX_BYTES as SITE_MAX_IMAGE_BYTES } from '../contracts/operation-catalog';
+import { VIDEO_MAX_BYTES as SITE_MAX_VIDEO_BYTES, IMAGE_MAX_BYTES as SITE_MAX_IMAGE_BYTES } from '../contracts/operation-catalog';
 export type ObjectMetadata = Record<string, string>;
 export type MediaSigner = typeof getSignedUrl;
 const artifactSchema = z.object({
@@ -57,7 +57,7 @@ function bodyStream(body: unknown): ReadableStream<Uint8Array> {
   });
   throw new ProcessingError('invalid_media_body', 'Private media could not be read', 503);
 }
-async function readBytes(stream: ReadableStream<Uint8Array>, byteSize: number | undefined, maxBytes: number): Promise<Uint8Array> {
+export async function readBytes(stream: ReadableStream<Uint8Array>, byteSize: number | undefined, maxBytes: number): Promise<Uint8Array> {
   if (!Number.isSafeInteger(maxBytes) || maxBytes <= 0 || (byteSize !== undefined && byteSize > maxBytes)) { await stream.cancel().catch(() => undefined); throw new ProcessingError('media_too_large', 'Media exceeds the byte limit', 413); }
   const reader = stream.getReader();
   const chunks: Uint8Array[] = [];
@@ -132,10 +132,10 @@ export class PrivateMediaStore implements ProcessingArtifactStore {
     try { return JSON.parse(new TextDecoder().decode(await this.getBytes(key, maxBytes))) as T; }
     catch (error) { if (error instanceof ProcessingError && error.status === 404) return null; throw error; }
   }
-  async getVersionedJson<T>(key: string): Promise<{ value: T; version: string } | null> {
+  async getVersionedJson<T>(key: string, maxBytes = 1_048_576): Promise<{ value: T; version: string } | null> {
     try {
       const result = await this.getReadStream(key);
-      const bytes = await readBytes(result.stream, result.byteSize, 1_048_576);
+      const bytes = await readBytes(result.stream, result.byteSize, maxBytes);
       if (!result.version) throw new ProcessingError('storage_unavailable', 'Private metadata version is unavailable', 503);
       return { value: JSON.parse(new TextDecoder().decode(bytes)) as T, version: result.version };
     } catch (error) { if (error instanceof ProcessingError && error.status === 404) return null; throw error; }

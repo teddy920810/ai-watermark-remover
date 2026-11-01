@@ -1,5 +1,5 @@
 import { ProcessingError } from '../processing/contracts';
-import type { MediaMetadata, ProcessingArtifact, ProcessingArtifactStore, ProcessingJob, ProcessingQuote } from '../processing/contracts';
+import type { MediaMetadata, ProcessingArtifact, ProcessingArtifactStore, ProcessingJob, ProcessingQuote, ProcessingOperation } from '../processing/contracts';
 import type { PublicArtifact, PublicDownload, PublicJob, PublicQuote } from '../contracts/processing-public';
 import { mediaKey } from './private-media-store';
 
@@ -13,6 +13,7 @@ export interface PublicProjectionOptions {
   now?: () => Date;
   refinementEnabled?: boolean;
   isDemo?: boolean;
+  isDemoFor?(operation: ProcessingOperation): boolean;
 }
 const errors: Record<string, string> = {
   provider_request_uncertain: 'The request status is being confirmed. Do not start another operation.',
@@ -52,9 +53,9 @@ export class PublicProcessingProjection {
     return { id: quote.id, operation: quote.operation, inputArtifactId: quote.inputArtifactId,
       ...(quote.maskArtifactId ? { maskArtifactId: quote.maskArtifactId } : {}), ...(quote.parentJobId ? { parentJobId: quote.parentJobId } : {}),
       amount: quote.amount, unit: quote.unit, priceVersion: quote.priceVersion, createdAt: quote.createdAt, expiresAt: quote.expiresAt,
-      isDemo: this.options.isDemo ?? false,
-      expectedOutput: { contentType: video ? 'video/mp4' : 'image/jpeg', format: video ? 'MP4' : 'JPG', width: input.metadata.width, height: input.metadata.height,
-        ...(video ? { durationSeconds: input.metadata.durationSeconds, fps: input.metadata.fps, hasAudio: input.metadata.hasAudio } : { transparent: false, background: 'white' }) } };
+      isDemo: this.options.isDemoFor?.(quote.operation) ?? this.options.isDemo ?? false,
+      expectedOutput: { contentType: video ? 'video/mp4' : ['background-removal', 'object-removal'].includes(quote.operation) ? 'image/png' : 'image/jpeg', format: video ? 'MP4' : ['background-removal', 'object-removal'].includes(quote.operation) ? 'PNG' : 'JPG', width: input.metadata.width, height: input.metadata.height,
+        ...(video ? { durationSeconds: input.metadata.durationSeconds, fps: input.metadata.fps, hasAudio: input.metadata.hasAudio } : quote.operation === 'background-removal' ? { transparent: true } : quote.operation === 'object-removal' ? {} : { transparent: false, background: 'white' }) } };
   }
   async job(ownerId: string, job: ProcessingJob): Promise<PublicJob> {
     if (job.ownerId !== ownerId) throw new ProcessingError('not_found', 'Task was not found', 404);
@@ -62,7 +63,7 @@ export class PublicProcessingProjection {
     const result = job.resultArtifactId ? await this.options.media.get(job.resultArtifactId) : null;
     const deadline = result && job.expiresAt ? new Date(Math.min(Date.parse(job.expiresAt), Date.parse(result.expiresAt))).toISOString() : job.expiresAt;
     const expired = Boolean(deadline && Date.parse(deadline) <= this.now().getTime());
-    const canRefine = Boolean(!expired && this.options.refinementEnabled && job.status === 'READY' && job.operation !== 'image-watermark-pro' && job.operation !== 'video-watermark' && result?.providerSessionId && result.metadata.kind === 'image' && Math.max(result.metadata.width, result.metadata.height) <= 1920);
+    const canRefine = Boolean(!expired && this.options.refinementEnabled && job.status === 'READY' && ['image-watermark', 'image-refine'].includes(job.operation) && result?.providerSessionId && result.metadata.kind === 'image' && Math.max(result.metadata.width, result.metadata.height) <= 1920);
     const code = job.error && errors[job.error] ? job.error : job.error ? 'processing_failed' : undefined;
     return { id: job.id, operation: job.operation, status: job.status === 'READY' && expired ? 'EXPIRED' : job.status, chargeStatus: job.chargeStatus, charge: { status: job.chargeStatus, amount: job.quote.amount, unit: job.quote.unit },
       amount: job.quote.amount, unit: job.quote.unit, quote: { id: job.quote.id, amount: job.quote.amount, unit: job.quote.unit },
@@ -70,7 +71,7 @@ export class PublicProcessingProjection {
       ...(job.parentJobId ? { parentJobId: job.parentJobId } : {}),
       ...(typeof job.progress === 'number' && Number.isFinite(job.progress) && job.progress >= 0 && job.progress <= 1 ? { progress: job.progress } : {}),
       ...(input ? { input: await this.artifact(ownerId, input) } : {}), ...(result ? { result: await this.artifact(ownerId, deadline ? { ...result, expiresAt: deadline } : result, canRefine) } : {}),
-      ...(code ? { errorCode: code, error: errors[code] } : {}), isDemo: this.options.isDemo ?? false };
+      ...(code ? { errorCode: code, error: errors[code] } : {}), isDemo: job.attempt?.checkpoint?.provider ? job.attempt.checkpoint.provider === 'mock' : this.options.isDemoFor?.(job.operation) ?? this.options.isDemo ?? false };
   }
   async download(ownerId: string, job: ProcessingJob): Promise<PublicDownload> {
     if (job.ownerId !== ownerId) throw new ProcessingError('not_found', 'Task was not found', 404);
@@ -84,7 +85,7 @@ export class PublicProcessingProjection {
     const head = await this.options.media.head(artifact.key);
     if (!head || head.byteSize !== artifact.metadata.byteSize || head.contentType !== artifact.metadata.contentType || head.metadata['owner-id'] !== ownerId || head.metadata['artifact-id'] !== artifact.id) throw new ProcessingError('result_expired', 'The result is no longer available', 410);
     const extension = ({ 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'video/mp4': 'mp4' } as Record<string, string>)[artifact.metadata.contentType];
-    const filename = artifact.metadata.kind === 'video' ? 'cleaned-video.mp4' : `cleaned-image.${extension ?? 'jpg'}`;
+    const filename = job.operation === 'object-removal' ? 'object-removed-image.png' : job.operation === 'background-removal' ? 'background-removed-image.png' : artifact.metadata.kind === 'video' ? 'cleaned-video.mp4' : `cleaned-image.${extension ?? 'jpg'}`;
     const url = await this.options.media.createDownloadUrl(artifact.key, filename, ttl);
     return { url, downloadUrl: url, filename, expiresAt: new Date(this.now().getTime() + ttl * 1000).toISOString(), artifactId: artifact.id };
   }

@@ -1,3 +1,4 @@
+import { imagePairFields, validateImagePair } from './image-pair';
 import { z } from 'zod';
 
 export const landingComparisonSchema = z.object({
@@ -13,9 +14,10 @@ const landingHeroSampleSchema = z.object({
   id: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
   label: z.string().min(1),
   image: z.string().min(1),
+  afterImage: imagePairFields.afterImage,
   imageAlt: z.string().min(1),
   comparison: landingComparisonSchema.optional(),
-});
+}).superRefine(validateImagePair);
 
 const relatedContentSchema = z.object({
   enabled: z.boolean().default(true),

@@ -8,9 +8,11 @@ ClearMark AI 是部署在 [www.watermarkgemini.com](https://www.watermarkgemini.
 
 新图片工作区提供普通、PRO 和画笔精修；视频工作区支持 MP4、24 fps、最长 9 分钟、100 MB，以及整段生效的固定选区。普通图片保留免费次数规则，PRO、精修和视频使用管理员分配的处理额度。选择文件即时预览，登录后自动上传检查、计算费用；点击带完整费用的处理按钮才开始，无需重复检查或确认弹窗。新处理链路默认关闭，配置完整耐久执行服务后启用。
 
-SEO 静态站、App/API 和容器 Worker 使用独立构建与发布目标。开发决策与发布进度见 [实施清单](docs/product/IMPLEMENTATION_TODO.md)、[产品与初始状态设计](docs/product/PROCESSING_PRODUCT_DESIGN.md)、[架构方案](docs/product/PROCESSING_ARCHITECTURE.md)、[配置说明](docs/product/PROCESSING_CONFIGURATION.md) 和 [Worker 部署](docs/product/WORKER_DEPLOYMENT.md)。账户与管理员额度操作见 [身份说明](docs/ACCOUNT_IDENTITY.md) 和 [额度说明](docs/PROCESSING_CREDITS.md)。
+SEO 静态站、App/API 和容器 Worker 使用独立构建与发布目标。本轮本地实施、证据和未结门禁见 [正式重构台账](docs/product/REFACTOR_LEDGER.md)；历史设计依据见 [产品与初始状态设计](docs/product/PROCESSING_PRODUCT_DESIGN.md)、[架构方案](docs/product/PROCESSING_ARCHITECTURE.md)、[配置说明](docs/product/PROCESSING_CONFIGURATION.md) 和 [Worker 部署](docs/product/WORKER_DEPLOYMENT.md)。账户与管理员额度操作见 [身份说明](docs/ACCOUNT_IDENTITY.md) 和 [额度说明](docs/PROCESSING_CREDITS.md)。
 
 ## 常用入口
+
+当前规范、设计依据和历史验收统一从[文档总索引](docs/INDEX.md)进入；操作与路由所有者见[当前架构](docs/CURRENT_ARCHITECTURE.md)。原实施台账和初始PRD不作为全项目实时状态。
 
 - 正式站点：[www.watermarkgemini.com](https://www.watermarkgemini.com)
 - GitHub：[teddy920810/ai-watermark-remover](https://github.com/teddy920810/ai-watermark-remover)
@@ -21,7 +23,7 @@ SEO 静态站、App/API 和容器 Worker 使用独立构建与发布目标。开
 
 ### 内容编辑（不需要写代码）
 
-使用 Pages CMS 新建或修改博客、工具落地页。保存后系统会提交到 GitHub，并由 Vercel 自动发布到生产环境。请先阅读 [Pages CMS 中文操作教程](docs/PAGES_CMS_GUIDE.md)，尤其不要修改已发布内容的 URL 路径。
+使用 Pages CMS 在内容审核分支新建或修改博客、工具落地页；通过PR审核和必需CI后合并main，再由Vercel发布。模板入口创建草稿分支与PR，不直接写main。请先阅读 [Pages CMS 中文操作教程](docs/PAGES_CMS_GUIDE.md)，尤其不要修改已发布内容的 URL 路径。
 
 ### 开发者
 
@@ -55,12 +57,12 @@ npm run dev
                          ├─ BackgroundRemovalProvider（背景移除）
                          └─ ObjectRemovalProvider（物体移除）
 
-Pages CMS → GitHub main → Vercel 自动构建 → www.watermarkgemini.com
+Pages CMS 内容分支 → PR / 必需CI / 内容审核 → GitHub main → Vercel → www.watermarkgemini.com
 ```
 
-R2 Bucket 为 `watermark`，必须保持私有。`uploads/`、`results/`、`jobs/` 应配置 1 天自动过期。上传密钥只允许在服务端环境变量中使用。
+R2 Bucket为`watermark`，必须保持私有。旧`uploads/results/jobs`按一天过期；新链仅媒体四个精确前缀过期，恢复控制记录保留。生命周期权威说明见[Worker部署](docs/product/WORKER_DEPLOYMENT.md#媒体过期与控制记录)。上传密钥只允许在服务端使用。
 
-Google OAuth 回调地址为 `/api/auth/callback/google`。本地 4321 端口与正式域名应分别在 Google Cloud 配置完整回调 URI。认证采用加密会话；Neon 保存 Google 授权提供的基础资料（稳定账号标识、邮箱及验证状态、姓名、头像、语言和 Workspace 域名，缺失的可选字段为空），以及免费余额、签到、扣减/退回账本和活跃时间。Google OAuth access token、refresh token 和 ID token 不写入资料表，供应商密钥和图片也不写入 Neon。账户历史列表和订阅仍属于后续版本。
+Google OAuth回调地址为`/api/auth/callback/google`。本地与正式域名分别配置完整URI。Neon保存基础资料、稳定身份、三类权益和金融/outbox记录，不保存Google OAuth token、图片或Provider密钥。App已有有效期内的Recent work任务历史与恢复；永久媒体历史和订阅尚未提供。详见[身份规范](docs/ACCOUNT_IDENTITY.md)和[当前架构](docs/CURRENT_ARCHITECTURE.md)。
 
 Dewatermark、Neon 与可选 R2 本地凭据可以通过 `npm run processing:import -- <Dewatermark Key 文件> <Neon URL 文件> [S3-info 文件]` 导入到被 Git 忽略的 `.env.local`。`npm run processing:check` 只检查供应商余额和数据库只读连接，不处理图片或消耗图片 credit。首次部署权益功能前运行一次 `npm run db:migrate`；该命令使用版本化 SQL 和事务锁安全建表。本地默认保持 `WATERMARK_PROVIDER=mock`；配置 `REPLICATE_API_TOKEN` 后，背景移除和物体移除会自动选择 Replicate，也可分别用 `BACKGROUND_REMOVAL_PROVIDER=mock` 和 `OBJECT_REMOVAL_PROVIDER=mock` 显式覆盖。Replicate token 只保存在服务端环境变量中。
 
@@ -102,5 +104,5 @@ PR 的 GitHub CI 始终运行完整 `npm run verify`，它是合并 `main` 的�
 - [运维手册](docs/OPERATIONS_RUNBOOK.md)
 - [测试与质量指南](docs/TESTING_GUIDE.md)
 - [贡献指南](CONTRIBUTING.md)
-- [产品 PRD 与技术方案](docs/product/AI_Watermark_Remover_MVP_PRD_Technical_Solution.md)
+- [初始MVP需求历史快照](docs/history/AI_Watermark_Remover_MVP_PRD_Technical_Solution.md)（不作为当前协议）
 

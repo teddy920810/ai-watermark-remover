@@ -45,135 +45,66 @@ async function setup(page: Page, options: { enabled?: boolean; mode?: 'success' 
   ` }));
 }
 
-// Approved launch catalog is intentionally local to these layout regressions.
-// The older 5/15/40 fixtures below continue testing payment recovery separately.
-async function setupApprovedPricingLayout(page: Page, enabled = true) {
-  await setup(page, { enabled });
-  let creates = 0;
-  await page.route('**/api/payments/catalog', route => route.fulfill({ json: {
-    enabled, creditsEnabled: true, clientId: 'sandbox-public-id', environment: 'sandbox',
-    packages: [
-      { sku: 'starter', name: 'Starter', credits: 4990, amountCents: 499, currency: 'USD' },
-      { sku: 'plus', name: 'Plus', credits: 9990, amountCents: 999, currency: 'USD' },
-      { sku: 'pro', name: 'Pro', credits: 19990, amountCents: 1999, currency: 'USD' },
-    ],
-    imageCosts: { 'watermark-removal': 100, 'background-removal': 10, 'object-removal': 10 }, imageCostVersion: '2026-10-31-v1',
-  } }));
-  await page.route('**/api/payments/paypal/orders', route => {
-    creates += 1;
-    return route.fulfill({ status: 500, json: { error: 'This layout check must not create a payment order.' } });
-  });
-  return () => creates;
-}
-
-test('pricing reference layout: desktop four-card comparison selects Plus and keeps free navigation non-billable', async ({ page }) => {
-  const creates = await setupApprovedPricingLayout(page);
-  await page.setViewportSize({ width: 1440, height: 1100 });
-  await page.goto('/app/credits');
-  const group = page.getByRole('group', { name: 'Choose an image credit package' });
-  const cards = group.locator('.credit-package');
-  await expect(cards).toHaveCount(4);
-  const free = cards.filter({ has: page.getByText('Free', { exact: true }) });
-  const starter = cards.filter({ has: page.getByText('Starter', { exact: true }) });
-  const plus = cards.filter({ has: page.getByText('Plus', { exact: true }) });
-  const pro = cards.filter({ has: page.getByText('Pro', { exact: true }) });
-  for (const card of [free, starter, plus, pro]) await expect(card).toBeVisible();
-  await expect(starter).toContainText('4,990 credits');
-  await expect(starter).toContainText('$4.99');
-  await expect(plus).toContainText('9,990 credits');
-  await expect(plus).toContainText('$9.99');
-  await expect(pro).toContainText('19,990 credits');
-  await expect(pro).toContainText('$19.99');
-  await expect(plus).toContainText(/Recommended|Most popular/i);
-  const recommendation = await plus.evaluate(node => {
-    const style = getComputedStyle(node);
-    return [style.borderColor, style.backgroundColor, style.boxShadow];
-  });
-  const ordinary = await pro.evaluate(node => {
-    const style = getComputedStyle(node);
-    return [style.borderColor, style.backgroundColor, style.boxShadow];
-  });
-  expect(recommendation).not.toEqual(ordinary);
-  const desktop = await cards.evaluateAll(nodes => nodes.map(node => {
-    const rect = node.getBoundingClientRect(); return { x: rect.x, y: rect.y, width: rect.width };
-  }));
-  expect(desktop.every(box => Math.abs(box.y - desktop[0].y) < 32)).toBe(true);
-  expect(desktop.every((box, index) => index === 0 || box.x >= desktop[index - 1].x + desktop[index - 1].width)).toBe(true);
-  const rates = page.getByRole('region', { name: 'Credits per image operation' });
-  await expect(rates).toContainText('Watermark removal100 credits');
-  await expect(rates).toContainText('Background removal10 credits');
-  await expect(rates).toContainText('Object removal10 credits');
-  await plus.getByRole('button', { name: 'Choose Plus', exact: true }).click();
-  await expect(group.getByRole('radio', { name: /Plus/ })).toBeChecked();
-  await expect(page.getByRole('region', { name: 'Review your purchase' })).toContainText('9,990 image credits');
-  await expect(page.getByRole('region', { name: 'Review your purchase' })).toContainText('$9.99');
-  expect(creates()).toBe(0);
-  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(1440);
-  const startFree = free.getByRole('link', { name: /free|start|try/i });
-  await expect(startFree).toHaveAttribute('href', '/app/image');
-  await startFree.click();
-  await expect(page).toHaveURL(/\/app\/image$/);
-  expect(creates()).toBe(0);
-});
-
-test('pricing reference layout: tablet has two columns, mobile has one and closed checkout cannot accept payment', async ({ page }) => {
-  const creates = await setupApprovedPricingLayout(page, false);
-  await page.setViewportSize({ width: 900, height: 1100 });
-  await page.goto('/app/credits');
-  const cards = page.getByRole('group', { name: 'Choose an image credit package' }).locator('.credit-package');
-  await expect(cards).toHaveCount(4);
-  const tablet = await cards.evaluateAll(nodes => nodes.map(node => {
-    const rect = node.getBoundingClientRect(); return { x: rect.x, y: rect.y, width: rect.width, height: rect.height };
-  }));
-  expect(Math.abs(tablet[0].y - tablet[1].y)).toBeLessThan(32);
-  expect(Math.abs(tablet[2].y - tablet[3].y)).toBeLessThan(32);
-  expect(Math.abs(tablet[0].x - tablet[2].x)).toBeLessThan(2);
-  expect(tablet[1].x).toBeGreaterThanOrEqual(tablet[0].x + tablet[0].width);
-  expect(tablet[2].y).toBeGreaterThan(tablet[0].y + tablet[0].height - 2);
-  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(900);
-  await page.setViewportSize({ width: 390, height: 844 });
-  const mobile = await cards.evaluateAll(nodes => nodes.map(node => {
-    const rect = node.getBoundingClientRect(); return { x: rect.x, y: rect.y, width: rect.width, height: rect.height };
-  }));
-  expect(mobile.every(box => Math.abs(box.x - mobile[0].x) < 2)).toBe(true);
-  expect(mobile.every((box, index) => index === 0 || box.y >= mobile[index - 1].y + mobile[index - 1].height - 2)).toBe(true);
-  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
-  await expect(page.getByRole('button', { name: 'Checkout unavailable', exact: true })).toBeDisabled();
-  await expect(page.getByRole('button', { name: 'PayPal test checkout' })).toHaveCount(0);
-  await expect(page.locator('script[src*="paypal.com/sdk/js"]')).toHaveCount(0);
-  expect(creates()).toBe(0);
-});
-
-test('credit bundles show each tool cost and do not unlock PRO processing', async ({ page }) => {
+test('public pricing keeps four-column desktop packages and selection is non-billable', async ({ page, request }) => {
   await setup(page);
-  await page.route('**/api/payments/catalog', route => route.fulfill({ json: {
-    enabled: true, clientId: 'sandbox-public-id', environment: 'sandbox',
-    packages: [
-      { sku: 'starter', name: 'Starter', credits: 4990, amountCents: 499, currency: 'USD' },
-      { sku: 'plus', name: 'Plus', credits: 9990, amountCents: 999, currency: 'USD' },
-      { sku: 'pro', name: 'Pro', credits: 19990, amountCents: 1999, currency: 'USD' },
-    ],
-    imageCosts: { 'watermark-removal': 100, 'background-removal': 10, 'object-removal': 10 }, imageCostVersion: '2026-10-31-v1',
-  } }));
-  await page.goto('/app/credits');
-  await expect(page.getByRole('group', { name: 'Choose an image credit package' })).toContainText('4,990 credits');
-  await expect(page.getByRole('group', { name: 'Choose an image credit package' })).toContainText('9,990 credits');
-  await expect(page.getByRole('group', { name: 'Choose an image credit package' })).toContainText('19,990 credits');
-  const rates = page.getByRole('region', { name: 'Credits per image operation' });
-  await expect(rates).toContainText('Watermark removal100 credits');
-  await expect(rates).toContainText('Background removal10 credits');
-  await expect(rates).toContainText('Object removal10 credits');
-  await expect(page.locator('.payment-review')).toContainText('PRO, brush refinement, and video processing use separate administrator credits');
-  await expect(page.locator('.payment-review')).toContainText('Free uses are used first');
-  await expect(page.locator('.credit-packages')).not.toContainText('per image');
-  await page.addStyleTag({ content: 'astro-dev-toolbar { display: none !important; }' });
-  await page.screenshot({ path: `${process.env.PAYPAL_UI_EVIDENCE_DIR ?? 'output/paypal-ui'}/credits-catalog-desktop.png`, fullPage: true });
-  await page.setViewportSize({ width: 390, height: 844 });
-  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
-  await page.screenshot({ path: `${process.env.PAYPAL_UI_EVIDENCE_DIR ?? 'output/paypal-ui'}/credits-catalog-mobile.png`, fullPage: true });
+  const catalog = await (await request.get('/api/payments/catalog')).json();
+  let creates = 0;
+  await page.route('**/api/payments/paypal/orders', route => { creates++; return route.fulfill({status:500,json:{error:'No order may be created by selecting a plan'}}); });
+  await page.setViewportSize({ width: 1440, height: 1100 });
+  await page.goto('/pricing');
+  const cards = page.getByRole('region', { name: 'Image credit packages' }).locator('.credit-package');
+  await expect(cards).toHaveCount(catalog.packages.length + 1);
+  for (let i = 0; i < catalog.packages.length; i++) {
+    const item = catalog.packages[i];
+    await expect(cards.nth(i+1)).toContainText(item.name);
+    await expect(cards.nth(i+1)).toContainText(item.credits.toLocaleString('en-US') + ' credits');
+    await expect(cards.nth(i+1)).toContainText(new Intl.NumberFormat('en-US', {style:'currency',currency:item.currency}).format(item.amountCents/100));
+  }
+  const desktop = await cards.evaluateAll(nodes => nodes.map(node => { const r=node.getBoundingClientRect(); return {x:r.x,y:r.y,width:r.width}; }));
+  expect(desktop.every(box => Math.abs(box.y-desktop[0].y)<32)).toBe(true);
+  expect(desktop.every((box,i) => i===0 || box.x>=desktop[i-1].x+desktop[i-1].width)).toBe(true);
+  await cards.nth(1).getByRole('link', {name:'Choose '+catalog.packages[0].name}).click();
+  await expect(page).toHaveURL(/\/app\/credits\?sku=/);
+  await expect(page.getByRole('region', {name:'Review your purchase'})).toContainText('Starter');
+  expect(creates).toBe(0);
 });
 
-test('image-credit purchases have a private App entry and preserve the existing account menu', async ({ page }) => {
+test('public pricing uses two tablet columns and one mobile column without payment controls', async ({ page }) => {
+  await page.setViewportSize({width:900,height:1100});
+  await page.goto('/pricing');
+  const cards=page.getByRole('region',{name:'Image credit packages'}).locator('.credit-package');
+  await expect(cards).toHaveCount(4);
+  const tablet=await cards.evaluateAll(nodes=>nodes.map(node=>{const r=node.getBoundingClientRect();return{x:r.x,y:r.y,width:r.width,height:r.height}}));
+  expect(Math.abs(tablet[0].y-tablet[1].y)).toBeLessThan(32);
+  expect(Math.abs(tablet[2].y-tablet[3].y)).toBeLessThan(32);
+  expect(Math.abs(tablet[0].x-tablet[2].x)).toBeLessThan(2);
+  expect(tablet[1].x).toBeGreaterThanOrEqual(tablet[0].x+tablet[0].width);
+  expect(tablet[2].y).toBeGreaterThan(tablet[0].y+tablet[0].height-2);
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(900);
+  await page.setViewportSize({width:390,height:844});
+  const mobile=await cards.evaluateAll(nodes=>nodes.map(node=>{const r=node.getBoundingClientRect();return{x:r.x,y:r.y,height:r.height}}));
+  expect(mobile.every(box=>Math.abs(box.x-mobile[0].x)<2)).toBe(true);
+  expect(mobile.every((box,i)=>i===0||box.y>=mobile[i-1].y+mobile[i-1].height-2)).toBe(true);
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+  await expect(page.locator('.paypal-button-container')).toHaveCount(0);
+  await expect(page.locator('script[src*="paypal.com/sdk/js"]')).toHaveCount(0);
+});
+
+test('checkout confirms only the selected plan and keeps image and processing balances separate', async ({page}) => {
+  await setup(page);
+  await page.goto('/app/credits?sku=regular');
+  const review=page.getByRole('region',{name:'Review your purchase'});
+  await expect(review).toContainText('Regular');
+  await expect(review).toContainText('15 image credits');
+  await expect(review).toContainText('$9.99');
+  await expect(review).toContainText('PRO, brush refinement, and video processing use separate administrator credits');
+  await expect(review).toContainText('Free uses are used first');
+  await expect(page.locator('.credit-packages')).toHaveCount(0);
+  await expect(page.locator('.payment-rates')).toHaveCount(0);
+  await expect(page.getByRole('link',{name:'Change plan'})).toHaveAttribute('href','/pricing?returnTo=%2Fapp%2Fimage');
+});
+
+test('image-credit purchase discovery opens public Pricing and preserves the existing account menu', async ({ page }) => {
   await setup(page, { enabled: false });
   await page.goto('/');
   const trigger = page.getByRole('button', { name: 'Account menu', exact: true });
@@ -184,8 +115,8 @@ test('image-credit purchases have a private App entry and preserve the existing 
   await expect(menu.getByRole('link', { name: 'Open workspace', exact: true })).toHaveAttribute('href', '/app/image');
   await expect(menu.getByRole('button', { name: 'Sign out', exact: true })).toBeVisible();
   await menu.getByRole('link', { name: 'Buy image credits', exact: true }).click();
-  await expect(page).toHaveURL(/\/app\/credits$/);
-  await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);
+  await expect(page).toHaveURL(/\/pricing$/);
+  await expect(page.locator('meta[name="robots"][content*="noindex"]')).toHaveCount(0);
   await expect(page.getByRole('heading', { name: 'More images. One simple purchase.' })).toBeVisible();
   await expect(page.getByText('These image credits do not cover PRO, brush refinement, or video processing.', { exact: true })).toBeVisible();
 });
@@ -214,8 +145,8 @@ test('standard image quotes show and use the purchased-image balance without adm
   await page.goto('/app/image');
   await expect(page.locator('.workspace-balances')).toContainText('Purchased image credits 500');
   await expect(page.locator('.workspace-balances')).toContainText('0 processing credits');
-  await expect(page.locator('.workspace-balances').getByRole('link', { name: 'Buy image credits', exact: true })).toHaveAttribute('href', '/app/credits?returnTo=%2Fapp%2Fimage');
-  await page.getByLabel('Upload image to workspace').setInputFiles({ name: 'image-use.jpg', mimeType: 'image/jpeg', buffer: image });
+  await expect(page.locator('.workspace-balances').getByRole('link', { name: 'Buy image credits', exact: true })).toHaveAttribute('href', '/pricing?returnTo=%2Fapp%2Fimage');
+  await page.getByLabel('Upload file to workspace').setInputFiles({ name: 'image-use.jpg', mimeType: 'image/jpeg', buffer: image });
   await expect(page.getByRole('button', { name: 'Remove watermarks · 100 image credits', exact: true })).toBeEnabled();
   await expect(page.getByLabel('Processing cost')).toContainText('500 image credits');
   await page.setViewportSize({ width: 390, height: 844 });
@@ -227,18 +158,18 @@ test('standard image quotes show and use the purchased-image balance without adm
 test('PRO processing stays unavailable with only purchased image credits', async ({ page }) => {
   const image = await imageUseWorkspace(page);
   await page.goto('/app/image');
-  await page.getByLabel('Upload image to workspace').setInputFiles({ name: 'image-use.jpg', mimeType: 'image/jpeg', buffer: image });
-  await page.getByRole('radio', { name: /^PRO/ }).check();
+  await page.getByLabel('Upload file to workspace').setInputFiles({ name: 'image-use.jpg', mimeType: 'image/jpeg', buffer: image });
+  await page.getByLabel('Choose operation').selectOption('image-watermark-pro');
   await expect(page.getByRole('button', { name: 'Remove watermarks · 3 processing credits', exact: true })).toBeDisabled();
   await expect(page.getByRole('alert')).toContainText('Ask an administrator');
-  await expect(page.getByRole('radio', { name: /^PRO/ })).toHaveAccessibleName(/Purchased image credits do not apply/);
+  await expect(page.locator('.workspace-controls')).toContainText('Purchased image credits do not apply.');
   await expect(page.getByRole('link', { name: 'Buy image credits', exact: true })).toHaveCount(0);
 });
 
 test('older account responses default image credits to zero and leave the file ready for purchase recovery', async ({ page }) => {
   const image = await imageUseWorkspace(page, { omitPurchased: true });
   await page.goto('/app/image');
-  await page.getByLabel('Upload image to workspace').setInputFiles({ name: 'recover-image.jpg', mimeType: 'image/jpeg', buffer: image });
+  await page.getByLabel('Upload file to workspace').setInputFiles({ name: 'recover-image.jpg', mimeType: 'image/jpeg', buffer: image });
   await expect(page.locator('.workspace-balances')).toContainText('Purchased image credits 0');
   await expect(page.getByRole('button', { name: 'Remove watermarks · 100 image credits', exact: true })).toBeDisabled();
   const purchase = page.locator('.workspace-action-block').getByRole('link', { name: 'Buy image credits', exact: true });
@@ -257,37 +188,6 @@ test('video workspace shows administrator credits without offering image-credit 
   await expect(page.getByRole('link', { name: 'Buy image credits', exact: true })).toHaveCount(0);
 });
 
-for (const path of ['/remove-background', '/remove-object']) {
-  test(`${path} preserves the selected image and offers image-credit purchase recovery after a 402`, async ({ page }) => {
-    await setup(page);
-    let uploads = 0;
-    await page.route('**/api/upload-url', route => route.fulfill({ json: { url: 'https://uploads.test/payment-image', key: `uploads/${++uploads}.png`, expiresIn: 600 } }));
-    await page.route('https://uploads.test/payment-image', route => route.fulfill({ status: 200 }));
-    await page.route('**/api/jobs', route => route.fulfill({ status: 402, json: { error: 'No credits remaining' } }));
-    await page.goto(path);
-    const tool = page.locator('#tool');
-    await tool.scrollIntoViewIfNeeded();
-    // SSR file inputs accept files before the React onChange handler is attached.
-    await expect(tool.locator('astro-island')).not.toHaveAttribute('ssr', '');
-    const buffer = await sharp({ create: { width: 128, height: 96, channels: 3, background: '#5577aa' } }).png().toBuffer();
-    await tool.locator('input[type=file]').setInputFiles({ name: 'selected-image.png', mimeType: 'image/png', buffer });
-    if (path === '/remove-object') {
-      const bounds = await page.getByLabel('Object removal mask canvas').boundingBox();
-      expect(bounds).not.toBeNull();
-      await page.mouse.move(bounds!.x + bounds!.width * .4, bounds!.y + bounds!.height * .4);
-      await page.mouse.down();
-      await page.mouse.move(bounds!.x + bounds!.width * .6, bounds!.y + bounds!.height * .6, { steps: 3 });
-      await page.mouse.up();
-      await tool.getByRole('button', { name: 'Remove object', exact: true }).click();
-    } else await tool.locator('.preview-panel .button-primary').click();
-    const purchase = tool.getByRole('link', { name: 'Buy image credits', exact: true });
-    await expect(purchase).toBeVisible();
-    await expect(purchase).toHaveAttribute('target', '_blank');
-    await expect(purchase).toHaveAttribute('href', `/app/credits?returnTo=${encodeURIComponent(`${path}#tool`)}`);
-    await expect(tool.locator('img[src^="blob:"]')).toBeVisible();
-  });
-}
-
 test('purchase remains unavailable when payment configuration is disabled', async ({ page }) => {
   await setup(page, { enabled: false, costs: false });
   let paypalRequests = 0;
@@ -295,8 +195,8 @@ test('purchase remains unavailable when payment configuration is disabled', asyn
   await page.goto('/app/credits');
   await expect(page.getByText('Purchases are not available yet.', { exact: false })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Checkout unavailable' })).toBeDisabled();
-  await expect(page.getByRole('region', { name: 'Credits per image operation' })).toContainText('Open a supported image tool to check its current credit cost');
-  await expect(page.getByRole('region', { name: 'Credits per image operation' })).not.toContainText('1 credit');
+  await expect(page.getByRole('region', { name: 'Credits per image operation' })).toHaveCount(0);
+  await expect(page.getByRole('region', { name: 'Review your purchase' })).toContainText('Starter');
   expect(paypalRequests).toBe(0);
 });
 
@@ -401,6 +301,26 @@ test('an unresolved purchase keeps its identity across historical orders and pag
   await expect(page.getByRole('button', { name: 'Make another purchase' })).toHaveCount(0);
   expect(await page.evaluate(() => sessionStorage.getItem('clearmark-payment:payment-user:request:starter'))).toBe(requestKey);
   expect(historicalReads).toBe(0);
+});
+
+test('an existing checkout takes priority over a new URL SKU and never creates a replacement order', async ({ page }) => {
+  await setup(page, { mode: 'pending' });
+  const active = { sku: 'starter', requestKey: 'retained-request-key', orderId: order.id };
+  await page.addInitScript(value => sessionStorage.setItem('clearmark-payment:payment-user:active', JSON.stringify(value)), active);
+  await page.route(`**/api/payments/orders/${order.id}`, route => route.fulfill({ json: order }));
+  let creates = 0;
+  await page.route('**/api/payments/paypal/orders', route => { creates++; return route.fulfill({ status: 500, json: { error: 'Must recover original order' } }); });
+  await page.goto('/app/credits?sku=regular');
+  await expect(page.getByRole('heading', { name: 'Confirming your payment' })).toBeVisible();
+  await expect(page.locator('.payment-outcome')).toContainText(order.id);
+  await expect(page.locator('.payment-outcome')).toContainText('5 image credits');
+  await expect(page.locator('.payment-review')).toContainText('Recovering your original purchase');
+  await expect(page.locator('.selected-plan-name')).toHaveCount(0);
+  await expect(page.locator('.payment-review')).not.toContainText('Regular');
+  await expect(page.locator('.paypal-button-container')).toBeHidden();
+  await expect(page.getByRole('link', { name: 'Change plan' })).toHaveCount(0);
+  expect(await page.evaluate(() => JSON.parse(sessionStorage.getItem('clearmark-payment:payment-user:active')!))).toEqual(active);
+  expect(creates).toBe(0);
 });
 
 test('a compact signed-in header keeps daily check-in on one line', async ({ page }) => {

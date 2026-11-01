@@ -36,6 +36,7 @@ export function buildSitemapEntries({
     withRule('/blog', settings.lastmod, settings.groups.blogIndex),
     withRule('/privacy', settings.lastmod, settings.groups.legalPages),
     withRule('/terms', settings.lastmod, settings.groups.legalPages),
+    withRule('/pricing', settings.lastmod, settings.groups.landingPages),
     ...posts
       .filter((post) => !post.draft)
       .map((post) => withRule(`/blog/${post.slug}`, post.publishedAt, settings.groups.blogPosts)),

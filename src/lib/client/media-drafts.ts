@@ -1,9 +1,11 @@
+import type { MediaRecommendation } from './media-recommendation';
 export type MediaKind = 'image' | 'video';
 export const DRAFT_TTL_MS = 60 * 60 * 1000;
 const DATABASE = 'watermarkgemini-media-drafts-v1';
 const STORE = 'drafts';
 const pointerKey = (kind: MediaKind) => `watermarkgemini:draft:${kind}`;
-export interface MediaDraft { id: string; kind: MediaKind; file: File; createdAt: number; expiresAt: number; source: string }
+export interface MediaDraft { id: string; kind: MediaKind; file: File; createdAt: number; expiresAt: number; source: string; ownerId?: string; recommendation?: MediaRecommendation }
+export function draftVisibleToOwner(draft: Pick<MediaDraft, 'ownerId'>, ownerId?: string) { return !draft.ownerId || draft.ownerId === ownerId; }
 export function workspacePath(kind: MediaKind) { return `/app/${kind}`; }
 export function draftIsExpired(draft: Pick<MediaDraft, 'expiresAt'>, now = Date.now()) { return !Number.isFinite(draft.expiresAt) || draft.expiresAt <= now; }
 export function validateLocalMedia(file: Pick<File, 'type' | 'size' | 'name'>, kind: MediaKind, maxBytes = kind === 'image' ? 10 * 1024 * 1024 : 100 * 1024 * 1024): { ok: true } | { ok: false; message: string } {
@@ -33,21 +35,28 @@ async function transact<T>(mode: IDBTransactionMode, action: (store: IDBObjectSt
     transaction.onerror = transaction.onabort = () => { db.close(); reject(new Error('Your browser could not save this file. Check available storage or choose the file in the workspace.')); };
   });
 }
-export async function saveMediaDraft(file: File, kind: MediaKind, source = window.location.pathname): Promise<MediaDraft> {
+export async function saveMediaDraft(file: File, kind: MediaKind, source = window.location.pathname, ownerId?: string, recommendation?: MediaRecommendation): Promise<MediaDraft> {
   const validation = validateLocalMedia(file, kind);
   if (!validation.ok) throw new Error(validation.message);
-  const draft: MediaDraft = { id: crypto.randomUUID(), kind, file, source, createdAt: Date.now(), expiresAt: Date.now() + DRAFT_TTL_MS };
+  const draft: MediaDraft = { id: crypto.randomUUID(), kind, file, source, createdAt: Date.now(), expiresAt: Date.now() + DRAFT_TTL_MS, ...(ownerId ? { ownerId } : {}), ...(recommendation ? { recommendation } : {}) };
   await transact('readwrite', store => store.put(draft));
   try { sessionStorage.setItem(pointerKey(kind), draft.id); }
   catch { await deleteMediaDraft(draft.id, kind); throw new Error('Your browser blocked draft recovery. Open the workspace and choose your file there.'); }
   return draft;
 }
-export async function readMediaDraft(kind: MediaKind): Promise<MediaDraft | null> {
+export async function readMediaDraft(kind: MediaKind, ownerId?: string): Promise<MediaDraft | null> {
   const id = sessionStorage.getItem(pointerKey(kind));
   if (!id) return null;
   const draft = await transact<MediaDraft | undefined>('readonly', store => store.get(id));
-  if (!draft || draft.kind !== kind || draftIsExpired(draft)) { await deleteMediaDraft(id, kind); return null; }
+  if (!draft || draft.kind !== kind || draftIsExpired(draft) || !draftVisibleToOwner(draft, ownerId)) { await deleteMediaDraft(id, kind); return null; }
   return draft;
+}
+/** Claim a known anonymous handoff without replacing its file, identifier or accepted UI state. */
+export async function claimMediaDraft(draft: MediaDraft, ownerId: string): Promise<void> {
+  const stored = await transact<MediaDraft | undefined>('readonly', store => store.get(draft.id));
+  if (!stored) return;
+  if (stored.kind !== draft.kind || draftIsExpired(stored) || !draftVisibleToOwner(stored, ownerId)) throw new Error('This local draft belongs to another account or has expired.');
+  await transact('readwrite', store => store.put({ ...stored, ownerId }));
 }
 export async function deleteMediaDraft(id: string, kind: MediaKind): Promise<void> {
   await transact('readwrite', store => store.delete(id));

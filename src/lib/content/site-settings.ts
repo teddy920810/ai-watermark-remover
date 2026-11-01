@@ -30,6 +30,7 @@ const headerNavigationItemSchema = z.object({
   }
 });
 
+/** Stored legacy record compatibility; current App controls and CMS forms do not consume this copy. */
 export const uploaderCopySchema = z.object({
   hero: z.object({
     eyebrow: z.string().min(1), heading: z.string().min(1), demoBadge: z.string().min(1), demoBadgeTitle: z.string().min(1),
@@ -81,24 +82,6 @@ export const siteCtaSchema = z.object({
   buttonLabel: z.string().min(1),
   buttonHref: z.string().min(1),
 });
-
-function resolveCopyGroup<T extends Record<string, string>>(shared: T, override?: Partial<T>): T {
-  return Object.fromEntries(Object.entries(shared).map(([key, value]) => {
-    const candidate = override?.[key];
-    return [key, typeof candidate === 'string' && candidate.trim().length > 0 ? candidate : value];
-  })) as T;
-}
-
-export function resolveUploaderCopy(shared: UploaderCopy, override?: UploaderCopyOverride): UploaderCopy {
-  return {
-    hero: resolveCopyGroup(shared.hero, override?.hero),
-    dropzone: resolveCopyGroup(shared.dropzone, override?.dropzone),
-    preview: resolveCopyGroup(shared.preview, override?.preview),
-    result: resolveCopyGroup(shared.result, override?.result),
-    auth: resolveCopyGroup(shared.auth, override?.auth),
-    privacyNote: override?.privacyNote?.trim() ? override.privacyNote : shared.privacyNote,
-  };
-}
 
 export const siteSettingsSchema = z.object({
   name: z.string().min(1),

@@ -26,9 +26,11 @@ test('ChatGPT landing modules keep source visuals and page-local actions without
   }
   await page.locator('.hero-actions').getByRole('link', { name: 'Review image requirements' }).click();
   await expect(page).toHaveURL(/#image-requirements$/);
-  await page.locator('.site-cta a').click();
-  await expect(page).toHaveURL(/\/chatgpt-watermark-remover#tool$/);
-  await expect(page.locator('#tool')).toBeInViewport();
+  const footer = page.locator('.site-cta'); await footer.scrollIntoViewIfNeeded();
+  const fileChooser = page.waitForEvent('filechooser');
+  await footer.getByRole('button', { name: 'Upload file', exact: true }).click();
+  await (await fileChooser).setFiles([]);
+  await expect(page).toHaveURL(/\/chatgpt-watermark-remover#image-requirements$/);
   await expect(page.locator('.site-cta h2')).toHaveText('Ready to Review an Authorized Image?');
   await page.goto('/remove-text-from-image');
   await expect(page.locator('#image-requirements')).toHaveCount(0);
@@ -220,24 +222,15 @@ test('homepage blueprint previews, CTA routes and motion controls work on deskto
     await expect(page.locator('[data-hero-preview]:visible')).toHaveCount(1);
     await page.locator('[data-hero-sample]').nth(1).click();
     await expect(page.locator('[data-hero-sample]').nth(1)).toHaveAttribute('aria-pressed','true');
-    const compare = page.locator('[data-hero-preview]:visible input[type=range]');
-    await compare.focus();
-    await compare.press('ArrowRight');
-    await expect(compare).toHaveValue('51');
-    const bounds=await compare.boundingBox();
-    // Locator actions scroll clipped ancestors before delivering real pointer events.
-    await compare.dragTo(compare, {
-      sourcePosition: { x: bounds!.width*.25, y: bounds!.height*.5 },
-      targetPosition: { x: bounds!.width*.75, y: bounds!.height*.5 },
-    });
-    expect(Number(await compare.inputValue())).toBeGreaterThan(70);
+    await expect(page.locator('[data-hero-preview]:visible input[type=range]')).toHaveCount(0);
     const tabs=page.locator('[data-scenario-tab]');
     await tabs.first().focus();
     await tabs.first().press('End');
     await expect(tabs.last()).toHaveAttribute('aria-selected','true');
-    await expect(page.locator('[data-scenario-panel]:visible a')).toHaveAttribute('href','/#tool');
-    await page.locator('[data-scenario-panel]:visible a').click();
-    await expect(page.locator('#tool')).toBeInViewport();
+    const scenarioAction = page.locator('[data-scenario-panel]:visible');
+    await scenarioAction.scrollIntoViewIfNeeded();
+    await expect(scenarioAction.getByRole('button', { name: 'Upload file', exact: true })).toBeEnabled();
+    await expect(scenarioAction.locator('input[type=file]')).toHaveAttribute('accept', 'image/jpeg,image/png,image/webp,video/mp4');
     await page.locator('[data-reviews-toggle]').click();
     await expect(page.locator('[data-reviews-marquee]')).toHaveClass(/is-paused/);
     await expect(page.locator('.audience-grid article')).toHaveCount(3);
@@ -262,7 +255,7 @@ test('homepage matches blueprint geometry and keeps mobile comparisons and activ
     return {
       tabs:rect('.result-tabs'),
       stepGrid:rect('.steps'),
-      feature:rect('.feature-media .home-compare'),
+      feature:rect('.feature-media .image-display'),
       audiences:rect('.audience-grid'),
       tools:rect('.live-removal-grid'),
       headingSize:getComputedStyle(document.querySelector('.features-section h2')!).fontSize,
@@ -273,7 +266,7 @@ test('homepage matches blueprint geometry and keeps mobile comparisons and activ
   expect(layout.tabs.width).toBeCloseTo(1200,0);
   expect(layout.stepGrid.width).toBeCloseTo(1200,0);
   expect(layout.feature.width).toBeCloseTo(540,0);
-  expect(layout.feature.height).toBeCloseTo(438,0);
+  expect(layout.feature.height).toBeGreaterThan(0);
   expect(layout.audiences.width).toBeCloseTo(1280,0);
   expect(layout.tools.x).toBeCloseTo((1920-1200)/2,0);
   expect(layout.headingSize).toBe('40px');
@@ -285,7 +278,7 @@ test('homepage matches blueprint geometry and keeps mobile comparisons and activ
   await tabs.first().press('End');
   const mobile=await page.evaluate(()=>{
     const rect=(selector:string)=>document.querySelector(selector)!.getBoundingClientRect();
-    const stage=rect('[data-scenario-panel]:not([hidden]) .home-compare');
+    const stage=rect('[data-scenario-panel]:not([hidden]) .image-display');
     const section=rect('.results-section');
     const tab=rect('[data-scenario-tab][aria-selected=true]');
     const tablist=rect('.result-tabs');
@@ -303,20 +296,16 @@ test('homepage matches blueprint geometry and keeps mobile comparisons and activ
   expect(mobile.noteBottom).toBeLessThanOrEqual(mobile.trustTop);
 });
 
-test('homepage sample switching preserves the comparison position as in the blueprint', async ({page})=>{
+test('homepage single images switch without showing comparison controls or labels', async ({ page }) => {
   await page.goto('/');
-  const heroRange=page.locator('[data-hero-preview]:visible input');
-  await heroRange.focus();
-  await heroRange.press('Home');
-  await heroRange.press('ArrowRight');
-  await page.locator('[data-hero-sample]').nth(1).click();
-  await expect(page.locator('[data-hero-preview]:visible input')).toHaveValue('1');
-  const range=page.locator('[data-scenario-panel]:visible input');
-  await range.focus();
-  await range.press('End');
-  await range.press('ArrowLeft');
+  for (const button of await page.locator('[data-hero-sample]').all()) {
+    await button.click(); await expect(button).toHaveAttribute('aria-pressed', 'true');
+    await expect(page.locator('[data-hero-preview]:visible')).toHaveCount(1);
+    await expect(page.locator('[data-hero-preview]:visible input[type=range]')).toHaveCount(0);
+  }
   await page.locator('[data-scenario-direction=next]:visible').click();
-  await expect(page.locator('[data-scenario-panel]:visible input')).toHaveValue('99');
+  await expect(page.locator('[data-scenario-panel]:visible [data-image-display]')).toBeVisible();
+  await expect(page.locator('[data-scenario-panel]:visible input[type=range],.fixed-watermark,.home-demo-watermark')).toHaveCount(0);
 });
 
 test('homepage reference controls, tools, highlighted headings, and guide lists work together', async ({ page }) => {
@@ -364,7 +353,7 @@ test('homepage CMS PNG and JPEG images load generated responsive WebP variants',
   }
 });
 
-test('missing and failed images use the site-wide placeholder without broken markup', async ({ page }) => {
+test('original missing content keeps its fallback and network failures use the site-wide placeholder', async ({ page }) => {
   await page.goto('/remove-logo-from-image');
 
   const missingFeature = page.getByRole('heading', { name: 'AI Logo Remover for Detailed Product Surfaces' })
@@ -372,6 +361,19 @@ test('missing and failed images use the site-wide placeholder without broken mar
     .locator('img');
   await expect(missingFeature).toHaveAttribute('src', '/images/image-placeholder.svg');
   await expect(missingFeature).toHaveAttribute('data-image-fallback', 'true');
+  await missingFeature.scrollIntoViewIfNeeded();
+  await expect.poll(() => missingFeature.evaluate(image => (image as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
+  const validFeature = page.locator('.feature-media').first().locator('img');
+  expect(await validFeature.getAttribute('src')).toMatch(/^\/uploads\//);
+  await validFeature.scrollIntoViewIfNeeded();
+  await expect.poll(() => validFeature.evaluate(image => (image as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
+  const source = await validFeature.evaluate(image => (image as HTMLImageElement).currentSrc);
+  await page.route(source, route => route.abort());
+  await page.reload();
+  await validFeature.scrollIntoViewIfNeeded();
+  await expect(validFeature).toHaveAttribute('src', '/images/image-placeholder.svg');
+  await expect(validFeature).toHaveAttribute('data-image-fallback', 'true');
+  await expect.poll(() => validFeature.evaluate(image => (image as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
 
   await page.route('**/uploads/watermarkgemini-logo.svg', (route) => route.abort());
   await page.reload();

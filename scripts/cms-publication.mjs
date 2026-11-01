@@ -1,8 +1,9 @@
 import { readdirSync, readFileSync, existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import YAML from 'yaml';
+import { knownPageRoutes, reservedToolSlugs } from '../src/lib/contracts/route-policy.mjs';
 
-export const reservedToolSlugs = new Set(['api', 'app', 'auth', 'blog', 'privacy', 'terms', '404', 'robots', 'sitemap', 'robots.txt', 'sitemap.xml']);
+export { reservedToolSlugs };
 export function parseCmsDocument(path, source) {
   if (path.endsWith('.json')) return { path, data: JSON.parse(source), body: '' };
   const match = source.match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)([\s\S]*)$/);
@@ -26,7 +27,7 @@ export function readCmsDocuments(root) {
 export function collectPublicationIssues(records, root) {
   const issues = [];
   const seen = new Set();
-  const publicRoutes = new Set(['/', '/blog', '/privacy', '/terms']);
+  const publicRoutes = new Set(knownPageRoutes);
   for (const record of records) {
     const landing = record.path.startsWith('src/content/landing-pages/');
     const route = `${landing ? '' : '/blog'}/${record.data.slug}`;

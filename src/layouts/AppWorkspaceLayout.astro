@@ -1,0 +1,17 @@
+---
+import AppWorkspace from '../components/workspace/AppWorkspace';
+import site from '../content/settings/site.json';
+import type { MediaKind } from '../lib/client/media-drafts';
+import '../styles/design-system.css';
+import '../styles/workspace.css';
+interface Props { kind?: MediaKind | 'auto' }
+const { kind = 'auto' } = Astro.props;
+const appAsset = (path: string) => process.env.BUILD_TARGET === 'app' ? `/_app-assets/public${path}` : path;
+---
+<!doctype html>
+<html lang={site.locale}>
+  <head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width" /><meta name="robots" content="noindex, follow" /><title>Workspace | {site.name}</title><meta name="description" content="Prepare a file, choose an operation, review its cost, and download the result." /><link rel="icon" href={appAsset(site.favicon)} /></head>
+  <body><AppWorkspace kind={kind} logo={appAsset(site.logo)} siteName={site.name} client:only="react">
+    <main slot="fallback" class="workspace-loading-shell" data-workspace-loading><h1>Opening your workspace</h1><p>Prepare a file, choose an operation, and review its cost before processing.</p><p>If this takes too long, reload this page to try again.</p><a class="button button-ghost" href={Astro.url.pathname + Astro.url.search}>Reload workspace</a><noscript>JavaScript is needed to open the image and video tools. Your file has not been uploaded or processed.</noscript></main>
+  </AppWorkspace></body>
+</html>

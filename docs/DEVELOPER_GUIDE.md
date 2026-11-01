@@ -27,7 +27,9 @@ Google 登录还需要：
 
 ## 应用结构
 
-Astro 负责内容路由和服务端 API；React 只用于上传交互岛。浏览器先请求预签名地址，再直接上传到私有 R2，避免图片经过 Vercel 函数。任务状态保存在 R2；去水印能力通过 `WatermarkProvider` 接口隔离，背景移除通过独立的 `BackgroundRemovalProvider` 接口隔离，物体移除通过 `ObjectRemovalProvider` 隔离，三种任务共用账户权益账本。
+当前操作、协议、数据与文档权威入口见[当前架构](CURRENT_ARCHITECTURE.md)和[总索引](INDEX.md)。每次从已登记维护根目录启动，先运行`npm run project:check -- --read-only`；既有改动分类后用`--classified <本机JSON>`核对。路径登记使用本机环境/已有Codex registry，不写进产品运行依赖。
+
+Astro 负责内容路由和服务端 API；React 只用于上传交互岛。浏览器先请求预签名地址，再直接上传到私有 R2，避免图片经过 Vercel 函数。任务状态保存在 R2；去水印能力通过 `WatermarkProvider` 接口隔离，背景移除通过独立的 `BackgroundRemovalProvider` 接口隔离，物体移除通过 `ObjectRemovalProvider` 隔离，三种任务共用账户权益账本。新背景与物体客户端已逐项接入共同耐久协调器和Worker；旧API的准入、查询、下载和已接受请求继续兼容，费用/PNG/选区与恢复规则见[图片操作规范](product/IMAGE_OPERATIONS.md)。
 
 新图片/视频工作区位于 `/app/image`、`/app/video`，使用 `/api/v1` 报价、任务和临时下载接口。非收费媒体检查和已确认任务由独立 Worker 执行，金融预留和耐久 outbox 在 PostgreSQL，媒体与权威任务状态在私有 R2。PRO、精修、视频使用独立的管理员处理额度；旧免费次数、旧 API 和其他工具保持兼容。
 
@@ -87,7 +89,7 @@ npm run blog:import-docx -- --input "审核稿.docx" --slug "how-to-remove-examp
 - Bucket：`watermark`，保持私有。
 - 客户端只接收短期预签名 URL，不得获得 R2 密钥。
 - CORS 只允许明确的生产/预览/本地来源及必要方法。
-- `uploads/`、`results/`、`jobs/` 配置 1 天生命周期删除规则。
+- 旧`uploads/results/jobs`按一天生命周期；新媒体只配置四个精确前缀，恢复控制记录不设全局TTL。完整来源与回读边界见[Worker规范](product/WORKER_DEPLOYMENT.md#媒体过期与控制记录)。
 - 日志不得输出签名 URL、密钥或完整用户图片内容。
 
 ## 测试与发布
@@ -103,5 +105,7 @@ npm run release:verify   # 高风险改动：依赖审计 + 站点校验 + 完�
 
 完整门禁的类型检查只在 Build 中执行一次；单独 `lint` 和 `build` 仍各自包含类型检查。Site/App/Worker 的独立构建入口、受影响目标和产物验收统一见 [测试与质量指南](TESTING_GUIDE.md#自动化保护) 与 [部署目标](../apps/DEPLOYMENT_TARGETS.md)，不要把 Worker 源码测试当作真实打包或生产执行的证据。
 
-Pages CMS 可能随时提交到 `main`。推送前执行 `git fetch origin main` 并检查分歧；如远端领先，先安全 rebase/merge，禁止 force push。合并到 `main` 后 Vercel 自动发布。
+Pages CMS在内容分支保存，经受保护PR与必需CI后进入`main`；模板工作流只创建审核分支和草稿PR。推送前执行`git fetch origin main`检查分歧；如远端领先，先安全rebase/merge，禁止force push。合并后Vercel按目标独立发布。
+
+原内容独立基线不自动随CMS保存更新。受保护的既有内容需要内容负责人先明确授权具体PR差异，维护者再运行`node scripts/update-content-baseline.mjs --approval APPROVED_PR_URL EXACT_CONTENT_PATH`，把fixture变化一并提交原PR审阅。该命令只更新测试预期，不改内容；填写PR链接本身不授予内容修改权限。新建草稿仍受草稿、模板文本、URL和图片检查约束。
 

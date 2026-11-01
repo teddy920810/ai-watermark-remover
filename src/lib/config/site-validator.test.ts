@@ -20,6 +20,15 @@ const validInput = {
 };
 
 describe('site content validation', () => {
+  it('allows real App entry links but rejects unknown App routes and reserved landing slugs', () => {
+    for (const href of ['/app', '/app/image?mode=pro', '/app/video', '/app/credits#orders']) {
+      expect(collectSiteValidationIssues({ ...validInput, contentDocuments: [{ path: 'home.json', value: { href } }] }), href).toEqual([]);
+    }
+    expect(collectSiteValidationIssues({ ...validInput, contentDocuments: [{ path: 'home.json', value: { href: '/app/unknown' } }] }).join()).toContain('internal link');
+    for (const slug of ['app', 'pricing', '404', 'robots', 'sitemap']) {
+      expect(collectSiteValidationIssues({ ...validInput, landingSlugs: [slug] }).join(), slug).toContain('reserved route');
+    }
+  });
   it('accepts a coherent forked-site configuration', () => {
     expect(collectSiteValidationIssues(validInput)).toEqual([]);
   });

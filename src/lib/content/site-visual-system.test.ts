@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
-const globalCss = readFileSync(new URL('../../styles/global.css', import.meta.url), 'utf8');
+const globalCss = readFileSync(new URL('../../styles/design-system.css', import.meta.url), 'utf8') + readFileSync(new URL('../../styles/global.css', import.meta.url), 'utf8');
 const homePage = readFileSync(new URL('../../pages/index.astro', import.meta.url), 'utf8');
 const landingPage = readFileSync(new URL('../../components/LandingPage.astro', import.meta.url), 'utf8');
 const launcher = readFileSync(new URL('../../components/launcher/MediaLauncher.tsx', import.meta.url), 'utf8');
@@ -26,7 +26,8 @@ describe('site-wide operations visual system', () => {
 
   it('gives upload, process, guide, blog, and legal surfaces one card language', () => {
     expect(globalCss).toContain('.tool-card {');
-    expect(globalCss).toContain('.upload-action {');
+    expect(launcherCss).toContain('.launcher-drop{');
+    expect(launcherCss).toContain('.launcher-drop .button{');
     expect(globalCss).toContain('.steps article {');
     expect(globalCss).toContain('.guide-grid article {');
     expect(globalCss).toContain('.blog-list article {');
@@ -90,7 +91,7 @@ describe('site-wide operations visual system', () => {
     expect(globalCss).toContain('@media (max-width: 900px)');
     expect(globalCss).toContain('@media (max-width: 620px)');
     expect(globalCss).toMatch(/@media \(max-width: 620px\)[\s\S]*\.hero h1\s*\{/);
-    expect(globalCss).toMatch(/@media \(max-width: 620px\)[\s\S]*\.drop-zone\s*\{/);
+    expect(launcherCss).toMatch(/@media\s*\(max-width:\s*620px\)[\s\S]*\.launcher-drop\s*\{/);
   });
 
   it('uses full-width airy surfaces from the supplied mockup to separate screens', () => {

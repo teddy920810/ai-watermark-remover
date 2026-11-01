@@ -31,7 +31,7 @@ PR CI 中的 `verify` 包含覆盖率、Lint、生产构建和浏览器 E2E，�
 - 纯函数和服务规则：Vitest 单元测试。
 - API、环境变量和安全错误：Vitest 集成测试。
 - 上传 UI、GA `page_view`、SEO 和无障碍：Playwright E2E。
-- 正式域名与真实 R2：`npm run test:smoke:production`，仅在运维检查或部署后运行。
+- 正式域名与匿名保护：`npm run test:smoke:production`只读、不上传；真实R2/Provider使用匹配operation的认证功能命令，按授权预算运行一次，见[测试指南](docs/TESTING_GUIDE.md)。
 
 完整说明见 `docs/TESTING_GUIDE.md`。
 
@@ -53,12 +53,12 @@ GA、支付、登录、Cloud SDK、Consent 等第三方初始化片段属于“�
 - 文案、博客、FAQ、SEO 标题：优先通过 Pages CMS 修改。
 - 页面结构、样式、API、字段模型：由开发者修改代码并走测试流程。
 - 已发布 `slug` 不应修改；确需变更时由开发者同时配置重定向。
-- 删除内容应由开发者在 Git 中完成，避免误删及断链。
+- CMS现有collection允许删除；删除公开内容前由内容负责人和开发者核对引用、旧URL和必要重定向，再走适用发布门禁。CMS允许删除不等于没有断链风险。
 
 ## 提交前检查
 
 - 工作区不存在密钥和临时文件。
-- `npm run verify` 全部通过。
+- 本地按AGENTS只选一次覆盖实际风险的门禁；main合并依赖CI完整`npm run verify`成功，不在低风险本地重复全量检查。
 - 本地检查目标页面及 `/404`、`/robots.txt`、`/sitemap.xml`。
 - 已同步远端 `main`，没有覆盖 Pages CMS 新提交。
 - 第三方集成使用官方原始片段，并已验证平台侧真实事件或明确记录未验证项。

@@ -11,6 +11,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 concurrency:
   group: cms-create-draft
@@ -33,3 +34,4 @@ jobs:
         run: node scripts/create-cms-draft.mjs
         env:
           CMS_ACTION_PAYLOAD: ${{ inputs.payload }}
+          GITHUB_TOKEN: ${{ github.token }}

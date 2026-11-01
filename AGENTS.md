@@ -1,5 +1,31 @@
 # Project instructions
 
+## Maintenance authority and change closure
+
+- Use the registered local project root for implementation, tests and release preparation. Read it through `AI_WATERMARK_PROJECT_ROOT` or the existing Codex project registry; do not add a drive letter as a runtime dependency or silently create another source worktree.
+- At startup run `npm run project:check -- --read-only`. Before editing or switching branches, classify existing changes in an ignored JSON file with an explicit `paths` array and run `npm run project:check -- --classified <file>`. Unknown changes or a directory/origin mismatch block mutation, never read-only preservation. Recheck cwd, branch, HEAD, remote divergence and scope at handoff. Never reset away preserved work.
+- Each fact has one authority: operation identifiers/limits in `src/lib/contracts/operation-catalog.ts`, route ownership and CMS entry policy in `src/lib/contracts/route-policy.mjs`, prices in server price books, UI rules in their shared components, and current documentation in `docs/INDEX.md`.
+- Change behavior together with its contract, focused tests, affected CMS migration and relevant instructions. Record documentation updates or a reason they are not applicable; do not change unrelated documentation only to refresh dates.
+- Development and CMS publication require applicable checks before production. CI, required branch checks, Vercel builds and actual production acceptance are separate gates. Existing CMS direct-main saves do not prove protected publication; external enforcement remains pending until verified and authorized.
+- Register temporary adapters, old clients/APIs/assets and historical worktrees with owner, replacement, review stage and retirement evidence in `docs/COMPATIBILITY.md`. Review overdue items; never delete automatically.
+- Upload and single/two-image rules are enabled per the refactor ledger. Do not claim unmigrated consumers conform to future rules. No new audio functionality, Provider request changes, or merging of free uses, purchased image Credits and processing Credits through refactoring.
+
+## Codex task naming
+
+- After the first user request makes the intended outcome clear, rename the current Codex task automatically without asking the user to provide a title.
+- Use the format `AI Watermark｜specific outcome｜status`.
+- Summarize the outcome in a short, concrete phrase; do not copy the full user prompt or use vague titles such as `new task`, `fix issue`, or `continue development`.
+- Use one of these status labels when applicable: `规划中`, `进行中`, `待用户`, `已完成`, or `已上线`.
+- Update only the outcome or status when the task meaningfully changes phase.
+- Never pin, unpin, archive, or move a task automatically. Those sidebar choices remain with the user.
+
+## Codex project workflow
+
+- Treat this Codex project as the default execution workspace for repository-backed AI Watermark work that will be implemented, tested, or released.
+- At the start of a new task, briefly classify it as planning-only or implementation and confirm that it belongs to this project. Do not repeatedly remind the user after classification.
+- If the request arrives from a ChatGPT Chat or Work discussion, summarize the agreed outcome, scope, protected boundaries, acceptance criteria, and delivery target before editing.
+- Keep planning-only requests read-only until the user explicitly asks to implement. Cross-product strategy may remain in ChatGPT; do not force a context switch when the current task can be completed safely here.
+
 - Generate SEO and content pages statically with Astro.
 - Use React islands only for interactive features.
 - Never expose R2 or provider credentials to browser code.
@@ -53,6 +79,13 @@
 - 未受本次改动影响的发布门禁标记为 `not applicable`，不要为了将其标记为 `passed` 而额外验证。域名、证书、OAuth、R2、CORS、Provider 和 Production Smoke 仅在改动直接涉及对应范围时验证。
 - 低风险 UI 上线后只需确认生产部署绑定预期 SHA，并对一个正向页面和一个负向区域做只读视觉/HTTP 检查。
 - 仅文档或项目指令修改不运行产品测试；检查目标 Markdown、最终 diff、改动范围和工作区状态即可，除非该文档被构建或自动化脚本消费。
+
+## Content and SEO ownership
+
+- 图片文件名、路径、引用、图片字节、alt/coverAlt/imageAlt、示例说明，以及标题、正文、FAQ、SEO元信息和内容URL均由内容/SEO角色拥有。研发重构只改实现，不自行重写、替换、重命名或删除这些内容。
+- 未获得用户明确的内容修改授权时，保留原内容值；字段迁移须逐字段验证语义等价，并核对最终HTML中的图片与alt，不能用迁移清单、别名或替换图片字节掩盖内容变化。
+- 原素材缺失、图内烘焙滑柄或文案问题登记为运营/SEO待办，保留正常fallback，不擅自替换素材或编造对比图。交互按钮、状态、处理协议由研发维护。
+- PR须单列内容/SEO影响及授权依据。`src/lib/content/seo-content-ownership.test.ts`的独立基线不随迁移映射自动变化；合法内容更新须由内容负责人明确授权并审阅对应基线变化。
 
 ## Third-party integration contract rules
 

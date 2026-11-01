@@ -1,7 +1,14 @@
 import { describe, expect, it } from 'vitest';
-import { draftIsExpired, validateLocalMedia, workspacePath, DRAFT_TTL_MS } from './media-drafts';
+import { draftIsExpired, draftVisibleToOwner, validateLocalMedia, workspacePath, DRAFT_TTL_MS } from './media-drafts';
 
 describe('local media handoff', () => {
+  it('allows anonymous intake but never restores an authenticated owner draft to another account or anonymous state', () => {
+    expect(draftVisibleToOwner({}, undefined)).toBe(true);
+    expect(draftVisibleToOwner({}, 'a')).toBe(true);
+    expect(draftVisibleToOwner({ ownerId: 'a' }, 'a')).toBe(true);
+    expect(draftVisibleToOwner({ ownerId: 'a' }, 'b')).toBe(false);
+    expect(draftVisibleToOwner({ ownerId: 'a' }, undefined)).toBe(false);
+  });
   it('rejects a video disguised by its filename and empty files before storing', () => {
     expect(validateLocalMedia({ type: 'image/jpeg', size: 100, name: 'movie.mp4' }, 'video')).toMatchObject({ ok: false });
     expect(validateLocalMedia({ type: 'image/png', size: 0, name: 'photo.png' }, 'image')).toMatchObject({ ok: false });

@@ -1,6 +1,8 @@
 import { createHash, randomUUID } from 'node:crypto';
 import { amountSchema, metadataSchema, operationSchema, ProcessingError } from './contracts';
 import type { AdmissionHistoryCursor, OperationCapability, ProcessingArtifact, ProcessingArtifactStore, ProcessingFinancialStore, ProcessingInspector, ProcessingJob, ProcessingJobStore, ProcessingOperation, ProcessingPriceBook, ProcessingQuote, ProcessingQuoteStore } from './contracts';
+import { operationCatalog } from '../contracts/operation-catalog';
+import type { ImageCreditCosts } from '../payments/image-credit-prices';
 
 export interface QuoteRequest { ownerId: string; operation: ProcessingOperation; inputArtifactId: string; maskArtifactId?: string; parentJobId?: string }
 export interface SubmitRequest { ownerId: string; quoteId: string; idempotencyKey: string }
@@ -17,6 +19,7 @@ export interface ProcessingServiceOptions {
   quoteTtlMs?: number;
   purchasedImageCreditsEnabled?: boolean;
   purchasedImageCreditCost?: number;
+  imageCreditCosts?: Partial<ImageCreditCosts>;
   imageCreditPriceVersion?: string;
 }
 
@@ -39,9 +42,12 @@ export class ProcessingService {
   async quote(request: QuoteRequest): Promise<ProcessingQuote> {
     operationSchema.parse(request.operation);
     const { input, mask } = await this.validate(request);
-    const imageCost = amountSchema.parse(this.options.purchasedImageCreditCost ?? 1);
+    const imageCreditOperation = operationCatalog[request.operation].legacyOperation;
+    const imageCost = amountSchema.parse((imageCreditOperation ? this.options.imageCreditCosts?.[imageCreditOperation] : undefined) ?? this.options.purchasedImageCreditCost ?? 1);
     let unit: ProcessingQuote['unit'] = 'processingCredits';
-    if (request.operation === 'image-watermark') {
+    if (['background-removal', 'object-removal'].includes(request.operation)) {
+      unit = await this.options.finance.getBalance(request.ownerId, 'freeUses') >= 1 || !this.options.purchasedImageCreditsEnabled ? 'freeUses' : 'purchasedImageCredits';
+    } else if (request.operation === 'image-watermark') {
       if (await this.options.finance.getBalance(request.ownerId, 'freeUses') >= 1) unit = 'freeUses';
       else if (await this.options.finance.getBalance(request.ownerId, 'purchasedImageCredits') >= imageCost) unit = 'purchasedImageCredits';
       else if (this.options.purchasedImageCreditsEnabled && await this.options.finance.getBalance(request.ownerId, 'processingCredits') < 1) unit = 'purchasedImageCredits';
@@ -49,7 +55,7 @@ export class ProcessingService {
     const amount = unit === 'processingCredits' ? amountSchema.parse(this.options.prices.amount(request.operation, input.metadata)) : unit === 'purchasedImageCredits' ? imageCost : 1;
     const now = this.now();
     const quote: ProcessingQuote = {
-      ...request, id: this.id(), amount, unit, priceVersion: this.priceVersion(unit),
+      ...request, id: this.id(), amount, unit, priceVersion: this.priceVersion(unit, request.operation),
       fingerprint: this.fingerprint(request, input, mask), createdAt: now.toISOString(),
       expiresAt: new Date(now.getTime() + (this.options.quoteTtlMs ?? 10 * 60_000)).toISOString(),
     };
@@ -72,7 +78,7 @@ export class ProcessingService {
     const requestHash = this.requestHash(quote);
     if (Date.parse(quote.expiresAt) <= this.now().getTime()) throw new ProcessingError('quote_expired', 'Confirm a new quote before processing', 409);
     const { input, mask } = await this.validate(quote);
-    if (this.fingerprint(quote, input, mask) !== quote.fingerprint || quote.priceVersion !== this.priceVersion(quote.unit)) throw new ProcessingError('quote_changed', 'Input or price changed; confirm a new quote', 409);
+    if (this.fingerprint(quote, input, mask) !== quote.fingerprint || quote.priceVersion !== this.priceVersion(quote.unit, quote.operation)) throw new ProcessingError('quote_changed', 'Input or price changed; confirm a new quote', 409);
     const now = this.now().toISOString();
     const job: ProcessingJob = {
       id: this.id(), ownerId: request.ownerId, operation: quote.operation, status: 'PREPARED', quote,
@@ -139,8 +145,9 @@ export class ProcessingService {
     if (request.maskArtifactId) {
       mask = await this.owned(request.ownerId, request.maskArtifactId);
       if (mask.role !== 'mask' || mask.metadata.contentType !== 'image/png' || mask.metadata.width !== input.metadata.width || mask.metadata.height !== input.metadata.height) throw new ProcessingError('invalid_mask', 'Selection must match the input dimensions');
-      if (!['image-refine', 'video-watermark'].includes(request.operation)) throw new ProcessingError('invalid_mask', 'This operation does not accept a selection');
+      if (!['image-refine', 'video-watermark', 'object-removal'].includes(request.operation)) throw new ProcessingError('invalid_mask', 'This operation does not accept a selection');
     }
+    if (request.operation === 'object-removal' && (!mask || mask.parentArtifactId !== input.id)) throw new ProcessingError('invalid_mask', 'Select an area on the current image');
     if (request.operation === 'image-refine') {
       if (!request.parentJobId || !mask) throw new ProcessingError('refinement_requires_parent', 'Select a completed image and a nonempty region');
       const parent = await this.get(request.ownerId, request.parentJobId);
@@ -158,8 +165,8 @@ export class ProcessingService {
   private requestHash(quote: ProcessingQuote): string {
     return createHash('sha256').update(`${quote.id}:${quote.fingerprint}:${quote.amount}:${quote.unit}:${quote.priceVersion}`).digest('hex');
   }
-  private priceVersion(unit: ProcessingQuote['unit']) {
-    return unit === 'purchasedImageCredits' && this.options.imageCreditPriceVersion
+  private priceVersion(unit: ProcessingQuote['unit'], operation: ProcessingOperation) {
+    return (unit === 'purchasedImageCredits' || ['background-removal', 'object-removal'].includes(operation) && this.options.purchasedImageCreditsEnabled) && this.options.imageCreditPriceVersion
       ? `${this.options.prices.version}:image:${this.options.imageCreditPriceVersion}` : this.options.prices.version;
   }
 }

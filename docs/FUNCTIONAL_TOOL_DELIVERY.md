@@ -17,10 +17,10 @@
 
 | 层级 | 必须证明 |
 |---|---|
-| 单元/集成 | operation 路由、Provider 返回、PNG 语义、额度原子性、失败/退款 |
-| 浏览器 E2E | 上传后布局、默认结果、原图切换、透明和彩色下载、无二次扣费、错误恢复 |
+| 单元/集成 | operation路由、Provider返回、该操作格式/尺寸/透明度/时长语义、额度原子性、失败/退款 |
+| 浏览器 E2E | 上传后状态、默认结果、原图切换、该操作下载、无二次扣费、错误恢复 |
 | Production public smoke | 域名、静态入口、匿名保护；不消耗 Provider 额度 |
-| Production functional smoke | 登录、上传、指定 operation、处理、结果/下载语义、额度恰好减一 |
+| Production functional smoke | 登录、上传、指定operation、产物/下载语义，按报价amount/unit检查恰好一次扣费及恢复；免费次数/购买图片Credits/管理员额度分别核对 |
 
 ## 完成定义
 

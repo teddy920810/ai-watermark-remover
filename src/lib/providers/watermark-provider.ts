@@ -11,6 +11,7 @@ export type ProviderResult =
   | { status: 'processing'; providerJobId: string };
 
 export interface ProviderCheckpoint {
+  provider?: 'mock' | 'replicate' | 'dewatermark';
   providerJobId?: string;
   sessionId?: string;
   stage?: string;

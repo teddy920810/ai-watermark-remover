@@ -2,7 +2,7 @@ import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, rmSync, existsSync
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
-import { collectTargetRoutes, createBuildPlan, prepareBuildInputs, targetIntegration, classifyTargetChanges, renderGatewayConfig, renderAppSiteProxy, configureAppSiteProxy, validateBuildArtifact, stageDeploymentArtifact } from '../../../scripts/build-target.mjs';
+import { collectTargetRoutes, createBuildPlan, prepareBuildInputs, targetIntegration, classifyTargetChanges, renderGatewayConfig, renderAppSiteProxy, configureAppSiteProxy, validateBuildArtifact, stageDeploymentArtifact, assertRequiredTargetBuilds } from '../../../scripts/build-target.mjs';
 
 const directories: string[] = [];
 function fixture() {
@@ -23,6 +23,67 @@ function fixture() {
 afterEach(() => { for (const directory of directories.splice(0)) rmSync(directory, { recursive: true, force: true }); });
 
 describe('independent build targets', () => {
+  it('keeps legacy service assembly App-only while shared durable resources reach App and Worker', () => {
+    expect(classifyTargetChanges(['src/lib/services.ts'])).toEqual(['app']);
+    expect(classifyTargetChanges(['src/lib/runtime/web-database-pool.ts', 'src/lib/benefits/free-benefits.ts'])).toEqual(['app', 'worker']);
+  });
+  it('owns only the exact public Pricing SSR route in App without proxying it to Site', () => {
+    const root = fixture();
+    writeFileSync(path.join(root, 'src/pages/pricing.astro'), '<h1>Pricing</h1>');
+    expect(collectTargetRoutes(root, 'app').map(route => route.pattern)).toContain('/pricing');
+    expect(collectTargetRoutes(root, 'site').map(route => route.pattern)).not.toContain('/pricing');
+    const config = renderAppSiteProxy({ version: 3, routes: [] }, { siteOrigin: 'https://site.example.test', publicOrigin: 'https://www.example.test' });
+    const proxy = config.routes[0];
+    expect(new RegExp(proxy.src!).test('/pricing')).toBe(false);
+    expect(new RegExp(proxy.src!).test('/pricing/')).toBe(false);
+    expect(new RegExp(proxy.src!).test('/pricing-unknown')).toBe(true);
+    expect(new RegExp(proxy.src!).test('/pricing/unknown')).toBe(true);
+    expect(classifyTargetChanges(['src/pages/pricing.astro'])).toEqual(['app']);
+    expect(classifyTargetChanges(['src/components/payments/CreditCatalog.tsx'])).toEqual(['app']);
+  });
+  it('publishes payment components to App and keeps verification-only edits out of deployment selection', () => {
+    for (const file of ['src/components/payments/CreditCheckout.tsx', 'src/components/payments/payment-attempt.ts']) {
+      expect(classifyTargetChanges([file]), file).toEqual(['app']);
+    }
+    for (const file of ['src/components/payments/BuyCreditsLink.tsx', 'src/components/payments/useImageCreditPrice.ts']) expect(classifyTargetChanges([file]), file).toEqual(['app']);
+    expect(classifyTargetChanges(['src/components/payments/payment-client.ts'])).toEqual(['app']);
+    for (const file of ['src/lib/build/retained-app-assets.test.ts', 'tests/e2e/payments.spec.ts', 'CONTRIBUTING.md', 'design-qa.md', 'docs/templates/example.json']) {
+      expect(classifyTargetChanges([file]), file).toEqual([]);
+    }
+    expect(classifyTargetChanges(['src/lib/payments/payment-service.ts'])).toEqual(['app', 'worker']);
+    expect(classifyTargetChanges(['.github/workflows/ci.yml'])).toEqual([]);
+  });
+  it('selects Site for a standalone Blog Markdown change while ordinary documentation stays verification-only', () => {
+    expect(classifyTargetChanges(['src/content/blog/example.md'])).toEqual(['site']);
+    for (const file of ['README.md', 'AGENTS.md', 'design-qa.md', 'docs/product/example.md', 'tests/fixtures/example.md']) expect(classifyTargetChanges([file]), file).toEqual([]);
+  });
+  it('requires successful selected Linux artifacts and never passes a failed or cancelled plan', () => {
+    expect(() => assertRequiredTargetBuilds(['site'], 'success', 'success')).not.toThrow();
+    expect(() => assertRequiredTargetBuilds([], 'skipped', 'success')).not.toThrow();
+    for (const result of ['failure', 'cancelled', 'skipped']) expect(() => assertRequiredTargetBuilds(['site'], result, 'success')).toThrow();
+    expect(() => assertRequiredTargetBuilds([], 'skipped', 'failure')).toThrow();
+    expect(() => assertRequiredTargetBuilds(['unknown'], 'success', 'success')).toThrow();
+  });
+  it('follows shared P5 intake and App-only editor consumers without selecting Worker', () => {
+    for (const file of ['src/components/uploader/BackgroundRemoverUploader.tsx', 'src/components/uploader/ObjectRemoverUploader.tsx', 'src/lib/client/auth-completion.ts', 'src/lib/client/canvas-mask.ts']) {
+      expect(classifyTargetChanges([file]), file).toEqual(['app']);
+    }
+    for (const file of ['src/lib/client/media-drafts.ts', 'src/lib/client/media-identification.ts', 'src/lib/client/media-recommendation.ts', 'src/components/launcher/MediaLauncher.tsx', 'src/components/launcher/launcher.css']) expect(classifyTargetChanges([file]), file).toEqual(['site', 'app']);
+    expect(classifyTargetChanges(['src/styles/image-editor.css'])).toEqual(['app']);
+    expect(classifyTargetChanges(['src/components/workspace/AppShell.tsx'])).toEqual(['app']);
+    expect(classifyTargetChanges(['src/lib/client/image-display.ts'])).toEqual(['site']);
+    expect(classifyTargetChanges(['src/lib/content/site-settings.ts'])).toEqual(['site', 'app']);
+  });
+  it('packages assets from the App-owned styles and excludes assets used only by Site marketing', () => {
+    const root = fixture();
+    mkdirSync(path.join(root, 'src/styles'), { recursive: true }); mkdirSync(path.join(root, 'public/images'), { recursive: true });
+    writeFileSync(path.join(root, 'src/styles/image-editor.css'), '.transparent { background: url("/images/transparency.svg"); }');
+    writeFileSync(path.join(root, 'src/styles/global.css'), '.hero { background: url("/uploads/marketing.png"); }');
+    writeFileSync(path.join(root, 'public/images/transparency.svg'), '<svg/>');
+    const plan = createBuildPlan(root, 'app'); prepareBuildInputs(plan);
+    expect(existsSync(path.join(plan.publicDir, '_app-assets/public/images/transparency.svg'))).toBe(true);
+    expect(existsSync(path.join(plan.publicDir, '_app-assets/public/uploads/marketing.png'))).toBe(false);
+  });
   it('keeps the image-use checkout and payment endpoints in App while Terms remain in Site', () => {
     const root = fixture();
     for (const file of ['src/pages/app/credits.astro', 'src/pages/api/payments/paypal/webhook.ts', 'src/pages/terms.astro']) {
@@ -57,6 +118,7 @@ describe('independent build targets', () => {
     integration.hooks['astro:config:setup']!({ injectRoute: (route: { pattern: string }) => injected.push(route) } as never);
     expect(injected.every((r) => !r.pattern.startsWith('/api') && !r.pattern.startsWith('/app'))).toBe(true);
     expect(() => integration.assertModule(path.join(root, 'src/lib/auth.ts'))).toThrow('site build imported');
+    expect(() => integration.assertModule(path.join(root, 'src/lib/payments/payment-config.ts'))).toThrow('site build imported');
     expect(() => integration.assertModule(path.join(root, 'src/components/auth/AuthControls.tsx'))).not.toThrow();
   });
   it('classifies content, API and durable execution changes by their actual build targets', () => {
@@ -68,7 +130,7 @@ describe('independent build targets', () => {
     expect(classifyTargetChanges(['scripts/build-worker.mjs'])).toEqual(['worker']);
     expect(classifyTargetChanges(['src/lib/providers/watermark-provider.ts', 'db/migrations/008_example.sql'])).toEqual(['app', 'worker']);
     expect(classifyTargetChanges(['src/styles/workspace.css'])).toEqual(['app']);
-    expect(classifyTargetChanges(['src/styles/global.css'])).toEqual(['site', 'app']);
+    expect(classifyTargetChanges(['src/styles/global.css'])).toEqual(['site']);
     expect(classifyTargetChanges(['docs/DEVELOPER_GUIDE.md'])).toEqual([]);
     expect(classifyTargetChanges(['scripts/build-target.mjs'])).toEqual(['site', 'app', 'worker']);
   });

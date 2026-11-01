@@ -1,4 +1,5 @@
 import type { Pool, PoolClient } from 'pg';
+import { ensureFreeBenefitAccount } from './free-benefits';
 import { consumePurchasedImageCredit, getPurchasedImageBalance, refundPurchasedImageCredit, reservePurchasedImageCredit } from '../payments/image-credit-wallet';
 import type { ImageCreditCosts, ImageCreditOperation } from '../payments/image-credit-wallet';
 import {
@@ -215,28 +216,7 @@ export class PostgresBenefitStore implements BenefitStore {
   }
 
   private async ensureUser(client: PoolClient, userId: string, email?: string): Promise<void> {
-    const inserted = await client.query<{ balance: number }>(`
-      INSERT INTO user_benefits (user_id, balance)
-      VALUES ($1, 1)
-      ON CONFLICT (user_id) DO NOTHING
-      RETURNING balance::int AS balance
-    `, [userId]);
-    if (inserted.rows[0]) {
-      await client.query(`
-        INSERT INTO benefit_ledger (user_id, delta, balance_after, reason, reference_id)
-        VALUES ($1, 1, 1, 'first_use', $1)
-      `, [userId]);
-    }
-    await client.query('UPDATE user_benefits SET last_active_at = NOW() WHERE user_id = $1', [userId]);
-    if (email) {
-      await client.query(`
-        INSERT INTO user_benefit_identities (user_id, email)
-        VALUES ($1, $2)
-        ON CONFLICT (user_id) DO UPDATE SET
-          email = EXCLUDED.email,
-          updated_at = NOW()
-      `, [userId, email.trim().toLowerCase()]);
-    }
+    await ensureFreeBenefitAccount(client, userId, { touchActivity: true, email });
   }
 
   private async transaction<T>(work: (client: PoolClient) => Promise<T>): Promise<T> {

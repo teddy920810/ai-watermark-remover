@@ -150,7 +150,6 @@
 .tool-landing .hero-sample img { border-radius: 5px; object-fit: cover; }
 .tool-landing .preview-caption { margin: 9px 0 0; color: #67748b; font-size: 11px; text-align: center; }
 
-.tool-landing .landing-compare,
 .tool-landing .landing-sample-image {
   position: relative;
   width: 100%;
@@ -162,11 +161,7 @@
   background: #e5edf7;
   isolation: isolate;
 }
-.tool-landing .landing-compare { cursor: ew-resize; }
-.tool-landing .landing-compare > .responsive-picture,
-.tool-landing .landing-compare > img,
-.tool-landing .landing-sample-image > .responsive-picture,
-.tool-landing .landing-sample-image > img {
+.tool-landing .landing-sample-image > .responsive-picture, .tool-landing .landing-sample-image > img {
   display: block;
   width: 100%;
   height: 100%;
@@ -175,21 +170,7 @@
   border-radius: 0;
   object-fit: cover;
 }
-.tool-landing .landing-compare > .responsive-picture > img,
 .tool-landing .landing-sample-image > .responsive-picture > img { width: 100%; height: 100%; object-fit: cover; }
-.tool-landing .landing-before-image,
-.tool-landing .landing-watermark {
-  position: absolute;
-  z-index: 2;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  clip-path: inset(0 calc(100% - var(--compare-position, 50%)) 0 0);
-  pointer-events: none;
-}
-.tool-landing .landing-before-image > .responsive-picture,
-.tool-landing .landing-before-image img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .tool-landing .gemini-mark {
   position: absolute;
   bottom: 32px;
@@ -208,61 +189,6 @@
 .tool-landing .gemini-mark > small { font-size: 10px; font-weight: 800; letter-spacing: 1.4px; }
 .tool-landing .sample-travel .gemini-mark { right: 30px; bottom: 30px; left: auto; }
 .tool-landing .sample-serum .gemini-mark { top: 36px; right: 28px; bottom: auto; left: auto; }
-.tool-landing .style-watermark .landing-watermark-badge {
-  position: absolute;
-  left: 10%;
-  bottom: 12%;
-  color: #fff;
-  font: 800 clamp(12px, 2vw, 22px)/1.2 "Plus Jakarta Sans", sans-serif;
-  text-shadow: 0 1px 4px #17366180;
-}
-.tool-landing .compare-label {
-  position: absolute;
-  z-index: 4;
-  top: 11px;
-  padding: 4px 7px;
-  border-radius: 5px;
-  color: #fff;
-  font-size: 10px;
-  line-height: 1.6;
-}
-.tool-landing .compare-label.before { left: 10px; background: #17233fdb; }
-.tool-landing .compare-label.after { right: 10px; background: #326ae8; }
-.tool-landing .compare-line {
-  position: absolute;
-  z-index: 3;
-  top: 0;
-  bottom: 0;
-  left: var(--compare-position, 50%);
-  width: 2px;
-  background: #fff;
-  pointer-events: none;
-}
-.tool-landing .compare-line > svg {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 32px;
-  height: 32px;
-  padding: 7px;
-  border-radius: 50%;
-  color: var(--landing-blue);
-  background: #fff;
-  box-shadow: 0 4px 12px #20364e55;
-  transform: translate(-50%, -50%);
-}
-.tool-landing .compare-control {
-  position: absolute;
-  z-index: 5;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  opacity: 0;
-  cursor: ew-resize;
-  touch-action: pan-y;
-}
-.tool-landing .landing-compare:has(.compare-control:focus-visible) { outline: 3px solid #93b3ff; outline-offset: 4px; }
 
 /* The live upload component keeps its state and API behavior. */
 .tool-landing .hero-tool .tool-card {
@@ -274,39 +200,6 @@
   box-shadow: none;
 }
 .tool-landing .hero-tool .tool-heading { display: none; }
-.tool-landing .hero-tool .drop-zone {
-  min-height: 396px;
-  height: 396px;
-  padding: 30px 24px 21px;
-  gap: 10px;
-  border: 2px dashed #c7d5f1;
-  border-radius: 18px;
-  background: #fff;
-}
-.tool-landing .hero-tool .drop-zone:focus-within { outline: 3px solid #93b3ff; outline-offset: 4px; }
-.tool-landing .hero-tool .upload-action {
-  min-width: 258px;
-  min-height: 72px;
-  justify-content: center;
-  gap: 13px;
-  padding: 18px 28px;
-  border-radius: 16px;
-  background: #3b6de7;
-  box-shadow: 0 12px 24px rgb(49 97 214 / .28);
-  font: 800 17px/1 "Plus Jakarta Sans", sans-serif;
-  letter-spacing: -.25px;
-}
-.tool-landing .hero-tool .upload-action strong { font: inherit; }
-.tool-landing .hero-tool .upload-action svg { width: 25px; height: 25px; flex: none; }
-.tool-landing .hero-tool .drop-zone > span:not(.upload-action) { margin-top: 0; font-size: 12px; }
-.tool-landing .hero-tool .drop-zone small {
-  margin-top: 0;
-  padding-top: 13px;
-  border-color: #edf0f5;
-  color: #69768a;
-  font-size: 12px;
-}
-.tool-landing .hero-tool .privacy-note { margin-top: 11px; font-size: 11px; }
 
 /* Keep the current image/video launcher aligned with the v16 preview frame. */
 .tool-landing .hero-tool .media-launcher { display: flex; min-width: 0; flex-direction: column; }
@@ -346,28 +239,6 @@
 .tool-landing .hero-tool .launcher-error { order: 2; }
 .tool-landing .hero-tool .launcher-local-note { order: 3; line-height: 1.6; }
 .tool-landing .hero-tool .launcher-workspace-link { order: 4; }
-
-.tool-landing .hero-inner.is-tool-expanded,
-.tool-landing .hero-inner:has(.preview-panel, .result-panel, .object-workspace, .background-result) { max-width: none; }
-.tool-landing .hero-inner.is-tool-expanded .hero-copy,
-.tool-landing .hero-inner.is-tool-expanded .hero-preview,
-.tool-landing .hero-inner:has(.preview-panel, .result-panel, .object-workspace, .background-result) .hero-copy,
-.tool-landing .hero-inner:has(.preview-panel, .result-panel, .object-workspace, .background-result) .hero-preview { display: none; }
-.tool-landing .hero-inner.is-tool-expanded .hero-workbench,
-.tool-landing .hero-inner:has(.preview-panel, .result-panel, .object-workspace, .background-result) .hero-workbench {
-  width: 1200px;
-  grid-template-columns: minmax(0, 1fr);
-}
-.tool-landing .hero-inner.is-tool-expanded .hero-tool .tool-card,
-.tool-landing .hero-inner:has(.preview-panel, .result-panel, .object-workspace, .background-result) .hero-tool .tool-card {
-  padding: 30px;
-  border: 1px solid var(--landing-line);
-  border-radius: 18px;
-  background: #fff;
-}
-.tool-landing .hero-inner.is-tool-expanded .tool-heading,
-.tool-landing .hero-inner:has(.preview-panel, .result-panel, .object-workspace, .background-result) .tool-heading { display: flex; }
-.tool-landing .hero-inner:has(.preview-panel) .preview-panel > img { height: min(56vh, 560px); }
 
 .tool-landing .landing-process { display: block; background: #f7f9ff; }
 .tool-landing .step-grid {
@@ -466,8 +337,6 @@
 .tool-landing .feature-media > .responsive-picture { display: block; width: 100%; height: 100%; }
 .tool-landing .feature-media > img,
 .tool-landing .feature-media > .responsive-picture > img { width: 100%; height: 100%; max-height: none; border-radius: 0; object-fit: contain; }
-.tool-landing .feature-media > .landing-compare { height: 100%; aspect-ratio: auto; border-radius: 0; }
-.tool-landing .feature-media .landing-watermark { background: #172b463a; backdrop-filter: grayscale(.72) contrast(.86); }
 .tool-landing .feature-media .gemini-mark { bottom: 28px; left: 28px; grid-template-columns: 27px auto; grid-template-rows: 15px 10px; column-gap: 5px; padding: 7px 9px; border-radius: 6px; background: #172033; }
 .tool-landing .feature-media .gemini-mark > svg { width: 29px; height: 29px; }
 .tool-landing .feature-media .gemini-mark > b { font-size: 18px; letter-spacing: .25px; }
@@ -475,10 +344,6 @@
 .tool-landing .sample-feature-1 .gemini-mark { right: 27px; bottom: 28px; left: auto; }
 .tool-landing .sample-feature-2 .gemini-mark { top: 47%; right: 24%; bottom: auto; left: auto; }
 .tool-landing .sample-feature-3 .gemini-mark { top: 55%; right: 24%; bottom: auto; left: auto; }
-.tool-landing .feature-media .compare-label { top: 16px; padding: 6px 11px; border-radius: 8px; font-size: 11px; }
-.tool-landing .feature-media .compare-label.before { left: 16px; }
-.tool-landing .feature-media .compare-label.after { right: 16px; }
-.tool-landing .feature-media .compare-line > svg { width: 41px; height: 41px; padding: 10px; box-shadow: 0 4px 14px #1c304745; }
 .tool-landing .feature-copy { max-width: none; min-width: 0; padding: 0; }
 .tool-landing .feature-copy h3 {
   max-width: 500px;
@@ -568,8 +433,6 @@
   .tool-landing .feature-media { aspect-ratio: auto; height: 438px; }
   .tool-landing .feature-copy h3,
   .tool-landing .feature-copy p { max-width: none; }
-  .tool-landing .hero-inner.is-tool-expanded .hero-workbench,
-  .tool-landing .hero-inner:has(.preview-panel, .result-panel, .object-workspace, .background-result) .hero-workbench { width: calc(100% - 48px); }
 }
 
 @media (max-width: 760px) {
@@ -581,9 +444,6 @@
   .tool-landing .hero-points li { font-size: 11px; }
   .tool-landing .hero-workbench { width: calc(100% - 40px); }
   .tool-landing .hero-sample { width: 58px; height: 58px; }
-  .tool-landing .hero-tool .drop-zone { min-height: 280px; height: 280px; padding: 25px 18px 18px; }
-  .tool-landing .hero-tool .upload-action { min-width: 0; max-width: 100%; min-height: 60px; padding: 16px 22px; border-radius: 14px; font-size: 15px; line-height: 1.25; }
-  .tool-landing .hero-tool .drop-zone small { font-size: 11px; }
   .tool-landing .hero-tool .launcher-drop { min-height: 280px; height: 280px; padding: 25px 18px 18px; }
   .tool-landing .hero-tool .launcher-drop .button { width: auto; min-width: min(180px, 100%); min-height: 60px; padding: 16px 22px; border-radius: 14px; font-size: 15px; }
   .tool-landing .hero-tool .launcher-drop-copy { margin: 10px 0; font-size: 12px; line-height: 1.5; }
@@ -614,13 +474,10 @@
   .tool-landing .faq-section .section-heading h2 { font-size: 31px; letter-spacing: -1.35px; }
   .tool-landing .faq-list { width: 100%; }
   .tool-landing .faq-list details { padding: 18px 20px; }
-  .tool-landing .hero-inner.is-tool-expanded .hero-workbench,
-  .tool-landing .hero-inner:has(.preview-panel, .result-panel, .object-workspace, .background-result) .hero-workbench { width: calc(100% - 40px); }
-  .tool-landing .hero-inner.is-tool-expanded .hero-tool .tool-card,
-  .tool-landing .hero-inner:has(.preview-panel, .result-panel, .object-workspace, .background-result) .hero-tool .tool-card { padding: 14px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .tool-landing .hero-sample,
   .tool-landing .tool-grid > .tool-card { transition: none; }
 }
+@media(max-width:900px){.tool-landing .hero-workbench:has(.media-launcher) .hero-tool{order:-1}}

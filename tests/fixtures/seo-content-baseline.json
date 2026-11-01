@@ -1,0 +1,1412 @@
+{
+  "base": "574ad43e53e5696e225f7fa73606e3849d7bd2db",
+  "note": "Independent original content, not derived from the migration manifest. Only the separately reviewed public Pricing navigation additions are normalized in the test. Update content expectations only with explicit content-owner authorization.",
+  "files": [
+    {
+      "file": "src/content/blog/how-to-remove-date-stamp-from-photo.md",
+      "semanticSha256": "4061f3826cca76105e9a717995afcb7121dcddc42099c7e24595b3fd815ed8b0",
+      "images": [
+        {
+          "path": "/frontmatter/coverImage",
+          "value": "/uploads/how-to-remove-date-stamp-from-photo-figure-1.jpg"
+        },
+        {
+          "path": "/frontmatter/coverAlt",
+          "value": "Illustration of a photograph with a visible corner date stamp and options for preserving or cropping the scene."
+        },
+        {
+          "path": "markdown",
+          "image": "/uploads/how-to-remove-date-stamp-from-photo-figure-2.jpg",
+          "alt": "Illustrative before-and-after comparison of a date-stamped photograph and a visually cleaned copy."
+        },
+        {
+          "path": "markdown",
+          "image": "/uploads/how-to-remove-date-stamp-from-photo-figure-3.jpg",
+          "alt": "Illustration showing how cropping a date stamp from a corner changes the photograph composition."
+        },
+        {
+          "path": "markdown",
+          "image": "/uploads/how-to-remove-date-stamp-from-photo-figure-4.jpg",
+          "alt": "Illustrative desktop photo-retouching scene showing a date-stamp repair, not an official Photoshop screenshot."
+        }
+      ]
+    },
+    {
+      "file": "src/content/blog/how-to-remove-gpt-image-2-5-grain-noise.md",
+      "semanticSha256": "e7efae2c7c0196e5f0d756097887d900b35da69331da15ac783118bbb7e2a81a",
+      "images": [
+        {
+          "path": "/frontmatter/coverImage",
+          "value": "/uploads/how-to-remove-gpt-image-2-5-grain-noise-figure-1.png"
+        },
+        {
+          "path": "/frontmatter/coverAlt",
+          "value": "Creator inspecting a grainy sky at 100 percent on a desktop monitor"
+        },
+        {
+          "path": "markdown",
+          "image": "/uploads/how-to-remove-gpt-image-2-5-grain-noise-figure-2.png",
+          "alt": "Local photo editor view showing a focused edit on a speckled ceramic surface"
+        },
+        {
+          "path": "markdown",
+          "image": "/uploads/how-to-remove-gpt-image-2-5-grain-noise-figure-3.png",
+          "alt": "Noise reduction adjustment with a portrait close up on a desktop monitor"
+        },
+        {
+          "path": "markdown",
+          "image": "/uploads/how-to-remove-gpt-image-2-5-grain-noise-figure-4.png",
+          "alt": "Creator comparing two product photo versions beside a camera"
+        }
+      ]
+    },
+    {
+      "file": "src/content/blog/how-to-remove-grok-watermark.md",
+      "semanticSha256": "81f27a9c586d3f95ae6ab2072e89497f168883a0e0e0f4393d564255ede362b3",
+      "images": [
+        {
+          "path": "markdown",
+          "image": "/uploads/how-to-remove-grok-watermark-figure-1.png",
+          "alt": "Separate the Grok provenance mark from elements you are actually allowed to edit."
+        },
+        {
+          "path": "markdown",
+          "image": "/uploads/how-to-remove-grok-watermark-figure-2.png",
+          "alt": "Four safe alternatives when the Grok watermark conflicts with the layout."
+        },
+        {
+          "path": "markdown",
+          "image": "/uploads/how-to-remove-grok-watermark-figure-3.png",
+          "alt": "WatermarkGemini workflow for a separate authorized supporting image in a Grok-centered content project."
+        }
+      ]
+    },
+    {
+      "file": "src/content/blog/how-to-remove-instagram-watermark.md",
+      "semanticSha256": "0cbe5a7b7be95ee048e9f19c8de230ba65a4d3b62cafc1955cfba7ed7220d589",
+      "images": [
+        {
+          "path": "/frontmatter/coverImage",
+          "value": "/uploads/how-to-remove-instagram-watermark-figure-1.jpg"
+        },
+        {
+          "path": "/frontmatter/coverAlt",
+          "value": "Person holding a phone displaying a travel Instagram Reel with a visible username watermark."
+        },
+        {
+          "path": "markdown",
+          "image": "/uploads/how-to-remove-instagram-watermark-figure-2.jpg",
+          "alt": "Downloaded Instagram Reel with a visible username watermark over a Santorini travel scene."
+        },
+        {
+          "path": "markdown",
+          "image": "/uploads/how-to-remove-instagram-watermark-figure-3.jpg",
+          "alt": "Editing a downloaded Instagram Reel in a browser-based video workspace on a laptop."
+        },
+        {
+          "path": "markdown",
+          "image": "/uploads/how-to-remove-instagram-watermark-figure-4.jpg",
+          "alt": "Selecting the stationary Instagram watermark area on a vertical travel Reel."
+        },
+        {
+          "path": "markdown",
+          "image": "/uploads/how-to-remove-instagram-watermark-figure-5.jpg",
+          "alt": "Creator checking a vertical video frame and editing timeline on a laptop."
+        },
+        {
+          "path": "markdown",
+          "image": "/uploads/how-to-remove-instagram-watermark-figure-6.jpg",
+          "alt": "Instagram username watermark over a busy European street video scene."
+        },
+        {
+          "path": "markdown",
+          "image": "/uploads/how-to-remove-instagram-watermark-figure-7.jpg",
+          "alt": "Illustrative comparison of a travel Reel with and without an Instagram watermark."
+        },
+        {
+          "path": "markdown",
+          "image": "/uploads/how-to-remove-instagram-watermark-figure-8.jpg",
+          "alt": "Same travel Reel frame with original sharp detail and a simulated blurred repair patch."
+        },
+        {
+          "path": "markdown",
+          "image": "/uploads/how-to-remove-instagram-watermark-figure-9.jpg",
+          "alt": "Traveler recording original vertical video footage on a smartphone in the mountains."
+        },
+        {
+          "path": "markdown",
+          "image": "/uploads/how-to-remove-instagram-watermark-figure-10.jpg",
+          "alt": "Clean vertical mountain travel footage from an original video export."
+        },
+        {
+          "path": "markdown",
+          "image": "/uploads/how-to-remove-instagram-watermark-figure-11.jpg",
+          "alt": "Illustrative smartphone video editor showing a short Reel and editing timeline."
+        },
+        {
+          "path": "markdown",
+          "image": "/uploads/how-to-remove-instagram-watermark-figure-12.jpg",
+          "alt": "Clean travel Reel footage without an Instagram watermark from an original source."
+        },
+        {
+          "path": "markdown",
+          "image": "/uploads/how-to-remove-instagram-watermark-figure-13.jpg",
+          "alt": "Instagram-style username watermark in the corner of a sunset beach Reel."
+        },
+        {
+          "path": "markdown",
+          "image": "/uploads/how-to-remove-instagram-watermark-figure-14.jpg",
+          "alt": "Same Reel scene before and after cropping the corner Instagram watermark."
+        },
+        {
+          "path": "markdown",
+          "image": "/uploads/how-to-remove-instagram-watermark-figure-15.jpg",
+          "alt": "Alpine lake travel Reel scene with a simulated blurred patch covering a corner username mark."
+        },
+        {
+          "path": "markdown",
+          "image": "/uploads/how-to-remove-instagram-watermark-figure-16.jpg",
+          "alt": "Creator comparing two versions of a travel scene on a laptop."
+        },
+        {
+          "path": "markdown",
+          "image": "/uploads/how-to-remove-instagram-watermark-figure-17.jpg",
+          "alt": "Instagram-style account watermark on a vertical European city travel Reel."
+        },
+        {
+          "path": "markdown",
+          "image": "/uploads/how-to-remove-instagram-watermark-figure-18.jpg",
+          "alt": "Clean vertical beach sunset video frame with no platform watermark."
+        }
+      ]
+    },
+    {
+      "file": "src/content/blog/how-to-remove-metadata-from-image.md",
+      "semanticSha256": "670b85d48bfd794e64e1a664204c88e1e849782a3b9eca57b634d7babb9c95c0",
+      "images": [
+        {
+          "path": "/frontmatter/coverImage",
+          "value": "/uploads/how-to-remove-metadata-from-image-figure-1.png"
+        },
+        {
+          "path": "/frontmatter/coverAlt",
+          "value": "Person reviewing a clean image copy before sharing."
+        },
+        {
+          "path": "markdown",
+          "image": "/uploads/how-to-remove-metadata-from-image-figure-1.png",
+          "alt": "Person reviewing a clean image copy before sharing."
+        },
+        {
+          "path": "markdown",
+          "image": "/uploads/how-to-remove-metadata-from-image-figure-2.png",
+          "alt": "Person checking image properties before sharing a new copy."
+        },
+        {
+          "path": "markdown",
+          "image": "/uploads/how-to-remove-metadata-from-image-figure-3.png",
+          "alt": "Person reviewing a visible label on an authorized product image."
+        }
+      ]
+    },
+    {
+      "file": "src/content/blog/how-to-remove-samsung-watermark-from-photos.md",
+      "semanticSha256": "fbf8dc975447010e6acd8cdbc428aaf630d6c076f356b12190cb5425d22af81c",
+      "images": [
+        {
+          "path": "/frontmatter/coverImage",
+          "value": "/uploads/how-to-remove-samsung-watermark-from-photos-figure-1.jpg"
+        },
+        {
+          "path": "/frontmatter/coverAlt",
+          "value": "Synthetic Samsung-style scenic photo before and after removing model and date watermark. Illustrative example, not a verified removal test."
+        },
+        {
+          "path": "markdown",
+          "image": "/uploads/how-to-remove-samsung-watermark-from-photos-figure-2.jpg",
+          "alt": "Conceptual close-up of a person viewing a camera watermarked Galaxy-style photo in a mobile gallery."
+        },
+        {
+          "path": "markdown",
+          "image": "/uploads/how-to-remove-samsung-watermark-from-photos-figure-3.jpg",
+          "alt": "Person taking an unedited landscape photo on a mobile device, illustrating camera photo source selection."
+        },
+        {
+          "path": "markdown",
+          "image": "/uploads/how-to-remove-samsung-watermark-from-photos-figure-4.jpg",
+          "alt": "Conceptual photo of a user checking a watermark-removal comparison on a laptop browser, not WatermarkGemini live interface."
+        },
+        {
+          "path": "markdown",
+          "image": "/uploads/how-to-remove-samsung-watermark-from-photos-figure-5.jpg",
+          "alt": "A sunset beach camera watermarked photo and a matching example without the mark, illustrative."
+        },
+        {
+          "path": "markdown",
+          "image": "/uploads/how-to-remove-samsung-watermark-from-photos-figure-6.jpg",
+          "alt": "Photo editor on a laptop displaying a scene for visual inspection after editing."
+        },
+        {
+          "path": "markdown",
+          "image": "/uploads/how-to-remove-samsung-watermark-from-photos-figure-7.jpg",
+          "alt": "Three photographic watermarked scenes with sky, detailed meadow and architectural lines that demand different quality checks."
+        },
+        {
+          "path": "markdown",
+          "image": "/uploads/how-to-remove-samsung-watermark-from-photos-figure-8.jpg",
+          "alt": "Conceptual close-up of a person selecting a Samsung-style camera watermark in a phone photo eraser."
+        },
+        {
+          "path": "markdown",
+          "image": "/uploads/how-to-remove-samsung-watermark-from-photos-figure-9.jpg",
+          "alt": "Conceptual Galaxy-style phone photo gallery with a reversible watermarked edit and restored original view."
+        },
+        {
+          "path": "markdown",
+          "image": "/uploads/how-to-remove-samsung-watermark-from-photos-figure-10.jpg",
+          "alt": "Hands using the crop boundaries of a photo editor to remove a camera watermark near the edge of a lake photo."
+        },
+        {
+          "path": "markdown",
+          "image": "/uploads/how-to-remove-samsung-watermark-from-photos-figure-11.jpg",
+          "alt": "Conceptual smartphone camera settings screen with watermark control being turned off, not an exact Samsung One UI screenshot."
+        },
+        {
+          "path": "markdown",
+          "image": "/uploads/how-to-remove-samsung-watermark-from-photos-figure-12.jpg",
+          "alt": "A full photograph showing an example of a blurry image repair patch; actual results vary."
+        },
+        {
+          "path": "markdown",
+          "image": "/uploads/how-to-remove-samsung-watermark-from-photos-figure-13.jpg",
+          "alt": "Illustrative travel photo with a visible model-name and date camera watermark already in the saved image."
+        },
+        {
+          "path": "markdown",
+          "image": "/uploads/how-to-remove-samsung-watermark-from-photos-figure-14.jpg",
+          "alt": "Close-up conceptual smartphone camera settings showing a watermark control for future captures."
+        },
+        {
+          "path": "markdown",
+          "image": "/uploads/how-to-remove-samsung-watermark-from-photos-figure-15.jpg",
+          "alt": "Clean illustrative photo of alpine mountains and lake without visible phone model watermark."
+        }
+      ]
+    },
+    {
+      "file": "src/content/blog/remove-moving-watermark-from-video.md",
+      "semanticSha256": "88189f9c36838ef0ab9db57227f72fbe6b710fbcf2654c0aa08abafb20bc40fb",
+      "images": [
+        {
+          "path": "markdown",
+          "image": "/uploads/moving-watermark-situation.png",
+          "alt": ""
+        },
+        {
+          "path": "markdown",
+          "image": "/uploads/moving-watermark-methods-compared.png",
+          "alt": ""
+        },
+        {
+          "path": "markdown",
+          "image": "/uploads/remove-moving-watermark-from-original-object.png",
+          "alt": ""
+        },
+        {
+          "path": "markdown",
+          "image": "/uploads/crop-watermark.png",
+          "alt": ""
+        },
+        {
+          "path": "markdown",
+          "image": "/uploads/track-the-moving-watermark.png",
+          "alt": ""
+        },
+        {
+          "path": "markdown",
+          "image": "/uploads/temporal-repair-for-moving-watermark.png",
+          "alt": ""
+        },
+        {
+          "path": "markdown",
+          "image": "/uploads/replace-the-shot-for-moving-watermark.png",
+          "alt": ""
+        },
+        {
+          "path": "markdown",
+          "image": "/uploads/temporal-qa-before-the-final-export.png",
+          "alt": ""
+        },
+        {
+          "path": "markdown",
+          "image": "/uploads/watermarkgemini-workflow-for-moving-watermark.png",
+          "alt": ""
+        }
+      ]
+    },
+    {
+      "file": "src/content/homepage/home.json",
+      "semanticSha256": "9976a0a23d5d22104e60d2203f99d45134bb8612c0993dd8fd42ad8a5331d021",
+      "images": [
+        {
+          "path": "/hero/samples/0/image",
+          "value": "/uploads/home-blueprint/features/hero-sample-01-serum.png"
+        },
+        {
+          "path": "/hero/samples/1/image",
+          "value": "/uploads/home-blueprint/features/hero-sample-02-sunset.png"
+        },
+        {
+          "path": "/hero/samples/2/image",
+          "value": "/uploads/home-blueprint/features/hero-sample-03-tote.png"
+        },
+        {
+          "path": "/hero/samples/3/image",
+          "value": "/uploads/home-blueprint/features/hero-sample-04-contract.png"
+        },
+        {
+          "path": "/useCases/0/image",
+          "value": "/uploads/home-blueprint/results/result-01-logo-hiker.png"
+        },
+        {
+          "path": "/useCases/0/imageAlt",
+          "value": "Hiker in a mountain landscape for a branded logo removal comparison"
+        },
+        {
+          "path": "/useCases/1/image",
+          "value": "/uploads/home-blueprint/results/result-02-magazine-model.png"
+        },
+        {
+          "path": "/useCases/1/imageAlt",
+          "value": "Fashion model for a magazine-cover text removal comparison"
+        },
+        {
+          "path": "/useCases/2/image",
+          "value": "/uploads/home-blueprint/results/result-03-gemini-water.png"
+        },
+        {
+          "path": "/useCases/2/imageAlt",
+          "value": "Portrait in water for an AI-generated mark removal comparison"
+        },
+        {
+          "path": "/useCases/3/image",
+          "value": "/uploads/home-blueprint/results/result-04-date-pyramids.png"
+        },
+        {
+          "path": "/useCases/3/imageAlt",
+          "value": "Tourist in front of pyramids for a date stamp removal comparison"
+        },
+        {
+          "path": "/useCases/4/image",
+          "value": "/uploads/home-blueprint/results/result-05-signature-invoice.png"
+        },
+        {
+          "path": "/useCases/4/imageAlt",
+          "value": "Invoice document for a handwritten signature removal comparison"
+        },
+        {
+          "path": "/features/items/0/image",
+          "value": "/uploads/home-blueprint/features/feature-01-cream-branded-base.png"
+        },
+        {
+          "path": "/features/items/0/imageAlt",
+          "value": "Branded cream jar product photo for transparent watermark removal comparison"
+        },
+        {
+          "path": "/features/items/1/image",
+          "value": "/uploads/home-blueprint/features/feature-02-date-base.png"
+        },
+        {
+          "path": "/features/items/1/imageAlt",
+          "value": "Portrait in front of a detailed stone building for date watermark removal comparison"
+        },
+        {
+          "path": "/features/items/2/image",
+          "value": "/uploads/home-blueprint/features/feature-03-travel-clean-base.png"
+        },
+        {
+          "path": "/features/items/2/imageAlt",
+          "value": "Clean travel portrait with a dog in Santorini for multi-element watermark removal comparison"
+        },
+        {
+          "path": "/features/items/3/image",
+          "value": "/uploads/home-blueprint/features/feature-04-laptop-clean-base.png"
+        },
+        {
+          "path": "/features/items/3/imageAlt",
+          "value": "Laptop showing a clean travel image ready for watermark removal comparison"
+        },
+        {
+          "path": "/audiences/cards/0/image",
+          "value": "/uploads/home-blueprint/audiences/creator-photo-studio.png"
+        },
+        {
+          "path": "/audiences/cards/0/alt",
+          "value": "Creator reviewing original photography in a home studio"
+        },
+        {
+          "path": "/audiences/cards/1/image",
+          "value": "/uploads/home-blueprint/audiences/marketer-office-meeting.png"
+        },
+        {
+          "path": "/audiences/cards/1/alt",
+          "value": "Marketing team reviewing campaign visuals together in a bright office meeting"
+        },
+        {
+          "path": "/audiences/cards/2/image",
+          "value": "/uploads/home-blueprint/audiences/educator-classroom-lesson.png"
+        },
+        {
+          "path": "/audiences/cards/2/alt",
+          "value": "Teacher leading an engaged classroom lesson with students"
+        },
+        {
+          "path": "/removalTools/cards/0/image",
+          "value": "/uploads/home-blueprint/tool-cards/card-01-background-lamp.png"
+        },
+        {
+          "path": "/removalTools/cards/0/alt",
+          "value": "Before-and-after lamp image showing a removed studio background"
+        },
+        {
+          "path": "/removalTools/cards/1/image",
+          "value": "/uploads/home-blueprint/tool-cards/card-02-object-living-room.png"
+        },
+        {
+          "path": "/removalTools/cards/1/alt",
+          "value": "Before-and-after living-room table showing a small red ball removed"
+        },
+        {
+          "path": "/removalTools/cards/2/image",
+          "value": "/uploads/home-blueprint/tool-cards/card-03-text-coastal-car.png"
+        },
+        {
+          "path": "/removalTools/cards/2/alt",
+          "value": "Before-and-after coastal road image showing decorative text overlay removal"
+        },
+        {
+          "path": "/removalTools/cards/3/image",
+          "value": "/uploads/home-blueprint/tool-cards/card-04-logo-hiking-bottle.png"
+        },
+        {
+          "path": "/removalTools/cards/3/alt",
+          "value": "Before-and-after hiking bottle image showing an embossed logo removed"
+        },
+        {
+          "path": "/removalTools/cards/4/image",
+          "value": "/uploads/home-blueprint/tool-cards/card-05-ai-watermark-tablet.png"
+        },
+        {
+          "path": "/removalTools/cards/4/alt",
+          "value": "Tablet image showing a fictional AI-style watermark removal comparison"
+        },
+        {
+          "path": "/removalTools/cards/5/image",
+          "value": "/uploads/home-blueprint/tool-cards/card-06-gemini-watermark-greenhouse.png"
+        },
+        {
+          "path": "/removalTools/cards/5/alt",
+          "value": "Before-and-after greenhouse portrait showing a colorful generated-image mark removed"
+        },
+        {
+          "path": "/removalTools/cards/6/image",
+          "value": "/uploads/home-blueprint/tool-cards/card-07-date-stamp-picnic.png"
+        },
+        {
+          "path": "/removalTools/cards/6/alt",
+          "value": "Before-and-after vintage picnic photo showing a date stamp removed"
+        },
+        {
+          "path": "/removalTools/cards/7/image",
+          "value": "/uploads/home-blueprint/tool-cards/card-08-signature-architecture.png"
+        },
+        {
+          "path": "/removalTools/cards/7/alt",
+          "value": "Before-and-after architecture sketch showing a handwritten signature removed"
+        }
+      ]
+    },
+    {
+      "file": "src/content/landing-pages/batch-watermark-remover.json",
+      "semanticSha256": "0d0499e615628e06211e555b64eb764efa6383186eeef33bffe7492181f4f813",
+      "images": [
+        {
+          "path": "/heroSamples/0/image",
+          "value": "/uploads/workflow-upload-step.png"
+        },
+        {
+          "path": "/heroSamples/0/imageAlt",
+          "value": "Image entering the secure upload workflow"
+        },
+        {
+          "path": "/heroSamples/1/image",
+          "value": "/uploads/workflow-ai-detection-step.png"
+        },
+        {
+          "path": "/heroSamples/1/imageAlt",
+          "value": "AI detecting a visible watermark area in an image"
+        },
+        {
+          "path": "/heroSamples/2/image",
+          "value": "/uploads/workflow-download-step.png"
+        },
+        {
+          "path": "/heroSamples/2/imageAlt",
+          "value": "Before and after image ready for secure download"
+        }
+      ]
+    },
+    {
+      "file": "src/content/landing-pages/capcut-watermark-remover.json",
+      "semanticSha256": "7c9284ce2c394dfbc332b92e314dc2e67afaff8ab6f50d71cf3ccba0fc8eb162",
+      "images": [
+        {
+          "path": "/process/steps/0/image",
+          "value": "/uploads/capcut-operations-feature-1.png"
+        },
+        {
+          "path": "/process/steps/0/imageAlt",
+          "value": "Use an export you can edit"
+        },
+        {
+          "path": "/process/steps/1/image",
+          "value": "/uploads/capcut-operations-feature-2.png"
+        },
+        {
+          "path": "/process/steps/1/imageAlt",
+          "value": "Identify the visible area"
+        },
+        {
+          "path": "/process/steps/2/image",
+          "value": "/uploads/capcut-operations-feature-3.png"
+        },
+        {
+          "path": "/process/steps/2/imageAlt",
+          "value": "Review before you export"
+        },
+        {
+          "path": "/features/items/0/image",
+          "value": "/uploads/capcut-operations-feature-1.png"
+        },
+        {
+          "path": "/features/items/0/imageAlt",
+          "value": "Use an export you can edit"
+        },
+        {
+          "path": "/features/items/1/image",
+          "value": "/uploads/capcut-operations-feature-2.png"
+        },
+        {
+          "path": "/features/items/1/imageAlt",
+          "value": "Identify the visible area"
+        },
+        {
+          "path": "/features/items/2/image",
+          "value": "/uploads/capcut-operations-feature-3.png"
+        },
+        {
+          "path": "/features/items/2/imageAlt",
+          "value": "Review before you export"
+        },
+        {
+          "path": "/heroSamples/0/image",
+          "value": "/uploads/capcut-operations-feature-1.png"
+        },
+        {
+          "path": "/heroSamples/0/imageAlt",
+          "value": "Use an export you can edit"
+        },
+        {
+          "path": "/heroSamples/1/image",
+          "value": "/uploads/capcut-operations-feature-2.png"
+        },
+        {
+          "path": "/heroSamples/1/imageAlt",
+          "value": "Identify the visible area"
+        },
+        {
+          "path": "/heroSamples/2/image",
+          "value": "/uploads/capcut-operations-feature-3.png"
+        },
+        {
+          "path": "/heroSamples/2/imageAlt",
+          "value": "Review before you export"
+        }
+      ]
+    },
+    {
+      "file": "src/content/landing-pages/facebook-watermark-remover.json",
+      "semanticSha256": "e01e3bcbc9cf61b6f53c0d7423552df2d32ffacaf449fd4305bf377f7d3287ca",
+      "images": [
+        {
+          "path": "/heroSamples/0/image",
+          "value": "/uploads/workflow-upload-step.png"
+        },
+        {
+          "path": "/heroSamples/0/imageAlt",
+          "value": "Image entering the secure upload workflow"
+        },
+        {
+          "path": "/heroSamples/1/image",
+          "value": "/uploads/workflow-ai-detection-step.png"
+        },
+        {
+          "path": "/heroSamples/1/imageAlt",
+          "value": "AI detecting a visible watermark area in an image"
+        },
+        {
+          "path": "/heroSamples/2/image",
+          "value": "/uploads/workflow-download-step.png"
+        },
+        {
+          "path": "/heroSamples/2/imageAlt",
+          "value": "Before and after image ready for secure download"
+        }
+      ]
+    },
+    {
+      "file": "src/content/landing-pages/gemini-watermark-remover.json",
+      "semanticSha256": "85d7be143003994d1c36b13ae52ec9196947eb6e451e11ba3d1839e7316a3536",
+      "images": [
+        {
+          "path": "/features/items/0/image",
+          "value": "/uploads/gemini-no-crop.webp"
+        },
+        {
+          "path": "/features/items/0/imageAlt",
+          "value": "Remove Gemini watermark without cropping"
+        },
+        {
+          "path": "/features/items/0/comparison/image",
+          "value": "/uploads/tool-landing-v16/gemini-travel.png"
+        },
+        {
+          "path": "/features/items/1/image",
+          "value": "/uploads/gemini-natural-background.webp"
+        },
+        {
+          "path": "/features/items/1/imageAlt",
+          "value": "Gemini watermark remover with natural background"
+        },
+        {
+          "path": "/features/items/1/comparison/image",
+          "value": "/uploads/tool-landing-v16/gemini-texture.png"
+        },
+        {
+          "path": "/features/items/2/image",
+          "value": "/uploads/gemini-easy-online.webp"
+        },
+        {
+          "path": "/features/items/2/imageAlt",
+          "value": "Remove Gemini watermark online easily"
+        },
+        {
+          "path": "/features/items/2/comparison/image",
+          "value": "/uploads/tool-landing-v16/gemini-laptop.png"
+        },
+        {
+          "path": "/features/items/3/image",
+          "value": "/uploads/tool-landing-v16/gemini-private.png"
+        },
+        {
+          "path": "/features/items/3/imageAlt",
+          "value": "Laptop and lock representing private Gemini watermark cleanup processing"
+        },
+        {
+          "path": "/features/items/3/comparison/image",
+          "value": "/uploads/tool-landing-v16/gemini-private.png"
+        },
+        {
+          "path": "/heroSamples/0/image",
+          "value": "/uploads/tool-landing-v16/gemini-water.png"
+        },
+        {
+          "path": "/heroSamples/0/imageAlt",
+          "value": "Portrait in water for a Gemini watermark cleanup illustration"
+        },
+        {
+          "path": "/heroSamples/1/image",
+          "value": "/uploads/tool-landing-v16/gemini-travel.png"
+        },
+        {
+          "path": "/heroSamples/1/imageAlt",
+          "value": "Travel portrait with a dog for a Gemini watermark cleanup illustration"
+        },
+        {
+          "path": "/heroSamples/2/image",
+          "value": "/uploads/tool-landing-v16/gemini-serum.png"
+        },
+        {
+          "path": "/heroSamples/2/imageAlt",
+          "value": "Skincare serum product photo for a Gemini watermark cleanup illustration"
+        }
+      ]
+    },
+    {
+      "file": "src/content/landing-pages/grok-watermark-remover.json",
+      "semanticSha256": "32fa6c1a0786116ce136c9b44479f1c836df60f1e9ae0b467999f790bd12e0fe",
+      "images": [
+        {
+          "path": "/heroSamples/0/image",
+          "value": "/uploads/workflow-upload-step.png"
+        },
+        {
+          "path": "/heroSamples/0/imageAlt",
+          "value": "Image entering the secure upload workflow"
+        },
+        {
+          "path": "/heroSamples/1/image",
+          "value": "/uploads/workflow-ai-detection-step.png"
+        },
+        {
+          "path": "/heroSamples/1/imageAlt",
+          "value": "AI detecting a visible watermark area in an image"
+        },
+        {
+          "path": "/heroSamples/2/image",
+          "value": "/uploads/workflow-download-step.png"
+        },
+        {
+          "path": "/heroSamples/2/imageAlt",
+          "value": "Before and after image ready for secure download"
+        }
+      ]
+    },
+    {
+      "file": "src/content/landing-pages/instagram-watermark-remover.json",
+      "semanticSha256": "110978ed2df7d02e7c9510748511ac046d9c253f9b009e7e461e1fce2c9717bb",
+      "images": [
+        {
+          "path": "/heroSamples/0/image",
+          "value": "/uploads/workflow-upload-step.png"
+        },
+        {
+          "path": "/heroSamples/0/imageAlt",
+          "value": "Image entering the secure upload workflow"
+        },
+        {
+          "path": "/heroSamples/1/image",
+          "value": "/uploads/workflow-ai-detection-step.png"
+        },
+        {
+          "path": "/heroSamples/1/imageAlt",
+          "value": "AI detecting a visible watermark area in an image"
+        },
+        {
+          "path": "/heroSamples/2/image",
+          "value": "/uploads/workflow-download-step.png"
+        },
+        {
+          "path": "/heroSamples/2/imageAlt",
+          "value": "Before and after image ready for secure download"
+        }
+      ]
+    },
+    {
+      "file": "src/content/landing-pages/kling-watermark-remover.json",
+      "semanticSha256": "64670e46a438888596c8575874fda6a41567e394b09dfa91d5cf6747f136e4b4",
+      "images": [
+        {
+          "path": "/heroSamples/0/image",
+          "value": "/uploads/workflow-upload-step.png"
+        },
+        {
+          "path": "/heroSamples/0/imageAlt",
+          "value": "Image entering the secure upload workflow"
+        },
+        {
+          "path": "/heroSamples/1/image",
+          "value": "/uploads/workflow-ai-detection-step.png"
+        },
+        {
+          "path": "/heroSamples/1/imageAlt",
+          "value": "AI detecting a visible watermark area in an image"
+        },
+        {
+          "path": "/heroSamples/2/image",
+          "value": "/uploads/workflow-download-step.png"
+        },
+        {
+          "path": "/heroSamples/2/imageAlt",
+          "value": "Before and after image ready for secure download"
+        }
+      ]
+    },
+    {
+      "file": "src/content/landing-pages/notebooklm-watermark-remover.json",
+      "semanticSha256": "1fb6c8aa4bb30982a847c4c33f2f78f280bb218a25bc1698f733019462c0d544",
+      "images": [
+        {
+          "path": "/heroSamples/0/image",
+          "value": "/uploads/workflow-upload-step.png"
+        },
+        {
+          "path": "/heroSamples/0/imageAlt",
+          "value": "Image entering the secure upload workflow"
+        },
+        {
+          "path": "/heroSamples/1/image",
+          "value": "/uploads/workflow-ai-detection-step.png"
+        },
+        {
+          "path": "/heroSamples/1/imageAlt",
+          "value": "AI detecting a visible watermark area in an image"
+        },
+        {
+          "path": "/heroSamples/2/image",
+          "value": "/uploads/workflow-download-step.png"
+        },
+        {
+          "path": "/heroSamples/2/imageAlt",
+          "value": "Before and after image ready for secure download"
+        }
+      ]
+    },
+    {
+      "file": "src/content/landing-pages/pdf-watermark-remover.json",
+      "semanticSha256": "45ea500ad570089268da1378a1326ab731506e72642b1e5f044c04542d5810ea",
+      "images": [
+        {
+          "path": "/features/items/0/image",
+          "value": "/uploads/remove-gemini-watermark-4.png"
+        },
+        {
+          "path": "/features/items/0/imageAlt",
+          "value": "remove logo from pdf"
+        },
+        {
+          "path": "/features/items/1/image",
+          "value": "/uploads/remove-logo-from-image-3.png"
+        },
+        {
+          "path": "/features/items/1/imageAlt",
+          "value": "remove watermark from pdf"
+        },
+        {
+          "path": "/features/items/2/image",
+          "value": "/uploads/remove-text-from-image-3.png"
+        },
+        {
+          "path": "/features/items/2/imageAlt",
+          "value": "cleam pdf watermark"
+        },
+        {
+          "path": "/heroSamples/0/image",
+          "value": "/uploads/remove-gemini-watermark-4.png"
+        },
+        {
+          "path": "/heroSamples/0/imageAlt",
+          "value": "remove logo from pdf"
+        },
+        {
+          "path": "/heroSamples/1/image",
+          "value": "/uploads/remove-logo-from-image-3.png"
+        },
+        {
+          "path": "/heroSamples/1/imageAlt",
+          "value": "remove watermark from pdf"
+        },
+        {
+          "path": "/heroSamples/2/image",
+          "value": "/uploads/remove-text-from-image-3.png"
+        },
+        {
+          "path": "/heroSamples/2/imageAlt",
+          "value": "cleam pdf watermark"
+        }
+      ]
+    },
+    {
+      "file": "src/content/landing-pages/remove-background.json",
+      "semanticSha256": "09757031cd1a80bb02cf4044cbc8c881c127669ab44211410488f6958bdb9ed6",
+      "images": [
+        {
+          "path": "/process/steps/0/image",
+          "value": "/uploads/background-remover-upload.png"
+        },
+        {
+          "path": "/process/steps/0/imageAlt",
+          "value": "Photo being uploaded to the background remover"
+        },
+        {
+          "path": "/process/steps/1/image",
+          "value": "/uploads/background-remover-ai-cutout.png"
+        },
+        {
+          "path": "/process/steps/1/imageAlt",
+          "value": "AI isolating a subject from its original background"
+        },
+        {
+          "path": "/process/steps/2/image",
+          "value": "/uploads/background-remover-download.png"
+        },
+        {
+          "path": "/process/steps/2/imageAlt",
+          "value": "Transparent background result ready to download as PNG"
+        },
+        {
+          "path": "/features/items/0/image",
+          "value": "/uploads/background-remover-product-photo.png"
+        },
+        {
+          "path": "/features/items/0/imageAlt",
+          "value": "Product photo shown before and after background removal"
+        },
+        {
+          "path": "/features/items/1/image",
+          "value": "/uploads/background-remover-hair-detail.png"
+        },
+        {
+          "path": "/features/items/1/imageAlt",
+          "value": "Detailed hair edges preserved on a transparent background"
+        },
+        {
+          "path": "/features/items/2/image",
+          "value": "/uploads/background-remover-background-colors.png"
+        },
+        {
+          "path": "/features/items/2/imageAlt",
+          "value": "Background-removed subject previewed on several color options"
+        },
+        {
+          "path": "/heroSamples/0/image",
+          "value": "/uploads/background-remover-product-photo.png"
+        },
+        {
+          "path": "/heroSamples/0/imageAlt",
+          "value": "Product photo shown before and after background removal"
+        },
+        {
+          "path": "/heroSamples/1/image",
+          "value": "/uploads/background-remover-hair-detail.png"
+        },
+        {
+          "path": "/heroSamples/1/imageAlt",
+          "value": "Detailed hair edges preserved on a transparent background"
+        },
+        {
+          "path": "/heroSamples/2/image",
+          "value": "/uploads/background-remover-background-colors.png"
+        },
+        {
+          "path": "/heroSamples/2/imageAlt",
+          "value": "Background-removed subject previewed on several color options"
+        }
+      ]
+    },
+    {
+      "file": "src/content/landing-pages/remove-logo-from-image.json",
+      "semanticSha256": "7642a4cfd972eb2d07146e12b597e4437eb63713afc9495dd31ba3a0f7800546",
+      "images": [
+        {
+          "path": "/features/items/0/image",
+          "value": "/uploads/remove-logo-from-product-image.webp"
+        },
+        {
+          "path": "/features/items/0/imageAlt",
+          "value": "remove logo from product image"
+        },
+        {
+          "path": "/features/items/1/image",
+          "value": "/uploads/remove-logo-from-image-without-blur.webp"
+        },
+        {
+          "path": "/features/items/1/imageAlt",
+          "value": "remove logo from image without blur"
+        },
+        {
+          "path": "/features/items/2/image",
+          "value": "/uploads/ai-logo-remover-detailed-product-surfaces.webp"
+        },
+        {
+          "path": "/features/items/2/imageAlt",
+          "value": "remove logo for detailed product surface"
+        },
+        {
+          "path": "/heroSamples/0/image",
+          "value": "/uploads/remove-logo-from-product-image.webp"
+        },
+        {
+          "path": "/heroSamples/0/imageAlt",
+          "value": "remove logo from product image"
+        },
+        {
+          "path": "/heroSamples/1/image",
+          "value": "/uploads/remove-logo-from-image-without-blur.webp"
+        },
+        {
+          "path": "/heroSamples/1/imageAlt",
+          "value": "remove logo from image without blur"
+        },
+        {
+          "path": "/heroSamples/2/image",
+          "value": "/uploads/home-blueprint/tool-cards/card-04-logo-hiking-bottle.png"
+        },
+        {
+          "path": "/heroSamples/2/imageAlt",
+          "value": "Hiking bottle before and after visible logo removal"
+        }
+      ]
+    },
+    {
+      "file": "src/content/landing-pages/remove-subtitle-from-video.json",
+      "semanticSha256": "0397fc84519ac9139285bc7abd3d7eb01697cca66f67ebe06e118f60fcdd4ac4",
+      "images": [
+        {
+          "path": "/heroSamples/0/image",
+          "value": "/uploads/workflow-upload-step.png"
+        },
+        {
+          "path": "/heroSamples/0/imageAlt",
+          "value": "Image entering the secure upload workflow"
+        },
+        {
+          "path": "/heroSamples/1/image",
+          "value": "/uploads/workflow-ai-detection-step.png"
+        },
+        {
+          "path": "/heroSamples/1/imageAlt",
+          "value": "AI detecting a visible watermark area in an image"
+        },
+        {
+          "path": "/heroSamples/2/image",
+          "value": "/uploads/workflow-download-step.png"
+        },
+        {
+          "path": "/heroSamples/2/imageAlt",
+          "value": "Before and after image ready for secure download"
+        }
+      ]
+    },
+    {
+      "file": "src/content/landing-pages/remove-text-from-image.json",
+      "semanticSha256": "1de6333963cbc9259ae15e9881903da690533581bc7f2af87af059155662c7fa",
+      "images": [
+        {
+          "path": "/features/items/0/image",
+          "value": "/uploads/preserve-background-final.webp"
+        },
+        {
+          "path": "/features/items/0/imageAlt",
+          "value": "AI text remover"
+        },
+        {
+          "path": "/features/items/1/image",
+          "value": "/uploads/three-text-removal-scenes-final.webp"
+        },
+        {
+          "path": "/features/items/1/imageAlt",
+          "value": "Remove text from pictures"
+        },
+        {
+          "path": "/features/items/2/image",
+          "value": "/uploads/online-easy-no-white-border-final.webp"
+        },
+        {
+          "path": "/features/items/2/imageAlt",
+          "value": "Remove text from images online"
+        },
+        {
+          "path": "/heroSamples/0/image",
+          "value": "/uploads/preserve-background-final.webp"
+        },
+        {
+          "path": "/heroSamples/0/imageAlt",
+          "value": "AI text remover"
+        },
+        {
+          "path": "/heroSamples/1/image",
+          "value": "/uploads/three-text-removal-scenes-final.webp"
+        },
+        {
+          "path": "/heroSamples/1/imageAlt",
+          "value": "Remove text from pictures"
+        },
+        {
+          "path": "/heroSamples/2/image",
+          "value": "/uploads/online-easy-no-white-border-final.webp"
+        },
+        {
+          "path": "/heroSamples/2/imageAlt",
+          "value": "Remove text from images online"
+        }
+      ]
+    },
+    {
+      "file": "src/content/landing-pages/shutterstock-watermark-remover.json",
+      "semanticSha256": "16953f0899eef4a2e80a5425c3398f17c3070169a4ec8f83c414501a16f016ee",
+      "images": [
+        {
+          "path": "/heroSamples/0/image",
+          "value": "/uploads/workflow-upload-step.png"
+        },
+        {
+          "path": "/heroSamples/0/imageAlt",
+          "value": "Image entering the secure upload workflow"
+        },
+        {
+          "path": "/heroSamples/1/image",
+          "value": "/uploads/workflow-ai-detection-step.png"
+        },
+        {
+          "path": "/heroSamples/1/imageAlt",
+          "value": "AI detecting a visible watermark area in an image"
+        },
+        {
+          "path": "/heroSamples/2/image",
+          "value": "/uploads/workflow-download-step.png"
+        },
+        {
+          "path": "/heroSamples/2/imageAlt",
+          "value": "Before and after image ready for secure download"
+        }
+      ]
+    },
+    {
+      "file": "src/content/landing-pages/sora-watermark-remover.json",
+      "semanticSha256": "f492a9a1c2e98b9b23407bb5f201fe28aee9cca1a7db7e837863bd0929e02331",
+      "images": [
+        {
+          "path": "/features/items/0/image",
+          "value": "/uploads/remove-gemini-watermark-3.png"
+        },
+        {
+          "path": "/features/items/0/imageAlt",
+          "value": "remove sora watermark"
+        },
+        {
+          "path": "/features/items/1/image",
+          "value": "/uploads/remove-logo-from-image-2.png"
+        },
+        {
+          "path": "/features/items/1/imageAlt",
+          "value": "clean sora video"
+        },
+        {
+          "path": "/features/items/2/image",
+          "value": "/uploads/remove-text-from-image-2.png"
+        },
+        {
+          "path": "/features/items/2/imageAlt",
+          "value": "turn sora clip into cleaner"
+        },
+        {
+          "path": "/heroSamples/0/image",
+          "value": "/uploads/remove-gemini-watermark-3.png"
+        },
+        {
+          "path": "/heroSamples/0/imageAlt",
+          "value": "remove sora watermark"
+        },
+        {
+          "path": "/heroSamples/1/image",
+          "value": "/uploads/remove-logo-from-image-2.png"
+        },
+        {
+          "path": "/heroSamples/1/imageAlt",
+          "value": "clean sora video"
+        },
+        {
+          "path": "/heroSamples/2/image",
+          "value": "/uploads/remove-text-from-image-2.png"
+        },
+        {
+          "path": "/heroSamples/2/imageAlt",
+          "value": "turn sora clip into cleaner"
+        }
+      ]
+    },
+    {
+      "file": "src/content/landing-pages/tiktok-watermark-remover.json",
+      "semanticSha256": "308ce5773cfcbfe57729459fb7ba0fcbe6f3510157464c13d1123b5231f807c5",
+      "images": [
+        {
+          "path": "/features/items/0/image",
+          "value": "/uploads/remove-gemini-watermark-5.png"
+        },
+        {
+          "path": "/features/items/0/imageAlt",
+          "value": "remove moving tiktok watermark"
+        },
+        {
+          "path": "/features/items/1/image",
+          "value": "/uploads/remove-logo-from-image-4.png"
+        },
+        {
+          "path": "/features/items/1/imageAlt",
+          "value": "remove tiktok watermark without cropping"
+        },
+        {
+          "path": "/features/items/2/image",
+          "value": "/uploads/remove-text-from-image-4.png"
+        },
+        {
+          "path": "/features/items/2/imageAlt",
+          "value": "remove tiktok watermark from saved video"
+        },
+        {
+          "path": "/heroSamples/0/image",
+          "value": "/uploads/remove-gemini-watermark-5.png"
+        },
+        {
+          "path": "/heroSamples/0/imageAlt",
+          "value": "remove moving tiktok watermark"
+        },
+        {
+          "path": "/heroSamples/1/image",
+          "value": "/uploads/remove-logo-from-image-4.png"
+        },
+        {
+          "path": "/heroSamples/1/imageAlt",
+          "value": "remove tiktok watermark without cropping"
+        },
+        {
+          "path": "/heroSamples/2/image",
+          "value": "/uploads/remove-text-from-image-4.png"
+        },
+        {
+          "path": "/heroSamples/2/imageAlt",
+          "value": "remove tiktok watermark from saved video"
+        }
+      ]
+    },
+    {
+      "file": "src/content/landing-pages/veo-watermark-remover.json",
+      "semanticSha256": "2e0e29d3150f30e6f09cfdd6a179776850f84ef8535175f53441a25ebd8f6d46",
+      "images": [
+        {
+          "path": "/features/items/0/image",
+          "value": "/uploads/remove-gemini-watermark.png"
+        },
+        {
+          "path": "/features/items/0/imageAlt",
+          "value": "remove veo watermark without blur"
+        },
+        {
+          "path": "/features/items/1/image",
+          "value": "/uploads/remove-logo-from-image.png"
+        },
+        {
+          "path": "/features/items/1/imageAlt",
+          "value": "remove veo watermark without cropping"
+        },
+        {
+          "path": "/features/items/2/image",
+          "value": "/uploads/remove-text-from-image.png"
+        },
+        {
+          "path": "/features/items/2/imageAlt",
+          "value": "clean veo 3 video exports"
+        },
+        {
+          "path": "/heroSamples/0/image",
+          "value": "/uploads/remove-gemini-watermark.png"
+        },
+        {
+          "path": "/heroSamples/0/imageAlt",
+          "value": "remove veo watermark without blur"
+        },
+        {
+          "path": "/heroSamples/1/image",
+          "value": "/uploads/remove-logo-from-image.png"
+        },
+        {
+          "path": "/heroSamples/1/imageAlt",
+          "value": "remove veo watermark without cropping"
+        },
+        {
+          "path": "/heroSamples/2/image",
+          "value": "/uploads/remove-text-from-image.png"
+        },
+        {
+          "path": "/heroSamples/2/imageAlt",
+          "value": "clean veo 3 video exports"
+        }
+      ]
+    },
+    {
+      "file": "src/content/landing-pages/video-watermark-remover.json",
+      "semanticSha256": "e5732d3fa1cc678b9ed6508ad8b3001427a8e28ffebdc4237af5a1a0e66a0024",
+      "images": [
+        {
+          "path": "/features/items/0/image",
+          "value": "/uploads/remove-gemini-watermark-2.png"
+        },
+        {
+          "path": "/features/items/0/imageAlt",
+          "value": "remove video watermark without replacing"
+        },
+        {
+          "path": "/features/items/1/image",
+          "value": "/uploads/remove-logo-from-image-1.png"
+        },
+        {
+          "path": "/features/items/1/imageAlt",
+          "value": "remove visible ai watermark from video"
+        },
+        {
+          "path": "/features/items/2/image",
+          "value": "/uploads/remove-text-from-image-1.png"
+        },
+        {
+          "path": "/features/items/2/imageAlt",
+          "value": "remove video watermark without cropping"
+        },
+        {
+          "path": "/heroSamples/0/image",
+          "value": "/uploads/remove-gemini-watermark-2.png"
+        },
+        {
+          "path": "/heroSamples/0/imageAlt",
+          "value": "remove video watermark without replacing"
+        },
+        {
+          "path": "/heroSamples/1/image",
+          "value": "/uploads/remove-logo-from-image-1.png"
+        },
+        {
+          "path": "/heroSamples/1/imageAlt",
+          "value": "remove visible ai watermark from video"
+        },
+        {
+          "path": "/heroSamples/2/image",
+          "value": "/uploads/remove-text-from-image-1.png"
+        },
+        {
+          "path": "/heroSamples/2/imageAlt",
+          "value": "remove video watermark without cropping"
+        }
+      ]
+    },
+    {
+      "file": "src/content/settings/site.json",
+      "semanticSha256": "e566870f703474365100c4aa02283c98d6bc42001e0ef725ed89421f36c066ed",
+      "images": [
+        {
+          "path": "/processVisuals/0/image",
+          "value": "/uploads/workflow-upload-step.png"
+        },
+        {
+          "path": "/processVisuals/0/imageAlt",
+          "value": "Image entering the secure upload workflow"
+        },
+        {
+          "path": "/processVisuals/1/image",
+          "value": "/uploads/workflow-ai-detection-step.png"
+        },
+        {
+          "path": "/processVisuals/1/imageAlt",
+          "value": "AI detecting a visible watermark area in an image"
+        },
+        {
+          "path": "/processVisuals/2/image",
+          "value": "/uploads/workflow-download-step.png"
+        },
+        {
+          "path": "/processVisuals/2/imageAlt",
+          "value": "Before and after image ready for secure download"
+        }
+      ]
+    }
+  ]
+}

@@ -41,9 +41,13 @@ describe('public processing contract boundary', () => {
     expect(existsSync(new URL('../../components/uploader/ImageUploader.tsx', import.meta.url))).toBe(false);
     const home = readFileSync(new URL('../../pages/index.astro', import.meta.url), 'utf8');
     const landing = readFileSync(new URL('../../components/LandingPage.astro', import.meta.url), 'utf8');
-    expect(home).toContain('<MediaLauncher autoDetect');
-    expect(landing).toContain('<MediaLauncher kind=');
-    expect(landing).toContain('<BackgroundRemoverUploader');
-    expect(landing).toContain('<ObjectRemoverUploader');
+    expect(home).toContain('<MediaLauncher');
+    expect(landing).toContain('<MediaLauncher');
+    expect(landing).not.toMatch(/BackgroundRemoverUploader|ObjectRemoverUploader/);
+    const workspace = readFileSync(new URL('../../components/workspace/AppWorkspace.tsx', import.meta.url), 'utf8');
+    const durable = readFileSync(new URL('../../components/workspace/WatermarkWorkspace.tsx', import.meta.url), 'utf8');
+    expect(durable).toContain('BackgroundOptions');
+    expect(durable).toContain('ObjectMaskEditor');
+    expect(workspace).not.toContain('LegacyImageWorkspace');
   });
 });

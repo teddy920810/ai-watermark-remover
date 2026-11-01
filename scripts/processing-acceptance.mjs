@@ -8,8 +8,10 @@ import { pathToFileURL } from 'node:url';
 import { AcceptanceBudget } from './lib/acceptance-budget.mjs';
 import { inspectImage, inspectMask } from '../src/lib/media/image.ts';
 import { probeVideo, validateVideoRequirements } from '../src/lib/media/video.ts';
+import { durableOperationIds, operationCatalog } from '../src/lib/contracts/operation-catalog.ts';
+import { inspectPngArtifact } from './lib/png-artifact.mjs';
 
-const operations = ['image-watermark', 'image-watermark-pro', 'image-refine', 'video-watermark'];
+const operations = durableOperationIds;
 const MAX_IMAGE = 10 * 1024 * 1024;
 const MAX_VIDEO = 100 * 1024 * 1024; // This site's limit, not a claimed vendor limit.
 export class ProcessingAcceptanceError extends Error {
@@ -55,7 +57,7 @@ async function bytesFrom(response, limit) {
 }
 function balances(body) {
   const value = body.balances ?? body;
-  const result = { freeUses: value.freeUses ?? value.freeUsesRemaining, processingCredits: value.processingCredits ?? value.processingCreditsRemaining };
+  const result = { freeUses: value.freeUses ?? value.freeUsesRemaining, processingCredits: value.processingCredits ?? value.processingCreditsRemaining, ...(value.purchasedImageCredits !== undefined ? { purchasedImageCredits: value.purchasedImageCredits } : {}) };
   if (!Object.values(result).every((amount) => Number.isSafeInteger(amount) && amount >= 0)) throw failure('protocol_invalid', 'Balance response must contain both allowance units');
   return result;
 }
@@ -105,13 +107,16 @@ export async function runProcessingAcceptance(options = {}, dependencies = {}) {
   if (!operations.includes(operation)) throw failure('configuration', 'Unknown processing operation');
   const expectedAmount = options.expectedAmount ?? (environment.PROCESSING_ACCEPTANCE_EXPECTED_AMOUNT !== undefined ? Number(environment.PROCESSING_ACCEPTANCE_EXPECTED_AMOUNT) : undefined);
   const expectedUnit = options.expectedUnit ?? environment.PROCESSING_ACCEPTANCE_EXPECTED_UNIT;
-  if (!Number.isSafeInteger(expectedAmount) || expectedAmount < 0 || !['freeUses', 'processingCredits'].includes(expectedUnit)) throw failure('amount_confirmation_required', 'Confirm the exact expected amount and allowance unit before functional acceptance');
+  if (!Number.isSafeInteger(expectedAmount) || expectedAmount < 0 || !operationCatalog[operation].units.includes(expectedUnit)) throw failure('amount_confirmation_required', 'Confirm the exact expected amount and supported allowance unit before functional acceptance');
   const kind = operation === 'video-watermark' ? 'video' : 'image';
   const imageLimit = options.imageLimit ?? Number(environment.PROCESSING_ACCEPTANCE_IMAGE_LIMIT ?? 5);
-  if (!Number.isInteger(imageLimit) || imageLimit < 0 || imageLimit > 10) throw failure('budget_authorization', 'Image acceptance limit must match the explicit supported authorization');
+  if (!Number.isInteger(imageLimit) || imageLimit < 0 || imageLimit > 15) throw failure('budget_authorization', 'Image acceptance limit must match the explicit supported authorization');
   const ledgerPath = resolve(options.ledgerPath ?? environment.ACCEPTANCE_LEDGER_PATH ?? 'output/acceptance/budget.json');
-  const budget = dependencies.budget ?? new AcceptanceBudget(ledgerPath, { image: imageLimit, video: 5 });
-  const remaining = (await budget.summary()).remaining[kind];
+  const budget = dependencies.budget ?? new AcceptanceBudget(ledgerPath, { image: imageLimit, video: 5 }, { requireCreditBudget: imageLimit > 10 });
+  let budgetState;
+  try { budgetState = await budget.summary(); }
+  catch { throw failure('budget_authorization', 'Acceptance limits or credit authorization do not match the existing ledger'); }
+  const remaining = budgetState.remaining[kind];
   if (remaining < 1) throw failure('budget_exhausted', `Real ${kind} acceptance budget exhausted`);
   const reportDir = resolve(options.reportDir ?? 'output/acceptance/site-records');
   const headers = { Cookie: session, Origin: origin, 'Content-Type': 'application/json' };
@@ -159,7 +164,7 @@ export async function runProcessingAcceptance(options = {}, dependencies = {}) {
       sourceInfo = { kind, contentType: 'video/mp4', byteSize: sample.bytes.byteLength, width: info.width, height: info.height, durationSeconds: info.durationSeconds, fps: info.frameRate, hasAudio: info.audio.length > 0 };
     } else {
       const info = await inspectImage(sample.bytes);
-      if (Math.max(info.width, info.height) > 6000) throw failure('configuration', 'Image sample exceeds the supported input dimensions');
+      if (['image-watermark', 'image-watermark-pro'].includes(operation) && Math.max(info.width, info.height) > 6000) throw failure('configuration', 'Image sample exceeds the supported input dimensions');
       sourceInfo = { kind, contentType: info.mimeType, byteSize: sample.bytes.byteLength, width: info.width, height: info.height };
     }
     input = await uploadAsset(sample.bytes, kind, sourceInfo.contentType);
@@ -168,19 +173,20 @@ export async function runProcessingAcceptance(options = {}, dependencies = {}) {
   }
   const maskPath = options.maskPath ?? environment.PROCESSING_ACCEPTANCE_MASK_PATH;
   if (maskPath) {
-    if (!['image-refine', 'video-watermark'].includes(operation)) throw failure('configuration', 'This operation does not accept a mask');
+    if (!['image-refine', 'video-watermark', 'object-removal'].includes(operation)) throw failure('configuration', 'This operation does not accept a mask');
     const sample = await sampleFile(maskPath, MAX_IMAGE);
     await inspectMask(sample.bytes, { width: sourceInfo.width, height: sourceInfo.height });
     mask = await uploadAsset(sample.bytes, 'mask', 'image/png', input.id);
-  } else if (operation === 'image-refine') throw failure('configuration', 'Refinement acceptance requires a binary PNG mask');
+  } else if (['image-refine', 'object-removal'].includes(operation)) throw failure('configuration', 'This operation requires a binary PNG mask');
   const quoteBody = await api('/api/v1/quotes', { operation, inputArtifactId: input.id, ...(mask ? { maskArtifactId: mask.id } : {}), ...(parentJobId ? { parentJobId } : {}) });
   const quote = quoteBody.quote ?? quoteBody;
   identifier(quote.id, 'quote');
   if (quote.isDemo !== false) throw failure('demo_quote', 'Functional production acceptance requires a real-provider quote');
   if (quote.amount !== expectedAmount || quote.unit !== expectedUnit) throw failure('quote_changed', 'Quoted amount or allowance unit differs from the explicit confirmation');
+  if (!Number.isSafeInteger(before[quote.unit])) throw failure('protocol_invalid', 'The quoted allowance balance is missing');
   if (before[quote.unit] < quote.amount) throw failure('insufficient_allowance', 'Acceptance account has insufficient allowance');
 
-  const recordId = await budget.reserve(kind, `site ${operation} functional acceptance`);
+  const recordId = await budget.reserve(kind, `site ${operation} functional acceptance`, { amount: quote.amount, unit: quote.unit });
   const clientOperationKey = randomUUID();
   let record = { recordId, clientOperationKey, operation, status: 'started', amount: quote.amount, unit: quote.unit, creditsBefore: before[quote.unit] };
   await writeEvidence(reportDir, record);
@@ -215,7 +221,10 @@ export async function runProcessingAcceptance(options = {}, dependencies = {}) {
     try {
       if (kind === 'image') {
         const info = await inspectImage(bytes, { maxBytes: 48 * 1024 * 1024 });
-        if (info.format !== 'jpeg') throw new Error('Not JPEG');
+        const png = ['background-removal', 'object-removal'].includes(operation);
+        if (info.format !== (png ? 'png' : 'jpeg')) throw new Error('Output format differs');
+        if (png && (info.width !== sourceInfo.width || info.height !== sourceInfo.height)) throw new Error('Output dimensions differ from source');
+        if (operation === 'background-removal') await inspectPngArtifact(bytes, { requireTransparency: true });
         artifact = { format: info.format, contentType: info.mimeType, width: info.width, height: info.height, byteSize: bytes.byteLength };
       } else {
         const directory = await mkdtemp(join(tmpdir(), 'watermark-download-'));
@@ -229,7 +238,7 @@ export async function runProcessingAcceptance(options = {}, dependencies = {}) {
       if (artifact.width !== expected.width || artifact.height !== expected.height || artifact.byteSize !== expected.byteSize || artifact.contentType !== expected.contentType || response.headers.get('content-type')?.split(';')[0] !== artifact.contentType) throw new Error('Output metadata differs');
     } catch { throw failure('artifact_invalid', 'Downloaded artifact failed actual media validation'); }
     const after = balances(await api('/api/v1/me'));
-    for (const unit of ['freeUses', 'processingCredits']) if (after[unit] !== before[unit] - (unit === quote.unit ? quote.amount : 0)) throw failure('credit_invariant', 'Allowance changed by more than the single confirmed quote');
+    for (const unit of new Set([...Object.keys(before), ...Object.keys(after)])) if (after[unit] !== before[unit] - (unit === quote.unit ? quote.amount : 0)) throw failure('credit_invariant', 'Allowance changed by more than the single confirmed quote');
     record = { ...record, status: 'passed', creditsAfter: after[quote.unit], artifact };
     await budget.finish(recordId, { status: 'passed', note: 'Actual artifact and one quoted debit verified.', creditsBefore: before[quote.unit], creditsAfter: after[quote.unit], width: artifact.width, height: artifact.height, ...(kind === 'video' ? { durationSeconds: artifact.durationSeconds, hasAudio: artifact.hasAudio } : {}) });
     await writeEvidence(reportDir, record); return record;

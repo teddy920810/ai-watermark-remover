@@ -47,7 +47,7 @@ function fixture(reducedMotion = false) {
   const containers = compares.map((compare, i) => {
     const el = new ElementStub();
     el.hidden = i !== 0 && i !== 2;
-    el.selectors.set('[data-home-compare]', [compare]);
+    el.selectors.set('[data-image-display]', [compare]);
     el.selectors.set('input[type="range"]', compare.selectors.get('input[type="range"]')!);
     return el;
   });
@@ -67,7 +67,7 @@ function fixture(reducedMotion = false) {
   toggle.dataset = { playLabel: 'Play', pauseLabel: 'Pause' };
   const marquee = new ElementStub();
   root.selectors = new Map([
-    ['[data-home-compare]', compares], ['[data-hero-sample]', samples],
+    ['[data-image-display]', compares], ['[data-hero-sample]', samples],
     ['[data-hero-preview]', containers.slice(0, 2)], ['[data-scenario-tab]', tabs],
     ['[data-scenario-panel]', containers.slice(2)], ['[data-scenario-direction]', directions],
     ['[data-reviews-toggle]', [toggle]], ['[data-reviews-marquee]', [marquee]],
@@ -79,37 +79,31 @@ function fixture(reducedMotion = false) {
 afterEach(() => vi.unstubAllGlobals());
 
 describe('homepage interaction state transitions', () => {
-  it('updates comparison positions with keyboard input and clamps captured pointer dragging', () => {
+  it('leaves pointer and range ownership with the shared image controller', () => {
     const { compares } = fixture();
     const range = compares[0].querySelector('input[type="range"]')!;
     range.value = '73'; range.event('input');
-    expect(compares[0].style.setProperty).toHaveBeenLastCalledWith('--compare-position', '73%');
-    range.event('pointermove', { pointerId: 1, clientX: 0 });
-    expect(range.value).toBe('73');
     range.event('pointerdown', { pointerId: 1, clientX: -30 });
-    expect(range.value).toBe('0');
-    range.event('pointermove', { pointerId: 1, clientX: 500 });
-    expect(range.value).toBe('100');
-    range.event('pointerup', { pointerId: 1 });
-    range.event('pointerup', { pointerId: 1 });
+    expect(range.value).toBe('73');
     expect(range.hasPointerCapture(1)).toBe(false);
+    expect(compares[0].style.setProperty).not.toHaveBeenCalled();
   });
 
-  it('preserves the comparison position when selecting another hero sample', () => {
+  it('resets the shared image display when selecting another hero sample', () => {
     const { compares, samples, containers } = fixture();
-    compares[0].querySelector('input[type="range"]')!.value = '19';
+    const reset = vi.fn(); compares[1].addEventListener('image-display:reset', reset);
     samples[1].event('click');
     expect(samples.map(x => x.getAttribute('aria-pressed'))).toEqual(['false', 'true']);
     expect(containers.slice(0, 2).map(x => x.hidden)).toEqual([true, false]);
-    expect(compares[1].querySelector('input[type="range"]')!.value).toBe('19');
+    expect(reset).toHaveBeenCalledTimes(1);
   });
 
   it('wraps scenarios and supports tab selection, keyboard focus and mobile visibility', () => {
     const { compares, tabs, containers, directions, tablist } = fixture();
-    compares[2].querySelector('input[type="range"]')!.value = '81';
+    const reset = vi.fn(); compares[4].addEventListener('image-display:reset', reset);
     directions[0].event('click');
     expect(tabs[2].getAttribute('aria-selected')).toBe('true');
-    expect(compares[4].querySelector('input[type="range"]')!.value).toBe('81');
+    expect(reset).toHaveBeenCalledTimes(1);
     directions[1].event('click');
     expect(tabs[0].getAttribute('aria-selected')).toBe('true');
     tabs[1].event('click');
