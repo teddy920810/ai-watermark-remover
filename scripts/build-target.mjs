@@ -87,7 +87,7 @@ export function targetIntegration(plan) {
   const assertModule = (id) => {
     const file = slash(id).split('?')[0];
     if (plan.target === 'site' && (/\/src\/pages\/(?:api|app|auth)\//.test(file)
-      || /\/src\/lib\/(?:auth\.ts|services\.ts|config\/server-env\.ts|runtime\/|processing\/|providers\/|payments\/|benefits\/postgres-)/.test(file)
+      || /\/src\/lib\/(?:auth\.ts|services\.ts|content-api\/(?!publication\.)|config\/server-env\.ts|runtime\/|processing\/|providers\/|payments\/|benefits\/postgres-)/.test(file)
       || /\/node_modules\/(?:@aws-sdk\/|pg\/)/.test(file))) throw new Error(`site build imported a server dependency: ${path.basename(file)}`);
   };
   return { name: `watermark-${plan.target}-routes`, assertModule,
@@ -122,6 +122,9 @@ export function classifyTargetChanges(files) {
   for (const raw of files) {
     const file = slash(raw);
     if (/\.(?:test|spec|d)\.[cm]?[jt]sx?$/.test(file) || /^(?:tests\/|docs\/)/.test(file) || /\.md$/.test(file) && !file.startsWith('src/content/') || file === '.github/workflows/ci.yml') continue;
+    if (/^\.content-api\//.test(file) || file === 'src/lib/content-api/publication.ts') { targets.add('site'); continue; }
+    if (/^src\/lib\/content-api\//.test(file)) { targets.add('app'); continue; }
+    if (file === 'src/lib/content/entry-schemas.ts' || /^scripts\/lib\/(?:cms-document|cms-publication-policy|content-baseline)\./.test(file)) { targets.add('site'); targets.add('app'); continue; }
     if (/^(?:docs\/|README\.md$|AGENTS\.md$|scripts\/processing-acceptance\.mjs$|scripts\/lib\/acceptance-budget\.mjs$)/.test(file)) continue;
     if (/^(?:apps\/worker\/|scripts\/build-worker)/.test(file)) { targets.add('worker'); continue; }
     if (/^(?:package(?:-lock)?\.json$|scripts\/build-target|\.github\/workflows\/build-targets)/.test(file)) { for (const target of buildTargets) targets.add(target); continue; }
@@ -257,7 +260,7 @@ export async function buildTarget(target) {
   }
   const plan = createBuildPlan(projectRoot, target); prepareBuildInputs(plan);
   const env = { ...process.env, BUILD_TARGET: target };
-  for (const key of Object.keys(env)) if (/^(?:DATABASE_URL$|R2_|DEWATERMARK_|REPLICATE_|GOOGLE_|GCP_|CLOUD_RUN_|VERCEL_OIDC_TOKEN$|BETTER_AUTH_|PROCESSING_|WORKER_)/.test(key)) delete env[key];
+  for (const key of Object.keys(env)) if (/^(?:DATABASE_URL$|CONTENT_|R2_|DEWATERMARK_|REPLICATE_|GOOGLE_|GCP_|CLOUD_RUN_|VERCEL_OIDC_TOKEN$|BETTER_AUTH_|PROCESSING_|WORKER_)/.test(key)) delete env[key];
   if (target === 'site') {
     runNode(path.join(projectRoot, 'scripts/optimize-images.mjs'), [], env);
   }

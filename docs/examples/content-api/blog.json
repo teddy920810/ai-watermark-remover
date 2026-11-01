@@ -1,0 +1,16 @@
+{
+  "data": {
+    "slug": "operator-draft-example",
+    "title": "Operator draft example",
+    "description": "An unpublished example demonstrating a valid content API document.",
+    "publishedAt": "2026-11-01",
+    "readTime": "2 min read",
+    "coverImage": "/uploads/background-remover-product-photo.png",
+    "coverAlt": "A product photograph used in the existing background removal example",
+    "contentMode": "markdown",
+    "featured": false,
+    "draft": true,
+    "templateVersion": 1
+  },
+  "body": "## Overview\n\nThis document is an unpublished API example. Replace the example with reviewed editorial content before requesting publication.\n\n## Image reference\n\n![A product photograph from the existing tool example](/uploads/background-remover-product-photo.png)\n\n## Related tool\n\n[Open the background removal tool](/remove-background).\n"
+}

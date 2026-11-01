@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
-const configSource = readFileSync(new URL('../../content.config.ts', import.meta.url), 'utf8');
+const configSource = readFileSync(new URL('./entry-schemas.ts', import.meta.url), 'utf8');
 const blogPageSource = readFileSync(new URL('../../pages/blog/[slug].astro', import.meta.url), 'utf8');
 const astroConfigSource = readFileSync(new URL('../../../astro.config.mjs', import.meta.url), 'utf8');
 

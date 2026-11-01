@@ -12,6 +12,7 @@
 | [运维](OPERATIONS_RUNBOOK.md) / [Worker](product/WORKER_DEPLOYMENT.md) | 域名、短期身份、生命周期与恢复 |
 | [账户身份](ACCOUNT_IDENTITY.md) / [管理员额度](PROCESSING_CREDITS.md) / [图片Credits](PAYPAL_LIVE_RELEASE.md) | 三类权益、价格目录、退款与发布顺序 |
 | [CMS教程](PAGES_CMS_GUIDE.md) / [建站模板](TEMPLATE_GUIDE.md) | 内容编辑和有限模板；不配置真实能力/费率/Provider |
+| [运营 Agent 内容 API](CONTENT_API.md) | 内容域 Bearer Token、Git 变更集、素材、具体差异批准、受保护发布与接入示例；生产启用须核对凭据和实际验收 |
 | [图片展示](product/IMAGE_DISPLAY.md) / [素材清单](product/CONTENT_MEDIA_MIGRATION.json) | 单/双图、失败降级、内容归属与已撤销的P5替换；运营素材待办 |
 | [上线剩余工作](product/RELEASE_READINESS.md) | 待实施清理、最终审查、真实验收、授权发布、观察与兼容退出 |
 | [App工作区](product/APP_WORKSPACE.md) | 六类新操作的共同协调、选区差异、状态/草稿归属和旧API兼容 |
