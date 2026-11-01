@@ -6,7 +6,8 @@
   "baseRevision": "920f304b3772d6b668188bdb654c4876d2981092",
   "createdAt": "2026-11-01T08:38:52.936Z",
   "entries": [
-    "src/content/blog/t3-acceptance-blog-402b5265.md"
+    "src/content/blog/t3-acceptance-blog-402b5265.md",
+    "src/content/landing-pages/t3-acceptance-landing-402b5265.json"
   ],
   "assets": [
     {
@@ -38,6 +39,10 @@
     },
     "f3186a345450be8cfab7c15382f0ca6b278d200fe1eac91f26166bd8cff6ea49": {
       "fingerprint": "76fcdc516cd18d24d9b6e20259165a031a4769a28dd54178c04a223f7fa228ee",
+      "result": {}
+    },
+    "7dc37e9e739cd13dac7ea310ce1b180667b77f8d788e5cd7f716a1df1cc26f25": {
+      "fingerprint": "cb509852cc78da83bff5895ef1c7c91de6d22a9e18bb7449b8170e54dec8d907",
       "result": {}
     }
   }
