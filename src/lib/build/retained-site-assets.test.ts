@@ -13,11 +13,12 @@ describe('prior Site asset preservation', () => {
   it('pins the currently published Site graph without changing its source bytes', () => {
     const value = JSON.parse(readFileSync(new URL('../../../apps/site/retained-assets.json', import.meta.url), 'utf8'));
     expect(value.origin).toBe(manifest.origin);
-    expect(value.assets).toHaveLength(13);
+    expect(value.assets).toHaveLength(14);
     expect(value.assets).toEqual(expect.arrayContaining([
       expect.objectContaining({ path: '/_site-assets/AuthControls.B9oav8Sw.js', sha256: 'c409759a0cb830d5a865fb9fbb9d49469a10f79aad00463ebb8540327b6ff646' }),
       expect.objectContaining({ path: '/_site-assets/MediaLauncher.DdIUGJ0w.js', sha256: '5f1d49566aa772de961c270740867a37c0f57c8386e451466c4850c9c5aac6ff' }),
       expect.objectContaining({ path: '/_site-assets/index.c43oQ-O6.css', sha256: 'c9aa53d86b5430716b365cd6afb7c91c30d6f6a88153a1ecbd9d1482a1195db0' }),
+      expect.objectContaining({ path: '/_site-assets/MediaLauncher.BwvaaFyJ.js', sha256: 'c849e012c82ce72e2513ce31b87ca3f8a7f1e39f208628acead5533290464cb8', byteSize: 8763, contentType: 'application/javascript' }),
     ]));
   });
   it('copies only pinned Site bytes and rejects a different origin or namespace before fetching', async () => {

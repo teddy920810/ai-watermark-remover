@@ -31,7 +31,7 @@ test('focused tool launchers keep the designed upload target and workspace entry
   const writes = await anonymousLauncher(page);
   for (const width of [1440, 390]) {
     await page.setViewportSize({ width, height: 900 });
-    for (const { route } of [
+    for (const { route, kind } of [
       { route: '/gemini-watermark-remover', kind: 'image' },
       { route: '/video-watermark-remover', kind: 'video' },
     ]) {
@@ -41,7 +41,7 @@ test('focused tool launchers keep the designed upload target and workspace entry
       const button = launcher.getByRole('button', { name: 'Upload file', exact: true });
       await expect(button).toBeEnabled();
       await expect(launcher.locator('.launcher-modes')).toHaveCount(0);
-      await expect(launcher.locator('.launcher-workspace-link')).toHaveAttribute('href', '/app');
+      await expect(launcher.locator('.launcher-workspace-link')).toHaveAttribute('href', kind === 'video' ? '/app/video' : '/app');
       await expect(launcher.locator('.launcher-workspace-link')).toBeVisible();
       const drop = await launcher.locator('.launcher-drop').boundingBox();
       const action = await button.boundingBox();
