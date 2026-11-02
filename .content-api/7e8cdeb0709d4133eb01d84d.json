@@ -14,6 +14,14 @@
       "height": 480,
       "bytes": 137368,
       "mime": "image/webp"
+    },
+    {
+      "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-hero-01-water-portrait-after-3b5732c40d10a859.webp",
+      "sha256": "3b5732c40d10a859c24d2efbfd461bdcd37fa36f3b51c652a2e8b2fed250141f",
+      "width": 940,
+      "height": 480,
+      "bytes": 137590,
+      "mime": "image/webp"
     }
   ],
   "events": {
@@ -30,6 +38,19 @@
           "width": 940,
           "height": 480,
           "bytes": 137368,
+          "mime": "image/webp"
+        }
+      }
+    },
+    "2d47bb36ba7891a5b2e58a1193872e460959af8d4d7b68e8e925d90064a69bd6": {
+      "fingerprint": "d48a0c54948779b3afa2ef93a18dd66d336ec3d49b7c055aa848725c066285f2",
+      "result": {
+        "asset": {
+          "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-hero-01-water-portrait-after-3b5732c40d10a859.webp",
+          "sha256": "3b5732c40d10a859c24d2efbfd461bdcd37fa36f3b51c652a2e8b2fed250141f",
+          "width": 940,
+          "height": 480,
+          "bytes": 137590,
           "mime": "image/webp"
         }
       }
