@@ -164,7 +164,7 @@
       {
         "enabled": true,
         "question": "How long does WatermarkGemini keep uploaded images?",
-        "answer": "Files and processing records use temporary private storage and are scheduled to expire, generally within about 24 hours. Temporary download links can expire sooner. Check the site's Privacy Policy for current retention details."
+        "answer": "Uploaded files, masks and results are generally scheduled to expire after about 24 hours; deletion may occur later. Temporary links can expire sooner. Account and processing records may be retained longer. See the Privacy Policy for details."
       }
     ]
   }
