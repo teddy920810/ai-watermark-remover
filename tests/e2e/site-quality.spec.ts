@@ -436,11 +436,32 @@ test('original missing content keeps its fallback and network failures use the s
     }
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
   }
+  const failureContent = JSON.parse(readFileSync(new URL('../../src/content/landing-pages/gemini-watermark-remover.json', import.meta.url), 'utf8'));
+  const failureItem = failureContent.features.items.find((item: { enabled?: boolean }) => item.enabled !== false);
+  const legacyAfter = failureItem.comparison?.image || failureItem.image;
+  const legacyPair = failureItem.comparison?.beforeImage && failureItem.comparison.beforeImage !== legacyAfter;
+  const expectedBefore = failureItem.afterImage ? failureItem.image || failureItem.comparison?.image : legacyPair ? failureItem.comparison.beforeImage : failureItem.image || failureItem.comparison?.image;
+  const expectedAfter = failureItem.afterImage || (legacyPair ? legacyAfter : undefined);
+  const expectedPair = Boolean(expectedAfter && expectedAfter !== expectedBefore);
+  expect(expectedBefore).toMatch(/^\/uploads\//);
+  if (expectedAfter) expect(expectedAfter).not.toBe(expectedBefore);
+  await page.goto('/gemini-watermark-remover');
   const validDisplay = page.locator('.landing-features-section .feature-media').first().locator('[data-image-display]');
   const validFeature = validDisplay.locator('[data-image-side="before"] img');
-  expect(await validFeature.getAttribute('src')).toMatch(/^\/uploads\//);
+  await expect(validFeature).toHaveAttribute('src', expectedBefore);
+  await expect(validFeature).toHaveAttribute('alt', failureItem.imageAlt);
   await validFeature.scrollIntoViewIfNeeded();
   await expect.poll(() => validFeature.evaluate(image => (image as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
+  if (expectedPair) {
+    await expect(validDisplay).toHaveAttribute('data-pair', 'true');
+    await expect(validDisplay).toHaveAttribute('data-ready', 'true');
+    await expect(validDisplay.locator('.image-display-controls')).toBeVisible();
+    await expect(validDisplay.locator('input[type="range"]')).toHaveValue('50');
+    await expect(validDisplay.locator('[data-image-side="after"] img')).toHaveAttribute('src', expectedAfter);
+  } else {
+    await expect(validDisplay.locator('input[type="range"],.image-display-controls')).toHaveCount(0);
+  }
+  // currentSrc selects the fetched responsive resource; only the content above defines the expected media contract.
   const source = await validFeature.evaluate(image => (image as HTMLImageElement).currentSrc);
   await page.route(source, route => route.abort());
   await page.reload();
@@ -448,12 +469,28 @@ test('original missing content keeps its fallback and network failures use the s
   await expect(validFeature).toHaveAttribute('src', '/images/image-placeholder.svg');
   await expect(validFeature).toHaveAttribute('data-image-fallback', 'true');
   await expect.poll(() => validFeature.evaluate(image => (image as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
-  if (await validDisplay.getAttribute('data-pair') === 'true') {
-    await expect(validDisplay).toHaveAttribute('data-ready', 'false');
-    await expect(validDisplay.locator('.image-display-controls')).toBeHidden();
-    await expect(validDisplay.locator('[data-image-side="after"] img')).toBeVisible();
+  await expect(validDisplay).toHaveAttribute('data-ready', 'false');
+  if (expectedPair) {
+    await expect(validDisplay).toHaveAttribute('data-pair', 'true');
+    const controls = validDisplay.locator('.image-display-controls');
+    const range = validDisplay.locator('input[type="range"]');
+    await expect(controls).toHaveCount(1);
+    await expect(controls).toBeHidden();
+    await expect(range).toHaveCount(1);
+    await expect(range).toBeHidden();
+    const after = validDisplay.locator('[data-image-side="after"] img');
+    await expect(after).toHaveAttribute('src', expectedAfter);
+    await expect(after).toHaveAttribute('alt', failureItem.imageAlt);
+    await expect(after).not.toHaveAttribute('data-image-fallback', 'true');
+    await expect.poll(() => after.evaluate(async element => {
+      const image = element as HTMLImageElement;
+      try { await image.decode(); return image.complete && image.naturalWidth > 0 && image.naturalHeight > 0; } catch { return false; }
+    })).toBe(true);
+    await expect(after).toBeVisible();
+    await expect(validDisplay.locator('[data-image-side="before"]')).toBeHidden();
   } else {
-    await expect(validDisplay.locator('input[type="range"]')).toHaveCount(0);
+    await expect(validDisplay).not.toHaveAttribute('data-pair', 'true');
+    await expect(validDisplay.locator('input[type="range"],.image-display-controls,[data-image-side="after"]')).toHaveCount(0);
   }
 
   await page.route('**/uploads/watermarkgemini-logo.svg', (route) => route.abort());
