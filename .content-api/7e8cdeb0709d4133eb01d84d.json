@@ -70,6 +70,14 @@
       "height": 480,
       "bytes": 196710,
       "mime": "image/webp"
+    },
+    {
+      "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-feature-02-fine-texture-before-26d64285e1ad1897.webp",
+      "sha256": "26d64285e1ad189712158b1169cac521bd7cb2c88ca8f219a9e1e49ebf4cf376",
+      "width": 940,
+      "height": 480,
+      "bytes": 196590,
+      "mime": "image/webp"
     }
   ],
   "events": {
@@ -177,6 +185,19 @@
           "width": 940,
           "height": 480,
           "bytes": 196710,
+          "mime": "image/webp"
+        }
+      }
+    },
+    "14b8645c6e66fc59e4284e0b866bd7e4f539e19508293b49ac16f48007b57fd9": {
+      "fingerprint": "a8140bead7d22825113bc39516a791637ebf6c53daf80ab4662dcc6102498089",
+      "result": {
+        "asset": {
+          "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-feature-02-fine-texture-before-26d64285e1ad1897.webp",
+          "sha256": "26d64285e1ad189712158b1169cac521bd7cb2c88ca8f219a9e1e49ebf4cf376",
+          "width": 940,
+          "height": 480,
+          "bytes": 196590,
           "mime": "image/webp"
         }
       }
