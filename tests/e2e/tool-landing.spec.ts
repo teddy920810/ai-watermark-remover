@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Locator, type Page } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import sharp from 'sharp';
 
@@ -24,6 +24,62 @@ async function anonymousLauncher(page: Page) {
     return route.abort();
   });
   return writes;
+}
+
+type ConfiguredImage = { image?: string; afterImage?: string; imageAlt: string; comparison?: { image?: string; beforeImage?: string } };
+
+async function expectConfiguredImage(display: Locator, item: ConfiguredImage) {
+  const legacyAfter = item.comparison?.image || item.image;
+  const legacyPair = item.comparison?.beforeImage && item.comparison.beforeImage !== legacyAfter;
+  const beforeSource = item.afterImage ? item.image || item.comparison?.image : legacyPair ? item.comparison!.beforeImage : item.image || item.comparison?.image;
+  const afterSource = item.afterImage || (legacyPair ? legacyAfter : undefined);
+  expect(beforeSource).toBeTruthy();
+  const before = display.locator('[data-image-side="before"] img');
+  await display.scrollIntoViewIfNeeded();
+  await expect(before).toHaveAttribute('src', beforeSource!);
+  await expect(before).toHaveAttribute('alt', item.imageAlt);
+  await expect(display.locator('.landing-watermark,.fixed-watermark')).toHaveCount(0);
+  await expect(display.locator('img')).toHaveCount(afterSource ? 2 : 1);
+  if (afterSource) {
+    expect(afterSource).not.toBe(beforeSource);
+    const after = display.locator('[data-image-side="after"] img');
+    await expect(after).toHaveAttribute('src', afterSource);
+    await expect(after).toHaveAttribute('alt', item.imageAlt);
+    await expect(display).toHaveAttribute('data-pair', 'true');
+    await expect(display).toHaveAttribute('data-ready', 'true');
+    await expect(after).toBeVisible();
+    await expect(display.locator('.image-display-controls')).toBeVisible();
+    await expect(display.locator('.image-display-before')).toHaveText('Before');
+    await expect(display.locator('.image-display-after')).toHaveText('After');
+    const range = display.getByRole('slider', { name: `Compare before and after: ${item.imageAlt}`, exact: true });
+    await expect(range).toHaveCount(1);
+    await expect(range).toHaveAttribute('min', '0');
+    await expect(range).toHaveAttribute('max', '100');
+    await expect(range).toHaveValue('50');
+    await range.focus(); await range.press('Home'); await expect(range).toHaveValue('0');
+    await expect.poll(() => display.evaluate(element => (element as HTMLElement).style.getPropertyValue('--image-position'))).toBe('0%');
+    const divider = display.locator('.image-display-divider');
+    const start = (await divider.boundingBox())!.x;
+    await range.press('End'); await expect(range).toHaveValue('100');
+    await expect.poll(() => display.evaluate(element => (element as HTMLElement).style.getPropertyValue('--image-position'))).toBe('100%');
+    expect((await divider.boundingBox())!.x - start).toBeCloseTo((await display.boundingBox())!.width, 0);
+    await range.press('ArrowLeft'); await expect(range).toHaveValue('99');
+    await expect(display.locator('[data-image-side="before"]')).toHaveCSS('clip-path', 'inset(0px 1% 0px 0px)');
+  } else {
+    await expect(display.locator('input[type="range"],.image-display-controls,.image-display-label,.image-display-divider,[data-image-side="after"]')).toHaveCount(0);
+    await expect(display).toHaveAttribute('data-ready', 'false');
+  }
+  for (const image of await display.locator('img').all()) {
+    await expect.poll(() => image.evaluate(async element => {
+      const image = element as HTMLImageElement;
+      try { await image.decode(); return image.complete && image.naturalWidth > 0 && image.naturalHeight > 0; } catch { return false; }
+    })).toBe(true);
+    await expect(image).toBeVisible();
+  }
+  if (afterSource) {
+    const ratios = await display.locator('img').evaluateAll(images => images.map(element => (element as HTMLImageElement).naturalWidth / (element as HTMLImageElement).naturalHeight));
+    expect(Math.abs(ratios[0] - ratios[1])).toBeLessThan(0.01);
+  }
 }
 
 test('focused tool launchers keep the designed upload target and workspace entry at both viewports', async ({ page }) => {
@@ -84,31 +140,28 @@ test('focused image and video landing entries hand local files to their matching
   expect(writes).toEqual([]);
 });
 
-test('Gemini features show the approved single artwork without synthetic comparison controls', async ({ page }) => {
+test('Gemini features preserve configured single images and real pairs without synthetic overlays', async ({ page }) => {
+  const writes = await anonymousLauncher(page);
   const content = JSON.parse(readFileSync(new URL('../../src/content/landing-pages/gemini-watermark-remover.json', import.meta.url), 'utf8'));
   for (const width of [1920, 390]) {
     await page.setViewportSize({ width, height: 1080 }); await page.goto('/gemini-watermark-remover');
     const features = page.locator('.landing-features-section .feature-item'); await expect(features).toHaveCount(4);
     for (let index = 0; index < 4; index++) {
       const feature = features.nth(index); await feature.scrollIntoViewIfNeeded();
-      const image = feature.locator('[data-image-display] img').first();
-      await expect(image).toHaveAttribute('src', content.features.items[index].image);
-      await expect.poll(() => image.evaluate(image => (image as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
-      await expect(image).toBeVisible();
+      await expectConfiguredImage(feature.locator('[data-image-display]'), content.features.items[index]);
+      const image = feature.locator('[data-image-side="before"] img');
       expect((await image.boundingBox())!.height).toBeGreaterThan(100);
       expect((await image.boundingBox())!.height).toBeCloseTo((await feature.locator('.feature-media').boundingBox())!.height - 2, 0);
-      await expect(feature.locator('input[type=range],.landing-watermark,.fixed-watermark')).toHaveCount(0);
+      await expect(feature.locator('.landing-watermark,.fixed-watermark')).toHaveCount(0);
     }
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
   }
+  expect(writes).toEqual([]);
 });
 
-test('landing static examples switch on desktop and mobile without creating processing requests', async ({ page }) => {
-  let processingRequests = 0;
-  await page.route(/\/api\/(?:jobs|upload-url)(?:\?|$)/, route => {
-    processingRequests += 1;
-    return route.abort();
-  });
+test('landing configured examples switch and reset on desktop and mobile without creating processing requests', async ({ page }) => {
+  const writes = await anonymousLauncher(page);
+  const content = JSON.parse(readFileSync(new URL('../../src/content/landing-pages/gemini-watermark-remover.json', import.meta.url), 'utf8'));
 
   for (const width of [1440, 390]) {
     await page.setViewportSize({ width, height: 900 });
@@ -116,19 +169,15 @@ test('landing static examples switch on desktop and mobile without creating proc
     await expect(page.locator('.tool-landing')).toBeVisible();
     await expect(page.locator('[data-landing-sample]')).toHaveCount(3);
     await expect(page.locator('[data-landing-preview]:visible')).toHaveCount(1);
-    const previewImage = page.locator('[data-landing-preview]:visible img').first();
-    await expect(previewImage).not.toHaveAttribute('src', /image-placeholder/);
-    await expect.poll(() => previewImage.evaluate(image => (image as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
-
-    await expect(page.locator('[data-landing-preview]:visible input[type="range"]')).toHaveCount(0);
-
-    const secondSample = page.locator('[data-landing-sample]').nth(1);
-    await secondSample.click();
-    await expect(secondSample).toHaveAttribute('aria-pressed', 'true');
-    await expect(page.locator('[data-landing-sample][aria-pressed="true"]')).toHaveCount(1);
-    await expect(page.locator('[data-landing-preview]:visible')).toHaveCount(1);
-    await expect(page.locator('[data-landing-preview]:visible input[type="range"]')).toHaveCount(0);
-    await expect(page.locator('[data-landing-preview]:visible img').first()).not.toHaveAttribute('src', /image-placeholder/);
+    for (const index of [0, 1, 2, 0]) {
+      const sample = page.locator('[data-landing-sample]').nth(index);
+      await sample.click();
+      await expect(sample).toHaveAttribute('aria-pressed', 'true');
+      await expect(page.locator('[data-landing-sample][aria-pressed="true"]')).toHaveCount(1);
+      await expect(page.locator('[data-landing-preview]:visible')).toHaveCount(1);
+      await expectConfiguredImage(page.locator('[data-landing-preview]:visible [data-image-display]'), content.heroSamples[index]);
+    }
+    await expect(page.locator('.tool-landing .landing-watermark,.tool-landing .fixed-watermark')).toHaveCount(0);
 
     const faq = page.locator('.tool-landing .faq-list details').first();
     await faq.locator('summary').click();
@@ -136,7 +185,7 @@ test('landing static examples switch on desktop and mobile without creating proc
     await expect(faq.locator('p')).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
   }
-  expect(processingRequests).toBe(0);
+  expect(writes).toEqual([]);
 });
 
 test('background and object content hand files to their App editor and share replacement intake', async ({ page }) => {
