@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "id": "7e8cdeb0709d4133eb01d84d",
+  "title": "Update Gemini and text tool pages with reviewed copy and illustrative image pairs",
+  "actor": "seo-editor-01",
+  "baseRevision": "c9f21db33563b7394f0d58ed4cc4c3dc9f779be3",
+  "createdAt": "2026-11-02T00:58:52.808Z",
+  "entries": [],
+  "assets": [],
+  "events": {
+    "28cbbc618033fcfe13879e18676663f7a210145f827bc6d4b6ed62e8a7e5be88": {
+      "fingerprint": "91451aca661945347320ae83a7e74b0ea0ed295bcbb2fd901d89f4f7bd7da05d",
+      "result": {}
+    }
+  }
+}
