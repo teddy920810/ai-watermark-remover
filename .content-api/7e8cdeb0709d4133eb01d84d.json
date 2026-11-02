@@ -6,11 +6,33 @@
   "baseRevision": "c9f21db33563b7394f0d58ed4cc4c3dc9f779be3",
   "createdAt": "2026-11-02T00:58:52.808Z",
   "entries": [],
-  "assets": [],
+  "assets": [
+    {
+      "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-hero-01-water-portrait-before-f6d51d6e3dfb908d.webp",
+      "sha256": "f6d51d6e3dfb908db58689c8097ee2ddec665c8fc46c47aea3bbfd4b5bfac900",
+      "width": 940,
+      "height": 480,
+      "bytes": 137368,
+      "mime": "image/webp"
+    }
+  ],
   "events": {
     "28cbbc618033fcfe13879e18676663f7a210145f827bc6d4b6ed62e8a7e5be88": {
       "fingerprint": "91451aca661945347320ae83a7e74b0ea0ed295bcbb2fd901d89f4f7bd7da05d",
       "result": {}
+    },
+    "896c3e3d9b9b7b5f948b56e5516d5ed4a9bf8b3d2ffd3f5026f7a9c0a16c55ca": {
+      "fingerprint": "90d54c6151e70cb719c022c723564280e0f44afb3696aea7e9d5a3044c70631d",
+      "result": {
+        "asset": {
+          "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-hero-01-water-portrait-before-f6d51d6e3dfb908d.webp",
+          "sha256": "f6d51d6e3dfb908db58689c8097ee2ddec665c8fc46c47aea3bbfd4b5bfac900",
+          "width": 940,
+          "height": 480,
+          "bytes": 137368,
+          "mime": "image/webp"
+        }
+      }
     }
   }
 }
