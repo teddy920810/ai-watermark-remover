@@ -38,6 +38,14 @@
       "height": 480,
       "bytes": 174756,
       "mime": "image/webp"
+    },
+    {
+      "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-hero-03-serum-product-before-d397e6da83740ca6.webp",
+      "sha256": "d397e6da83740ca64e86d6515f1f9e954dc3137ac4bfd1da1e605e034ff529b6",
+      "width": 940,
+      "height": 480,
+      "bytes": 138204,
+      "mime": "image/webp"
     }
   ],
   "events": {
@@ -93,6 +101,19 @@
           "width": 940,
           "height": 480,
           "bytes": 174756,
+          "mime": "image/webp"
+        }
+      }
+    },
+    "a5066300c0199d2e7d99f5b8b504cd88a79b49447a6308f2c32d25948a7cee21": {
+      "fingerprint": "e8128bf541f9279766ef097ca3c95843f0926b3334bf29d0a60d242fc406eb2c",
+      "result": {
+        "asset": {
+          "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-hero-03-serum-product-before-d397e6da83740ca6.webp",
+          "sha256": "d397e6da83740ca64e86d6515f1f9e954dc3137ac4bfd1da1e605e034ff529b6",
+          "width": 940,
+          "height": 480,
+          "bytes": 138204,
           "mime": "image/webp"
         }
       }
