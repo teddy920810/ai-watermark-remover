@@ -118,6 +118,14 @@
       "height": 480,
       "bytes": 123448,
       "mime": "image/webp"
+    },
+    {
+      "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-hero-01-before-2700c7b5172f007f.webp",
+      "sha256": "2700c7b5172f007f8aeb6ae4653bddf49ace499ec15fe9474fcdfe1a8e1298dd",
+      "width": 940,
+      "height": 480,
+      "bytes": 173948,
+      "mime": "image/webp"
     }
   ],
   "events": {
@@ -303,6 +311,19 @@
           "width": 940,
           "height": 480,
           "bytes": 123448,
+          "mime": "image/webp"
+        }
+      }
+    },
+    "8d4a95b68da4d8a75d7f37753be4fd98f6e1ed4bfb30d85775e9e994ac99e541": {
+      "fingerprint": "a8e18f788faabb1656573192e4d7ef46fe39c551a8f63695087d84b42c8f9e20",
+      "result": {
+        "asset": {
+          "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-hero-01-before-2700c7b5172f007f.webp",
+          "sha256": "2700c7b5172f007f8aeb6ae4653bddf49ace499ec15fe9474fcdfe1a8e1298dd",
+          "width": 940,
+          "height": 480,
+          "bytes": 173948,
           "mime": "image/webp"
         }
       }
