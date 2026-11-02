@@ -6,7 +6,8 @@
   "baseRevision": "c9f21db33563b7394f0d58ed4cc4c3dc9f779be3",
   "createdAt": "2026-11-02T00:58:52.808Z",
   "entries": [
-    "src/content/landing-pages/gemini-watermark-remover.json"
+    "src/content/landing-pages/gemini-watermark-remover.json",
+    "src/content/landing-pages/remove-text-from-image.json"
   ],
   "assets": [
     {
@@ -563,6 +564,10 @@
     },
     "de34a9752bb0b635f8ea853c083e2cdde147bc7339924a57427952c6e1551d47": {
       "fingerprint": "b1902f34616d22f41f5571095a0fd3a05b43458db0b7e0920597e61f56f03447",
+      "result": {}
+    },
+    "36afb317dbcf19147caab8b3b810910c945d1e8fa2b75e6bd528e40856b3de7a": {
+      "fingerprint": "81f141de70b5c7818b13fbed61add520378d89ee19ca64ec3a207b97b0393e1a",
       "result": {}
     }
   }
