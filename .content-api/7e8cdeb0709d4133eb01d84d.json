@@ -166,6 +166,14 @@
       "height": 480,
       "bytes": 87048,
       "mime": "image/webp"
+    },
+    {
+      "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-feature-04-before-e08fc72daec9ad8e.webp",
+      "sha256": "e08fc72daec9ad8e8b05418ace77494626ce9b7c0e919828ff54808232e82bc3",
+      "width": 940,
+      "height": 480,
+      "bytes": 188528,
+      "mime": "image/webp"
     }
   ],
   "events": {
@@ -429,6 +437,19 @@
           "width": 940,
           "height": 480,
           "bytes": 87048,
+          "mime": "image/webp"
+        }
+      }
+    },
+    "2c22e998bdbffd0c358f7780fce2eab7a193d518ba8cbaf8f81757b835d91ca7": {
+      "fingerprint": "065e8ae8c38db5976193b596f5a6835c231009757ca21c054b2967f0d5db9a71",
+      "result": {
+        "asset": {
+          "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-feature-04-before-e08fc72daec9ad8e.webp",
+          "sha256": "e08fc72daec9ad8e8b05418ace77494626ce9b7c0e919828ff54808232e82bc3",
+          "width": 940,
+          "height": 480,
+          "bytes": 188528,
           "mime": "image/webp"
         }
       }
