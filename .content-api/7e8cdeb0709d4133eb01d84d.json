@@ -22,6 +22,14 @@
       "height": 480,
       "bytes": 137590,
       "mime": "image/webp"
+    },
+    {
+      "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-hero-02-santorini-travel-before-b34188f03be17e2a.webp",
+      "sha256": "b34188f03be17e2af28cc2867370c7d37a139b5626c363bd390109f78e12e5c7",
+      "width": 940,
+      "height": 480,
+      "bytes": 167552,
+      "mime": "image/webp"
     }
   ],
   "events": {
@@ -51,6 +59,19 @@
           "width": 940,
           "height": 480,
           "bytes": 137590,
+          "mime": "image/webp"
+        }
+      }
+    },
+    "1f38ef24bfda9cdda1262942bb113d72ec20eb7cffd552d6a71217ee221b3456": {
+      "fingerprint": "eca9307184977b895350dd6e439de48bbdf642ef93b0cfe113f761214d3ba17f",
+      "result": {
+        "asset": {
+          "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-hero-02-santorini-travel-before-b34188f03be17e2a.webp",
+          "sha256": "b34188f03be17e2af28cc2867370c7d37a139b5626c363bd390109f78e12e5c7",
+          "width": 940,
+          "height": 480,
+          "bytes": 167552,
           "mime": "image/webp"
         }
       }
