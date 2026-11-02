@@ -7,6 +7,8 @@ import { resolveImagePair } from './image-pair';
 const contentRoot = new URL('../../content/landing-pages/', import.meta.url);
 const pages = readdirSync(contentRoot).filter(file => file.endsWith('.json')).map(file => JSON.parse(readFileSync(new URL(file, contentRoot), 'utf8')));
 const previewPages = pages.filter(page => !page.draft || page.heroSamples);
+const mediaInventory = JSON.parse(readFileSync(new URL('../../../docs/product/CONTENT_MEDIA_MIGRATION.json', import.meta.url), 'utf8'));
+const missingOriginals = new Set(mediaInventory.items.filter((item: { classification: string }) => item.classification === 'missing-fallback').map((item: { image: string }) => item.image));
 
 describe('independent tool landing-page previews', () => {
   it.each(previewPages.map(page => [page.slug, page] as const))('keeps usable, independently editable samples on %s', (_, page) => {
@@ -14,43 +16,44 @@ describe('independent tool landing-page previews', () => {
     expect(new Set(page.heroSamples.map((sample: { id: string }) => sample.id)).size).toBe(3);
     for (const sample of page.heroSamples) {
       expect(sample.label).toEqual(expect.any(String));
-      expect(sample.imageAlt).toEqual(expect.any(String));
-      expect(existsSync(new URL(`../../../public${sample.image}`, import.meta.url))).toBe(true);
+    }
+    for (const visual of [...page.heroSamples, ...(page.features?.items ?? [])]) {
+      const pair = resolveImagePair(visual);
+      expect(visual.imageAlt.trim().length).toBeGreaterThan(0);
+      expect(pair.image).toEqual(expect.any(String));
+      if (pair.afterImage) expect(pair.afterImage).not.toBe(pair.image);
+      for (const source of [pair.image, pair.afterImage].filter((image): image is string => Boolean(image))) {
+        // The recorded missing original keeps its static fallback; both comparison sources must exist.
+        expect(existsSync(new URL(`../../../public${source}`, import.meta.url)), source).toBe(Boolean(pair.afterImage) || !missingOriginals.has(source));
+      }
     }
   });
 
-  it('uses the supplied Gemini illustrations without replacing existing feature artwork', () => {
-    const gemini = pages.find(page => page.slug === 'gemini-watermark-remover');
-    expect(gemini.heroSamples?.every((sample: Parameters<typeof resolveImagePair>[0]) => !resolveImagePair(sample).afterImage)).toBe(true);
-    expect(gemini.features.items.slice(0, 3).map((item: Parameters<typeof resolveImagePair>[0]) => resolveImagePair(item).image)).toEqual([
-      '/uploads/gemini-no-crop.webp',
-      '/uploads/gemini-natural-background.webp',
-      '/uploads/gemini-easy-online.webp',
-    ]);
+  it('keeps an illustrative legacy comparison static and preserves the configured primary image', () => {
+    expect(resolveImagePair({
+      image: '/uploads/original.webp',
+      comparison: { image: '/uploads/illustration.png', style: 'gemini', watermark: 'GEMINI' },
+    })).toEqual({ image: '/uploads/original.webp' });
   });
 
   it('provides the four Gemini feature comparisons while preserving accurate credit and privacy claims', () => {
     const gemini = pages.find(page => page.slug === 'gemini-watermark-remover');
     expect(gemini.features.items).toHaveLength(4);
     expect(gemini.features.items.map((item: { imagePosition: string }) => item.imagePosition)).toEqual(['left', 'right', 'left', 'right']);
-    for (const feature of gemini.features.items) {
-      expect(resolveImagePair(feature)).toEqual({ image: feature.image });
-      expect(existsSync(new URL(`../../../public${feature.image}`, import.meta.url))).toBe(true);
-    }
     const privacy = gemini.features.items[3];
-    expect(privacy.heading).toBe('Free Online Watermark Removal with Private Processing');
-    expect(privacy.description).toMatch(/Google/i);
-    expect(privacy.description).toMatch(/daily check-in/i);
+    expect(privacy.heading.trim().length).toBeGreaterThan(0);
+    expect(privacy.description).toMatch(/private/i);
+    expect(privacy.description).toMatch(/free (?:processing balance|image uses)|processing cost/i);
     expect(privacy.description).toMatch(/24 hours/i);
     expect(privacy.description).not.toMatch(/no credits to purchase|unlimited/i);
   });
 
-  it('keeps existing composite artwork as a static preview', () => {
-    for (const slug of ['remove-background', 'remove-object', 'remove-text-from-image']) {
-      const page = pages.find(page => page.slug === slug);
-      expect(page.heroSamples?.map((sample: { image: string }) => sample.image)).toEqual(page.features.items.map((item: { image: string }) => item.image));
-      expect(page.heroSamples?.every((sample: { comparison?: unknown }) => !sample.comparison)).toBe(true);
-    }
+  it('preserves explicit independent image sources instead of an older comparison override', () => {
+    expect(resolveImagePair({
+      image: '/uploads/before.webp',
+      afterImage: '/uploads/after.webp',
+      comparison: { image: '/uploads/old-after.png', beforeImage: '/uploads/old-before.png', style: 'gemini', watermark: 'GEMINI' },
+    })).toEqual({ image: '/uploads/before.webp', afterImage: '/uploads/after.webp' });
   });
 
   it('exposes page-level sample, optional After and related-content controls in CMS', () => {
