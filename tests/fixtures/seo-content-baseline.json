@@ -666,81 +666,94 @@
     },
     {
       "file": "src/content/landing-pages/gemini-watermark-remover.json",
-      "semanticSha256": "85d7be143003994d1c36b13ae52ec9196947eb6e451e11ba3d1839e7316a3536",
+      "semanticSha256": "f03cacb78cdcb8dd5a09d2a1a3dcc4ec344f568860c63cd16ccc438e09ea5eb8",
       "images": [
         {
-          "path": "/features/items/0/image",
-          "value": "/uploads/gemini-no-crop.webp"
-        },
-        {
-          "path": "/features/items/0/imageAlt",
-          "value": "Remove Gemini watermark without cropping"
-        },
-        {
-          "path": "/features/items/0/comparison/image",
-          "value": "/uploads/tool-landing-v16/gemini-travel.png"
-        },
-        {
-          "path": "/features/items/1/image",
-          "value": "/uploads/gemini-natural-background.webp"
-        },
-        {
-          "path": "/features/items/1/imageAlt",
-          "value": "Gemini watermark remover with natural background"
-        },
-        {
-          "path": "/features/items/1/comparison/image",
-          "value": "/uploads/tool-landing-v16/gemini-texture.png"
-        },
-        {
-          "path": "/features/items/2/image",
-          "value": "/uploads/gemini-easy-online.webp"
-        },
-        {
-          "path": "/features/items/2/imageAlt",
-          "value": "Remove Gemini watermark online easily"
-        },
-        {
-          "path": "/features/items/2/comparison/image",
-          "value": "/uploads/tool-landing-v16/gemini-laptop.png"
-        },
-        {
-          "path": "/features/items/3/image",
-          "value": "/uploads/tool-landing-v16/gemini-private.png"
-        },
-        {
-          "path": "/features/items/3/imageAlt",
-          "value": "Laptop and lock representing private Gemini watermark cleanup processing"
-        },
-        {
-          "path": "/features/items/3/comparison/image",
-          "value": "/uploads/tool-landing-v16/gemini-private.png"
-        },
-        {
           "path": "/heroSamples/0/image",
-          "value": "/uploads/tool-landing-v16/gemini-water.png"
+          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-hero-01-water-portrait-before-f6d51d6e3dfb908d.webp"
+        },
+        {
+          "path": "/heroSamples/0/afterImage",
+          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-hero-01-water-portrait-after-3b5732c40d10a859.webp"
         },
         {
           "path": "/heroSamples/0/imageAlt",
-          "value": "Portrait in water for a Gemini watermark cleanup illustration"
+          "value": "Illustrative water portrait with and without an added repeating Gemini mark; not a tested product output."
         },
         {
           "path": "/heroSamples/1/image",
-          "value": "/uploads/tool-landing-v16/gemini-travel.png"
+          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-hero-02-santorini-travel-before-b34188f03be17e2a.webp"
+        },
+        {
+          "path": "/heroSamples/1/afterImage",
+          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-hero-02-santorini-travel-after-31f2223eee037f6a.webp"
         },
         {
           "path": "/heroSamples/1/imageAlt",
-          "value": "Travel portrait with a dog for a Gemini watermark cleanup illustration"
+          "value": "Illustrative santorini travel portrait with a dog, with and without an added repeating Gemini mark; not a tested product output."
         },
         {
           "path": "/heroSamples/2/image",
-          "value": "/uploads/tool-landing-v16/gemini-serum.png"
+          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-hero-03-serum-product-before-d397e6da83740ca6.webp"
+        },
+        {
+          "path": "/heroSamples/2/afterImage",
+          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-hero-03-serum-product-after-44c2fbd00eb9ebfd.webp"
         },
         {
           "path": "/heroSamples/2/imageAlt",
-          "value": "Skincare serum product photo for a Gemini watermark cleanup illustration"
+          "value": "Illustrative skincare serum product scene with and without an added repeating Gemini mark; not a tested product output."
+        },
+        {
+          "path": "/features/items/0/image",
+          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-feature-01-full-frame-before-c36c792986f4af98.webp"
+        },
+        {
+          "path": "/features/items/0/afterImage",
+          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-feature-01-full-frame-after-4899599429f7223e.webp"
+        },
+        {
+          "path": "/features/items/0/imageAlt",
+          "value": "Illustrative alpine landscape and hiker with and without an added repeating Gemini mark; not a tested product output."
+        },
+        {
+          "path": "/features/items/1/image",
+          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-feature-02-fine-texture-before-26d64285e1ad1897.webp"
+        },
+        {
+          "path": "/features/items/1/afterImage",
+          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-feature-02-fine-texture-after-98f3b7fafbcd23b0.webp"
+        },
+        {
+          "path": "/features/items/1/imageAlt",
+          "value": "Illustrative portrait and embroidered fabric with and without an added repeating Gemini mark; not a tested product output."
+        },
+        {
+          "path": "/features/items/2/image",
+          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-feature-03-browser-workflow-before-2035d37b7cc40748.webp"
+        },
+        {
+          "path": "/features/items/2/afterImage",
+          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-feature-03-browser-workflow-after-ae7bc9dee63c9714.webp"
+        },
+        {
+          "path": "/features/items/2/imageAlt",
+          "value": "Illustrative laptop browser workflow illustration with and without an added repeating Gemini mark; not a tested product output."
+        },
+        {
+          "path": "/features/items/3/image",
+          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-feature-04-private-processing-before-e48149c6cfc455f8.webp"
+        },
+        {
+          "path": "/features/items/3/afterImage",
+          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-feature-04-private-processing-after-37cba2e12d93172a.webp"
+        },
+        {
+          "path": "/features/items/3/imageAlt",
+          "value": "Illustrative laptop privacy and free-use diagram with and without an added repeating Gemini mark; not a tested product output."
         }
-      ]
+      ],
+      "contentOwnerApproval": "https://github.com/teddy920810/ai-watermark-remover/pull/114#issuecomment-6566751391"
     },
     {
       "file": "src/content/landing-pages/grok-watermark-remover.json",
@@ -1080,57 +1093,82 @@
     },
     {
       "file": "src/content/landing-pages/remove-text-from-image.json",
-      "semanticSha256": "1de6333963cbc9259ae15e9881903da690533581bc7f2af87af059155662c7fa",
+      "semanticSha256": "ff442a1c25110b58ca262078ba840d2af8d2348f6f4fa2ce5c61c7db90556ebd",
       "images": [
         {
-          "path": "/features/items/0/image",
-          "value": "/uploads/preserve-background-final.webp"
-        },
-        {
-          "path": "/features/items/0/imageAlt",
-          "value": "AI text remover"
-        },
-        {
-          "path": "/features/items/1/image",
-          "value": "/uploads/three-text-removal-scenes-final.webp"
-        },
-        {
-          "path": "/features/items/1/imageAlt",
-          "value": "Remove text from pictures"
-        },
-        {
-          "path": "/features/items/2/image",
-          "value": "/uploads/online-easy-no-white-border-final.webp"
-        },
-        {
-          "path": "/features/items/2/imageAlt",
-          "value": "Remove text from images online"
-        },
-        {
           "path": "/heroSamples/0/image",
-          "value": "/uploads/preserve-background-final.webp"
+          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-hero-01-before-2700c7b5172f007f.webp"
+        },
+        {
+          "path": "/heroSamples/0/afterImage",
+          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-hero-01-after-a635c077de284938.webp"
         },
         {
           "path": "/heroSamples/0/imageAlt",
-          "value": "AI text remover"
+          "value": "Illustrative café window scene with and without CITY STORIES lettering; not a tested product output."
         },
         {
           "path": "/heroSamples/1/image",
-          "value": "/uploads/three-text-removal-scenes-final.webp"
+          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-hero-02-before-fd4fa4f7b6de6e7f.webp"
+        },
+        {
+          "path": "/heroSamples/1/afterImage",
+          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-hero-02-after-6e6aeadc5ba16633.webp"
         },
         {
           "path": "/heroSamples/1/imageAlt",
-          "value": "Remove text from pictures"
+          "value": "Illustrative vacation portrait with and without the added date 2026.08.15; not a tested product output."
         },
         {
           "path": "/heroSamples/2/image",
-          "value": "/uploads/online-easy-no-white-border-final.webp"
+          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-hero-03-before-8fcb751fca0f327a.webp"
+        },
+        {
+          "path": "/heroSamples/2/afterImage",
+          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-hero-03-after-4ffcc47c14779d2b.webp"
         },
         {
           "path": "/heroSamples/2/imageAlt",
-          "value": "Remove text from images online"
+          "value": "Illustrative skincare product scene with and without BOTANICAL LAB lettering; not a tested product output."
+        },
+        {
+          "path": "/features/items/0/image",
+          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-feature-04-before-e08fc72daec9ad8e.webp"
+        },
+        {
+          "path": "/features/items/0/afterImage",
+          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-feature-04-after-95709d8ec7b5ce9b.webp"
+        },
+        {
+          "path": "/features/items/0/imageAlt",
+          "value": "Illustrative coastal travel poster with and without SUMMER ESCAPE lettering; not a tested product output."
+        },
+        {
+          "path": "/features/items/1/image",
+          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-feature-05-before-4513846f077b7df2.webp"
+        },
+        {
+          "path": "/features/items/1/afterImage",
+          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-feature-05-after-69269989b0bae489.webp"
+        },
+        {
+          "path": "/features/items/1/imageAlt",
+          "value": "Illustrative fashion portrait with and without FALL EDITION lettering; not a tested product output."
+        },
+        {
+          "path": "/features/items/2/image",
+          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-feature-06-before-a85b7d7db460cc54.webp"
+        },
+        {
+          "path": "/features/items/2/afterImage",
+          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-feature-06-after-688e3444fba5289c.webp"
+        },
+        {
+          "path": "/features/items/2/imageAlt",
+          "value": "Illustrative neon city scene with and without TOKYO NIGHTS lettering; not a tested product output."
         }
-      ]
+      ],
+      "contentOwnerApproval": "https://github.com/teddy920810/ai-watermark-remover/pull/114#issuecomment-6566751391"
     },
     {
       "file": "src/content/landing-pages/shutterstock-watermark-remover.json",

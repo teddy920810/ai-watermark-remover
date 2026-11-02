@@ -1,0 +1,593 @@
+{
+  "version": 1,
+  "id": "7e8cdeb0709d4133eb01d84d",
+  "title": "Update Gemini and text tool pages with reviewed copy and illustrative image pairs",
+  "actor": "seo-editor-01",
+  "baseRevision": "c9f21db33563b7394f0d58ed4cc4c3dc9f779be3",
+  "createdAt": "2026-11-02T00:58:52.808Z",
+  "entries": [
+    "src/content/landing-pages/gemini-watermark-remover.json",
+    "src/content/landing-pages/remove-text-from-image.json"
+  ],
+  "assets": [
+    {
+      "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-hero-01-water-portrait-before-f6d51d6e3dfb908d.webp",
+      "sha256": "f6d51d6e3dfb908db58689c8097ee2ddec665c8fc46c47aea3bbfd4b5bfac900",
+      "width": 940,
+      "height": 480,
+      "bytes": 137368,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-hero-01-water-portrait-after-3b5732c40d10a859.webp",
+      "sha256": "3b5732c40d10a859c24d2efbfd461bdcd37fa36f3b51c652a2e8b2fed250141f",
+      "width": 940,
+      "height": 480,
+      "bytes": 137590,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-hero-02-santorini-travel-before-b34188f03be17e2a.webp",
+      "sha256": "b34188f03be17e2af28cc2867370c7d37a139b5626c363bd390109f78e12e5c7",
+      "width": 940,
+      "height": 480,
+      "bytes": 167552,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-hero-02-santorini-travel-after-31f2223eee037f6a.webp",
+      "sha256": "31f2223eee037f6a0b781b4a08cbd364539c2b8535879e3fd4472e25db7c0372",
+      "width": 940,
+      "height": 480,
+      "bytes": 174756,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-hero-03-serum-product-before-d397e6da83740ca6.webp",
+      "sha256": "d397e6da83740ca64e86d6515f1f9e954dc3137ac4bfd1da1e605e034ff529b6",
+      "width": 940,
+      "height": 480,
+      "bytes": 138204,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-hero-03-serum-product-after-44c2fbd00eb9ebfd.webp",
+      "sha256": "44c2fbd00eb9ebfde21fa5ef86255598eed8973a957b2426d47595efde1359a6",
+      "width": 940,
+      "height": 480,
+      "bytes": 137712,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-feature-01-full-frame-before-c36c792986f4af98.webp",
+      "sha256": "c36c792986f4af986a67c1a4a2c24b5d003e807ec3b8a9bfe8de72ae728c141e",
+      "width": 940,
+      "height": 480,
+      "bytes": 184178,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-feature-01-full-frame-after-4899599429f7223e.webp",
+      "sha256": "4899599429f7223ed3a1843468a439f6a8176b09326b0d361e98735398930160",
+      "width": 940,
+      "height": 480,
+      "bytes": 196710,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-feature-02-fine-texture-before-26d64285e1ad1897.webp",
+      "sha256": "26d64285e1ad189712158b1169cac521bd7cb2c88ca8f219a9e1e49ebf4cf376",
+      "width": 940,
+      "height": 480,
+      "bytes": 196590,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-feature-02-fine-texture-after-98f3b7fafbcd23b0.webp",
+      "sha256": "98f3b7fafbcd23b03b8f8b590f5091462425102e3d8309fcc2fdf54ddeb46cf7",
+      "width": 940,
+      "height": 480,
+      "bytes": 209018,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-feature-03-browser-workflow-before-2035d37b7cc40748.webp",
+      "sha256": "2035d37b7cc40748293371b2cb2eff4de3b09d96ebfc14ec3df94c1643eb2fff",
+      "width": 940,
+      "height": 480,
+      "bytes": 139998,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-feature-03-browser-workflow-after-ae7bc9dee63c9714.webp",
+      "sha256": "ae7bc9dee63c9714440889367642616f9445274105f6bd01c75440f455cf315f",
+      "width": 940,
+      "height": 480,
+      "bytes": 136120,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-feature-04-private-processing-before-e48149c6cfc455f8.webp",
+      "sha256": "e48149c6cfc455f820ec92bf81496b2592f6c1aeec8ca859a7536d48dd829201",
+      "width": 940,
+      "height": 480,
+      "bytes": 128810,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-feature-04-private-processing-after-37cba2e12d93172a.webp",
+      "sha256": "37cba2e12d93172aeffc398418b092f05ab7ae99eee2c7f90bfa65ba53e96965",
+      "width": 940,
+      "height": 480,
+      "bytes": 123448,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-hero-01-before-2700c7b5172f007f.webp",
+      "sha256": "2700c7b5172f007f8aeb6ae4653bddf49ace499ec15fe9474fcdfe1a8e1298dd",
+      "width": 940,
+      "height": 480,
+      "bytes": 173948,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-hero-01-after-a635c077de284938.webp",
+      "sha256": "a635c077de284938eaf571befc5b83ad5c05b21e6b2fd874ba5d007e1b2ce7c3",
+      "width": 940,
+      "height": 480,
+      "bytes": 172966,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-hero-02-before-fd4fa4f7b6de6e7f.webp",
+      "sha256": "fd4fa4f7b6de6e7f39e43f6e8e05d37aeccf31dbe747f35f75f8f7035d1247a1",
+      "width": 940,
+      "height": 480,
+      "bytes": 95348,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-hero-02-after-6e6aeadc5ba16633.webp",
+      "sha256": "6e6aeadc5ba166333a3629d17f95cd3314d8b23c4ebbf48c165a2534a453132d",
+      "width": 940,
+      "height": 480,
+      "bytes": 94462,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-hero-03-before-8fcb751fca0f327a.webp",
+      "sha256": "8fcb751fca0f327ab07f09d505d1acabaeab883e02ab2240a09d720ffba48f33",
+      "width": 940,
+      "height": 480,
+      "bytes": 89304,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-hero-03-after-4ffcc47c14779d2b.webp",
+      "sha256": "4ffcc47c14779d2bb74aeba2a971288639532d044b43206c665e9efc83de7008",
+      "width": 940,
+      "height": 480,
+      "bytes": 87048,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-feature-04-before-e08fc72daec9ad8e.webp",
+      "sha256": "e08fc72daec9ad8e8b05418ace77494626ce9b7c0e919828ff54808232e82bc3",
+      "width": 940,
+      "height": 480,
+      "bytes": 188528,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-feature-04-after-95709d8ec7b5ce9b.webp",
+      "sha256": "95709d8ec7b5ce9be7b2b1e869b27c35d0b4f6386590a32eda810c519ff3ec51",
+      "width": 940,
+      "height": 480,
+      "bytes": 186494,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-feature-05-before-4513846f077b7df2.webp",
+      "sha256": "4513846f077b7df2dc55e594a972293344f4361452f8df6306c1f1bcd081d59d",
+      "width": 940,
+      "height": 480,
+      "bytes": 107340,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-feature-05-after-69269989b0bae489.webp",
+      "sha256": "69269989b0bae48990ae8e408bec62c901769d601e780758fd66cffa5c83d562",
+      "width": 940,
+      "height": 480,
+      "bytes": 105894,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-feature-06-before-a85b7d7db460cc54.webp",
+      "sha256": "a85b7d7db460cc5462dc536f8e03d751160288c66ca9f0945b96aa05ccd85750",
+      "width": 940,
+      "height": 480,
+      "bytes": 189740,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-feature-06-after-688e3444fba5289c.webp",
+      "sha256": "688e3444fba5289c039fa6d1792ea254cb6d7fa4cdd26e1ab317ec4080ebc8be",
+      "width": 940,
+      "height": 480,
+      "bytes": 190098,
+      "mime": "image/webp"
+    }
+  ],
+  "events": {
+    "28cbbc618033fcfe13879e18676663f7a210145f827bc6d4b6ed62e8a7e5be88": {
+      "fingerprint": "91451aca661945347320ae83a7e74b0ea0ed295bcbb2fd901d89f4f7bd7da05d",
+      "result": {}
+    },
+    "896c3e3d9b9b7b5f948b56e5516d5ed4a9bf8b3d2ffd3f5026f7a9c0a16c55ca": {
+      "fingerprint": "90d54c6151e70cb719c022c723564280e0f44afb3696aea7e9d5a3044c70631d",
+      "result": {
+        "asset": {
+          "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-hero-01-water-portrait-before-f6d51d6e3dfb908d.webp",
+          "sha256": "f6d51d6e3dfb908db58689c8097ee2ddec665c8fc46c47aea3bbfd4b5bfac900",
+          "width": 940,
+          "height": 480,
+          "bytes": 137368,
+          "mime": "image/webp"
+        }
+      }
+    },
+    "2d47bb36ba7891a5b2e58a1193872e460959af8d4d7b68e8e925d90064a69bd6": {
+      "fingerprint": "d48a0c54948779b3afa2ef93a18dd66d336ec3d49b7c055aa848725c066285f2",
+      "result": {
+        "asset": {
+          "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-hero-01-water-portrait-after-3b5732c40d10a859.webp",
+          "sha256": "3b5732c40d10a859c24d2efbfd461bdcd37fa36f3b51c652a2e8b2fed250141f",
+          "width": 940,
+          "height": 480,
+          "bytes": 137590,
+          "mime": "image/webp"
+        }
+      }
+    },
+    "1f38ef24bfda9cdda1262942bb113d72ec20eb7cffd552d6a71217ee221b3456": {
+      "fingerprint": "eca9307184977b895350dd6e439de48bbdf642ef93b0cfe113f761214d3ba17f",
+      "result": {
+        "asset": {
+          "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-hero-02-santorini-travel-before-b34188f03be17e2a.webp",
+          "sha256": "b34188f03be17e2af28cc2867370c7d37a139b5626c363bd390109f78e12e5c7",
+          "width": 940,
+          "height": 480,
+          "bytes": 167552,
+          "mime": "image/webp"
+        }
+      }
+    },
+    "ecd7305dee0eb7906b12bd846d431b9eeef752bc477fe7bb28a95eed14aaf2ef": {
+      "fingerprint": "ebc2614ce5aae250e8dd3aa029a00f2d2b248f7db472a0243f50c9f5c9034b85",
+      "result": {
+        "asset": {
+          "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-hero-02-santorini-travel-after-31f2223eee037f6a.webp",
+          "sha256": "31f2223eee037f6a0b781b4a08cbd364539c2b8535879e3fd4472e25db7c0372",
+          "width": 940,
+          "height": 480,
+          "bytes": 174756,
+          "mime": "image/webp"
+        }
+      }
+    },
+    "a5066300c0199d2e7d99f5b8b504cd88a79b49447a6308f2c32d25948a7cee21": {
+      "fingerprint": "e8128bf541f9279766ef097ca3c95843f0926b3334bf29d0a60d242fc406eb2c",
+      "result": {
+        "asset": {
+          "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-hero-03-serum-product-before-d397e6da83740ca6.webp",
+          "sha256": "d397e6da83740ca64e86d6515f1f9e954dc3137ac4bfd1da1e605e034ff529b6",
+          "width": 940,
+          "height": 480,
+          "bytes": 138204,
+          "mime": "image/webp"
+        }
+      }
+    },
+    "c8dd68586e4119c117a08d74b3164d193424fb2eba3555fae5345edfaea017b5": {
+      "fingerprint": "a72bae783156408be1b6c8995d090818be94538a47224305ba48bd24a95c85a5",
+      "result": {
+        "asset": {
+          "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-hero-03-serum-product-after-44c2fbd00eb9ebfd.webp",
+          "sha256": "44c2fbd00eb9ebfde21fa5ef86255598eed8973a957b2426d47595efde1359a6",
+          "width": 940,
+          "height": 480,
+          "bytes": 137712,
+          "mime": "image/webp"
+        }
+      }
+    },
+    "be742e9e67ce2b02e389410ef8e3fdca65c16fcd9dbcf447e92a2f63c117400d": {
+      "fingerprint": "a1fbf251e3a2cf197012c4557024278e2f6d52390f4364fd757030cec443a59b",
+      "result": {
+        "asset": {
+          "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-feature-01-full-frame-before-c36c792986f4af98.webp",
+          "sha256": "c36c792986f4af986a67c1a4a2c24b5d003e807ec3b8a9bfe8de72ae728c141e",
+          "width": 940,
+          "height": 480,
+          "bytes": 184178,
+          "mime": "image/webp"
+        }
+      }
+    },
+    "4f96d384c340c44af498a619173c1967d29fad32e06d2ada35f01b09665c530c": {
+      "fingerprint": "7d48475aa4b15110444ccaf2f79666002f413fe62e0e9f87c3d39ef441c3cb31",
+      "result": {
+        "asset": {
+          "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-feature-01-full-frame-after-4899599429f7223e.webp",
+          "sha256": "4899599429f7223ed3a1843468a439f6a8176b09326b0d361e98735398930160",
+          "width": 940,
+          "height": 480,
+          "bytes": 196710,
+          "mime": "image/webp"
+        }
+      }
+    },
+    "14b8645c6e66fc59e4284e0b866bd7e4f539e19508293b49ac16f48007b57fd9": {
+      "fingerprint": "a8140bead7d22825113bc39516a791637ebf6c53daf80ab4662dcc6102498089",
+      "result": {
+        "asset": {
+          "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-feature-02-fine-texture-before-26d64285e1ad1897.webp",
+          "sha256": "26d64285e1ad189712158b1169cac521bd7cb2c88ca8f219a9e1e49ebf4cf376",
+          "width": 940,
+          "height": 480,
+          "bytes": 196590,
+          "mime": "image/webp"
+        }
+      }
+    },
+    "ad617d3621dbabcdfd945a6eec3d938a8ad4bd541a49b38cbecc27968b6bb8fa": {
+      "fingerprint": "984072521f9b0f74b8cd771d2ac1cf0db7fb57e916e12533763aa6acfb2125e7",
+      "result": {
+        "asset": {
+          "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-feature-02-fine-texture-after-98f3b7fafbcd23b0.webp",
+          "sha256": "98f3b7fafbcd23b03b8f8b590f5091462425102e3d8309fcc2fdf54ddeb46cf7",
+          "width": 940,
+          "height": 480,
+          "bytes": 209018,
+          "mime": "image/webp"
+        }
+      }
+    },
+    "5dec6b683d9909499def118fd41e982f61a22b237b1d372ae85b45481de71fa0": {
+      "fingerprint": "b8a71a88edb141288b9fb5803acf36d6b9ea36c814c6edcd9903d1080b4f5ecb",
+      "result": {
+        "asset": {
+          "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-feature-03-browser-workflow-before-2035d37b7cc40748.webp",
+          "sha256": "2035d37b7cc40748293371b2cb2eff4de3b09d96ebfc14ec3df94c1643eb2fff",
+          "width": 940,
+          "height": 480,
+          "bytes": 139998,
+          "mime": "image/webp"
+        }
+      }
+    },
+    "fb76db77c8a75ea4296893566a08cbc0f72370beb8b979f6c22040c4b4c4cfde": {
+      "fingerprint": "95bf88324f48f36989cfd52fbd4cd0f20cf224f5acdc6d73dfe8e189b04c1fdf",
+      "result": {
+        "asset": {
+          "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-feature-03-browser-workflow-after-ae7bc9dee63c9714.webp",
+          "sha256": "ae7bc9dee63c9714440889367642616f9445274105f6bd01c75440f455cf315f",
+          "width": 940,
+          "height": 480,
+          "bytes": 136120,
+          "mime": "image/webp"
+        }
+      }
+    },
+    "51d7d36a140e35ffb246daf03e2cca6fbb24237bd3c9a2ec645b97fcd7811791": {
+      "fingerprint": "3e70b37cd62b021005dfa954462972054fa67eb8623d67d9b768f1c727be7c92",
+      "result": {
+        "asset": {
+          "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-feature-04-private-processing-before-e48149c6cfc455f8.webp",
+          "sha256": "e48149c6cfc455f820ec92bf81496b2592f6c1aeec8ca859a7536d48dd829201",
+          "width": 940,
+          "height": 480,
+          "bytes": 128810,
+          "mime": "image/webp"
+        }
+      }
+    },
+    "31fcbaec9477498da71c1015f8a19c7a2f18454f0f1c07e040b52aa5caf56a11": {
+      "fingerprint": "03a4e60b87386d82c2b642deb9a2022e0eaab27f5a1fd8f159bd974ee7c7b2d3",
+      "result": {
+        "asset": {
+          "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-feature-04-private-processing-after-37cba2e12d93172a.webp",
+          "sha256": "37cba2e12d93172aeffc398418b092f05ab7ae99eee2c7f90bfa65ba53e96965",
+          "width": 940,
+          "height": 480,
+          "bytes": 123448,
+          "mime": "image/webp"
+        }
+      }
+    },
+    "8d4a95b68da4d8a75d7f37753be4fd98f6e1ed4bfb30d85775e9e994ac99e541": {
+      "fingerprint": "a8e18f788faabb1656573192e4d7ef46fe39c551a8f63695087d84b42c8f9e20",
+      "result": {
+        "asset": {
+          "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-hero-01-before-2700c7b5172f007f.webp",
+          "sha256": "2700c7b5172f007f8aeb6ae4653bddf49ace499ec15fe9474fcdfe1a8e1298dd",
+          "width": 940,
+          "height": 480,
+          "bytes": 173948,
+          "mime": "image/webp"
+        }
+      }
+    },
+    "1a10bd4ec8c5b3bc29a152e23812a7ce87281d03c63a5fb453c560b7098c664a": {
+      "fingerprint": "5183d0f51123c5b0989942f53d43850b26998b4ebbed9ec79ee2aac34c5ffcd4",
+      "result": {
+        "asset": {
+          "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-hero-01-after-a635c077de284938.webp",
+          "sha256": "a635c077de284938eaf571befc5b83ad5c05b21e6b2fd874ba5d007e1b2ce7c3",
+          "width": 940,
+          "height": 480,
+          "bytes": 172966,
+          "mime": "image/webp"
+        }
+      }
+    },
+    "763835e29df808f16760b9457d4c3b36c9dc2655cd6a4375587a43b974da4571": {
+      "fingerprint": "871d40167a2336b3b00ed9be6772df869cc34ec7922a2acf1c9ef17b220d7afb",
+      "result": {
+        "asset": {
+          "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-hero-02-before-fd4fa4f7b6de6e7f.webp",
+          "sha256": "fd4fa4f7b6de6e7f39e43f6e8e05d37aeccf31dbe747f35f75f8f7035d1247a1",
+          "width": 940,
+          "height": 480,
+          "bytes": 95348,
+          "mime": "image/webp"
+        }
+      }
+    },
+    "2c08280d23effad69af1b9917ad19bb2db2f37268c76bec192f302b3388f74b5": {
+      "fingerprint": "9f5e7fef27d38276ac4bedf6a678c85c0b37b0d48389c6677a3ea3d0ddd1d20d",
+      "result": {
+        "asset": {
+          "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-hero-02-after-6e6aeadc5ba16633.webp",
+          "sha256": "6e6aeadc5ba166333a3629d17f95cd3314d8b23c4ebbf48c165a2534a453132d",
+          "width": 940,
+          "height": 480,
+          "bytes": 94462,
+          "mime": "image/webp"
+        }
+      }
+    },
+    "62a2c9c4d61b0cd5319d7dd263e5d13b1ddec0eb389981c467093d1b01b347e3": {
+      "fingerprint": "5405942db90b2ddc14da8bfaf90706d5d08856103923198e4f0986c01a1ff723",
+      "result": {
+        "asset": {
+          "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-hero-03-before-8fcb751fca0f327a.webp",
+          "sha256": "8fcb751fca0f327ab07f09d505d1acabaeab883e02ab2240a09d720ffba48f33",
+          "width": 940,
+          "height": 480,
+          "bytes": 89304,
+          "mime": "image/webp"
+        }
+      }
+    },
+    "85f94c9967ccfd9523f5fad601a4f050403ebdbf1e1d42c46d211186ec8580e6": {
+      "fingerprint": "d9f89587d2fc7346bd59ddfeda32d1067ffc4107d4e048652ad039e10076459c",
+      "result": {
+        "asset": {
+          "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-hero-03-after-4ffcc47c14779d2b.webp",
+          "sha256": "4ffcc47c14779d2bb74aeba2a971288639532d044b43206c665e9efc83de7008",
+          "width": 940,
+          "height": 480,
+          "bytes": 87048,
+          "mime": "image/webp"
+        }
+      }
+    },
+    "2c22e998bdbffd0c358f7780fce2eab7a193d518ba8cbaf8f81757b835d91ca7": {
+      "fingerprint": "065e8ae8c38db5976193b596f5a6835c231009757ca21c054b2967f0d5db9a71",
+      "result": {
+        "asset": {
+          "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-feature-04-before-e08fc72daec9ad8e.webp",
+          "sha256": "e08fc72daec9ad8e8b05418ace77494626ce9b7c0e919828ff54808232e82bc3",
+          "width": 940,
+          "height": 480,
+          "bytes": 188528,
+          "mime": "image/webp"
+        }
+      }
+    },
+    "8a9dc171d90d39555cee453af46aa51da0ba1daa911d717546450fa6421dad7a": {
+      "fingerprint": "1091a59e51a4968a6b6463e86b79393290054fe47c82e45ab41d30a42e148846",
+      "result": {
+        "asset": {
+          "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-feature-04-after-95709d8ec7b5ce9b.webp",
+          "sha256": "95709d8ec7b5ce9be7b2b1e869b27c35d0b4f6386590a32eda810c519ff3ec51",
+          "width": 940,
+          "height": 480,
+          "bytes": 186494,
+          "mime": "image/webp"
+        }
+      }
+    },
+    "4080f2d1a21ccb1b831d57e73a33205392e7ac7fc1333e3f2cd352258168e4c3": {
+      "fingerprint": "331dfc97729f0e92941d9d9f02bdfb37f5475698cbe88c9ba4edcd6ab40f9bbf",
+      "result": {
+        "asset": {
+          "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-feature-05-before-4513846f077b7df2.webp",
+          "sha256": "4513846f077b7df2dc55e594a972293344f4361452f8df6306c1f1bcd081d59d",
+          "width": 940,
+          "height": 480,
+          "bytes": 107340,
+          "mime": "image/webp"
+        }
+      }
+    },
+    "ef82cf23aec62f4c829f1921b448bc4036d71aa04ddfa8bfaab1031923f93096": {
+      "fingerprint": "ccb8acce5cf9ad0868e476c34e17c305c582c08246a79808b1086ab26daa2756",
+      "result": {
+        "asset": {
+          "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-feature-05-after-69269989b0bae489.webp",
+          "sha256": "69269989b0bae48990ae8e408bec62c901769d601e780758fd66cffa5c83d562",
+          "width": 940,
+          "height": 480,
+          "bytes": 105894,
+          "mime": "image/webp"
+        }
+      }
+    },
+    "9ca7827e22c7d1baff5ccea6d0e643e408baf18f55e1dff5688fd11a79d2abc1": {
+      "fingerprint": "ccacadf8fb3d8dd1a748b63daa16eff24eb4be141dbcd4d456fd6a297ddb5966",
+      "result": {
+        "asset": {
+          "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-feature-06-before-a85b7d7db460cc54.webp",
+          "sha256": "a85b7d7db460cc5462dc536f8e03d751160288c66ca9f0945b96aa05ccd85750",
+          "width": 940,
+          "height": 480,
+          "bytes": 189740,
+          "mime": "image/webp"
+        }
+      }
+    },
+    "62e889a3cf20b42becb3efb0fdcbdce336aac6e0fb4f7ebf860de44b8a9e50c2": {
+      "fingerprint": "6ce6996b15fb437debfcbf1dc99fcaacf26ed995e54ee99e63dae4aecce5d74a",
+      "result": {
+        "asset": {
+          "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-feature-06-after-688e3444fba5289c.webp",
+          "sha256": "688e3444fba5289c039fa6d1792ea254cb6d7fa4cdd26e1ab317ec4080ebc8be",
+          "width": 940,
+          "height": 480,
+          "bytes": 190098,
+          "mime": "image/webp"
+        }
+      }
+    },
+    "de34a9752bb0b635f8ea853c083e2cdde147bc7339924a57427952c6e1551d47": {
+      "fingerprint": "b1902f34616d22f41f5571095a0fd3a05b43458db0b7e0920597e61f56f03447",
+      "result": {}
+    },
+    "36afb317dbcf19147caab8b3b810910c945d1e8fa2b75e6bd528e40856b3de7a": {
+      "fingerprint": "81f141de70b5c7818b13fbed61add520378d89ee19ca64ec3a207b97b0393e1a",
+      "result": {}
+    },
+    "9bdfaf11f59e7bc624a95ac3aac55d4a35599595410302a1fd0fd48dbe1d85b3": {
+      "fingerprint": "2dbad1cfab91ed57cae7ecb38553b81cea4b75f69ff7ed918717357ecea78258",
+      "result": {}
+    },
+    "9fc9067b1b060506e59d773fbfeaa3ddf7d663fa6538effaa1cf8e8997770ff0": {
+      "fingerprint": "1bb96b7646929b68839bd21df4e9809740b62ae611872e1369ea3a1441b556e2",
+      "result": {}
+    },
+    "ecb7001cd947bde12727b7ce627dcc4c3e2dd9e03829eb6b4459e7e313c4ec62": {
+      "fingerprint": "3617653abba6b405f2c974655381d3995c30bb52180c443087daa8a75bb0c402",
+      "result": {}
+    }
+  },
+  "pull": 114,
+  "approval": {
+    "digest": "42c90bd4a6cd299aabc10e222e6cd62a08cce1fca818229d33e73747385ab615",
+    "actor": "seo-editor-01",
+    "reference": "https://github.com/teddy920810/ai-watermark-remover/pull/114#issuecomment-6566751391",
+    "note": "The human content owner authorized the seven supplied landing-page updates on 2026-11-02. The coordinator independently reviewed this first batch at source revision 27be85a17ef44e825c878b5aeeb0aab4065443b5, base c9f21db33563b7394f0d58ed4cc4c3dc9f779be3, exact digest 42c90bd4a6cd299aabc10e222e6cd62a08cce1fca818229d33e73747385ab615. Approve only Gemini Watermark Remover and Remove Text from Image, with their 26 supplied original WebP assets (3,889,224 bytes), visible illustrative-example disclosures, source-grounded alt text, current cost/capability limits and corrected media-versus-record retention wording. The Text metadata/intro/retention corrections and schema-default normalization were reviewed. Authorize the existing API review to update only these two SEO-baseline records. This content approval does not authorize publishing, merging, wallet changes, Provider calls, transactions, local main synchronization or the second five-page batch; protected CI and separate publish approval remain required."
+  }
+}
