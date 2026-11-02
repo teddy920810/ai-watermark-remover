@@ -5,7 +5,9 @@
   "actor": "seo-editor-01",
   "baseRevision": "c9f21db33563b7394f0d58ed4cc4c3dc9f779be3",
   "createdAt": "2026-11-02T00:58:52.808Z",
-  "entries": [],
+  "entries": [
+    "src/content/landing-pages/gemini-watermark-remover.json"
+  ],
   "assets": [
     {
       "path": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-hero-01-water-portrait-before-f6d51d6e3dfb908d.webp",
@@ -558,6 +560,10 @@
           "mime": "image/webp"
         }
       }
+    },
+    "de34a9752bb0b635f8ea853c083e2cdde147bc7339924a57427952c6e1551d47": {
+      "fingerprint": "b1902f34616d22f41f5571095a0fd3a05b43458db0b7e0920597e61f56f03447",
+      "result": {}
     }
   }
 }
