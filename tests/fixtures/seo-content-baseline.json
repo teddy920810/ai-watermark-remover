@@ -346,23 +346,39 @@
     },
     {
       "file": "src/content/homepage/home.json",
-      "semanticSha256": "9976a0a23d5d22104e60d2203f99d45134bb8612c0993dd8fd42ad8a5331d021",
+      "semanticSha256": "6752c0f7dee51c4484c0e2afdeef1c67d562d75528247220aad661e22291fe41",
       "images": [
         {
           "path": "/hero/samples/0/image",
-          "value": "/uploads/home-blueprint/features/hero-sample-01-serum.png"
+          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-hero-03-serum-product-before-d397e6da83740ca6.webp"
+        },
+        {
+          "path": "/hero/samples/0/afterImage",
+          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-hero-03-serum-product-after-44c2fbd00eb9ebfd.webp"
         },
         {
           "path": "/hero/samples/1/image",
-          "value": "/uploads/home-blueprint/features/hero-sample-02-sunset.png"
+          "value": "/uploads/landing-phase2-20261103/sora-watermark-remover/hero-01-before.webp"
+        },
+        {
+          "path": "/hero/samples/1/afterImage",
+          "value": "/uploads/landing-phase2-20261103/sora-watermark-remover/hero-01-after.webp"
         },
         {
           "path": "/hero/samples/2/image",
-          "value": "/uploads/home-blueprint/features/hero-sample-03-tote.png"
+          "value": "/uploads/landing-phase2-20261103/remove-logo-from-image/hero-03-before.webp"
+        },
+        {
+          "path": "/hero/samples/2/afterImage",
+          "value": "/uploads/landing-phase2-20261103/remove-logo-from-image/hero-03-after.webp"
         },
         {
           "path": "/hero/samples/3/image",
-          "value": "/uploads/home-blueprint/features/hero-sample-04-contract.png"
+          "value": "/uploads/landing-phase2-20261103/pdf-watermark-remover/hero-01-before.webp"
+        },
+        {
+          "path": "/hero/samples/3/afterImage",
+          "value": "/uploads/landing-phase2-20261103/pdf-watermark-remover/hero-01-after.webp"
         },
         {
           "path": "/useCases/0/image",
@@ -524,7 +540,8 @@
           "path": "/removalTools/cards/7/alt",
           "value": "Before-and-after architecture sketch showing a handwritten signature removed"
         }
-      ]
+      ],
+      "contentOwnerApproval": "https://github.com/teddy920810/ai-watermark-remover/pull/117#issuecomment-6606766433"
     },
     {
       "file": "src/content/landing-pages/batch-watermark-remover.json",

@@ -255,7 +255,8 @@ test('homepage blueprint previews, CTA routes and motion controls work on deskto
     await expect(page.locator('[data-hero-preview]:visible')).toHaveCount(1);
     await page.locator('[data-hero-sample]').nth(1).click();
     await expect(page.locator('[data-hero-sample]').nth(1)).toHaveAttribute('aria-pressed','true');
-    await expect(page.locator('[data-hero-preview]:visible input[type=range]')).toHaveCount(0);
+    await expect(page.locator('[data-hero-preview]:visible [data-image-display]')).toHaveAttribute('data-ready', 'true');
+    await expect(page.locator('[data-hero-preview]:visible').getByRole('slider', { name: 'Compare before and after: Sunset', exact: true })).toHaveValue('50');
     const tabs=page.locator('[data-scenario-tab]');
     await tabs.first().focus();
     await tabs.first().press('End');
@@ -329,12 +330,61 @@ test('homepage matches blueprint geometry and keeps mobile comparisons and activ
   expect(mobile.noteBottom).toBeLessThanOrEqual(mobile.trustTop);
 });
 
-test('homepage single images switch without showing comparison controls or labels', async ({ page }) => {
+test('homepage hero pairs drag and reset when samples switch while scenarios remain single images', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/');
-  for (const button of await page.locator('[data-hero-sample]').all()) {
-    await button.click(); await expect(button).toHaveAttribute('aria-pressed', 'true');
+  const home = JSON.parse(readFileSync(new URL('../../src/content/homepage/home.json', import.meta.url), 'utf8'));
+  await expect(page.locator('.illustration-note')).toHaveText('Illustrative comparisons — not tested product outputs. Actual results depend on your image.');
+  const buttons = page.locator('[data-hero-sample]');
+  await expect(buttons).toHaveCount(4);
+  for (const index of [0, 1, 2, 3, 0]) {
+    const sample = home.hero.samples[index];
+    await buttons.nth(index).click();
+    for (let other = 0; other < 4; other++) {
+      await expect(buttons.nth(other)).toHaveAttribute('aria-pressed', String(other === index));
+    }
     await expect(page.locator('[data-hero-preview]:visible')).toHaveCount(1);
-    await expect(page.locator('[data-hero-preview]:visible input[type=range]')).toHaveCount(0);
+    const display = page.locator('[data-hero-preview]:visible [data-image-display]');
+    await display.scrollIntoViewIfNeeded();
+    await expect(display).toHaveAttribute('data-pair', 'true');
+    await expect(display).toHaveAttribute('data-ready', 'true');
+    const dimensions = [];
+    for (const [side, source] of [['before', sample.image], ['after', sample.afterImage]]) {
+      const image = display.locator(`[data-image-side="${side}"] img`);
+      await expect(image).toHaveAttribute('src', source);
+      await expect(image).toHaveAttribute('alt', sample.label);
+      await expect.poll(() => image.evaluate(async element => {
+        const image = element as HTMLImageElement;
+        try { await image.decode(); return image.complete && image.naturalWidth > 0 && image.naturalHeight > 0; } catch { return false; }
+      })).toBe(true);
+      await expect.poll(() => image.evaluate(element => (element as HTMLImageElement).currentSrc)).toBe(new URL(source, page.url()).href);
+      dimensions.push(await image.evaluate(element => {
+        const image = element as HTMLImageElement;
+        return [image.naturalWidth, image.naturalHeight];
+      }));
+    }
+    expect(dimensions[0]).toEqual(dimensions[1]);
+    const slider = display.getByRole('slider', { name: `Compare before and after: ${sample.label}`, exact: true });
+    await expect(slider).toHaveCount(1);
+    await expect(slider).toHaveValue('50');
+    await expect(display.locator('.image-display-controls')).toBeVisible();
+    await expect.poll(() => display.evaluate(element => element.style.getPropertyValue('--image-position'))).toBe('50%');
+    const box = await display.boundingBox();
+    expect(box).not.toBeNull();
+    if (!box) throw new Error('Visible hero comparison has no bounds');
+    for (const position of [20, 80]) {
+      await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+      await page.mouse.down();
+      await page.mouse.move(box.x + box.width * position / 100, box.y + box.height / 2, { steps: 6 });
+      await page.mouse.up();
+      await expect.poll(async () => Math.abs(Number(await slider.inputValue()) - position)).toBeLessThan(2);
+      await expect.poll(() => display.evaluate((element, target) => Math.abs(parseFloat(element.style.getPropertyValue('--image-position')) - target), position)).toBeLessThan(2);
+      await expect.poll(() => display.evaluate((element, target) => {
+        const stage = element.getBoundingClientRect();
+        const divider = element.querySelector('.image-display-divider')!.getBoundingClientRect();
+        return Math.abs((divider.x + divider.width / 2 - stage.x) / stage.width * 100 - target);
+      }, position)).toBeLessThan(2);
+    }
   }
   await page.locator('[data-scenario-direction=next]:visible').click();
   await expect(page.locator('[data-scenario-panel]:visible [data-image-display]')).toBeVisible();

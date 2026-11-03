@@ -38,10 +38,12 @@ describe('single and true two-image content', () => {
   it('never invents an overlay for a newly entered single-image home record', () => {
     const home = JSON.parse(readFileSync(new URL('../../content/homepage/home.json', import.meta.url), 'utf8'));
     delete home.hero.samples[0].watermark;
+    delete home.hero.samples[0].afterImage;
     delete home.useCases[0].watermark; delete home.useCases[0].comparisonStyle;
     delete home.features.items[0].watermark; delete home.features.items[0].comparisonStyle;
     const parsed = homepageSchema.parse(home);
     expect(parsed.hero.samples[0].watermark).toBeUndefined();
+    expect(parsed.hero.samples[0].afterImage).toBeUndefined();
     expect(parsed.useCases[0].watermark).toBeUndefined(); expect(parsed.useCases[0].comparisonStyle).toBeUndefined();
     expect(parsed.features.items[0].watermark).toBeUndefined();
   });
