@@ -183,6 +183,7 @@
 @media(max-width:760px) {
   .home-blueprint .hero-copy { padding:0 22px; }
   .home-blueprint .hero-workbench { width:calc(100% - 40px); max-width:calc(100% - 64px); }
+  .home-blueprint .compare-panel > .illustration-note { position:static; margin-top:3px; }
   .home-blueprint .trust-list { gap:8px 18px; }
   .home-blueprint .section-heading h2 { font-size:32px; }
   .home-blueprint .process-section { padding-top:38px; }

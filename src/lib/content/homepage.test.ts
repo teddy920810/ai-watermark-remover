@@ -8,6 +8,37 @@ const homepage = JSON.parse(
 );
 
 describe('homepage CMS content', () => {
+  it('supplies the four approved independent hero image pairs', () => {
+    const parsed = homepageSchema.parse(homepage);
+    const approvedSamples = [
+      {
+        id: 'serum', label: 'Serum',
+        image: '/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-hero-03-serum-product-before-d397e6da83740ca6.webp',
+        afterImage: '/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-hero-03-serum-product-after-44c2fbd00eb9ebfd.webp',
+      },
+      {
+        id: 'sunset', label: 'Sunset',
+        image: '/uploads/landing-phase2-20261103/sora-watermark-remover/hero-01-before.webp',
+        afterImage: '/uploads/landing-phase2-20261103/sora-watermark-remover/hero-01-after.webp',
+      },
+      {
+        id: 'tote', label: 'Tote bag',
+        image: '/uploads/landing-phase2-20261103/remove-logo-from-image/hero-03-before.webp',
+        afterImage: '/uploads/landing-phase2-20261103/remove-logo-from-image/hero-03-after.webp',
+      },
+      {
+        id: 'contract', label: 'Contract',
+        image: '/uploads/landing-phase2-20261103/pdf-watermark-remover/hero-01-before.webp',
+        afterImage: '/uploads/landing-phase2-20261103/pdf-watermark-remover/hero-01-after.webp',
+      },
+    ];
+    expect(parsed.hero.samples.map(sample => sample.afterImage)).toEqual(approvedSamples.map(sample => sample.afterImage));
+    expect(parsed.hero.samples.map(({ id, label, image, afterImage }) => ({ id, label, image, afterImage }))).toEqual(approvedSamples);
+    expect(parsed.hero.previewNote).toBe('Illustrative comparisons — not tested product outputs. Actual results depend on your image.');
+    for (const sample of parsed.hero.samples) {
+      expect(sample.afterImage).not.toBe(sample.image);
+    }
+  });
   it('explains the unified upload formats and separates free image uses from video credits', () => {
     const parsed = homepageSchema.parse(homepage);
     const formatAnswer = parsed.faq.items.find(item => item.question.includes('file types'))?.answer ?? '';

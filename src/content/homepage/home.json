@@ -16,29 +16,33 @@
       {
         "id": "serum",
         "label": "Serum",
-        "image": "/uploads/home-blueprint/features/hero-sample-01-serum.png",
+        "image": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-hero-03-serum-product-before-d397e6da83740ca6.webp",
+        "afterImage": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-hero-03-serum-product-after-44c2fbd00eb9ebfd.webp",
         "watermark": "watermark"
       },
       {
         "id": "sunset",
         "label": "Sunset",
-        "image": "/uploads/home-blueprint/features/hero-sample-02-sunset.png",
+        "image": "/uploads/landing-phase2-20261103/sora-watermark-remover/hero-01-before.webp",
+        "afterImage": "/uploads/landing-phase2-20261103/sora-watermark-remover/hero-01-after.webp",
         "watermark": "2025.06.18 19:42"
       },
       {
         "id": "tote",
         "label": "Tote bag",
-        "image": "/uploads/home-blueprint/features/hero-sample-03-tote.png",
+        "image": "/uploads/landing-phase2-20261103/remove-logo-from-image/hero-03-before.webp",
+        "afterImage": "/uploads/landing-phase2-20261103/remove-logo-from-image/hero-03-after.webp",
         "watermark": "VG"
       },
       {
         "id": "contract",
         "label": "Contract",
-        "image": "/uploads/home-blueprint/features/hero-sample-04-contract.png",
+        "image": "/uploads/landing-phase2-20261103/pdf-watermark-remover/hero-01-before.webp",
+        "afterImage": "/uploads/landing-phase2-20261103/pdf-watermark-remover/hero-01-after.webp",
         "watermark": "Please review"
       }
     ],
-    "previewNote": "Interactive illustrations — actual results depend on your image.",
+    "previewNote": "Illustrative comparisons — not tested product outputs. Actual results depend on your image.",
     "privacyNote": "Private upload · Automatically deleted after 24 hours"
   },
   "useCases": [
