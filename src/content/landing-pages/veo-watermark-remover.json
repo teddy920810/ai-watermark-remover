@@ -1,83 +1,83 @@
 {
   "draft": false,
   "slug": "veo-watermark-remover",
-  "title": "Veo Watermark Remover – Remove Veo Watermark from Video Online",
-  "description": "Remove Veo watermark from video online with an AI Veo watermark remover. Clean visible Veo and Veo 3 watermarks while keeping your video clear, complete, and ready to share.",
+  "title": "Veo Watermark Remover for Veo 3 & Google Flow | Coming Soon",
+  "description": "Explore WatermarkGemini's upcoming Veo watermark remover for visible video overlays. Learn how Veo 3, Google Flow and SynthID differ before video cleanup launches.",
   "eyebrow": "AI VEO WATERMARK REMOVER",
   "statusLabel": "Coming Soon",
-  "heading": "Veo Watermark Remover – Remove Veo Watermark from Video",
-  "intro": "Remove visible Veo watermarks from your AI-generated videos without complicated frame-by-frame editing. WatermarkGemini works as an AI-powered Veo watermark remover that cleans unwanted Veo logos while preserving the surrounding scene, helping you prepare cleaner videos for social media, presentations, creative portfolios, and client projects.",
+  "heading": "Veo Watermark Remover for Veo 3 and Google Flow Videos",
+  "intro": "Veo and Google Flow clips may include visible branding in addition to invisible provenance signals. WatermarkGemini is preparing a dedicated Veo video watermark workflow, but this page currently labels it Coming Soon. Video cleanup and export details should be treated as unverified until the feature is activated and tested.\n\nThe comparison images on this page are illustrative examples, not tested product outputs.",
   "benefits": [
-    "Remove visible Veo watermarks automatically",
-    "Keep the original video composition",
-    "Clean Veo and Veo 3 generated videos"
+    "Veo 3 and Flow video focus",
+    "Visible watermark, not SynthID",
+    "Dedicated workflow coming soon"
   ],
   "process": {
     "eyebrow": "How it works",
-    "heading": "How to Remove Veo Watermark from Video Online",
-    "intro": "Wondering how to remove Veo watermark from video without working through individual frames? Complete the process in three simple steps.",
+    "heading": "How to Remove Visible Watermarks from Veo Videos",
+    "intro": "Follow the three steps below. Always confirm the file type and actual processing status shown in the tool before you submit content.",
     "steps": [
       {
         "number": "01",
-        "title": "Upload Your Veo Video",
-        "description": "Choose the Veo, Veo 3, Google Flow, or Gemini video you want to clean and upload the supported file to WatermarkGemini."
+        "title": "Prepare Your Veo or Flow Export",
+        "description": "Keep the original video you generated through Veo, Gemini or Google Flow. Note the visible overlay and retain an unedited backup."
       },
       {
         "number": "02",
-        "title": "Remove the Visible Veo Watermark",
-        "description": "Our AI identifies the visible Veo watermark area and processes the surrounding visual details to create a cleaner result."
+        "title": "Check When the Veo Video Tool Is Available",
+        "description": "This page currently displays a Coming Soon status. Media types listed by a shared uploader do not establish that dedicated Veo processing or MP4 export is active. Verify the service and credit cost before starting."
       },
       {
         "number": "03",
-        "title": "Preview and Download",
-        "description": "Review the cleaned result and download your video for your next social post, presentation, portfolio, creative project, or client preview."
+        "title": "Inspect Output Across the Full Timeline",
+        "description": "After the feature is released, compare several identical frames and transitions, test audio playback, and review whether any visible mark remains. Never judge a video result from one still."
       }
     ]
   },
   "faq": {
-    "eyebrow": "Veo image FAQ",
+    "eyebrow": "Veo watermark FAQ",
     "heading": "Veo Watermark Remover FAQs",
-    "intro": "Common questions about Veo watermark removal, Veo 3 videos, Google Flow, video quality, and online processing.",
+    "intro": "Clear answers about supported inputs, editing quality, limits and responsible use.",
     "items": [
       {
         "enabled": true,
-        "question": "How to remove Veo watermark from video?",
-        "answer": "Upload your supported Veo-generated video to WatermarkGemini and start the watermark removal process. The tool analyzes the visible watermark area and surrounding content to create a cleaner result without requiring manual frame-by-frame editing."
+        "question": "Can I use the Veo watermark remover right now?",
+        "answer": "The dedicated Veo video watermark remover on this page is labeled Coming Soon. A shared uploader listing MP4 does not by itself prove that Veo processing and download are active. Confirm availability before spending credits."
       },
       {
         "enabled": true,
-        "question": "Can I remove Veo watermark online?",
-        "answer": "Yes. WatermarkGemini works as a Veo watermark remover online, allowing you to clean supported visible Veo watermarks through a browser-based workflow without professional editing software."
+        "question": "How can I remove a visible Veo watermark from video?",
+        "answer": "A compatible video editor would process authorized footage, identify the visible overlay and reconstruct the area across frames. WatermarkGemini's Veo-specific tool still needs to be verified and launched; a finished MP4 result is not yet confirmed on this page."
       },
       {
         "enabled": true,
-        "question": "How do I remove Veo 3 watermark?",
-        "answer": "Use the same workflow: upload your supported Veo 3-generated video, let the tool process the visible watermark, preview the result, and download the cleaned file."
+        "question": "Will the tool support Veo 3 or Veo 3.1?",
+        "answer": "Veo 3 and Veo 3.1 are relevant user searches, but support must be confirmed against actual exports. Model version alone does not guarantee that a particular watermark pattern is recognized."
       },
       {
         "enabled": true,
-        "question": "Is there a free Veo 3 watermark remover?",
-        "answer": "WatermarkGemini provides an online Veo watermark removal workflow for supported content. Available processing limits should be checked in the uploader before starting."
+        "question": "Can it clean clips made in Google Flow?",
+        "answer": "Google Flow is a relevant Veo distribution workflow. Different export paths and visible marks may need different handling. Compatibility will be stated after video input, output and logo-type testing."
       },
       {
         "enabled": true,
-        "question": "Can WatermarkGemini remove watermarks from Google Flow videos?",
-        "answer": "Supported Veo-generated videos exported through Google Flow can use the same visible-watermark cleanup workflow. Actual results depend on the watermark style, position, video quality, and surrounding scene."
+        "question": "Is there a free Veo watermark remover online?",
+        "answer": "Any free allowance should be based on the live pricing policy and the tool's actual availability. The current page is marked Coming Soon, so no unlimited free Veo-video processing promise is appropriate."
       },
       {
         "enabled": true,
-        "question": "Will removing the Veo watermark make my video blurry?",
-        "answer": "The goal is to reconstruct the visible watermark area while preserving surrounding visual detail rather than simply blurring the region. Results can vary depending on motion, background complexity, watermark placement, and source quality."
+        "question": "Can I remove a Veo watermark without cropping?",
+        "answer": "Region-based reconstruction may help retain the original frame, but it needs real video-output validation. For the dedicated WatermarkGemini Veo workflow, no-crop editing remains an intended benefit rather than a verified result."
       },
       {
         "enabled": true,
-        "question": "Does the Veo watermark remover remove SynthID?",
-        "answer": "No. This tool focuses on visible watermarks shown inside the video frame. Google's invisible SynthID provenance technology is different from a visible Veo logo and is not the target of this workflow."
+        "question": "Does removing a Veo mark remove SynthID?",
+        "answer": "No. A visible video logo and Google's invisible SynthID provenance are different things. Cleaning a visible area does not establish that hidden provenance information has been removed."
       },
       {
         "enabled": true,
-        "question": "Can I remove a Veo watermark from any video?",
-        "answer": "Only remove watermarks from videos you own or have permission to modify. WatermarkGemini is intended for cleaning your own authorized Veo-generated content rather than removing ownership marks from content belonging to other creators."
+        "question": "Will my video keep its audio and quality?",
+        "answer": "Quality, codec, frame rate and audio preservation depend on the real video processing pipeline. When a compatible workflow becomes available, review the complete output file for changes to detail, motion and audio."
       }
     ]
   },
@@ -88,68 +88,81 @@
   },
   "features": {
     "eyebrow": "BUILT FOR VEO VIDEOS",
-    "heading": "A Veo Watermark Remover Built Around Real Video Problems",
-    "intro": "Removing a watermark from video is harder than removing one from a single image. The background changes from frame to frame. Subjects move. Textures shift. WatermarkGemini is designed to solve the problems that matter most when you remove Veo watermark from video—cleaner frames, preserved composition, and videos that are easier to reuse.",
+    "heading": "Veo Video Cleanup: What Matters Before You Remove a Visible Mark",
+    "intro": "Veo watermark cleanup needs to consider moving scenes, full-frame composition and differences between visible graphics and invisible AI provenance. These are the design goals for the upcoming video workflow.\n\nThe comparison images on this page are illustrative examples, not tested product outputs.",
     "items": [
       {
         "enabled": true,
         "eyebrow": "FEATURE 1",
-        "heading": "Remove Veo Watermark Without Distracting Blur or Patches",
-        "description": "A watermark may sit over changing skies, clothing, products, faces, landscapes, or other detailed parts of your Veo-generated scene. Simply blurring the logo can replace one distraction with another. Our Veo video watermark remover analyzes the area around the visible watermark and works to reconstruct the missing visual details rather than covering the region with an obvious blur box. The result is a cleaner frame that keeps attention on your video instead of the edit.",
-        "image": "/uploads/remove-gemini-watermark.png",
-        "imageAlt": "remove veo watermark without blur",
-        "imagePosition": "right"
+        "heading": "Focus on Visible Veo Marks, Not Hidden SynthID",
+        "description": "A visible corner mark is an image element inside a frame, while SynthID is an invisible provenance signal. The planned tool is intended to address visible overlays. Removing a visible mark does not establish removal of SynthID, file metadata or other origin markers.\n\nIllustrative scene: Rainy historic city; not a tested product output.",
+        "image": "/uploads/landing-phase2-20261103/veo-watermark-remover/feature-04-before.webp",
+        "imageAlt": "Illustrative Rainy historic city comparison; not a tested product output.",
+        "imagePosition": "right",
+        "afterImage": "/uploads/landing-phase2-20261103/veo-watermark-remover/feature-04-after.webp"
       },
       {
         "enabled": true,
         "eyebrow": "FEATURE 2",
-        "heading": "Remove Veo Watermark Without Cropping Away Your Scene",
-        "description": "Cropping may hide a Veo watermark quickly, but it also removes part of the video you spent time generating. That can cut into characters, product shots, subtitles, important background elements, or carefully composed cinematic framing. WatermarkGemini helps you remove Veo watermark without relying on aggressive cropping, so you can keep more of the original frame and preserve the composition you intended. This is especially useful when one Veo video needs to be reused across multiple platforms with different aspect-ratio requirements.",
-        "image": "/uploads/remove-logo-from-image.png",
-        "imageAlt": "remove veo watermark without cropping",
-        "imagePosition": "left"
+        "heading": "Keep the Original Veo Scene Composition",
+        "description": "Cropping can remove products, subtitles, actors or important edge details in cinematic footage. A future video-cleanup workflow should work in the marked area and preserve the source aspect ratio where possible. The illustrative still below is not evidence of a processed video.\n\nIllustrative scene: Surfer inside wave; not a tested product output.",
+        "image": "/uploads/landing-phase2-20261103/veo-watermark-remover/feature-05-before.webp",
+        "imageAlt": "Illustrative Surfer inside wave comparison; not a tested product output.",
+        "imagePosition": "left",
+        "afterImage": "/uploads/landing-phase2-20261103/veo-watermark-remover/feature-05-after.webp"
       },
       {
         "enabled": true,
         "eyebrow": "FEATURE 3",
-        "heading": "Clean Veo 3, Google Flow, and Gemini Video Exports",
-        "description": "Veo content does not always come from the same workflow. Creators may generate videos directly with Veo, work inside Google Flow, or access Veo-powered generation through Gemini. Different generations can also show different visible watermark styles. Our Veo 3 watermark remover is designed around these real creator workflows, giving you one simple place to clean supported visible Veo watermarks from your own AI-generated content. Upload your export and let WatermarkGemini handle the cleanup without requiring a complex desktop editing workflow.",
-        "image": "/uploads/remove-text-from-image.png",
-        "imageAlt": "clean veo 3 video exports",
-        "imagePosition": "right"
+        "heading": "Explain Differences Between Veo 3 and Google Flow Exports",
+        "description": "Users may download Veo-powered videos from Gemini or Flow, and visible marks can vary with the production path. Compatibility with specific exports remains unverified on this Coming Soon page. These illustrative stills do not demonstrate tested Veo 3 or Flow exports.\n\nIllustrative scene: Sunbeams and woodland stag; not a tested product output.",
+        "image": "/uploads/landing-phase2-20261103/veo-watermark-remover/feature-06-before.webp",
+        "imageAlt": "Illustrative Sunbeams and woodland stag comparison; not a tested product output.",
+        "imagePosition": "right",
+        "afterImage": "/uploads/landing-phase2-20261103/veo-watermark-remover/feature-06-after.webp"
       }
     ]
   },
   "heroSamples": [
     {
       "id": "preview-1",
-      "label": "Example 1",
-      "image": "/uploads/remove-gemini-watermark.png",
-      "imageAlt": "remove veo watermark without blur"
+      "label": "Stormy coastal surf · Illustrative",
+      "image": "/uploads/landing-phase2-20261103/veo-watermark-remover/hero-01-before.webp",
+      "imageAlt": "Illustrative Stormy coastal surf comparison; not a tested product output.",
+      "afterImage": "/uploads/landing-phase2-20261103/veo-watermark-remover/hero-01-after.webp"
     },
     {
       "id": "preview-2",
-      "label": "Example 2",
-      "image": "/uploads/remove-logo-from-image.png",
-      "imageAlt": "remove veo watermark without cropping"
+      "label": "Night city portrait · Illustrative",
+      "image": "/uploads/landing-phase2-20261103/veo-watermark-remover/hero-02-before.webp",
+      "imageAlt": "Illustrative Night city portrait comparison; not a tested product output.",
+      "afterImage": "/uploads/landing-phase2-20261103/veo-watermark-remover/hero-02-after.webp"
     },
     {
       "id": "preview-3",
-      "label": "Example 3",
-      "image": "/uploads/remove-text-from-image.png",
-      "imageAlt": "clean veo 3 video exports"
+      "label": "Alpine cloudscape · Illustrative",
+      "image": "/uploads/landing-phase2-20261103/veo-watermark-remover/hero-03-before.webp",
+      "imageAlt": "Illustrative Alpine cloudscape comparison; not a tested product output.",
+      "afterImage": "/uploads/landing-phase2-20261103/veo-watermark-remover/hero-03-after.webp"
     }
   ],
   "relatedTools": {
     "enabled": true,
     "eyebrow": "Popular tools",
-    "heading": "All AI tools of WatermarkGemini",
-    "intro": "Start with the cleanup workflow that best matches your image."
+    "heading": "All AI Tools of WatermarkGemini",
+    "intro": "Select the tool that matches the file and cleanup task you actually have."
   },
   "guides": {
     "enabled": true,
     "eyebrow": "Helpful guides",
-    "heading": "Learn More About Free AI Watermark Remover from Image",
-    "intro": "Practical guides for cleaner, more polished images."
+    "heading": "Learn More About AI Watermark Remover from Image",
+    "intro": "Practical tutorials for improving the images and videos you are allowed to edit."
+  },
+  "cta": {
+    "eyebrow": "Ready when you are",
+    "heading": "Check the Veo Watermark Remover Availability",
+    "description": "The dedicated video workflow on this page is marked Coming Soon. Keep your original file and check this page for verified availability and supported export formats.",
+    "buttonLabel": "Upload your image",
+    "buttonHref": "/#tool"
   }
 }
