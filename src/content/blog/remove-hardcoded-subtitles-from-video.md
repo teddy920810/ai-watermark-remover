@@ -141,7 +141,7 @@ If cropping would damage composition, create a solid lower-third strip, use a ca
 
 For technical users, FFmpeg includes a delogo filter that interpolates pixels around a rectangular region. It can conceal a small, stationary caption, but usually struggles with a full-width subtitle band or moving detailed backgrounds. The numbers below are examples, not values for your video:
 
-ffmpeg -i input.mp4 -vf "delogo=x=80:y=900:w=1100:h=90" -c:a copy output.mp4
+`ffmpeg -i input.mp4 -vf "delogo=x=80:y=900:w=1100:h=90" -c:a copy output.mp4`
 
 Adjust x and y for the upper-left corner of the text box, and w and h for its width and height. Verify that the rectangle stays inside the video frame. FFmpeg re-encodes the video when a filter is applied, so compare visual quality and the output audio before replacing your source. This technique does not restore the hidden original pixels.
 
