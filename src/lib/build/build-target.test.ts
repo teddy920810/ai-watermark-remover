@@ -1,5 +1,5 @@
 import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, rmSync, existsSync, symlinkSync, renameSync } from 'node:fs';
-import { execFileSync } from 'node:child_process';
+import { execFileSync, spawnSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
@@ -24,6 +24,16 @@ function fixture() {
 afterEach(() => { for (const directory of directories.splice(0)) rmSync(directory, { recursive: true, force: true }); });
 
 describe('independent build targets', () => {
+  it.each(['site', 'app', 'gateway'])('builds an explicit same-commit %s redeployment so environment updates take effect', (target) => {
+    const root = path.resolve(import.meta.dirname, '../../..');
+    const head = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim();
+    const result = spawnSync(process.execPath, ['scripts/build-target.mjs', 'ignore', target], {
+      cwd: root, encoding: 'utf8', env: { ...process.env, VERCEL_GIT_PREVIOUS_SHA: head, VERCEL_GIT_COMMIT_SHA: head },
+    });
+    // Vercel uses exit 1 to build, exit 0 to skip. No install or build is started by this decision.
+    expect(result.stderr).toBe('');
+    expect(result.status).toBe(1);
+  });
   it('includes the deleted executable side when a source file is renamed into documentation', () => {
     const root = fixture();
     const git = (...args: string[]) => execFileSync('git', ['-C', root, ...args], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim();
