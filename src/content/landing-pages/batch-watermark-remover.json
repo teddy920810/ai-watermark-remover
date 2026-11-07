@@ -5,7 +5,6 @@
   "title": "Batch Watermark Remover Online | WatermarkGemini",
   "description": "Prepare multiple supported images for a future batch watermark remover workflow in one organized tool page.",
   "eyebrow": "BATCH WATERMARK REMOVER",
-  "statusLabel": "Coming Soon",
   "heading": "Batch Watermark Remover",
   "intro": "A dedicated page for a future workflow that removes watermarks from multiple authorized files in one batch.",
   "benefits": [
@@ -14,9 +13,7 @@
     "Designed for authorized assets"
   ],
   "uploader": {
-    "dropzone": {
-      "dropLabel": "Coming Soon"
-    }
+    "dropzone": {}
   },
   "process": {
     "eyebrow": "HOW IT WORKS",
@@ -53,7 +50,7 @@
       {
         "enabled": true,
         "question": "Is batch processing available now?",
-        "answer": "The page is live for discovery, while multi-file processing is marked Coming Soon."
+        "answer": "This page provides workflow guidance. Multi-file processing is not currently supported."
       },
       {
         "enabled": true,

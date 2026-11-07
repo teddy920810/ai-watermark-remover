@@ -545,7 +545,7 @@
     },
     {
       "file": "src/content/landing-pages/batch-watermark-remover.json",
-      "semanticSha256": "0d0499e615628e06211e555b64eb764efa6383186eeef33bffe7492181f4f813",
+      "semanticSha256": "42cee0098c41f9c781ce8eb68a5f177544705e534b7281eab624b394ab1cd2fc",
       "images": [
         {
           "path": "/heroSamples/0/image",
@@ -571,11 +571,12 @@
           "path": "/heroSamples/2/imageAlt",
           "value": "Before and after image ready for secure download"
         }
-      ]
+      ],
+      "contentOwnerApproval": "https://github.com/teddy920810/ai-watermark-remover/pull/130"
     },
     {
       "file": "src/content/landing-pages/capcut-watermark-remover.json",
-      "semanticSha256": "7c9284ce2c394dfbc332b92e314dc2e67afaff8ab6f50d71cf3ccba0fc8eb162",
+      "semanticSha256": "e991b80e3d5e154c1159357c7a37ea3670c3775fa45be422da64d4529b05ccaa",
       "images": [
         {
           "path": "/process/steps/0/image",
@@ -649,11 +650,12 @@
           "path": "/heroSamples/2/imageAlt",
           "value": "Review before you export"
         }
-      ]
+      ],
+      "contentOwnerApproval": "https://github.com/teddy920810/ai-watermark-remover/pull/130"
     },
     {
       "file": "src/content/landing-pages/facebook-watermark-remover.json",
-      "semanticSha256": "e01e3bcbc9cf61b6f53c0d7423552df2d32ffacaf449fd4305bf377f7d3287ca",
+      "semanticSha256": "214135711fb7f425b24843ac57d7aca14f8fff90d23a3c33d94648d07ffd7ced",
       "images": [
         {
           "path": "/heroSamples/0/image",
@@ -679,7 +681,8 @@
           "path": "/heroSamples/2/imageAlt",
           "value": "Before and after image ready for secure download"
         }
-      ]
+      ],
+      "contentOwnerApproval": "https://github.com/teddy920810/ai-watermark-remover/pull/130"
     },
     {
       "file": "src/content/landing-pages/gemini-watermark-remover.json",
@@ -804,7 +807,7 @@
     },
     {
       "file": "src/content/landing-pages/instagram-watermark-remover.json",
-      "semanticSha256": "110978ed2df7d02e7c9510748511ac046d9c253f9b009e7e461e1fce2c9717bb",
+      "semanticSha256": "4cfd4c596200c68d3b9450a2640caa47425906ed65d9214bec478fd39aa7c8f6",
       "images": [
         {
           "path": "/heroSamples/0/image",
@@ -830,11 +833,12 @@
           "path": "/heroSamples/2/imageAlt",
           "value": "Before and after image ready for secure download"
         }
-      ]
+      ],
+      "contentOwnerApproval": "https://github.com/teddy920810/ai-watermark-remover/pull/130"
     },
     {
       "file": "src/content/landing-pages/kling-watermark-remover.json",
-      "semanticSha256": "64670e46a438888596c8575874fda6a41567e394b09dfa91d5cf6747f136e4b4",
+      "semanticSha256": "04dcf2e49cfe6af6e50ce02d68eb4792daba5885319eb4d61d697617bc32ca6a",
       "images": [
         {
           "path": "/heroSamples/0/image",
@@ -860,7 +864,8 @@
           "path": "/heroSamples/2/imageAlt",
           "value": "Before and after image ready for secure download"
         }
-      ]
+      ],
+      "contentOwnerApproval": "https://github.com/teddy920810/ai-watermark-remover/pull/130"
     },
     {
       "file": "src/content/landing-pages/notebooklm-watermark-remover.json",
@@ -1130,7 +1135,7 @@
     },
     {
       "file": "src/content/landing-pages/remove-subtitle-from-video.json",
-      "semanticSha256": "0397fc84519ac9139285bc7abd3d7eb01697cca66f67ebe06e118f60fcdd4ac4",
+      "semanticSha256": "a90bfcd217a3ccfa9fe28cb6650fcc32a4862aa67b2de25152eb577adcca8039",
       "images": [
         {
           "path": "/heroSamples/0/image",
@@ -1156,7 +1161,8 @@
           "path": "/heroSamples/2/imageAlt",
           "value": "Before and after image ready for secure download"
         }
-      ]
+      ],
+      "contentOwnerApproval": "https://github.com/teddy920810/ai-watermark-remover/pull/130"
     },
     {
       "file": "src/content/landing-pages/remove-text-from-image.json",
@@ -1269,7 +1275,7 @@
     },
     {
       "file": "src/content/landing-pages/sora-watermark-remover.json",
-      "semanticSha256": "490387c8bfa9c4cd8bee403f00fe323540e5a12f02da65aeccade58d62563d02",
+      "semanticSha256": "106ee0a49acdcfda1ffea0544cd9f03e04ceee9e6b3ed27d7666b3be67e8ba13",
       "images": [
         {
           "path": "/features/items/0/image",
@@ -1344,11 +1350,11 @@
           "value": "/uploads/landing-phase2-20261103/sora-watermark-remover/hero-03-after.webp"
         }
       ],
-      "contentOwnerApproval": "https://github.com/teddy920810/ai-watermark-remover/pull/114#issuecomment-6591790363"
+      "contentOwnerApproval": "https://github.com/teddy920810/ai-watermark-remover/pull/130"
     },
     {
       "file": "src/content/landing-pages/tiktok-watermark-remover.json",
-      "semanticSha256": "c9a6d82dd66a72d57b901549fc809a531c75c4b6af507fdb04d484ceddf9c40c",
+      "semanticSha256": "2a738693cd5879af57b19807e1bd1de88993c6e236302ecf97e7de1bb38e4eb3",
       "images": [
         {
           "path": "/features/items/0/image",
@@ -1423,11 +1429,11 @@
           "value": "/uploads/landing-phase2-20261103/tiktok-watermark-remover/hero-03-after.webp"
         }
       ],
-      "contentOwnerApproval": "https://github.com/teddy920810/ai-watermark-remover/pull/114#issuecomment-6591790363"
+      "contentOwnerApproval": "https://github.com/teddy920810/ai-watermark-remover/pull/130"
     },
     {
       "file": "src/content/landing-pages/veo-watermark-remover.json",
-      "semanticSha256": "867164d25fc702466456e8b8b1b6a2c787d9a393b7103565a6c4ebfa73fef926",
+      "semanticSha256": "c003f86d2102050c51789298d74273a54167388fb242a30d4c10b19df003f56f",
       "images": [
         {
           "path": "/features/items/0/image",
@@ -1502,7 +1508,7 @@
           "value": "/uploads/landing-phase2-20261103/veo-watermark-remover/hero-03-after.webp"
         }
       ],
-      "contentOwnerApproval": "https://github.com/teddy920810/ai-watermark-remover/pull/114#issuecomment-6591790363"
+      "contentOwnerApproval": "https://github.com/teddy920810/ai-watermark-remover/pull/130"
     },
     {
       "file": "src/content/landing-pages/video-watermark-remover.json",
@@ -1560,7 +1566,7 @@
     },
     {
       "file": "src/content/settings/site.json",
-      "semanticSha256": "e566870f703474365100c4aa02283c98d6bc42001e0ef725ed89421f36c066ed",
+      "semanticSha256": "6020d7283ca2d17d77f7a7fd47c210eb54e080528119ae97bc94f681cbd99388",
       "images": [
         {
           "path": "/processVisuals/0/image",
@@ -1586,7 +1592,8 @@
           "path": "/processVisuals/2/imageAlt",
           "value": "Before and after image ready for secure download"
         }
-      ]
+      ],
+      "contentOwnerApproval": "https://github.com/teddy920810/ai-watermark-remover/pull/130"
     }
   ]
 }

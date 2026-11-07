@@ -41,14 +41,16 @@ test('a background recommendation keeps its image and an incompatible video open
   await expect(page.locator('.app-entry-notice')).toContainText(/video|compatible/i);
   await expect(page.getByText('original.mp4', { exact: true })).toBeVisible(); expect(writes).toEqual([]);
 });
-test('an unavailable source gives an explicit notice and the footer hands off a real local file directly', async ({ page }) => {
+test('a tool without a status badge explains the compatible workspace and hands off the footer file directly', async ({ page }) => {
   const writes = await localOnly(page);
   await page.goto('/sora-watermark-remover');
   const footer = page.locator('.site-cta'); await footer.scrollIntoViewIfNeeded();
   await expect(footer.getByRole('button', { name: 'Upload file', exact: true })).toBeEnabled();
   await footer.locator('input[type=file]').setInputFiles({ name: 'from-footer.mp4', mimeType: 'video/mp4', buffer: video });
   await expect(page.getByText('from-footer.mp4', { exact: true })).toBeVisible();
-  await expect(page.locator('.app-entry-notice')).toContainText(/not available|not open|unavailable/i);
+  await expect(page.getByLabel('Choose operation')).toHaveValue('video-watermark');
+  await expect(page.locator('.app-entry-notice')).toContainText(/video.*compatible workspace/i);
+  await expect(page.locator('.app-entry-notice')).not.toContainText(/not available|not open|unavailable/i);
   expect(writes).toEqual([]);
 });
 test('choosing another file in App automatically switches media while keeping the original bytes local', async ({ page }) => {

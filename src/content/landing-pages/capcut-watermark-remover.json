@@ -2,30 +2,26 @@
   "draft": false,
   "slug": "capcut-watermark-remover",
   "toolKind": "watermark-remover",
-  "title": "CapCut Watermark Remover Online — Coming Soon | WatermarkGemini",
-  "description": "Explore WatermarkGemini’s forthcoming CapCut watermark remover online page. Learn the permission-first steps to prepare image exports while the dedicated workflow is coming soon.",
-  "eyebrow": "COMING SOON",
-  "statusLabel": "Coming Soon",
-  "heading": "CapCut Watermark Remover — Coming Soon",
+  "title": "CapCut Watermark Remover Online | WatermarkGemini",
+  "description": "Explore WatermarkGemini’s forthcoming CapCut watermark remover online page. Learn the permission-first steps to prepare image exports.",
+  "eyebrow": "CAPCUT IMAGE EXPORTS",
+  "heading": "CapCut Watermark Remover",
   "intro": "WatermarkGemini is preparing a dedicated page for visible-watermark cleanup on CapCut image exports you own or are authorized to edit. The CapCut-specific processing workflow is not available yet.\n\nLooking for how to remove capcut watermark from an image you are allowed to modify? Start by confirming ownership, saving the original, and checking the available tools before you upload anything.",
   "benefits": [
-    "CapCut workflow: Coming Soon"
+    "CapCut workflow"
   ],
   "uploader": {
     "hero": {
-      "eyebrow": "COMING SOON",
-      "heading": "CapCut workflow: Coming Soon",
-      "demoBadge": "Coming Soon",
+      "eyebrow": "CAPCUT IMAGE EXPORTS",
+      "heading": "CapCut workflow",
       "demoBadgeTitle": "The CapCut-specific processing workflow is not available yet."
     },
-    "dropzone": {
-      "dropLabel": "Coming Soon"
-    }
+    "dropzone": {}
   },
   "process": {
     "eyebrow": "HOW TO",
     "heading": "How to prepare for a CapCut watermark cleanup",
-    "intro": "The dedicated CapCut workflow is coming soon.",
+    "intro": "Prepare an authorized CapCut image export before choosing a cleanup tool.",
     "steps": [
       {
         "number": "01",
@@ -44,7 +40,7 @@
       {
         "number": "03",
         "title": "Check the tool status.",
-        "description": "The dedicated CapCut workflow is coming soon. Review the live page for supported-file and processing details before you submit a file.",
+        "description": "Review the live page for supported-file and processing details before you submit a file.",
         "image": "/uploads/capcut-operations-feature-3.png",
         "imageAlt": "Review before you export"
       }
@@ -53,12 +49,12 @@
   "faq": {
     "eyebrow": "FAQ",
     "heading": "CapCut Watermark Remover FAQs",
-    "intro": "The dedicated CapCut workflow is Coming Soon.",
+    "intro": "Answers about CapCut image exports and supported cleanup workflows.",
     "items": [
       {
         "enabled": true,
         "question": "Is this a capcut watermark remover?",
-        "answer": "This is WatermarkGemini’s discovery page for a forthcoming CapCut-specific workflow. The page currently says Coming Soon, so it must not promise that a file can be processed today."
+        "answer": "This is WatermarkGemini’s discovery page for a forthcoming CapCut-specific workflow. A dedicated CapCut-specific processing workflow has not been verified."
       },
       {
         "enabled": true,
@@ -78,7 +74,7 @@
       {
         "enabled": true,
         "question": "Is there a capcut watermark remover free option?",
-        "answer": "The dedicated CapCut workflow is Coming Soon. Do not equate an existing free image-cleanup offer with this unreleased workflow."
+        "answer": "Do not equate an existing free image-cleanup offer with this unreleased workflow."
       },
       {
         "enabled": true,
@@ -128,8 +124,8 @@
     ]
   },
   "cta": {
-    "eyebrow": "COMING SOON",
-    "heading": "CapCut workflow: Coming Soon",
+    "eyebrow": "CAPCUT IMAGE EXPORTS",
+    "heading": "CapCut workflow",
     "description": "WatermarkGemini is preparing a dedicated page for visible-watermark cleanup on CapCut image exports you own or are authorized to edit. The CapCut-specific processing workflow is not available yet.",
     "buttonLabel": "See available image cleanup tools",
     "buttonHref": "/#tool"

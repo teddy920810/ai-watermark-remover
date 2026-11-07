@@ -5,7 +5,6 @@
   "title": "Facebook Watermark Remover Online | WatermarkGemini",
   "description": "Use the Facebook watermark remover page to prepare supported Facebook media for authorized watermark cleanup.",
   "eyebrow": "FACEBOOK WATERMARK REMOVER",
-  "statusLabel": "Coming Soon",
   "heading": "Facebook Watermark Remover",
   "intro": "A dedicated page for cleaning visible watermarks from Facebook media you own or have permission to edit.",
   "benefits": [
@@ -14,9 +13,7 @@
     "Built for authorized media"
   ],
   "uploader": {
-    "dropzone": {
-      "dropLabel": "Coming Soon"
-    }
+    "dropzone": {}
   },
   "process": {
     "eyebrow": "HOW IT WORKS",
@@ -53,7 +50,7 @@
       {
         "enabled": true,
         "question": "Is the dedicated workflow available now?",
-        "answer": "The page is live for discovery, while the processing workflow is marked Coming Soon."
+        "answer": "This page provides workflow guidance. Confirm supported files and processing details in the tool before submitting media."
       },
       {
         "enabled": true,

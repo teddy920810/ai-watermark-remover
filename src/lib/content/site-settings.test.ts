@@ -57,7 +57,7 @@ describe('site settings CMS content', () => {
     expect(parsed.header.navigation[0].children).toHaveLength(2);
   });
 
-  it('lists every tool exactly once and marks only unopened tools Coming Soon', () => {
+  it('lists every tool exactly once without retired availability badges', () => {
     const directory = new URL('../../content/landing-pages/', import.meta.url);
     const entries = readdirSync(directory).filter(file => file.endsWith('.json'))
       .map(filename => ({ data: JSON.parse(readFileSync(new URL(filename, directory), 'utf8')) }));

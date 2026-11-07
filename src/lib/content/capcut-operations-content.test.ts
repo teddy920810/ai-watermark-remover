@@ -14,12 +14,12 @@ describe('CapCut operations Word content', () => {
     const page = JSON.parse(readFileSync(pageUrl, 'utf8'));
     expect(page).toMatchObject({
       slug: 'capcut-watermark-remover', toolKind: 'watermark-remover', draft: false,
-      statusLabel: 'Coming Soon',
-      title: 'CapCut Watermark Remover Online — Coming Soon | WatermarkGemini',
-      heading: 'CapCut Watermark Remover — Coming Soon',
+      title: 'CapCut Watermark Remover Online | WatermarkGemini',
+      heading: 'CapCut Watermark Remover',
     });
     expect(page.heroActions).toEqual([{ label: 'See available image cleanup tools', href: '/#tool' }]);
-    expect(page.uploader.dropzone.dropLabel).toBe('Coming Soon');
+    expect(page.statusLabel).toBeUndefined();
+    expect(page.uploader.dropzone.dropLabel).toBeUndefined();
     expect(page.process.heading).toBe('How to prepare for a CapCut watermark cleanup');
     expect(page.process.steps).toHaveLength(3);
     expect(page.features.items.map((item: { heading: string }) => item.heading)).toEqual([

@@ -5,7 +5,6 @@
   "title": "Instagram Watermark Remover Online | WatermarkGemini",
   "description": "Use the Instagram watermark remover page to prepare supported Instagram media for authorized watermark cleanup.",
   "eyebrow": "INSTAGRAM WATERMARK REMOVER",
-  "statusLabel": "Coming Soon",
   "heading": "Instagram Watermark Remover",
   "intro": "A dedicated page for removing visible watermarks from Instagram media you own or have permission to reuse.",
   "benefits": [
@@ -14,9 +13,7 @@
     "Designed for authorized content"
   ],
   "uploader": {
-    "dropzone": {
-      "dropLabel": "Coming Soon"
-    }
+    "dropzone": {}
   },
   "process": {
     "eyebrow": "HOW IT WORKS",
@@ -53,7 +50,7 @@
       {
         "enabled": true,
         "question": "Is Instagram media processing available now?",
-        "answer": "The page is live for discovery, while the dedicated processing workflow is marked Coming Soon."
+        "answer": "This page provides workflow guidance. Confirm supported files and processing details in the tool before submitting media."
       },
       {
         "enabled": true,

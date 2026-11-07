@@ -231,10 +231,11 @@ test('landing discovery modules point to published tools and real articles while
   await expect(page.locator('main h1')).toContainText(/background/i);
 });
 
-test('the shared template keeps availability labels and does not alter the homepage', async ({ page }) => {
+test('the shared template omits retired availability labels and does not alter the homepage', async ({ page }) => {
   await page.goto('/batch-watermark-remover');
   await expect(page.locator('.tool-landing')).toBeVisible();
-  await expect(page.locator('.hero-status-badge')).toHaveText('Coming Soon');
+  await expect(page.locator('.hero-status-badge')).toHaveCount(0);
+  await expect(page.locator('.tool-landing')).not.toContainText(/coming\s+soon/i);
   await page.goto('/');
   await expect(page.locator('.tool-landing')).toHaveCount(0);
   await expect(page.locator('.home-blueprint')).toBeVisible();
