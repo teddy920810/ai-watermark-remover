@@ -1,10 +1,10 @@
 # Processing credits and admission recovery
 
-Implementation and release progress are tracked in [the refactor ledger](product/REFACTOR_LEDGER.md). This document describes the implemented contracts; it does not assert that a migration, production grant or deployment has been completed.
+This document owns the implemented Credits contracts. Version-specific migration, deployment and acceptance evidence is recorded in [release readiness](product/RELEASE_READINESS.md); the [refactor ledger](product/REFACTOR_LEDGER.md) retains historical implementation evidence.
 
-## Universal Credits candidate: default off, no account cutover performed
+## Universal Credits: repository default off, explicit account cutover
 
-`UNIVERSAL_CREDITS_ENABLED` defaults to `false`. This candidate adds a fourth explicit unit, `credits`; it does not reinterpret any old amount. The shared price authority is `src/lib/credits/credit-policy.ts`; operation identifiers and limits remain in `operation-catalog.ts`. New and upgraded accounts use that one spendable currency for every operation and every eligible source:
+`UNIVERSAL_CREDITS_ENABLED` defaults to `false`; a deployed environment's activation is a separate release fact. The implementation adds a fourth explicit unit, `credits`; it does not reinterpret any old amount. The shared price authority is `src/lib/credits/credit-policy.ts`; operation identifiers and limits remain in `operation-catalog.ts`. New and upgraded accounts use that one spendable currency for every operation and every eligible source:
 
 | Operation | New Credits |
 | --- | ---: |
@@ -17,7 +17,7 @@ Implementation and release progress are tracked in [the refactor ledger](product
 
 Video uses the sealed server duration: 3 seconds costs 200, 5 seconds costs 300. Quotes seal the rule version, environment and wallet epoch. Reservations and refunds use the original amount and source allocations, including after price changes or quote cleanup. Legacy quotes, jobs, orders, units and amounts are not rewritten.
 
-The new first reward is 100 Credits. One UTC daily check-in issues up to 100; only available plus reserved **reward** Credits count toward the 300 issuance cap. Purchased and administrator Credits do not block a reward. A refund or historical entitlement may exceed the cap and is never clipped. Small-tool reward purchasing power increases by the approved factor of ten. The package catalog and money amounts remain unchanged; this candidate does not reopen purchases.
+The new first reward is 100 Credits. One UTC daily check-in issues up to 100; only available plus reserved **reward** Credits count toward the 300 issuance cap. Purchased and administrator Credits do not block a reward. A refund or historical entitlement may exceed the cap and is never clipped. Small-tool reward purchasing power increases by the approved factor of ten. The package catalog and money amounts remain unchanged; the Credits release does not reopen purchases.
 
 The SQL wallet is source-aware: reward, administrator and purchase lots share spendable units but retain origin, actor, allocations and immutable ledger rows. Consumption uses reward, then administrator, then purchase lots, with FIFO within each source kind. Insufficient funds cause no partial debit. Revocation can remove only the unreserved remainder of the explicitly named administrator grant. Frozen purchases cannot be revived by a failed-task refund. Captures and adjustments keep the original owner, environment, money and order references.
 
@@ -27,7 +27,7 @@ The SQL wallet is source-aware: reward, administrator and purchase lots share sp
 2. Deploy compatible Worker and recovery code, then App, with `UNIVERSAL_CREDITS_ENABLED=false` and purchases still closed. Verify actual versions separately.
 3. Review per-owner source evidence, drain old admission, and wait for all old reservations, UNKNOWN/SAVING/SETTLING tasks and durable claims to reconcile. Old reads, settlement, refunds and original-order captures remain recoverable.
 4. Preview again after draining; apply only its exact reviewed digest in one owner-locked transaction. New lots and old migration-out ledger rows commit together. Old purchases convert 1:1; verified formal processing grants and free uses convert 100:1. Unverified processing origins defer the account; a total balance alone is not sufficient proof.
-5. Enable new admission only after real database, compatible Worker, account migration, browser and bounded functional acceptance gates. New accounts receive the new first reward only when explicitly enabled. An existing legacy account never upgrades merely by signing in.
+5. After real database, compatible Worker and account migration gates, an explicitly authorized bounded activation window may enable new admission for browser and functional acceptance. Use the existing aggregate ledger, keep purchases closed and pause new admission if acceptance fails. Do not declare the launch accepted until these real gates pass. New accounts receive the new first reward only when explicitly enabled. An existing legacy account never upgrades merely by signing in.
 
 An account progresses `legacy → draining → unified`; the epoch fences old confirmations. The shared transaction-scoped owner fence precedes benefit/account/lot locks, including payment fulfillment. Global source-conversion keys prevent a free or processing source from being converted again into another environment. The browser sends `X-Credits-Contract: credits-v1`; an old client cannot submit a new Credits charge. Pause by disabling new admission, retain all tables and financial history, and keep compatible settlement/refund/read code. Never roll back to a binary that treats an unknown unit as processingCredits.
 

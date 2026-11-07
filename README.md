@@ -4,9 +4,9 @@ ClearMark AI 是部署在 [www.watermarkgemini.com](https://www.watermarkgemini.
 
 本仓库也可作为同类站点框架完整 fork：WatermarkGemini 内容继续保留在当前仓库，新站在自己的仓库中初始化品牌并通过 Pages CMS 重建内容。操作见 [新站模板指南](docs/TEMPLATE_GUIDE.md)。
 
-> 当前状态：匿名用户可以选择和预览图片，创建处理任务时需要通过 Google 登录。首次登录获得 1 次免费处理，每日签到增加 1 次，免费余额上限为 3 次；去水印、背景移除和物体移除共用这份余额。上传、临时存储和任务流程已经可用；生产环境可分别通过服务端配置启用 Dewatermark v3 去水印 Provider、Replicate 851 Labs 背景移除 Provider 和 Replicate LaMa 物体移除 Provider，本地和测试环境默认仍使用 Mock Provider。
+> 当前状态：匿名用户可以选择和预览图片，创建处理任务时需要通过 Google 登录。启用统一 Credits 的环境中，新账户与已审核升级的账户使用一个处理余额，奖励、管理员和购买来源分别留账；旧账户沿用原单位，登录不会自动转换。奖励、费率与逐账户迁移以 [Credits 合同](docs/PROCESSING_CREDITS.md)为准，实际生产启用与验收见[发布记录](docs/product/RELEASE_READINESS.md)。生产使用服务端配置的 Dewatermark 与 Replicate Provider，本地和测试环境默认使用 Mock Provider。
 
-新图片工作区提供普通、PRO 和画笔精修；视频工作区支持 MP4、24 fps、最长 9 分钟、100 MB，以及整段生效的固定选区。普通图片保留免费次数规则，PRO、精修和视频使用管理员分配的处理额度。选择文件即时预览，登录后自动上传检查、计算费用；点击带完整费用的处理按钮才开始，无需重复检查或确认弹窗。新环境的处理链路配置默认关闭，须配置完整耐久执行服务后启用；这一默认值不表示生产关闭，生产验收见发布记录。
+新图片工作区提供普通、PRO、画笔精修、背景移除与物体移除；视频工作区支持 MP4、24 fps、最长 9 分钟、100 MB，以及整段生效的固定选区。六种操作均支持统一 Credits，旧单位和已接受任务继续兼容。选择文件即时预览，登录后自动上传检查、计算费用；点击带完整费用的处理按钮才开始，无需重复检查或确认弹窗。新环境的处理链路和统一 Credits 配置默认关闭，须按发布合同启用；默认值不表示生产关闭。
 
 SEO 静态站、App/API 和容器 Worker 使用独立构建与发布目标。重构阶段与原始验收见 [重构台账](docs/product/REFACTOR_LEDGER.md)，2026-11-01 的后续交付与剩余观察见 [发布记录](docs/product/RELEASE_READINESS.md)；历史设计依据见 [产品与初始状态设计](docs/product/PROCESSING_PRODUCT_DESIGN.md) 和 [架构方案](docs/product/PROCESSING_ARCHITECTURE.md)，现行配置与部署合同见 [配置说明](docs/product/PROCESSING_CONFIGURATION.md) 和 [Worker 部署](docs/product/WORKER_DEPLOYMENT.md)。账户与管理员额度操作见 [身份说明](docs/ACCOUNT_IDENTITY.md) 和 [额度说明](docs/PROCESSING_CREDITS.md)。
 
@@ -97,7 +97,7 @@ PR 的 GitHub CI 保持 `CI / verify` 与 `Required target artifacts` 必需门�
 
 ## 文档索引
 
-- [PayPal 图片 Credits 与正式发布](docs/PAYPAL_LIVE_RELEASE.md)：一次性购买，三种图片工具分别计费；与免费次数、管理员处理额度分开，默认关闭收款。
+- [PayPal Credits 与正式发布](docs/PAYPAL_LIVE_RELEASE.md)：购买目录、来源批次、旧单位兼容与发布顺序；统一处理余额不等于开放收款。
 
 - [Pages CMS 中文操作教程](docs/PAGES_CMS_GUIDE.md)
 - [SEO 运营 Agent 内容 API](docs/CONTENT_API.md)：内容域 Token、持久草稿/素材、精确差异审核和受保护发布。

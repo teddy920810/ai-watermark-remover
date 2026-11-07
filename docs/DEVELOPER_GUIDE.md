@@ -31,7 +31,7 @@ Google 登录还需要：
 
 Astro 负责内容路由和服务端 API；React 只用于上传交互岛。浏览器先请求预签名地址，再直接上传到私有 R2，避免图片经过 Vercel 函数。任务状态保存在 R2；去水印能力通过 `WatermarkProvider` 接口隔离，背景移除通过独立的 `BackgroundRemovalProvider` 接口隔离，物体移除通过 `ObjectRemovalProvider` 隔离，三种任务共用账户权益账本。新背景与物体客户端已逐项接入共同耐久协调器和Worker；旧API的准入、查询、下载和已接受请求继续兼容，费用/PNG/选区与恢复规则见[图片操作规范](product/IMAGE_OPERATIONS.md)。
 
-新图片/视频工作区位于 `/app/image`、`/app/video`，使用 `/api/v1` 报价、任务和临时下载接口。非收费媒体检查和已确认任务由独立 Worker 执行，金融预留和耐久 outbox 在 PostgreSQL，媒体与权威任务状态在私有 R2。PRO、精修、视频使用独立的管理员处理额度；旧免费次数、旧 API 和其他工具保持兼容。
+新图片/视频工作区位于 `/app/image`、`/app/video`，使用 `/api/v1` 报价、任务和临时下载接口。非收费媒体检查和已确认任务由独立 Worker 执行，金融预留和耐久 outbox 在 PostgreSQL，媒体与权威任务状态在私有 R2。新账户与已审核升级的账户可使用统一 Credits；旧账户、旧单位和已接受任务继续兼容。仓库开关默认关闭，实际启用、逐账户转换和来源账本见 [Credits 合同](PROCESSING_CREDITS.md)与[发布记录](product/RELEASE_READINESS.md)。
 
 新处理配置见 [配置说明](product/PROCESSING_CONFIGURATION.md)，独立 Web 构建见 [部署目标](../apps/DEPLOYMENT_TARGETS.md)，Worker、R2 清理和真实验收见 [部署说明](product/WORKER_DEPLOYMENT.md)。新账号和再次登录的稳定归属见 [Google 账户身份](ACCOUNT_IDENTITY.md)。现行规范从 [总索引](INDEX.md) 进入；重构阶段与原始验收见 [重构台账](product/REFACTOR_LEDGER.md)，后续交付见 [发布记录](product/RELEASE_READINESS.md)。原 [T0–T11 TODO](product/IMPLEMENTATION_TODO.md) 为历史记录，不能继承其中预算或测试结果。
 
@@ -58,7 +58,7 @@ npm run processing:check
 npm run db:migrate
 ```
 
-迁移脚本读取 `db/migrations`，在 Neon 事务和 advisory lock 内只执行尚未登记的版本。Neon 保存 Google 授权返回的基础资料，以及首次 1 次、每日签到 +1、余额上限 3、任务扣减/失败退回账本及最近活跃时间。Google OAuth token 不写入资料表；图片、结果及 MVP 任务状态仍保存在私有 R2。
+迁移脚本读取 `db/migrations`，在 Neon 事务和 advisory lock 内只执行尚未登记的版本。Neon 保存 Google 授权返回的基础资料、旧权益和统一 Credits 的来源/预留/结算账本及最近活跃时间。旧账户的首次 1 次、每日签到 +1 和免费奖励上限 3 继续兼容；统一 Credits 的奖励与费率以当前合同为准。数据库结构升级不会自动转换旧账户。Google OAuth token 不写入资料表；图片、结果及 MVP 任务状态仍保存在私有 R2。
 
 ## 内容模型
 
