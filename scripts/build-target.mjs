@@ -290,7 +290,9 @@ if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.ar
     else if (command === 'ignore') {
       if (!['site', 'app', 'gateway'].includes(args[0])) throw new Error('Unknown deployment target');
       const files = changedTargetFiles(process.env.VERCEL_GIT_PREVIOUS_SHA, process.env.VERCEL_GIT_COMMIT_SHA);
-      process.exitCode = (args[0] === 'gateway' ? !files || files.some((file) => /^(?:apps\/gateway\/|scripts\/build-target)/.test(file)) : classifyTargetChanges(files ?? ['package.json']).includes(args[0])) ? 1 : 0;
+      // Same-commit redeployments can carry new environment settings despite an empty Git diff.
+      const redeploy = process.env.VERCEL_GIT_PREVIOUS_SHA && process.env.VERCEL_GIT_PREVIOUS_SHA === process.env.VERCEL_GIT_COMMIT_SHA;
+      process.exitCode = (redeploy || (args[0] === 'gateway' ? !files || files.some((file) => /^(?:apps\/gateway\/|scripts\/build-target)/.test(file)) : classifyTargetChanges(files ?? ['package.json']).includes(args[0]))) ? 1 : 0;
     }
     else if (command === 'gateway') {
       if (!process.env.SITE_ORIGIN || !process.env.APP_ORIGIN) throw new Error('Set SITE_ORIGIN and APP_ORIGIN before rendering a literal gateway configuration');

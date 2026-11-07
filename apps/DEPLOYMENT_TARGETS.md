@@ -1,5 +1,7 @@
 # Independent web deployment targets
 
+An explicit redeployment whose previous and current Git SHAs are identical must still build: production environment variables may have changed. The `ignore` decision returns Vercel's build status (exit 1) for this case, including App, Site and gateway. Ordinary commits continue to use the target change classifier. This does not bypass verification, install, build, artifact validation or deployment acceptance. Changing environment variables alone does not update an already running deployment; verify the replacement deployment and its runtime policy.
+
 Current implementation and release gates are tracked in [IMPLEMENTATION_TODO](../docs/product/IMPLEMENTATION_TODO.md). Earlier planning statements describe the research baseline, not the current repository state; this document specifies the selected launch topology and does not claim that deployment or DNS verification has finished.
 
 The canonical content and source files remain in `src/`. `apps/site/src` and `apps/app/src` are route-discovery containers, not copies of CMS content. The build selects entrypoints through Astro's documented `srcDir` and `injectRoute` APIs before bundling; it never removes unwanted functions after building.
