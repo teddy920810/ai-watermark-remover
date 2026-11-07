@@ -1,16 +1,15 @@
 {
   "draft": false,
   "slug": "sora-watermark-remover",
-  "title": "Sora Watermark Remover for Sora 2 Videos | Coming Soon",
+  "title": "Sora Watermark Remover for Sora 2 Videos",
   "description": "Explore WatermarkGemini's upcoming Sora watermark remover. Learn about moving Sora 2 logos, video quality and what to check before a supported video workflow launches.",
   "eyebrow": "SORA WATERMARK REMOVER",
-  "statusLabel": "Coming Soon",
   "heading": "Sora Watermark Remover for Sora and Sora 2 Videos",
   "intro": "Sora and Sora 2 videos can carry visible watermarks that move or overlap detailed scenes. WatermarkGemini is preparing a dedicated Sora video cleanup workflow. Video processing is not yet confirmed as available on this page; review the launch status before uploading a file or purchasing credits.\n\nThe comparison images on this page are illustrative examples, not tested product outputs.",
   "benefits": [
     "Sora and Sora 2 video focus",
     "Moving watermark explained",
-    "Video tool coming soon"
+    "Video tool"
   ],
   "process": {
     "eyebrow": "How it works",
@@ -25,7 +24,7 @@
       {
         "number": "02",
         "title": "Check Video Tool Availability",
-        "description": "This dedicated Sora video-removal workflow is marked Coming Soon. The shared uploader may list image or MP4 formats, but that alone does not confirm that Sora video removal is enabled. Do not purchase processing until the workflow is announced and verified."
+        "description": "The shared uploader may list image or MP4 formats, but that alone does not confirm that Sora video removal is enabled. Do not purchase processing until the workflow is announced and verified."
       },
       {
         "number": "03",
@@ -42,7 +41,7 @@
       {
         "enabled": true,
         "question": "Can WatermarkGemini remove Sora video watermarks now?",
-        "answer": "The dedicated Sora video watermark remover is currently labeled Coming Soon on this page. The shared file uploader may show media-format limits, but the finished Sora video workflow has not been verified. Do not treat this page as an active Sora 2 MP4 remover yet."
+        "answer": "The shared file uploader may show media-format limits, but the finished Sora video workflow has not been verified. Do not treat this page as an active Sora 2 MP4 remover yet."
       },
       {
         "enabled": true,
@@ -82,12 +81,8 @@
     ]
   },
   "uploader": {
-    "hero": {
-      "heading": "Coming Soon"
-    },
-    "dropzone": {
-      "dropLabel": "Coming Soon"
-    }
+    "hero": {},
+    "dropzone": {}
   },
   "features": {
     "eyebrow": "AI Sora Watermark Remover",
@@ -164,7 +159,7 @@
   "cta": {
     "eyebrow": "Ready when you are",
     "heading": "Check the Sora Watermark Remover Availability",
-    "description": "The dedicated video workflow on this page is marked Coming Soon. Keep your original file and check this page for verified availability and supported export formats.",
+    "description": "Keep your original file and check this page for verified availability and supported export formats.",
     "buttonLabel": "Upload your image",
     "buttonHref": "/#tool"
   }

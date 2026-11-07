@@ -5,7 +5,6 @@
   "title": "Remove Subtitle from Video Online | WatermarkGemini",
   "description": "Use the remove subtitle from video page to prepare supported videos for future AI-assisted subtitle cleanup.",
   "eyebrow": "REMOVE SUBTITLE FROM VIDEO",
-  "statusLabel": "Coming Soon",
   "heading": "Remove Subtitle from Video",
   "intro": "A dedicated page for a future workflow that cleans visible burned-in subtitles from videos you own or have permission to edit.",
   "benefits": [
@@ -14,9 +13,7 @@
     "Built for authorized edits"
   ],
   "uploader": {
-    "dropzone": {
-      "dropLabel": "Coming Soon"
-    }
+    "dropzone": {}
   },
   "process": {
     "eyebrow": "HOW IT WORKS",
@@ -48,7 +45,7 @@
       {
         "enabled": true,
         "question": "Can this page remove subtitle from video now?",
-        "answer": "The page is live for discovery, while the dedicated video-processing workflow is marked Coming Soon."
+        "answer": "This page provides workflow guidance. Dedicated subtitle removal is not currently supported; review the available video tool and its fixed-area selection limits."
       },
       {
         "enabled": true,

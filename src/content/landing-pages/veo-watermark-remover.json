@@ -1,16 +1,15 @@
 {
   "draft": false,
   "slug": "veo-watermark-remover",
-  "title": "Veo Watermark Remover for Veo 3 & Google Flow | Coming Soon",
+  "title": "Veo Watermark Remover for Veo 3 & Google Flow",
   "description": "Explore WatermarkGemini's upcoming Veo watermark remover for visible video overlays. Learn how Veo 3, Google Flow and SynthID differ before video cleanup launches.",
   "eyebrow": "AI VEO WATERMARK REMOVER",
-  "statusLabel": "Coming Soon",
   "heading": "Veo Watermark Remover for Veo 3 and Google Flow Videos",
-  "intro": "Veo and Google Flow clips may include visible branding in addition to invisible provenance signals. WatermarkGemini is preparing a dedicated Veo video watermark workflow, but this page currently labels it Coming Soon. Video cleanup and export details should be treated as unverified until the feature is activated and tested.\n\nThe comparison images on this page are illustrative examples, not tested product outputs.",
+  "intro": "Veo and Google Flow clips may include visible branding in addition to invisible provenance signals. WatermarkGemini is preparing a dedicated Veo video watermark workflow. Video cleanup and export details should be treated as unverified until the feature is activated and tested.\n\nThe comparison images on this page are illustrative examples, not tested product outputs.",
   "benefits": [
     "Veo 3 and Flow video focus",
     "Visible watermark, not SynthID",
-    "Dedicated workflow coming soon"
+    "Dedicated workflow"
   ],
   "process": {
     "eyebrow": "How it works",
@@ -25,7 +24,7 @@
       {
         "number": "02",
         "title": "Check When the Veo Video Tool Is Available",
-        "description": "This page currently displays a Coming Soon status. Media types listed by a shared uploader do not establish that dedicated Veo processing or MP4 export is active. Verify the service and credit cost before starting."
+        "description": "Media types listed by a shared uploader do not establish that dedicated Veo processing or MP4 export is active. Verify the service and credit cost before starting."
       },
       {
         "number": "03",
@@ -42,7 +41,7 @@
       {
         "enabled": true,
         "question": "Can I use the Veo watermark remover right now?",
-        "answer": "The dedicated Veo video watermark remover on this page is labeled Coming Soon. A shared uploader listing MP4 does not by itself prove that Veo processing and download are active. Confirm availability before spending credits."
+        "answer": "A shared uploader listing MP4 does not by itself prove that Veo processing and download are active. Confirm availability before spending credits."
       },
       {
         "enabled": true,
@@ -62,7 +61,7 @@
       {
         "enabled": true,
         "question": "Is there a free Veo watermark remover online?",
-        "answer": "Any free allowance should be based on the live pricing policy and the tool's actual availability. The current page is marked Coming Soon, so no unlimited free Veo-video processing promise is appropriate."
+        "answer": "Any free allowance should be based on the live pricing policy and the tool's actual availability. No unlimited free Veo-video processing promise is appropriate."
       },
       {
         "enabled": true,
@@ -82,9 +81,7 @@
     ]
   },
   "uploader": {
-    "dropzone": {
-      "dropLabel": "Coming Soon"
-    }
+    "dropzone": {}
   },
   "features": {
     "eyebrow": "BUILT FOR VEO VIDEOS",
@@ -115,7 +112,7 @@
         "enabled": true,
         "eyebrow": "FEATURE 3",
         "heading": "Explain Differences Between Veo 3 and Google Flow Exports",
-        "description": "Users may download Veo-powered videos from Gemini or Flow, and visible marks can vary with the production path. Compatibility with specific exports remains unverified on this Coming Soon page. These illustrative stills do not demonstrate tested Veo 3 or Flow exports.\n\nIllustrative scene: Sunbeams and woodland stag; not a tested product output.",
+        "description": "Users may download Veo-powered videos from Gemini or Flow, and visible marks can vary with the production path. Compatibility with specific exports remains unverified on this page. These illustrative stills do not demonstrate tested Veo 3 or Flow exports.\n\nIllustrative scene: Sunbeams and woodland stag; not a tested product output.",
         "image": "/uploads/landing-phase2-20261103/veo-watermark-remover/feature-06-before.webp",
         "imageAlt": "Illustrative Sunbeams and woodland stag comparison; not a tested product output.",
         "imagePosition": "right",
@@ -161,7 +158,7 @@
   "cta": {
     "eyebrow": "Ready when you are",
     "heading": "Check the Veo Watermark Remover Availability",
-    "description": "The dedicated video workflow on this page is marked Coming Soon. Keep your original file and check this page for verified availability and supported export formats.",
+    "description": "Keep your original file and check this page for verified availability and supported export formats.",
     "buttonLabel": "Upload your image",
     "buttonHref": "/#tool"
   }

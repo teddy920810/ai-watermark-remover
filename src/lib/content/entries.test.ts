@@ -132,7 +132,7 @@ describe('publicNavigation', () => {
     const links = result.flatMap(item => item.children ?? []);
     expect(links).toHaveLength(21);
     expect(links.filter(link => link.href === '/nano-banana-watermark-remover')).toHaveLength(1);
-    expect(links.filter(link => link.badge === 'Coming Soon')).toHaveLength(9);
+    expect(links.filter(link => link.badge === 'Coming Soon')).toHaveLength(0);
     for (const entry of entries.filter(entry => entry.data.draft)) expect(links.some(link => link.href === `/${entry.data.slug}`)).toBe(false);
   });
 });

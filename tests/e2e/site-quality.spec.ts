@@ -40,23 +40,24 @@ test('ChatGPT landing modules keep source visuals and page-local actions without
   await expect(page.locator('.site-cta > div > p')).toHaveText(textPage.cta?.description ?? site.cta.description);
 });
 
-test('all tools remain reachable in the desktop and mobile header with honest availability labels', async ({ page }) => {
+test('all tools remain reachable in the desktop and mobile header without retired availability badges', async ({ page }) => {
   for (const width of [1440, 390]) {
     await page.setViewportSize({ width, height: 844 });
     await page.goto('/chatgpt-watermark-remover');
     if (width === 390) await page.locator('[data-mobile-menu-toggle]').click();
     const nav = page.getByRole('navigation', { name: 'Main navigation' });
     await nav.getByRole('button', { name: 'Video & Batch Tools' }).click();
-    await expect(nav.locator('.nav-status-badge')).toHaveCount(9);
+    await expect(nav.locator('.nav-status-badge')).toHaveCount(0);
     await expect(nav.getByRole('link', { name: 'Video Watermark Remover', exact: true })).toBeVisible();
     await expect(nav.getByRole('link', { name: 'All Watermark Tools' })).toHaveCount(0);
-    const lastTool = nav.getByRole('link', { name: 'Batch Watermark Remover Coming Soon', exact: true });
+    const lastTool = nav.getByRole('link', { name: 'Batch Watermark Remover', exact: true });
     await lastTool.scrollIntoViewIfNeeded();
     await expect(lastTool).toBeInViewport();
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
     await lastTool.click();
     await expect(page).toHaveURL(/\/batch-watermark-remover$/);
-    await expect(page.locator('.hero-status-badge')).toHaveText('Coming Soon');
+    await expect(page.locator('.hero-status-badge')).toHaveCount(0);
+    await expect(page.locator('.tool-landing')).not.toContainText(/coming\s+soon/i);
   }
 });
 
@@ -85,7 +86,7 @@ for (const width of [1440, 390]) test(`keyboard closes the navigation and return
   await expect(video).toBeVisible();
   await page.keyboard.press('Tab'); await expect(video).toBeFocused();
   await page.keyboard.press('Tab');
-  await expect(nav.getByRole('link', { name: 'Sora Watermark Remover Coming Soon', exact: true })).toBeFocused();
+  await expect(nav.getByRole('link', { name: 'Sora Watermark Remover', exact: true })).toBeFocused();
   await page.mouse.click(width - 5, 830);
   await expect(video).toBeHidden();
 });
