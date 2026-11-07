@@ -40,7 +40,7 @@ const appAsset = (path: string) => import.meta.env.BUILD_TARGET === 'app' ? `/_a
       <CreditCheckout initialCatalog={initialCatalog} initialSku={initialSku} initialReturnTo={returnTo} client:load />
       <div class="pricing-terms">
         <p>One-time payment. No automatic renewal. Purchased image credits have no scheduled expiry, cannot be transferred, and cannot be exchanged for cash. Process only images you are authorized to edit.</p>
-        {initialCatalog.universalCredits ? <p>Upgraded accounts use one Credits balance across all six operations. Existing orders keep their original quantities and payment amounts. Purchases remain unavailable until checkout opens.</p> : <p>These image credits do not cover PRO, brush refinement, or video processing.</p>}
+        {initialCatalog.universalCredits ? <p>Upgraded accounts use one Credits balance across all six operations. Existing orders keep their original quantities and payment amounts.</p> : <p>These image credits do not cover PRO, brush refinement, or video processing.</p>}
         <p>Image files and results are temporary and expire after 24 hours. Download your results promptly. For purchase refunds, contact support with your order number before using the credits; used or disputed orders require review.</p>
         <p>Read our <a href="/terms">Terms</a> and <a href="/privacy">Privacy Policy</a> before buying.</p>
       </div>
