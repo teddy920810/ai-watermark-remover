@@ -4,7 +4,7 @@
 
 ## 2026-11-07购买入口开放
 
-用户明确要求“开启购买入口”后，现有App生产环境的`PAYPAL_LIVE_APPROVED`和`PAYPAL_ENABLED`改为true，并重新部署既有产物。公开目录回读`environment=live`、`enabled=true`、`creditsEnabled=true`，统一Credits版本为`credits-20261104-v1`；原套餐和金额保持。配置切换部署为`dpl_4E4bx7rShQXtpLDi9C9ZMG1kzAxp`，源码`699c271237c8f2fab21d6ff84e5d1ea21eba2979`，READY。结算页删除不随开关变化的“购买尚未开放”旧提示，实际关闭态仍由支付组件控制。
+用户明确要求“开启购买入口”后，现有App生产环境的`PAYPAL_LIVE_APPROVED`和`PAYPAL_ENABLED`改为true，并重新部署既有产物。公开目录回读`environment=live`、`enabled=true`、`creditsEnabled=true`，统一Credits版本为`credits-20261104-v1`；原套餐和金额保持。配置切换部署为`dpl_4E4bx7rShQXtpLDi9C9ZMG1kzAxp`，源码`699c271237c8f2fab21d6ff84e5d1ea21eba2979`，READY。价格及结算页删除不随开关变化的“购买尚未开放”旧提示，实际关闭态仍由支付组件控制。
 
 只读Live OAuth及Webhook查询均为200，正式回调地址和五类订阅匹配；真实登录会话下，官方Live SDK及PayPal付款按钮已显示。此证据只证明入口开放和初始化，不证明真实付款、资金结算、回调投递或退款。本次未创建Live订单、Capture或退款，未新增Provider任务；人工付款与资金退款仍按用户此前要求暂缓。真实交易、精确发点、实际验签回调和资金退款须由账户持有人另行完成或明确授权，不能据按钮或配置成功标记通过。验收记录保存在本机忽略目录`.tools/paypal-open-20261107/`及`output/playwright/paypal-open-20261107/`。
 

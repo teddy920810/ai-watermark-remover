@@ -4,7 +4,7 @@
 
 ## 2026-11-07购买入口开放
 
-用户明确要求开放购买后，仅调整现有App生产环境`PAYPAL_LIVE_APPROVED=true`、`PAYPAL_ENABLED=true`，重新部署既有源码`699c271237c8f2fab21d6ff84e5d1ea21eba2979`，部署`dpl_4E4bx7rShQXtpLDi9C9ZMG1kzAxp`已READY；统一Credits、原套餐与费率保持。公开目录回读Live enabled=true；真实登录会话下官方PayPal SDK及付款按钮显示。结算页另删除一处不随开关变化的旧关闭提示，关闭态控制和第三方初始化合同不变。
+用户明确要求开放购买后，仅调整现有App生产环境`PAYPAL_LIVE_APPROVED=true`、`PAYPAL_ENABLED=true`，重新部署既有源码`699c271237c8f2fab21d6ff84e5d1ea21eba2979`，部署`dpl_4E4bx7rShQXtpLDi9C9ZMG1kzAxp`已READY；统一Credits、原套餐与费率保持。公开目录回读Live enabled=true；真实登录会话下官方PayPal SDK及付款按钮显示。价格及结算页另删除两处不随开关变化的旧关闭提示，关闭态控制和第三方初始化合同不变。
 
 Live只读凭据及Webhook配置检查通过；真实付款、精确发点、实际验签回调、已购来源消费和资金退款仍未验收，人工资金测试按用户要求暂缓。本次无Live订单、Capture、退款、Provider新增调用或测试额度发行。入口开放与完整支付验收分开记录；回退时只关闭`PAYPAL_ENABLED`，保留已购余额支持、订单恢复与金融记录。证据保存在`.tools/paypal-open-20261107/`和`output/playwright/paypal-open-20261107/`。下节“购买仍关闭”是统一Credits发布时的历史快照。
 
