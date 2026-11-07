@@ -68,7 +68,8 @@ describe('independent tool landing-page previews', () => {
   });
 
   it('retains each page’s publication state, processing capability and independent FAQ', () => {
-    expect(pages.filter(page => !page.draft)).toHaveLength(20);
+    expect(pages.filter(page => !page.draft)).toHaveLength(21);
+    expect(pages.find(page => page.slug === 'nano-banana-watermark-remover')).toMatchObject({ draft: false, toolKind: 'watermark-remover' });
     expect(pages.filter(page => page.statusLabel === 'Coming Soon')).toHaveLength(9);
     expect(pages.find(page => page.slug === 'video-watermark-remover')).toMatchObject({ draft: false, toolKind: 'video-watermark-remover' });
     expect(pages.find(page => page.slug === 'video-watermark-remover').statusLabel).toBeUndefined();

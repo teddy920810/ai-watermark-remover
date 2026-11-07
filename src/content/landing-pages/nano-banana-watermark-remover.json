@@ -1,98 +1,219 @@
 {
   "slug": "nano-banana-watermark-remover",
-  "draft": true,
+  "draft": false,
   "templateVersion": 1,
   "toolKind": "watermark-remover",
-  "title": "Nano Banana Watermark Remover",
-  "description": "【待替换】概括工具用途、适用对象与实际能力。",
-  "eyebrow": "【待替换】工具类别",
-  "heading": "Nano Banana Watermark Remover",
-  "intro": "【待替换】说明用户可以完成什么操作，不承诺尚未具备的能力。",
+  "title": "Nano Banana Watermark Remover – Clean Visible Marks Online",
+  "description": "Remove visible watermarks from Nano Banana images online. Upload a JPG, PNG or WebP, review the processing cost, and preview your edited JPG before downloading.",
+  "eyebrow": "NANO BANANA WATERMARK REMOVER",
+  "heading": "Nano Banana Watermark Remover – Keep the Full Picture",
+  "intro": "Clean a visible corner mark from a Nano Banana image you own or have permission to edit. Keep your composition, review the processing cost, and compare the returned image before downloading. The AI-generated scenes shown here illustrate image uses; they are not tested cleanup results.",
   "benefits": [
-    "【待替换】优点一",
-    "【待替换】优点二",
-    "【待替换】优点三"
+    "Clean visible corner marks",
+    "Keep your original framing",
+    "Preview before downloading"
   ],
   "heroActions": [
     {
-      "label": "【待替换】开始使用",
+      "label": "Upload your image",
       "href": "#tool"
+    },
+    {
+      "label": "How it works",
+      "href": "#how-it-works"
+    }
+  ],
+  "heroSamples": [
+    {
+      "id": "still-life",
+      "label": "Product still life",
+      "image": "/uploads/nano-banana-20261107/still-life.webp",
+      "imageAlt": "AI-generated illustrative still life of a pale yellow vase, green stems, a banana and cream linen on a stone plinth; not a processed result."
+    },
+    {
+      "id": "landscape",
+      "label": "Travel landscape",
+      "image": "/uploads/nano-banana-20261107/landscape.webp",
+      "imageAlt": "AI-generated illustrative alpine lake landscape with a small timber cabin, mountains and wildflowers; not a processed result."
+    },
+    {
+      "id": "texture",
+      "label": "Fine textures",
+      "image": "/uploads/nano-banana-20261107/texture.webp",
+      "imageAlt": "AI-generated illustrative close-up of woven linen, a ribbed glass and leaf shadows on a sunlit table; not a processed result."
     }
   ],
   "process": {
-    "eyebrow": "【待替换】使用方法",
-    "heading": "【待替换】三步完成操作",
-    "intro": "【待替换】描述操作前需要准备什么。",
+    "eyebrow": "How it works",
+    "heading": "How to Remove a Nano Banana Watermark Online",
+    "intro": "Start with the original exported image, keep a backup, and use the preview to judge the edited area. Workflow graphics below are illustrations of the steps.",
     "steps": [
       {
         "number": "01",
-        "title": "【待替换】准备图片",
-        "description": "【待替换】填写支持的图片格式与授权要求。"
+        "title": "Choose your original image",
+        "description": "Upload one JPG, PNG or WebP image up to 10 MB. Use the original download rather than a screenshot when possible, so the tool has more detail to work with."
       },
       {
         "number": "02",
-        "title": "【待替换】进行处理",
-        "description": "【待替换】按真实交互说明操作步骤。"
+        "title": "Review the cost and process",
+        "description": "Sign in with Google to prepare your image. Check the displayed processing cost and available balance, then start the watermark removal. Selecting a file alone does not start processing."
       },
       {
         "number": "03",
-        "title": "【待替换】检查并下载",
-        "description": "【待替换】说明检查效果及下载结果的方法。"
+        "title": "Inspect and download your JPG",
+        "description": "Compare the returned image with the original. Look closely at the former mark and nearby edges, shadows and textures. Download the edited JPG if the result works for your project."
       }
     ]
   },
   "features": {
-    "eyebrow": "【待替换】功能介绍",
-    "heading": "【待替换】功能与使用场景",
-    "intro": "【待替换】用具体场景介绍能力。",
+    "eyebrow": "Made for images you already have",
+    "heading": "A Practical Cleanup Step for Nano Banana Images",
+    "intro": "Use WatermarkGemini when a visible mark distracts from a saved image. These original AI-generated illustrations show common creative scenes, not before-and-after comparisons or outputs from the removal tool.",
     "items": [
       {
         "enabled": true,
-        "eyebrow": "【待替换】场景类别",
-        "heading": "【待替换】场景标题",
-        "description": "【待替换】描述场景、用途和限制。",
+        "eyebrow": "Full-frame composition",
+        "heading": "Keep the space around your subject",
+        "description": "Cropping a marked corner can cut into a product arrangement or remove space you need for a layout. Visible watermark cleanup works on the marked area instead of trimming away the frame. Review the result before using it in a presentation, social post or design.",
         "listItems": [
-          "【待替换】功能要点"
+          "Keep a copy of the original export",
+          "Check the subject and nearby edges after processing"
         ],
-        "image": "/images/image-placeholder.svg",
-        "imageAlt": "【待替换】准确描述配图内容",
+        "image": "/uploads/nano-banana-20261107/still-life.webp",
+        "imageAlt": "AI-generated illustrative product arrangement with a yellow vase, banana and linen, showing space around the subject; not a tested cleanup result.",
+        "imagePosition": "left"
+      },
+      {
+        "enabled": true,
+        "eyebrow": "One saved image at a time",
+        "heading": "Edit an existing image without generating it again",
+        "description": "A new generation can change the lighting, framing or details you liked. If you already have the composition you want, try cleaning its visible mark and compare the result with the saved original. This page accepts image files; it does not generate Nano Banana images or connect to your Gemini account.",
+        "listItems": [
+          "JPG, PNG and WebP inputs up to 10 MB",
+          "Download the processed image as JPG"
+        ],
+        "image": "/uploads/nano-banana-20261107/landscape.webp",
+        "imageAlt": "AI-generated illustrative alpine lake and timber cabin with mountains and wildflowers, representing a saved travel composition; not a tested cleanup result.",
         "imagePosition": "right"
+      },
+      {
+        "enabled": true,
+        "eyebrow": "A closer look",
+        "heading": "Check texture before you use the result",
+        "description": "Marks over flat backgrounds are different from marks over fabric, glass, foliage or fine lettering. Cleanup may soften or change nearby detail, and JPG compression can also affect the image. Inspect the edited region at full size rather than judging only a small preview. Results depend on the source image.",
+        "listItems": [
+          "Look for smearing, repeated patterns or uneven shadows",
+          "Keep the original if the edited detail is unsuitable"
+        ],
+        "image": "/uploads/nano-banana-20261107/texture.webp",
+        "imageAlt": "AI-generated illustrative detail of woven linen, ribbed glass and leaf shadows, showing textures to inspect after editing; not a tested cleanup result.",
+        "imagePosition": "left"
       }
     ]
   },
   "scope": {
-    "eyebrow": "【待替换】适用范围",
-    "heading": "【待替换】使用前须知",
-    "intro": "【待替换】说明授权要求和能力边界。",
+    "eyebrow": "Before you start",
+    "heading": "Visible Marks, Clear Limits",
+    "intro": "WatermarkGemini is an independent editing service. It is not affiliated with Google, Gemini or Nano Banana.",
     "items": [
       {
-        "heading": "【待替换】限制",
-        "description": "【待替换】仅处理拥有权利或获得授权的内容；补充具体限制。"
+        "heading": "Visible cleanup, not SynthID removal",
+        "description": "This tool targets visible marks in an image. It does not claim to remove invisible SynthID watermarks, C2PA Content Credentials or other provenance signals, and it cannot certify an image as non-AI."
+      },
+      {
+        "heading": "Use images you may edit",
+        "description": "Only upload content you own or have permission to modify. Removing a visible mark does not change the image's origin, grant usage rights or replace any disclosure your use requires."
+      },
+      {
+        "heading": "Check the workspace cost",
+        "description": "Eligible standard processing may use limited free image uses. Other processing may require credits. The workspace shows the applicable cost and balance before you start; processing is not unlimited or automatically free."
       }
     ]
   },
+  "relatedTools": {
+    "enabled": true,
+    "eyebrow": "Related image tools",
+    "heading": "Choose the Cleanup Your Image Needs",
+    "intro": "Explore tools for visible Gemini marks, image text and unwanted objects.",
+    "slugs": [
+      "gemini-watermark-remover",
+      "remove-text-from-image",
+      "remove-object"
+    ]
+  },
+  "guides": {
+    "enabled": true,
+    "eyebrow": "Useful reading",
+    "heading": "Understand Watermarks and AI Image Origins",
+    "intro": "Learn about Gemini's watermark settings, responsible editing and the limits of identifying AI-generated photos.",
+    "slugs": [
+      "how-to-turn-off-gemini-watermark",
+      "how-to-remove-watermarks-responsibly",
+      "how-to-tell-if-photo-is-ai-generated"
+    ]
+  },
   "faq": {
-    "eyebrow": "【待替换】常见问题",
-    "heading": "【待替换】用户关心的问题",
-    "intro": "【待替换】简要介绍。",
+    "eyebrow": "Nano Banana watermark FAQ",
+    "heading": "Questions About Nano Banana Watermark Removal",
+    "intro": "What this tool edits, how the workflow works, and what to check before using your image.",
     "items": [
       {
         "enabled": true,
-        "question": "【待替换】支持哪些图片？",
-        "answer": "【待替换】按真实能力回答。"
+        "question": "How do I remove a visible Nano Banana watermark?",
+        "answer": "Choose your saved JPG, PNG or WebP image, sign in with Google and review the cost in the workspace. Start processing, compare the returned image with the original, then download the edited JPG if the marked area looks suitable. Keep your original file."
       },
       {
         "enabled": true,
-        "question": "【待替换】如何收费？",
-        "answer": "【待替换】核对当前权益规则再填写。"
+        "question": "Is Nano Banana watermark removal the same as Gemini watermark removal?",
+        "answer": "Nano Banana is part of Google's Gemini image model family. This page uses WatermarkGemini's image watermark workflow to clean visible marks on saved images; it is not a separate Nano Banana model or an official Google service. Whether your image has a visible mark depends on where and how it was created."
+      },
+      {
+        "enabled": true,
+        "question": "Does this tool remove SynthID or make an image undetectable as AI?",
+        "answer": "No. WatermarkGemini targets visible marks and does not claim to remove Google's invisible SynthID watermark or other provenance signals. A visually clean corner does not establish that an image is human-made or change how it was created."
+      },
+      {
+        "enabled": true,
+        "question": "Can I turn off visible watermarks in Gemini instead?",
+        "answer": "Google documents a Media watermark option under Settings in Gemini Apps on a computer, subject to account and location restrictions. If available, it controls visible marks on newly generated media. It does not edit images you already saved or switch off SynthID and Content Credentials. Check Google's current help for availability."
+      },
+      {
+        "enabled": true,
+        "question": "Is the Nano Banana watermark remover free?",
+        "answer": "Eligible standard image processing may use limited free image uses. Other processing may require credits. Sign in and review the applicable cost, balance and eligibility shown in the workspace before starting. The service does not offer unlimited free removal."
+      },
+      {
+        "enabled": true,
+        "question": "Which file formats and sizes are supported?",
+        "answer": "Upload one JPG, PNG or WebP image up to 10 MB at a time. The watermark removal result is JPG. A PNG input does not mean the output will retain transparency. This page is for images, not PDF files, video or batch processing."
+      },
+      {
+        "enabled": true,
+        "question": "Can I remove the watermark without cropping?",
+        "answer": "The tool processes the visible marked area rather than cutting away a corner. It aims to keep the full composition, but cleanup can change nearby details. Compare the result with the original, especially where the mark crosses fine textures, faces or text."
+      },
+      {
+        "enabled": true,
+        "question": "Do I need a Google account or my Gemini password?",
+        "answer": "You can select and preview a file locally before signing in. Google sign-in to WatermarkGemini is required to prepare and process it. Upload the image you already downloaded; you do not need to give this service your Gemini password or connect your Gemini image history."
+      },
+      {
+        "enabled": true,
+        "question": "Will the edited image be identical to the original apart from the watermark?",
+        "answer": "No pixel-identical result is guaranteed. Reconstructing a marked area may alter texture, edges or color, and the JPG result may have different compression from the source. Inspect the output at full size before including it in a final project."
+      },
+      {
+        "enabled": true,
+        "question": "Are the pictures on this page real removal results?",
+        "answer": "No. The still life, landscape and texture images are original AI-generated illustrations of creative image uses. They were not generated with Nano Banana and do not demonstrate tested WatermarkGemini processing results. Judge cleanup quality using your own returned image."
       }
     ]
   },
   "cta": {
-    "eyebrow": "【待替换】行动提示",
-    "heading": "【待替换】开始使用工具",
-    "description": "【待替换】用一句话总结用途。",
-    "buttonLabel": "【待替换】开始使用",
+    "eyebrow": "Start with your saved image",
+    "heading": "Clean the Visible Mark, Keep the Composition",
+    "description": "Choose an image you may edit, review the processing cost, and inspect your result before downloading.",
+    "buttonLabel": "Upload your image",
     "buttonHref": "#tool"
   }
 }
