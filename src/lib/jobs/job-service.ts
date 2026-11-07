@@ -5,6 +5,11 @@ import { createJob, failJob, finishJob, type Job, type ProcessingOperation } fro
 import type { JobStore } from './job-store';
 import { ImagePriceChangedError, type BenefitStore, type ImageCreditConsent } from '../benefits/benefit-store';
 import type { JobRequest, JobRequestStore } from './job-request-store';
+import { ProcessingError } from '../processing/contracts';
+
+function requiresNewConfirmation(error: unknown) {
+  return error instanceof ImagePriceChangedError || error instanceof ProcessingError && error.code === 'wallet_upgraded';
+}
 
 interface JobServiceDependencies {
   jobStore: JobStore;
@@ -66,7 +71,7 @@ export class JobService {
     try {
       await this.reserve(job, imageCreditConsent);
     } catch (error) {
-      if (!(error instanceof ImagePriceChangedError)) await this.cleanupInputs(inputKey, maskKey);
+      if (!requiresNewConfirmation(error)) await this.cleanupInputs(inputKey, maskKey);
       throw error;
     }
 
@@ -120,7 +125,7 @@ export class JobService {
       if (active.status !== 'processing') return this.recover(active);
       await this.reserve(job, consent);
     } catch (error) {
-      if (error instanceof ImagePriceChangedError) {
+      if (requiresNewConfirmation(error)) {
         // This refusal happened before financial admission or a Provider call.
         // Preserve the upload for the user's next explicit price confirmation.
         // A failed release remains a 503; never pretend another attempt is safe.

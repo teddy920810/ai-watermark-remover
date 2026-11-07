@@ -6,6 +6,7 @@ import { cloudRunTriggerFromEnvironment } from '../../src/lib/runtime/cloud-run-
 import { createProcessingRuntime, type ProcessingRuntime, type ProcessingRuntimeConfig } from '../../src/lib/runtime/processing-services';
 import { imageCreditConfigFromEnvironment } from '../../src/lib/payments/image-credit-config';
 import { readImageProviderConfig } from '../../src/lib/config/image-providers';
+import { creditsConfiguration } from '../../src/lib/credits/credit-policy';
 
 type Environment = Record<string, string | undefined>;
 type Mode = 'preflight' | 'process' | 'reconcile' | 'dispatch' | 'retention';
@@ -43,6 +44,7 @@ export function workerConfigFromEnvironment(source: Environment): ProcessingRunt
     imageProviders: readImageProviderConfig(source),
     ffprobePath: source.FFPROBE_PATH, enabled, priceVersion: source.PROCESSING_PRICE_VERSION ?? 'processing-v1', trigger,
     imageCredits: imageCreditConfigFromEnvironment(source),
+    credits: creditsConfiguration(source),
   };
 }
 export interface WorkerDependencies {

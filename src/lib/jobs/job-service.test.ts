@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { createJob, finishJob, type Job } from './job';
 import { JobService } from './job-service';
 import { ImagePriceChangedError } from '../benefits/benefit-store';
+import { ProcessingError } from '../processing/contracts';
 
 function createDependencies() {
   const jobs = new Map<string, Job>();
@@ -251,6 +252,15 @@ describe('JobService', () => {
     await expect(new JobService(deps, () => 'job-2').create(inputKey, 'google-user-1', operation, selection)).resolves.toMatchObject({ id: 'job-1', status: 'completed' });
     expect(deps.benefits.reserve).toHaveBeenCalledExactlyOnceWith('job-1', 'google-user-1', operation);
     expect(deps.providers[operation].remove).toHaveBeenCalledTimes(1);
+  });
+  it.each([false, true])('preserves an unadmitted upload when the wallet was upgraded (durable=%s)', async durable => {
+    const durableDeps = createDurableDependencies();
+    const deps = durable ? durableDeps : createDependencies();
+    deps.benefits.reserve.mockRejectedValueOnce(new ProcessingError('wallet_upgraded', 'Open the current workspace', 409));
+    await expect(new JobService(deps, () => 'old-client').create(inputKey, 'google-user-1', 'object-removal', maskKey)).rejects.toMatchObject({ code: 'wallet_upgraded' });
+    expect(deps.providers['object-removal'].remove).not.toHaveBeenCalled();
+    expect(deps.objects.delete).not.toHaveBeenCalled();
+    if (durable) expect(durableDeps.requests.releaseUnreservedRequest).toHaveBeenCalledExactlyOnceWith('google-user-1', 'old-client');
   });
   it('passes price consent to the first paid reservation, preserves uploads on rejection and waits for a new user-confirmed attempt', async () => {
     const deps = createDurableDependencies();

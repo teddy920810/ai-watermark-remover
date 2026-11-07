@@ -29,10 +29,12 @@ import sharp from 'sharp';
 import type { ImageProviderConfig } from '../config/image-providers';
 import { ReplicateImageProvider } from './replicate-image-provider';
 import { SensitiveRetention } from '../processing/sensitive-retention';
+import type { CreditsConfiguration } from '../credits/credit-policy';
 export type { PublicUpload } from '../contracts/processing-public';
 
 export type ExecutionTrigger = (action: 'process' | 'reconcile' | 'preflight', id: string, ownerId: string, existingExecutionRef?: string, dispatchId?: string) => Promise<{ executionRef?: string; nextCheckAt: string; terminal?: boolean }>;
 export interface ProcessingRuntimeConfig {
+  credits?: CreditsConfiguration;
   r2: { endpoint: string; accessKeyId: string; secretAccessKey: string; bucket: string };
   databaseUrl: string;
   apiKey?: string;
@@ -113,8 +115,9 @@ export function createProcessingRuntime(config: ProcessingRuntimeConfig): Proces
   // empty body, rejecting the actual upload. R2 sealing still verifies SHA-256.
   // https://docs.aws.amazon.com/sdkref/latest/guide/feature-dataintegrity.html
   const client = deps.client ?? new S3Client({ endpoint: config.r2.endpoint, region: 'auto', forcePathStyle: true, requestChecksumCalculation: 'WHEN_REQUIRED', credentials: { accessKeyId: config.r2.accessKeyId, secretAccessKey: config.r2.secretAccessKey } });
-  const finance = deps.finance ?? new PostgresProcessingStore(pool, { imageCreditsEnabled: config.imageCredits?.enabled, paymentEnvironment: config.imageCredits?.environment ?? 'sandbox' });
-  const benefits = deps.benefits ?? new PostgresBenefitStore(pool, config.imageCredits?.enabled ?? false, config.imageCredits?.environment ?? 'sandbox', config.imageCredits?.costs);
+  if (config.credits && config.imageCredits && config.credits.environment !== config.imageCredits.environment) throw new Error('Wallet and payment environments differ');
+  const finance = deps.finance ?? new PostgresProcessingStore(pool, { imageCreditsEnabled: config.imageCredits?.enabled, paymentEnvironment: config.imageCredits?.environment ?? config.credits?.environment ?? 'sandbox', credits: config.credits });
+  const benefits = deps.benefits ?? new PostgresBenefitStore(pool, config.imageCredits?.enabled ?? false, config.imageCredits?.environment ?? config.credits?.environment ?? 'sandbox', config.imageCredits?.costs, config.imageCredits?.priceVersion, config.credits);
   const media = new PrivateMediaStore({ client, bucket: config.r2.bucket, ffprobePath: config.ffprobePath, signUrl: deps.signUrl, now });
   const json = new S3ConditionalJsonStore(client, config.r2.bucket);
   const jobs = new R2ProcessingJobStore(json); const quotes = new R2ProcessingQuoteStore(json);
@@ -130,7 +133,7 @@ export function createProcessingRuntime(config: ProcessingRuntimeConfig): Proces
     const enabled = config.enabled !== false && (mode === 'mock' || Boolean(config.imageProviders?.REPLICATE_API_TOKEN?.trim()));
     return { ...capability, enabled, reason: enabled ? undefined : reason };
   });
-  const core = new ProcessingService({ jobs, artifacts: media, quotes, finance, capabilities, purchasedImageCreditsEnabled: config.imageCredits?.enabled, purchasedImageCreditCost: config.imageCredits?.costs?.['watermark-removal'], imageCreditCosts: config.imageCredits?.costs, imageCreditPriceVersion: config.imageCredits?.priceVersion,
+  const core = new ProcessingService({ jobs, artifacts: media, quotes, finance, capabilities, credits: config.credits, purchasedImageCreditsEnabled: config.imageCredits?.enabled, purchasedImageCreditCost: config.imageCredits?.costs?.['watermark-removal'], imageCreditCosts: config.imageCredits?.costs, imageCreditPriceVersion: config.imageCredits?.priceVersion,
     inspector: { inspect: async (owner, artifactId) => { const a = await media.get(artifactId); if (!a || a.ownerId !== owner) throw new ProcessingError('artifact_not_found', 'Validated input was not found', 404); return a; } },
     prices: { version: config.priceVersion ?? 'processing-v1', amount: (operation, input) => operation === 'image-watermark-pro' ? 3 : operation === 'video-watermark' ? Math.ceil(input.durationSeconds! * 0.5) : 1 }, now, id });
   const service: ProcessingApiRuntime['service'] = {
@@ -190,7 +193,11 @@ export function createProcessingRuntime(config: ProcessingRuntimeConfig): Proces
     },
     async getUpload(owner, uploadId) { return projectUpload(owner, await preflight.getUpload(owner, uploadId)); },
     projectJob: (owner, job) => projection.job(owner, job), projectQuote: (owner, quote) => projection.quote(owner, quote),
-    async balances(owner, email) { const legacy = await benefits.getSummary(owner, email); return { freeUses: legacy.balance, processingCredits: await finance.getBalance(owner), ...(config.imageCredits?.enabled ? { purchasedImageCredits: legacy.paidBalance ?? await finance.getBalance(owner, 'purchasedImageCredits') } : {}) }; },
+    async balances(owner, email) {
+      const allowance = await benefits.getSummary(owner, email);
+      if (allowance.walletMode === 'unified') return { walletMode: 'unified', unit: 'credits', credits: allowance.credits, admissionEnabled: config.credits?.admissionEnabled ?? false };
+      return { freeUses: allowance.balance, processingCredits: await finance.getBalance(owner), ...(config.imageCredits?.enabled ? { purchasedImageCredits: allowance.paidBalance ?? await finance.getBalance(owner, 'purchasedImageCredits') } : {}) };
+    },
     async download(owner, jobId) { return projection.download(owner, await core.get(owner, jobId)); },
     async runJob(jobId, workerId = `worker-${id()}`, dispatchId) { return executionWorker().run(jobId, workerId, dispatchId); },
     async retainExpired(options) {

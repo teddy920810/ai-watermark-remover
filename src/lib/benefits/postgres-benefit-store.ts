@@ -1,5 +1,10 @@
 import type { Pool, PoolClient } from 'pg';
-import { ensureFreeBenefitAccount } from './free-benefits';
+import { ensureFreeBenefitAccount, lockFinancialOwner } from './free-benefits';
+import { PostgresCreditWallet } from '../credits/postgres-credit-wallet';
+import type { CreditSummary } from '../credits/postgres-credit-wallet';
+import { creditPolicy, rewardAmount } from '../credits/credit-policy';
+import type { CreditsConfiguration } from '../credits/credit-policy';
+import { ProcessingError } from '../processing/contracts';
 import { consumePurchasedImageCredit, getPurchasedImageBalance, refundPurchasedImageCredit, reservePurchasedImageCredit } from '../payments/image-credit-wallet';
 import type { ImageCreditCosts, ImageCreditOperation } from '../payments/image-credit-wallet';
 import {
@@ -8,6 +13,8 @@ import {
   ImagePriceChangedError,
   type BenefitStore,
   type BenefitSummary,
+  type LegacyBenefitSummary,
+  type UnifiedBenefitSummary,
   type CheckInResult,
   type ImageCreditConsent,
 } from './benefit-store';
@@ -20,14 +27,24 @@ interface UserState {
 
 export class PostgresBenefitStore implements BenefitStore {
   private readonly imageCosts: ImageCreditCosts;
-  constructor(private readonly pool: Pool, private readonly paidCredits = false, private readonly environment: 'sandbox' | 'live' = 'sandbox', imageCosts: ImageCreditCosts = {}, private readonly priceVersion?: string) {
+  readonly wallet?: PostgresCreditWallet;
+  constructor(private readonly pool: Pool, private readonly paidCredits = false, private readonly environment: 'sandbox' | 'live' = 'sandbox', imageCosts: ImageCreditCosts = {}, private readonly priceVersion?: string, private readonly credits?: CreditsConfiguration) {
     if (Object.values(imageCosts).some((amount) => !Number.isSafeInteger(amount) || amount! < 1)) throw new Error('Invalid image credit amount');
     this.imageCosts = { ...imageCosts };
+    if (credits) {
+      if (credits.environment !== environment) throw new Error('Wallet and payment environments differ');
+      this.wallet = new PostgresCreditWallet(pool, environment);
+    }
   }
 
   async getSummary(userId: string, email?: string): Promise<BenefitSummary> {
     const normalizedEmail = email?.trim().toLowerCase();
     const current = await this.readSummary(this.pool, userId);
+    if (this.wallet) {
+      const wallet = current && (!normalizedEmail || current.identity_email === normalizedEmail)
+        ? await this.wallet.summary(userId) : await this.wallet.bootstrap(userId, normalizedEmail, this.credits?.admissionEnabled);
+      if (wallet.phase === 'unified') return this.unifiedSummary(wallet);
+    }
     // Polling reads live entitlement without updating activity or identity.
     // First-use rewards and changed emails still use the existing transaction.
     if (current && (!normalizedEmail || current.identity_email === normalizedEmail)) return this.withPaid(this.pool, userId, this.summary(current));
@@ -39,9 +56,16 @@ export class PostgresBenefitStore implements BenefitStore {
     });
   }
 
-  async checkIn(userId: string, email?: string): Promise<CheckInResult> {
+  async checkIn(userId: string, email?: string, acceptCredits = true): Promise<CheckInResult> {
+    if (this.wallet) await this.wallet.bootstrap(userId, email, this.credits?.admissionEnabled);
     return this.transaction(async (client) => {
       await this.ensureUser(client, userId, email);
+      if (this.wallet && (await this.wallet.state(client, userId)).phase === 'unified') {
+        if (!acceptCredits) throw new ProcessingError('wallet_upgraded', 'Refresh the workspace to claim Credits rewards', 409);
+        const next = await this.wallet.checkIn(userId, client);
+        return { ...this.unifiedSummary(next), granted: next.granted > 0, rewardGranted: next.granted, balanceFull: rewardAmount(next.rewardAvailable, next.rewardReserved) === 0 };
+      }
+      if (this.wallet) await this.wallet.assertLegacy(client, userId, true);
       const user = await client.query<{ balance: number }>(`
         SELECT balance::int AS balance
         FROM user_benefits
@@ -103,6 +127,7 @@ export class PostgresBenefitStore implements BenefitStore {
         if (existing.rows[0].user_id === userId && existing.rows[0].status !== 'refunded') return;
         throw new Error('Invalid credit reservation');
       }
+      if (this.wallet) await this.wallet.assertLegacy(client, userId);
       if (user.rows[0].balance < 1) {
         if (this.paidCredits) {
           const amount = this.imageCosts[operation] ?? 1;
@@ -132,6 +157,7 @@ export class PostgresBenefitStore implements BenefitStore {
 
   async consume(jobId: string, userId: string): Promise<void> {
     await this.transaction(async (client) => {
+      await lockFinancialOwner(client, userId);
       if (this.paidCredits) await client.query('SELECT user_id FROM user_benefits WHERE user_id=$1 FOR UPDATE', [userId]);
       const reservation = await client.query<{ user_id: string; status: string; source?: string }>(`
         SELECT user_id, status ${this.paidCredits ? ', source' : ''} FROM job_credit_reservations WHERE job_id = $1 FOR UPDATE
@@ -154,6 +180,7 @@ export class PostgresBenefitStore implements BenefitStore {
 
   async refund(jobId: string, userId: string): Promise<void> {
     await this.transaction(async (client) => {
+      await lockFinancialOwner(client, userId);
       await client.query<{ balance: number }>(`
         SELECT balance::int AS balance FROM user_benefits WHERE user_id = $1 FOR UPDATE
       `, [userId]);
@@ -200,7 +227,7 @@ export class PostgresBenefitStore implements BenefitStore {
     return result.rows[0];
   }
 
-  private summary(state: Pick<UserState, 'balance' | 'checked_in_today'>): BenefitSummary {
+  private summary(state: Pick<UserState, 'balance' | 'checked_in_today'>): LegacyBenefitSummary {
     return {
       balance: state.balance,
       cap: FREE_USE_CAP,
@@ -209,10 +236,15 @@ export class PostgresBenefitStore implements BenefitStore {
     };
   }
 
-  private async withPaid<T extends BenefitSummary>(client: Pick<PoolClient, 'query'>, userId: string, summary: T): Promise<T> {
+  private async withPaid<T extends LegacyBenefitSummary>(client: Pick<PoolClient, 'query'>, userId: string, summary: T): Promise<T> {
     if (!this.paidCredits) return summary;
     const paidBalance = await getPurchasedImageBalance(client, userId, this.environment);
     return { ...summary, paidBalance };
+  }
+  private unifiedSummary(value: CreditSummary): UnifiedBenefitSummary {
+    return { walletMode: 'unified', unit: 'credits', credits: value.credits, epoch: value.epoch, cap: creditPolicy.rewards.cap,
+      dailyReward: creditPolicy.rewards.daily, rewardAvailable: value.rewardAvailable, rewardReserved: value.rewardReserved,
+      dailyRewardAvailable: value.checkedInToday ? 0 : rewardAmount(value.rewardAvailable, value.rewardReserved), checkedInToday: value.checkedInToday };
   }
 
   private async ensureUser(client: PoolClient, userId: string, email?: string): Promise<void> {

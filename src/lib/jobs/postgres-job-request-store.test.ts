@@ -110,10 +110,10 @@ describe('durable processing request claims', () => {
     await benefits.reserve('paid', 'owner');
     expect(await requests.reservationStatus('paid', 'owner')).toBe('reserved');
     expect(await new PostgresJobRequestStore(pool, 'live').reservationStatus('paid', 'owner')).toBeNull();
-    expect((await benefits.getSummary('owner')).paidBalance).toBe(4);
+    expect(await benefits.getSummary('owner')).toMatchObject({ paidBalance: 4 });
     await benefits.refund('paid', 'owner');
     expect(await requests.reservationStatus('paid', 'owner')).toBe('refunded');
-    expect((await benefits.getSummary('owner')).paidBalance).toBe(5);
+    expect(await benefits.getSummary('owner')).toMatchObject({ paidBalance: 5 });
   });
 
   it('selects only expired or unsettled terminal requests for the requested owner and environment', async () => {

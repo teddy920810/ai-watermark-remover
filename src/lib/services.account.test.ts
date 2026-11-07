@@ -51,7 +51,7 @@ describe('database-only account service boundary', () => {
     await account.recoverUser('signed-in-account');
     expect(account.benefits).toBe(mocks.benefits);
     expect(mocks.pool).toHaveBeenCalledExactlyOnceWith(expect.objectContaining({ connectionString: 'postgresql://test:password@isolated-db.test/account-tests' }));
-    expect(mocks.benefitStore).toHaveBeenCalledWith(expect.anything(), true, 'sandbox', { 'watermark-removal': 1, 'background-removal': 1, 'object-removal': 1 }, 'sandbox-image-costs-v1');
+    expect(mocks.benefitStore).toHaveBeenCalledWith(expect.anything(), true, 'sandbox', { 'watermark-removal': 1, 'background-removal': 1, 'object-removal': 1 }, 'sandbox-image-costs-v1', { admissionEnabled: false, environment: 'sandbox' });
     expect(mocks.requestStore).toHaveBeenCalledWith(expect.anything(), 'sandbox');
     expect(mocks.recoverable).toHaveBeenCalledExactlyOnceWith('signed-in-account');
     expect(mocks.objectStore).not.toHaveBeenCalled();
@@ -104,7 +104,7 @@ describe('database-only account service boundary', () => {
     const { getAccountServices } = await import('./services');
     const account = getAccountServices();
     await account.recoverUser('legacy-account');
-    expect(mocks.benefitStore).toHaveBeenCalledWith(expect.anything(), false, 'sandbox', { 'watermark-removal': 1, 'background-removal': 1, 'object-removal': 1 }, undefined);
+    expect(mocks.benefitStore).toHaveBeenCalledWith(expect.anything(), false, 'sandbox', { 'watermark-removal': 1, 'background-removal': 1, 'object-removal': 1 }, undefined, { admissionEnabled: false, environment: 'sandbox' });
     expect(mocks.requestStore).not.toHaveBeenCalled();
     expect(mocks.recoverable).not.toHaveBeenCalled();
     expect(mocks.objectStore).not.toHaveBeenCalled();

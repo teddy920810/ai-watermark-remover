@@ -21,6 +21,27 @@ async function setup() {
 }
 
 describe('ProcessingWorker', () => {
+  it.each(['environment', 'walletEpoch'] as const)('rejects a Credits admission with mismatched %s before Provider work', async field => {
+    const s = await setup();
+    const record = (await s.jobs.get(s.job.id))!;
+    const quote = { ...record.job.quote, unit: 'credits' as const, amount: 100, environment: 'live' as const, walletEpoch: 2 };
+    await s.jobs.compareAndSwap(s.job.id, record.version, { ...record.job, quote });
+    const admission = await s.finance.getAdmission(s.job.id);
+    vi.spyOn(s.finance, 'getAdmission').mockResolvedValue({ ...admission!, unit: 'credits', amount: 100, environment: 'live', walletEpoch: 2,
+      [field]: field === 'environment' ? 'sandbox' : 1 });
+    await expect(s.worker.run(s.job.id, 'wrong-context')).rejects.toMatchObject({ code: 'admission_missing' });
+    expect(s.provider.submit).not.toHaveBeenCalled();
+    expect(s.provider.poll).not.toHaveBeenCalled();
+  });
+  it('rejects a mismatched Credits epoch before dispatch recovery can refund it', async () => {
+    const s = await setup(); const record = (await s.jobs.get(s.job.id))!;
+    await s.jobs.compareAndSwap(s.job.id, record.version, { ...record.job, quote: { ...record.job.quote, unit: 'credits', amount: 100, environment: 'live', walletEpoch: 2 } });
+    const admission = await s.finance.getAdmission(s.job.id);
+    vi.spyOn(s.finance, 'getAdmission').mockResolvedValue({ ...admission!, unit: 'credits', amount: 100, environment: 'live', walletEpoch: 1 });
+    s.setNow('2026-10-24T00:16:00.000Z');
+    await expect(s.worker.run(s.job.id, 'wrong-recovery')).rejects.toMatchObject({ code: 'admission_missing' });
+    expect(s.finance.refunds).toBe(0); expect(s.provider.submit).not.toHaveBeenCalled();
+  });
   it('refunds an unstarted expired dispatch before a late worker can submit', async () => {
     const s = await setup(); s.setNow('2026-10-24T00:16:00.000Z');
     expect(await s.worker.run(s.job.id, 'late-worker')).toMatchObject({ status: 'REFUNDED', chargeStatus: 'refunded' });

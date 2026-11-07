@@ -28,7 +28,7 @@ describe('POST /api/me/check-in', () => {
     const response = await POST(context);
     expect(response.status).toBe(200);
     await expect(response.json()).resolves.toMatchObject({ balance: 2, checkedInToday: true, granted: true });
-    expect(checkIn).toHaveBeenCalledWith('google-user-1', 'Person@Example.com');
+    expect(checkIn).toHaveBeenCalledWith('google-user-1', 'Person@Example.com', false);
     expect(getServices).not.toHaveBeenCalled();
     expect(recoverUser).not.toHaveBeenCalled();
   });

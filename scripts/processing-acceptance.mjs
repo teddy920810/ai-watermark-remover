@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 import { pathToFileURL } from 'node:url';
-import { AcceptanceBudget } from './lib/acceptance-budget.mjs';
+import { authorizeFunctionalAcceptance } from './lib/acceptance-budget.mjs';
 import { inspectImage, inspectMask } from '../src/lib/media/image.ts';
 import { probeVideo, validateVideoRequirements } from '../src/lib/media/video.ts';
 import { durableOperationIds, operationCatalog } from '../src/lib/contracts/operation-catalog.ts';
@@ -57,6 +57,10 @@ async function bytesFrom(response, limit) {
 }
 function balances(body) {
   const value = body.balances ?? body;
+  if (value.walletMode === 'unified') {
+    if (value.unit !== 'credits' || !Number.isSafeInteger(value.credits) || value.credits < 0) throw failure('protocol_invalid', 'Unified Credits balance is invalid');
+    return { credits: value.credits };
+  }
   const result = { freeUses: value.freeUses ?? value.freeUsesRemaining, processingCredits: value.processingCredits ?? value.processingCreditsRemaining, ...(value.purchasedImageCredits !== undefined ? { purchasedImageCredits: value.purchasedImageCredits } : {}) };
   if (!Object.values(result).every((amount) => Number.isSafeInteger(amount) && amount >= 0)) throw failure('protocol_invalid', 'Balance response must contain both allowance units');
   return result;
@@ -109,17 +113,11 @@ export async function runProcessingAcceptance(options = {}, dependencies = {}) {
   const expectedUnit = options.expectedUnit ?? environment.PROCESSING_ACCEPTANCE_EXPECTED_UNIT;
   if (!Number.isSafeInteger(expectedAmount) || expectedAmount < 0 || !operationCatalog[operation].units.includes(expectedUnit)) throw failure('amount_confirmation_required', 'Confirm the exact expected amount and supported allowance unit before functional acceptance');
   const kind = operation === 'video-watermark' ? 'video' : 'image';
-  const imageLimit = options.imageLimit ?? Number(environment.PROCESSING_ACCEPTANCE_IMAGE_LIMIT ?? 5);
-  if (!Number.isInteger(imageLimit) || imageLimit < 0 || imageLimit > 15) throw failure('budget_authorization', 'Image acceptance limit must match the explicit supported authorization');
-  const ledgerPath = resolve(options.ledgerPath ?? environment.ACCEPTANCE_LEDGER_PATH ?? 'output/acceptance/budget.json');
-  const budget = dependencies.budget ?? new AcceptanceBudget(ledgerPath, { image: imageLimit, video: 5 }, { requireCreditBudget: imageLimit > 10 });
-  let budgetState;
-  try { budgetState = await budget.summary(); }
-  catch { throw failure('budget_authorization', 'Acceptance limits or credit authorization do not match the existing ledger'); }
+  const { budget, summary: budgetState } = await authorizeFunctionalAcceptance({ ...options, baseUrl: origin, operation, expectedUnit, expectedAmount }, environment);
   const remaining = budgetState.remaining[kind];
   if (remaining < 1) throw failure('budget_exhausted', `Real ${kind} acceptance budget exhausted`);
   const reportDir = resolve(options.reportDir ?? 'output/acceptance/site-records');
-  const headers = { Cookie: session, Origin: origin, 'Content-Type': 'application/json' };
+  const headers = { Cookie: session, Origin: origin, 'Content-Type': 'application/json', ...(expectedUnit === 'credits' ? { 'X-Credits-Contract': 'credits-v1' } : {}) };
   async function api(route, body) {
     const response = await request(`${origin}${route}`, { headers, ...(body !== undefined ? { method: 'POST', body: JSON.stringify(body) } : {}) });
     try { return JSON.parse(new TextDecoder().decode(await bytesFrom(response, 1_048_576))); }
@@ -186,7 +184,7 @@ export async function runProcessingAcceptance(options = {}, dependencies = {}) {
   if (!Number.isSafeInteger(before[quote.unit])) throw failure('protocol_invalid', 'The quoted allowance balance is missing');
   if (before[quote.unit] < quote.amount) throw failure('insufficient_allowance', 'Acceptance account has insufficient allowance');
 
-  const recordId = await budget.reserve(kind, `site ${operation} functional acceptance`, { amount: quote.amount, unit: quote.unit });
+  const recordId = await budget.reserve(kind, `site ${operation} functional acceptance`, { amount: quote.amount, unit: quote.unit, operation });
   const clientOperationKey = randomUUID();
   let record = { recordId, clientOperationKey, operation, status: 'started', amount: quote.amount, unit: quote.unit, creditsBefore: before[quote.unit] };
   await writeEvidence(reportDir, record);
@@ -255,12 +253,13 @@ export async function runProcessingAcceptance(options = {}, dependencies = {}) {
 
 export function acceptanceCliOptions(args) {
   const result = { functional: false };
+  const creditFields = { '--credit-budget-id': 'creditBudgetId', '--credit-scope-id': 'creditScopeId', '--credit-environment': 'creditEnvironment' };
   const fields = { '--base-url': 'baseUrl', '--operation': 'operation', '--sample': 'samplePath', '--mask': 'maskPath', '--parent-job': 'parentJobId', '--parent-artifact': 'parentArtifactId', '--expected-amount': 'expectedAmount', '--expected-unit': 'expectedUnit', '--image-limit': 'imageLimit', '--ledger': 'ledgerPath', '--report-dir': 'reportDir', '--ffprobe': 'ffprobePath', '--max-wait-ms': 'maxWaitMs', '--poll-interval-ms': 'pollIntervalMs' };
   for (let index = 0; index < args.length; index++) {
     const argument = args[index];
     if (argument === '--functional') { result.functional = true; continue; }
-    if (!fields[argument] || !args[index + 1] || args[index + 1].startsWith('--')) throw failure('configuration', 'Unknown or incomplete acceptance argument');
-    const field = fields[argument]; const value = args[++index];
+    if (!(fields[argument] || creditFields[argument]) || !args[index + 1] || args[index + 1].startsWith('--')) throw failure('configuration', 'Unknown or incomplete acceptance argument');
+    const field = fields[argument] ?? creditFields[argument]; const value = args[++index];
     result[field] = ['expectedAmount', 'imageLimit', 'maxWaitMs', 'pollIntervalMs'].includes(field) ? Number(value) : value;
   }
   return result;

@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { durableOperationIds } from '../contracts/operation-catalog';
+import type { WalletState, CreditEnvironment } from '../credits/credit-policy';
 import type { ProviderCheckpoint, ProcessingWatermarkProvider } from '../providers/watermark-provider';
 export type { ProviderCheckpoint, ProviderOutcome, ProcessingProviderContext } from '../providers/watermark-provider';
 
@@ -20,7 +21,7 @@ export const metadataSchema = z.object({
 export type MediaMetadata = z.infer<typeof metadataSchema>;
 export type ProcessingStatus = 'PREPARED' | 'QUEUED' | 'VALIDATING' | 'TRANSFERRING' | 'SUBMITTING' | 'PROCESSING' | 'SAVING' | 'SETTLING' | 'READY' | 'UNKNOWN' | 'FAILED' | 'REFUNDED' | 'EXPIRED';
 export type ChargeStatus = 'reserved' | 'settled' | 'refunded';
-export type CreditUnit = 'freeUses' | 'purchasedImageCredits' | 'processingCredits';
+export type CreditUnit = 'freeUses' | 'purchasedImageCredits' | 'processingCredits' | 'credits';
 
 /** Internal records contain private keys. HTTP responses must use a public projection. */
 export interface ProcessingArtifact {
@@ -57,6 +58,9 @@ export interface ProcessingQuote {
   amount: number;
   unit: CreditUnit;
   priceVersion: string;
+  /** Required for the new currency only. Legacy sealed records stay byte-equivalent. */
+  environment?: CreditEnvironment;
+  walletEpoch?: number;
   fingerprint: string;
   createdAt: string;
   expiresAt: string;
@@ -115,6 +119,8 @@ export interface Admission {
   requestHash: string;
   amount: number;
   unit: CreditUnit;
+  environment?: CreditEnvironment;
+  walletEpoch?: number;
   status: ChargeStatus;
 }
 export interface ReserveRequest extends Omit<Admission, 'status'> { now: string }
@@ -129,6 +135,7 @@ export interface OutboxMessage {
   executionRef?: string;
 }
 export interface ProcessingFinancialStore {
+  getWalletState?(ownerId: string): Promise<WalletState>;
   getBalance(ownerId: string, unit?: CreditUnit): Promise<number>;
   findAdmission(ownerId: string, idempotencyKey: string): Promise<Admission | null>;
   getAdmission(jobId: string): Promise<Admission | null>;
@@ -164,3 +171,10 @@ export class ProcessingError extends Error {
 
 /** Throw only when the adapter knows no upstream processing was accepted. */
 export class DefinitiveProviderError extends Error {}
+
+/** The immutable admission and task must describe the same original charge. */
+export function admissionMatchesJob(admission: Admission | null, job: ProcessingJob): admission is Admission {
+  return !!admission && admission.jobId === job.id && admission.ownerId === job.ownerId && admission.amount === job.quote.amount && admission.unit === job.quote.unit
+    && (job.quote.unit !== 'credits' || admission.environment === job.quote.environment && admission.walletEpoch === job.quote.walletEpoch
+      && ['live', 'sandbox'].includes(admission.environment ?? '') && Number.isSafeInteger(admission.walletEpoch) && admission.walletEpoch! > 0);
+}

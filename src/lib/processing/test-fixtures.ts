@@ -1,5 +1,6 @@
 import type { Admission, AttemptResult, CreditUnit, ProcessingArtifact, ProcessingArtifactStore, ProcessingFinancialStore, ProcessingJob, ProcessingJobStore, ProcessingQuote, ProcessingQuoteStore, ReserveRequest, VersionedJob } from './contracts';
 import { ProcessingError } from './contracts';
+import type { WalletState } from '../credits/credit-policy';
 
 export const NOW = '2026-10-24T00:00:00.000Z';
 export function source(overrides: Partial<ProcessingArtifact> = {}): ProcessingArtifact {
@@ -30,12 +31,23 @@ export class MemoryFinance implements ProcessingFinancialStore {
   balances = new Map([['user-1', 100]]);
   freeBalances = new Map<string, number>();
   imageBalances = new Map<string, number>();
+  creditBalances = new Map<string, number>();
+  walletStates = new Map<string, WalletState>();
   admissions = new Map<string, Admission>();
   admissionTimes = new Map<string, string>();
   outbox = new Set<string>();
   settlements = 0;
   refunds = 0;
-  private balanceMap(unit: CreditUnit) { return unit === 'freeUses' ? this.freeBalances : unit === 'purchasedImageCredits' ? this.imageBalances : this.balances; }
+  private balanceMap(unit: CreditUnit) {
+    switch (unit) {
+      case 'freeUses': return this.freeBalances;
+      case 'purchasedImageCredits': return this.imageBalances;
+      case 'processingCredits': return this.balances;
+      case 'credits': return this.creditBalances;
+      default: throw new Error('Unknown allowance unit');
+    }
+  }
+  async getWalletState(ownerId: string): Promise<WalletState> { return this.walletStates.get(ownerId) ?? { phase: 'legacy', epoch: 0, environment: 'sandbox' }; }
   async getBalance(ownerId: string, unit: CreditUnit = 'processingCredits') { return this.balanceMap(unit).get(ownerId) ?? 0; }
   async findAdmission(ownerId: string, key: string) { return [...this.admissions.values()].find((a) => a.ownerId === ownerId && a.idempotencyKey === key) ?? null; }
   async getAdmission(jobId: string) { return this.admissions.get(jobId) ?? null; }

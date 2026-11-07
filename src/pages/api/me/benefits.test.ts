@@ -20,6 +20,13 @@ it('recovers only the authenticated account before reporting spendable credits',
 const context = { request: new Request('https://example.test/api/me/benefits') } as Parameters<typeof GET>[0];
 
 describe('GET /api/me/benefits', () => {
+  it('asks an old client to refresh instead of presenting Credits as free-use counts', async () => {
+    getSession.mockResolvedValue({ user: { id: 'user-1' } });
+    getAccountServices.mockReturnValue({ recoverUser: vi.fn(), benefits: { getSummary: vi.fn(async () => ({ walletMode: 'unified', unit: 'credits', credits: 100 })) } });
+    expect((await GET(context)).status).toBe(409);
+    const current = { request: new Request('https://example.test/api/me/benefits', { headers: { 'X-Credits-Contract': 'credits-v1' } }) } as Parameters<typeof GET>[0];
+    expect((await GET(current)).status).toBe(200);
+  });
   beforeEach(() => {
     getServices.mockReset();
     getAccountServices.mockReset();

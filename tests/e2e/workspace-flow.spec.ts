@@ -23,11 +23,13 @@ test.beforeAll(async () => {
   downloadOrigin = `http://127.0.0.1:${address.port}`;
 });
 test.afterAll(async () => { await new Promise<void>((resolve, reject) => downloadServer?.close(error => error ? reject(error) : resolve())); });
-async function account(page: Page, signedIn = true) {
+async function account(page: Page, signedIn = true, unified = false) {
+  const state = { credits: 1000 };
   await page.route('**/api/auth/get-session', route => json(route, signedIn ? { user: { id: 'workspace-test-user', name: 'Test user' }, session: { id: 'workspace-session' } } : null));
   await page.route('**/api/v1/capabilities', route => json(route, capabilities));
-  await page.route('**/api/v1/me', route => json(route, { freeUses: 1, processingCredits: 100 }));
+  await page.route('**/api/v1/me', route => json(route, unified ? { walletMode: 'unified', unit: 'credits', credits: state.credits, admissionEnabled: true } : { freeUses: 1, processingCredits: 100 }));
   await page.route('**/api/v1/jobs', route => route.request().method() === 'GET' ? json(route, { jobs: [] }) : route.continue());
+  return state;
 }
 async function imageUploadFixture(page: Page) {
   const image = await sharp({ create: { width: 80, height: 60, channels: 3, background: '#c9b07b' } }).jpeg().toBuffer();
@@ -111,8 +113,10 @@ test('landing hands an anonymous file to the workspace and restores it without a
 for (const scenario of [
   { name: 'image removal', operation: 'image-watermark', amount: 1, unit: 'freeUses', cost: '1 free image use', canRefine: true },
   { name: 'PRO image removal', operation: 'image-watermark-pro', amount: 3, unit: 'processingCredits', cost: '3 processing credits', canRefine: false },
-] as const) test(`${scenario.name} automatically checks and prices the file, processes once, and downloads a real artifact`, async ({ page }) => {
-  await account(page);
+  { name: 'unified Credits image removal', operation: 'image-watermark', amount: 100, unit: 'credits', cost: '100 Credits', canRefine: true },
+  { name: 'unified Credits PRO image removal', operation: 'image-watermark-pro', amount: 300, unit: 'credits', cost: '300 Credits', canRefine: false },
+] as const) test(`${scenario.name} automatically checks and prices the file, processes once, and downloads a real artifact`, async ({ page }, testInfo) => {
+  const balance = await account(page, true, scenario.unit === 'credits');
   const image = await sharp({ create: { width: 100, height: 75, channels: 3, background: '#c9b07b' } }).png().toBuffer();
   const resultBytes = await sharp(image).jpeg().toBuffer();
   const input = { id: 'input-image', role: 'input', metadata: { kind: 'image', contentType: 'image/png', byteSize: image.length, width: 100, height: 75 }, previewUrl: `${origin}/fixture/source.png`, expiresAt: expiration() };
@@ -129,9 +133,9 @@ for (const scenario of [
   await page.route('**/api/v1/quotes', route => {
     quotes += 1; const { operation } = route.request().postDataJSON() as { operation: string };
     expect(['image-watermark', scenario.operation]).toContain(operation);
-    return json(route, operation === scenario.operation ? quote : { ...quote, id: 'unused-standard-quote', operation, amount: 1, unit: 'freeUses' });
+    return json(route, operation === scenario.operation ? quote : { ...quote, id: 'unused-standard-quote', operation, amount: scenario.unit === 'credits' ? 100 : 1, unit: scenario.unit === 'credits' ? 'credits' : 'freeUses' });
   });
-  await page.route('**/api/v1/jobs', route => { if (route.request().method() === 'GET') return json(route, { jobs: [] }); submissions += 1; expect(route.request().postDataJSON()).toMatchObject({ quoteId: 'quote-image', idempotencyKey: expect.any(String) }); return json(route, { ...job, status: 'QUEUED', result: undefined, charge: { ...job.charge, status: 'reserved' } }, 202); });
+  await page.route('**/api/v1/jobs', route => { if (route.request().method() === 'GET') return json(route, { jobs: [] }); submissions += 1; balance.credits -= scenario.amount; expect(route.request().postDataJSON()).toMatchObject({ quoteId: 'quote-image', idempotencyKey: expect.any(String) }); return json(route, { ...job, status: 'QUEUED', result: undefined, charge: { ...job.charge, status: 'reserved' } }, 202); });
   await page.route('**/api/v1/jobs/job-image', route => json(route, job));
   downloadFiles.set('/image.jpg', { contentType: 'image/jpeg', name: 'watermark-removed-image.jpg', bytes: resultBytes });
   await page.route('**/api/v1/jobs/job-image/download', route => { downloads += 1; return json(route, { url: `${downloadOrigin}/image.jpg`, expiresAt: quoteExpiration() }); });
@@ -140,6 +144,16 @@ for (const scenario of [
   if (scenario.operation === 'image-watermark-pro') await page.getByLabel('Choose operation').selectOption('image-watermark-pro');
   const process = page.getByRole('button', { name: `Remove watermarks · ${scenario.cost}`, exact: true });
   await expect(process).toBeEnabled();
+  if (scenario.unit === 'credits') {
+    await expect(page.getByText('Uses your shared Credits balance. Reward Credits are used first.', { exact: true })).toBeVisible();
+    await expect(page.getByText('Standard uses free image uses first, then purchased image credits.', { exact: true })).toHaveCount(0);
+  }
+  if (scenario.unit === 'credits' && scenario.operation === 'image-watermark') for (const [name, width, height] of [['desktop', 1440, 900], ['mobile', 390, 844]] as const) {
+    await page.setViewportSize({ width, height });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+    await process.scrollIntoViewIfNeeded();
+    await page.screenshot({ path: testInfo.outputPath(`credits-positive-${name}.png`), animations: 'disabled', style: 'astro-dev-toolbar{visibility:hidden!important}' });
+  }
   await expect(page.getByRole('button', { name: 'Upload & check file', exact: true })).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Review processing cost', exact: true })).toHaveCount(0);
   await expect(page.getByRole('dialog')).toHaveCount(0);
@@ -157,6 +171,7 @@ for (const scenario of [
   const stream = await artifact.createReadStream(); const chunks: Buffer[] = []; for await (const chunk of stream) chunks.push(Buffer.from(chunk));
   expect(await sharp(Buffer.concat(chunks)).metadata()).toMatchObject({ format: 'jpeg', width: 100, height: 75 });
   expect(submissions).toBe(1); expect(quotes).toBeGreaterThanOrEqual(1); expect(downloads).toBe(1);
+  if (scenario.unit === 'credits') await expect(page.locator('.workspace-balances')).toContainText(`${1000 - scenario.amount} Credits`);
   if (scenario.canRefine) await expect(page.getByRole('button', { name: 'Refine remaining marks' })).toBeVisible();
   else await expect(page.getByRole('button', { name: 'Refine remaining marks' })).toHaveCount(0);
 });
@@ -210,45 +225,63 @@ test('an unstarted task timeout returns the allowance and never starts a paid re
   await expect(page.getByRole('dialog')).toHaveCount(0); expect(submissions).toBe(0);
 });
 
-test('refinement sends an opaque binary mask and keeps the previous result when the new attempt fails', async ({ page }) => {
-  await account(page);
+for (const unified of [false, true]) test(unified ? 'unified Credits refinement spends 100 once and downloads a new version' : 'refinement sends an opaque binary mask and keeps the previous result when the new attempt fails', async ({ page }) => {
+  const balance = await account(page, true, unified);
   const image = await sharp({ create: { width: 160, height: 120, channels: 3, background: '#e8c991' } }).jpeg().toBuffer();
   const input = { id: 'base-input', role: 'input', metadata: { kind: 'image', contentType: 'image/jpeg', byteSize: image.length, width: 160, height: 120 }, previewUrl: `${origin}/fixture/base.jpg`, expiresAt: expiration() };
   const result = { ...input, id: 'previous-result', role: 'result', canRefine: true };
   const previous = { id: 'previous-job', status: 'READY', operation: 'image-watermark', input, result, charge: { status: 'consumed', amount: 1, unit: 'freeUses' }, createdAt: new Date().toISOString() };
   let maskBytes: Buffer | null = null;
+  let submissions = 0;
+  const refined = { id: 'refinement-job', operation: 'image-refine', status: 'READY', parentJobId: previous.id, input: result, result: { ...result, id: 'refined-result' }, charge: { status: 'settled', amount: 100, unit: 'credits' }, createdAt: new Date().toISOString() };
   await page.route('**/fixture/base.jpg', route => route.fulfill({ status: 200, contentType: 'image/jpeg', body: image }));
-  await page.route('**/api/v1/jobs', route => route.request().method() === 'GET' ? json(route, { jobs: [previous] }) : json(route, { id: 'refinement-job', status: 'FAILED', operation: 'image-refine', parentJobId: previous.id, input: result, charge: { status: 'refunded', amount: 1, unit: 'processingCredits' }, error: 'Refinement could not finish. Your previous result is still available.', createdAt: new Date().toISOString() }, 202));
+  await page.route('**/api/v1/jobs', route => {
+    if (route.request().method() === 'GET') return json(route, { jobs: [previous] });
+    submissions++; if (unified) balance.credits -= 100;
+    return json(route, unified ? refined : { id: 'refinement-job', status: 'FAILED', operation: 'image-refine', parentJobId: previous.id, input: result, charge: { status: 'refunded', amount: 1, unit: 'processingCredits' }, error: 'Refinement could not finish. Your previous result is still available.', createdAt: new Date().toISOString() }, 202);
+  });
+  await page.route('**/api/v1/jobs/refinement-job', route => json(route, refined));
+  downloadFiles.set('/refined.jpg', { contentType: 'image/jpeg', name: 'refined-image.jpg', bytes: image });
+  await page.route('**/api/v1/jobs/refinement-job/download', route => json(route, { url: `${downloadOrigin}/refined.jpg`, expiresAt: quoteExpiration() }));
   await page.route('**/api/v1/jobs/previous-job', route => json(route, previous));
   await page.route('**/api/v1/uploads', route => { expect(route.request().postDataJSON()).toMatchObject({ kind: 'mask', contentType: 'image/png', inputArtifactId: 'previous-result' }); return json(route, { id: 'mask-upload', uploadUrl: `${origin}/fixture/mask-upload` }, 201); });
   await page.route('**/fixture/mask-upload', route => { maskBytes = route.request().postDataBuffer(); return route.fulfill({ status: 200 }); });
   await page.route('**/api/v1/uploads/mask-upload/complete', route => json(route, { id: 'mask-upload', status: 'validating' }, 202));
   await page.route('**/api/v1/uploads/mask-upload', route => json(route, { id: 'mask-upload', status: 'ready', artifact: { id: 'binary-mask', role: 'mask', metadata: { kind: 'mask', contentType: 'image/png', width: 160, height: 120, byteSize: 100 }, expiresAt: expiration() } }));
-  await page.route('**/api/v1/quotes', route => { expect(route.request().postDataJSON()).toEqual({ operation: 'image-refine', inputArtifactId: 'previous-result', maskArtifactId: 'binary-mask', parentJobId: 'previous-job' }); return json(route, { id: 'refinement-quote', amount: 1, unit: 'processingCredits', operation: 'image-refine', expiresAt: quoteExpiration(), expectedOutput: { format: 'JPG', contentType: 'image/jpeg', width: 160, height: 120 } }); });
+  await page.route('**/api/v1/quotes', route => { expect(route.request().postDataJSON()).toEqual({ operation: 'image-refine', inputArtifactId: 'previous-result', maskArtifactId: 'binary-mask', parentJobId: 'previous-job' }); return json(route, { id: 'refinement-quote', amount: unified ? 100 : 1, unit: unified ? 'credits' : 'processingCredits', operation: 'image-refine', expiresAt: quoteExpiration(), expectedOutput: { format: 'JPG', contentType: 'image/jpeg', width: 160, height: 120 } }); });
   await page.goto('/app/image?job=previous-job');
   await page.getByRole('button', { name: 'Refine remaining marks' }).click();
   await expect(page.getByRole('button', { name: 'Refine image', exact: true })).toBeDisabled();
   const canvas = page.getByLabel('Watermark refinement selection'); const box = await canvas.boundingBox(); expect(box).toBeTruthy();
   await page.mouse.move(box!.x + box!.width * .3, box!.y + box!.height * .3); await page.mouse.down(); await page.mouse.move(box!.x + box!.width * .6, box!.y + box!.height * .5, { steps: 4 }); await page.mouse.up();
-  const refine = page.getByRole('button', { name: 'Refine image · 1 processing credit', exact: true });
+  const refine = page.getByRole('button', { name: unified ? 'Refine image · 100 Credits' : 'Refine image · 1 processing credit', exact: true });
   await expect(refine).toBeEnabled(); await expect(page.getByRole('dialog')).toHaveCount(0);
   const pixels = await sharp(maskBytes!).ensureAlpha().raw().toBuffer({ resolveWithObject: true }); expect(pixels.info).toMatchObject({ width: 160, height: 120 });
   const values = new Set<number>(); let opaqueBinary = true;
   for (let index = 0; index < pixels.data.length; index += 4) { const value = pixels.data[index]; values.add(value); if (pixels.data[index + 1] !== value || pixels.data[index + 2] !== value || pixels.data[index + 3] !== 255 || value !== 0 && value !== 255) opaqueBinary = false; }
   expect(opaqueBinary).toBe(true); expect([...values].sort()).toEqual([0, 255]);
   await refine.click();
-  await expect(page.getByText('Your reserved credits were returned.')).toBeVisible();
-  await page.locator('.workspace-recent button').filter({ hasText: 'Ready to review' }).click();
+  if (unified) {
+    await expect(page.locator('.workspace-balances')).toContainText('900 Credits');
+    const event = page.waitForEvent('download'); await page.getByRole('button', { name: 'Download JPG', exact: true }).click();
+    const stream = await (await event).createReadStream(); const chunks: Buffer[] = []; for await (const chunk of stream) chunks.push(Buffer.from(chunk));
+    expect(await sharp(Buffer.concat(chunks)).metadata()).toMatchObject({ format: 'jpeg', width: 160, height: 120 });
+    expect(submissions).toBe(1); expect(balance.credits).toBe(900);
+  } else {
+    await expect(page.getByText('Your reserved credits were returned.')).toBeVisible();
+    await page.locator('.workspace-recent button').filter({ hasText: 'Ready to review' }).click();
+  }
   await expect(page.getByRole('button', { name: 'Download JPG', exact: true })).toBeVisible();
 });
 
-test('video fixed-area processing prices automatically and produces synchronized, downloadable MP4 media', async ({ page }) => {
-  await account(page);
+for (const unified of [false, true]) test(unified ? 'unified Credits video spends 100 per started 2 seconds and downloads the MP4 once' : 'video fixed-area processing prices automatically and produces synchronized, downloadable MP4 media', async ({ page }) => {
+  const balance = await account(page, true, unified);
+  const amount = unified ? 100 : 1; const unit = unified ? 'credits' : 'processingCredits';
   const video = readFileSync(new URL('../fixtures/workspace-24fps.mp4', import.meta.url));
   const metadata = { kind: 'video', contentType: 'video/mp4', byteSize: video.length, width: 160, height: 90, durationSeconds: 2, fps: 24, hasAudio: true };
   const input = { id: 'video-input', role: 'input', metadata, previewUrl: `${origin}/fixture/original.mp4`, expiresAt: expiration() };
   const result = { id: 'video-result', role: 'result', metadata, previewUrl: `${origin}/fixture/result.mp4`, expiresAt: expiration(), canRefine: false };
-  const job = { id: 'video-job', operation: 'video-watermark', status: 'READY', input, result, charge: { status: 'consumed', amount: 1, unit: 'processingCredits' }, createdAt: new Date().toISOString() };
+  const job = { id: 'video-job', operation: 'video-watermark', status: 'READY', input, result, charge: { status: 'consumed', amount, unit }, createdAt: new Date().toISOString() };
   let maskBytes: Buffer | null = null; let submissions = 0;
   await page.route('**/fixture/*.mp4', route => route.fulfill({ status: 200, contentType: 'video/mp4', body: video, headers: route.request().url().endsWith('download.mp4') ? { 'Content-Disposition': 'attachment; filename="watermark-removed-video.mp4"' } : {} }));
   await page.route('**/api/v1/uploads', route => { const payload = route.request().postDataJSON() as { kind: string }; return json(route, { id: payload.kind === 'mask' ? 'video-mask-upload' : 'video-upload', uploadUrl: `${origin}/fixture/${payload.kind}-upload` }, 201); });
@@ -260,9 +293,9 @@ test('video fixed-area processing prices automatically and produces synchronized
   await page.route('**/api/v1/quotes', route => {
     const payload = route.request().postDataJSON() as { maskArtifactId?: string };
     expect(payload).toEqual({ operation: 'video-watermark', inputArtifactId: 'video-input', ...(payload.maskArtifactId ? { maskArtifactId: 'video-mask' } : {}) });
-    return json(route, { id: payload.maskArtifactId ? 'video-quote' : 'unused-automatic-video-quote', operation: 'video-watermark', amount: 1, unit: 'processingCredits', expiresAt: quoteExpiration(), expectedOutput: { contentType: 'video/mp4', format: 'MP4', width: 160, height: 90, durationSeconds: 2 } });
+    return json(route, { id: payload.maskArtifactId ? 'video-quote' : 'unused-automatic-video-quote', operation: 'video-watermark', amount, unit, expiresAt: quoteExpiration(), expectedOutput: { contentType: 'video/mp4', format: 'MP4', width: 160, height: 90, durationSeconds: 2 } });
   });
-  await page.route('**/api/v1/jobs', route => { if (route.request().method() === 'GET') return json(route, { jobs: [] }); submissions += 1; expect(route.request().postDataJSON()).toMatchObject({ quoteId: 'video-quote', idempotencyKey: expect.any(String) }); return json(route, { ...job, status: 'PROCESSING', result: undefined, progress: .5 }, 202); });
+  await page.route('**/api/v1/jobs', route => { if (route.request().method() === 'GET') return json(route, { jobs: [] }); submissions += 1; balance.credits -= amount; expect(route.request().postDataJSON()).toMatchObject({ quoteId: 'video-quote', idempotencyKey: expect.any(String) }); return json(route, { ...job, status: 'PROCESSING', result: undefined, progress: .5 }, 202); });
   await page.route('**/api/v1/jobs/video-job', route => json(route, job));
   downloadFiles.set('/video.mp4', { contentType: 'video/mp4', name: 'watermark-removed-video.mp4', bytes: video });
   await page.route('**/api/v1/jobs/video-job/download', route => json(route, { url: `${downloadOrigin}/video.mp4`, expiresAt: quoteExpiration() }));
@@ -271,7 +304,7 @@ test('video fixed-area processing prices automatically and produces synchronized
   await page.getByLabel('Fixed area', { exact: false }).check();
   const stage = page.locator('.workspace-video-stage'); const box = await stage.boundingBox(); expect(box).toBeTruthy();
   await page.mouse.move(box!.x + box!.width * .65, box!.y + box!.height * .1); await page.mouse.down(); await page.mouse.move(box!.x + box!.width * .9, box!.y + box!.height * .3, { steps: 4 }); await page.mouse.up();
-  const process = page.getByRole('button', { name: 'Remove watermarks · 1 processing credit', exact: true });
+  const process = page.getByRole('button', { name: unified ? 'Remove watermarks · 100 Credits' : 'Remove watermarks · 1 processing credit', exact: true });
   await expect(process).toBeEnabled();
   await expect(page.getByRole('dialog')).toHaveCount(0); expect(submissions).toBe(0);
   const maskMetadata = await sharp(maskBytes!).metadata(); expect(maskMetadata).toMatchObject({ width: 160, height: 90, format: 'png' });
@@ -289,6 +322,7 @@ test('video fixed-area processing prices automatically and produces synchronized
   const pendingDownload = page.waitForEvent('download'); await page.getByRole('button', { name: 'Download video', exact: true }).click();
   const download = await pendingDownload; const stream = await download.createReadStream(); const chunks: Buffer[] = []; for await (const chunk of stream) chunks.push(Buffer.from(chunk));
   expect(Buffer.concat(chunks).equals(video)).toBe(true); expect(submissions).toBe(1);
+  if (unified) await expect(page.locator('.workspace-balances')).toContainText('900 Credits');
 });
 
 test('an admitted request returning HTTP 408 restores the same confirmation after refresh', async ({ page }) => {

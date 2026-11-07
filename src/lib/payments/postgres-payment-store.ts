@@ -1,5 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import type { Pool, PoolClient } from 'pg';
+import { PostgresCreditWallet } from '../credits/postgres-credit-wallet';
+import { lockFinancialOwner } from '../benefits/free-benefits';
 import type { PaymentAdjustmentReason, PaymentCapture, PaymentEvent, PaymentOrder, PaymentPurchase, PaymentStore } from './payment-store';
 
 interface OrderRow {
@@ -96,7 +98,7 @@ export class PostgresPaymentStore implements PaymentStore {
       await this.lockUser(client, current.user_id);
       const adjustments = await client.query('SELECT id FROM payment_adjustments WHERE capture_id = $1 AND environment=$2', [capture.id,this.environment]);
       const status = adjustments.rows.length ? 'review' : 'fulfilled';
-      if (status === 'fulfilled') {
+      if (status === 'fulfilled' && !await new PostgresCreditWallet(this.pool, this.environment).purchase(client, current)) {
         await client.query(`INSERT INTO paid_credit_lots (id,order_id,user_id,granted,available) VALUES ($1,$1,$2,$3,$3)`, [current.id, current.user_id, current.credits]);
         await client.query(`INSERT INTO paid_credit_ledger (user_id,lot_id,delta,balance_after,reason,reference_id) VALUES ($1,$2,$3,$3,'purchase',$4)`, [current.user_id, current.id, current.credits, capture.id]);
       }
@@ -134,6 +136,7 @@ export class PostgresPaymentStore implements PaymentStore {
       const current = found.rows[0];
       if (!current) return;
       await this.lockUser(client, current.user_id);
+      const unified = await new PostgresCreditWallet(this.pool, this.environment).freezePurchase(client, current.user_id, current.id);
       const lots = await client.query<{ id: string; available: number; granted: number; status: string }>('SELECT id,available,granted,status FROM paid_credit_lots WHERE order_id=$1 FOR UPDATE', [current.id]);
       const lot = lots.rows[0];
       if (lot?.status === 'active') {
@@ -148,7 +151,7 @@ export class PostgresPaymentStore implements PaymentStore {
           )
         )
       `, [current.id]);
-      const fullUnusedRefund = reason === 'refund' && amountCents === current.amount_cents && reservations.rows[0].count === 0;
+      const fullUnusedRefund = reason === 'refund' && amountCents === current.amount_cents && reservations.rows[0].count === 0 && !unified.used;
       const status = current.status === 'refunded' ? 'refunded' : fullUnusedRefund ? 'refunded' : 'review';
       await client.query('UPDATE payment_orders SET status=$2,updated_at=NOW() WHERE id=$1', [current.id, status]);
     });
@@ -168,6 +171,7 @@ export class PostgresPaymentStore implements PaymentStore {
   }
 
   private async lockUser(client: PoolClient, userId: string): Promise<void> {
+    await lockFinancialOwner(client, userId);
     const inserted = await client.query(`INSERT INTO user_benefits(user_id,balance) VALUES ($1,1) ON CONFLICT (user_id) DO NOTHING RETURNING user_id`, [userId]);
     if (inserted.rows[0]) await client.query(`INSERT INTO benefit_ledger(user_id,delta,balance_after,reason,reference_id) VALUES ($1,1,1,'first_use',$1)`, [userId]);
     await client.query('SELECT user_id FROM user_benefits WHERE user_id=$1 FOR UPDATE', [userId]);

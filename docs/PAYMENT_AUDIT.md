@@ -2,6 +2,10 @@
 
 审计日期：2026-11-01（Asia/Shanghai）。实施基线为已合并 `988656d5f6aeb482a6bf7ba76b79975a25b14adb`，不是未合并候选或旧 Sandbox 部署。支付配置及发布合同见 [PayPal 发布说明](PAYPAL_LIVE_RELEASE.md)。本次修复的 PR、CI、部署和验收结果须绑定最终版本记录，不能把下列历史证据当作新补丁已经通过。
 
+## 通用Credits本地候选补充
+
+通用Credits候选已进入本地实现，默认关闭；下文三类权益与生产证据仍按原日期/版本阅读。新普通100、PRO300、精修100、背景10、物体10，视频为`100 * ceil(服务端秒数 / 2)`，不是100/秒。来源转换、奖励、预算和切换以[当前Credits合同](PROCESSING_CREDITS.md)为准。套餐不改、购买不开放，旧单恢复与金额保持；候选代码、PGlite、mock浏览器、真实PG、真实Provider、人工支付/资金退款、部署和生产验收分别结清。本地窗口真实发行/DB/Provider为0；人工付款与资金退款按用户要求暂缓。
+
 ## 当前商业与运行边界
 
 2026-11-01 的生产公开 `GET /api/payments/catalog` 回读为 `environment=live`、`enabled=false`、`creditsEnabled=true`，新购买关闭，已购余额支持保留。未开启 Live、支付、退款、充值、自动发额度或新增 Provider 调用。开关是运行事实，未来发布及开放前应重新回读；公开响应不能证明私有批准标志或商户资格。

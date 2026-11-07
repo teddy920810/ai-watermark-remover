@@ -5,6 +5,7 @@ import { build } from 'esbuild';
 import { mkdirSync, mkdtempSync, realpathSync, rmSync } from 'node:fs';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import path from 'node:path';
+import { getPaymentConfig, publicPaymentCatalog } from '../../lib/payments/payment-config';
 
 describe('pure public catalog presentation', () => {
   it('renders supplied approved plans and operation rates with no checkout state', async () => {
@@ -25,6 +26,13 @@ describe('pure public catalog presentation', () => {
     expect(html).toContain('/app/credits?sku=plus&amp;returnTo=%2Fremove-background%23tool');
     expect(html).not.toMatch(/<script|paypal-button-container|Your orders|type="radio"/);
     expect(html.match(/class="credit-package /g)).toHaveLength(4);
+    const legacy = renderToStaticMarkup(createElement(CreditCatalog, { catalog: publicPaymentCatalog(getPaymentConfig({})) }));
+    expect(legacy).toContain('1 free use on first sign-in');
+    expect(legacy).toContain('All three standard image tools');
+    expect(legacy).not.toContain('All six processing operations');
+    const unified = renderToStaticMarkup(createElement(CreditCatalog, { catalog: publicPaymentCatalog(getPaymentConfig({ UNIVERSAL_CREDITS_ENABLED: 'true' })) }));
+    for (const text of ['All six processing operations', '100 Credits on first sign-in', 'Reward balance capped at 300 Credits', 'PRO watermark removal', 'Brush refinement', 'Video watermark removal', '100 Credits per started 2 seconds', 'No payment can be made']) expect(unified).toContain(text);
+    expect(unified).not.toContain('Free uses are used first');
     } finally {
       rmSync(temporary, { recursive: true, force: true });
     }

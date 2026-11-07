@@ -6,6 +6,7 @@ import { createProcessingRuntime } from './processing-services';
 import type { ProcessingRuntime, ProcessingRuntimeConfig } from './processing-services';
 import { imageCreditConfigFromEnvironment } from '../payments/image-credit-config';
 import { readImageProviderConfig } from '../config/image-providers';
+import { creditsConfiguration } from '../credits/credit-policy';
 
 type RuntimeDependencies = {
   factory?: (config: ProcessingRuntimeConfig) => ProcessingRuntime;
@@ -28,6 +29,7 @@ export function createServerProcessingRuntimeAccessor(source: NodeJS.ProcessEnv 
       // Worker-side runtimes remain directly runnable without a web trigger.
       providerMode: env.PROCESSING_PROVIDER, enabled: env.PROCESSING_ENABLED && Boolean(trigger), priceVersion: env.PROCESSING_PRICE_VERSION, trigger,
       imageCredits: imageCreditConfigFromEnvironment(source),
+      credits: creditsConfiguration(source),
     });
     return cached;
   };

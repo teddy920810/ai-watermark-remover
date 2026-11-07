@@ -256,9 +256,9 @@ export default function CreditCheckout({ initialCatalog, initialSku, initialRetu
             <h2 id="payment-review-heading">Review your purchase</h2>
             {activeAttempt ? <p>Recovering your original purchase. Its accepted order and price remain in effect.</p> : selected ? <p className="selected-plan-name">{selected.name}</p> : null}
             {!busy && !activeAttempt && status !== 'fulfilled' ? <a href={`/pricing?returnTo=${encodeURIComponent(returnTo)}`}>Change plan</a> : null}
-            {selected && !activeAttempt ? <p>{selected.credits.toLocaleString('en-US')} image credits · <strong>{formatPrice(selected.amountCents, selected.currency)} {selected.currency}</strong> total</p> : null}
-            <p>For standard watermark removal, background removal, and object removal. PRO, brush refinement, and video processing use separate administrator credits; package names do not unlock these modes.</p>
-            <p>Free uses are used first. Failed operations return credits or free uses to their original source. Credits are added to your signed-in account after payment is confirmed. No automatic renewal.</p>
+            {selected && !activeAttempt ? <p>{selected.credits.toLocaleString('en-US')} {catalog.universalCredits ? 'Credits' : 'image credits'} · <strong>{formatPrice(selected.amountCents, selected.currency)} {selected.currency}</strong> total</p> : null}
+            <p>{catalog.universalCredits ? 'One Credits balance covers standard watermark removal, PRO, brush refinement, video, background removal, and object removal. Your account must finish its upgrade before using the shared balance.' : 'For standard watermark removal, background removal, and object removal. PRO, brush refinement, and video processing use separate administrator credits; package names do not unlock these modes.'}</p>
+            <p>{catalog.universalCredits ? 'Reward Credits are used first. Failed operations return Credits to their original source.' : 'Free uses are used first. Failed operations return credits or free uses to their original source.'} Credits are added to your signed-in account after payment is confirmed. No automatic renewal.</p>
             <p><a href="/terms">Purchase and refund terms</a></p>
           </div>
           <div className="payment-action">
@@ -277,11 +277,11 @@ export default function CreditCheckout({ initialCatalog, initialSku, initialRetu
       </> : null}
       {status === 'confirming' || (status === 'error' && activeAttempt) ? <section className="payment-outcome" role="status">
         <h2>Confirming your payment</h2><p>Please do not pay again. Check this order to recover a delayed confirmation.</p>
-        {order ? <p>{order.credits.toLocaleString('en-US')} image credits · {formatPrice(order.amountCents, order.currency)} {order.currency} · original order</p> : null}
+        {order ? <p>{order.credits.toLocaleString('en-US')} {catalog?.universalCredits ? 'Credits' : 'image credits'} · {formatPrice(order.amountCents, order.currency)} {order.currency} · original order</p> : null}
         {order || activeAttempt?.orderId ? <><p>Order: <code>{order?.id ?? activeAttempt?.orderId}</code></p><button className="button button-primary" type="button" onClick={() => checkOrder((order?.id ?? activeAttempt?.orderId) as string)} disabled={checking}>{checking ? 'Checking…' : 'Check payment'}</button></> : activeAttempt ? <button className="button button-primary" type="button" onClick={recoverCheckout} disabled={checking}>{checking ? 'Checking…' : 'Recover checkout'}</button> : <button className="button button-ghost" type="button" onClick={() => loadOrders(true)}>Refresh order history</button>}
       </section> : null}
       {status === 'fulfilled' && order ? <section className="payment-outcome" role="status">
-        <h2>Your credits have arrived</h2><p>{order.credits.toLocaleString('en-US')} image credits were added. Order: <code>{order.id}</code></p>
+        <h2>Your credits have arrived</h2><p>{order.credits.toLocaleString('en-US')} {catalog?.universalCredits ? 'Credits' : 'image credits'} were added. Order: <code>{order.id}</code></p>
         <a className="button button-primary" href={returnTo}>Return to image tools</a>
         <button className="button button-ghost" type="button" onClick={resetCheckout}>Make another purchase</button>
       </section> : null}

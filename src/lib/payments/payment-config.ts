@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { cloudRunTriggerFromEnvironment } from '../runtime/cloud-run-trigger';
 import { getImageCreditPrices } from './image-credit-prices';
+import { creditPolicy, creditsConfiguration } from '../credits/credit-policy';
 
 const purchase = z.object({
   sku: z.string().regex(/^[a-z0-9-]{1,40}$/),
@@ -41,7 +42,10 @@ export function getPaymentConfig(source: NodeJS.ProcessEnv = process.env) {
   if (new Set(packages.map((item) => item.sku)).size !== packages.length) throw new Error('Duplicate payment SKU');
   const imagePrices = getImageCreditPrices(source);
   const catalogVersion = z.string().regex(/^[a-zA-Z0-9:_-]{1,100}$/).parse(source.PAYPAL_CATALOG_VERSION ?? 'sandbox-image-credits-v1');
-  return { enabled, creditsEnabled, environment, clientId, clientSecret, merchantId, webhookId, packages, catalogVersion, imageCosts: imagePrices.costs, imageCostVersion: imagePrices.version };
+  const credits = creditsConfiguration(source);
+  return { enabled, creditsEnabled, environment, clientId, clientSecret, merchantId, webhookId, packages, catalogVersion, imageCosts: imagePrices.costs, imageCostVersion: imagePrices.version,
+    ...(credits.admissionEnabled ? { universalCredits: { version: creditPolicy.version, imageRates: creditPolicy.imageRates,
+      video: { stepSeconds: creditPolicy.videoBlockSeconds, creditsPerStep: creditPolicy.videoBlockCredits }, rewards: creditPolicy.rewards } } : {}) };
 }
 export type PaymentConfig = ReturnType<typeof getPaymentConfig>;
 
@@ -52,5 +56,7 @@ export function publicPaymentCatalog(config: PaymentConfig) {
     enabled: config.enabled, creditsEnabled: config.creditsEnabled, environment: config.environment,
     ...(config.enabled ? { clientId: config.clientId } : {}),
     packages: config.packages, imageCosts: config.imageCosts, imageCostVersion: config.imageCostVersion,
+    ...(config.universalCredits ? { universalCredits: { version: config.universalCredits.version, imageRates: config.universalCredits.imageRates,
+      video: config.universalCredits.video, rewards: config.universalCredits.rewards } } : {}),
   };
 }

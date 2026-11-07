@@ -19,6 +19,40 @@ test.afterAll(async () => { await new Promise<void>((resolve, reject) => downloa
 
 const fixture = (page: Page, initiallySignedIn = true, purchasedImageCredits = 100, operation: 'background-removal' | 'object-removal' = 'background-removal', autoSelect = true) => imageOperationFixture(page, { initiallySignedIn, purchasedImageCredits, operation, autoSelect, output, downloadOrigin });
 
+test('unified Credits paused admission and insufficient balance retain the file without a misleading purchase prompt', async ({ page }, testInfo) => {
+  const state = await imageOperationFixture(page, { unified: true, creditsAdmissionEnabled: false, output, downloadOrigin });
+  await expect(page.getByRole('button', { name: 'Remove background · 10 Credits', exact: true })).toBeDisabled();
+  await expect(page.locator('.workspace-balances')).toContainText('New processing is paused');
+  await page.route('**/api/v1/me', route => route.fulfill({ json: { walletMode: 'unified', unit: 'credits', credits: 0, admissionEnabled: true } }));
+  await page.reload();
+  await expect(page.getByRole('button', { name: 'Remove background · 10 Credits', exact: true })).toBeDisabled();
+  await expect(page.getByRole('alert')).toContainText('not have enough Credits');
+  await expect(page.locator('.workspace-action-block').getByRole('link', { name: 'Buy image credits', exact: true })).toHaveCount(0);
+  await expect(page.locator('.workspace-action-block').getByRole('link', { name: 'Credits & orders', exact: true })).toBeVisible();
+  for (const [name, width, height] of [['desktop', 1440, 900], ['mobile', 390, 844]] as const) {
+    await page.setViewportSize({ width, height }); expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+    await page.locator('.workspace-action-block').scrollIntoViewIfNeeded();
+    await page.screenshot({ path: testInfo.outputPath(`credits-insufficient-${name}.png`), animations: 'disabled', style: 'astro-dev-toolbar{visibility:hidden!important}' });
+  }
+  expect(state.submissions).toBe(0); expect(state.oldRequests).toBe(0);
+});
+
+for (const operation of ['background-removal', 'object-removal'] as const) test(`unified Credits ${operation} spends 10 once and downloads the original PNG format`, async ({ page }, testInfo) => {
+  const state = await imageOperationFixture(page, { operation, unified: true, output, downloadOrigin });
+  await expect(page.locator('.workspace-balances')).toContainText('100 Credits');
+  await expect(page.getByText('Uses your shared Credits balance. Reward Credits are used first.', { exact: true })).toBeVisible();
+  const label = operation === 'object-removal' ? 'Remove object' : 'Remove background';
+  expect(state.submissions).toBe(0);
+  await page.getByRole('button', { name: `${label} · 10 Credits`, exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Download PNG', exact: true })).toBeVisible();
+  await expect(page.locator('.workspace-balances')).toContainText('90 Credits');
+  const event = page.waitForEvent('download'); await page.getByRole('button', { name: 'Download PNG', exact: true }).click();
+  const path = testInfo.outputPath(`${operation}.png`); await (await event).saveAs(path);
+  expect(await inspectPngArtifact(readFileSync(path), { requireTransparency: operation === 'background-removal' })).toMatchObject({ width: 80, height: 60 });
+  await page.reload(); await expect(page.getByRole('button', { name: 'Download PNG', exact: true })).toBeVisible();
+  expect(state.submissions).toBe(1); expect(state.oldRequests).toBe(0); expect(state.purchasedImageCredits).toBe(90);
+});
+
 test('background uses the common durable quote, retains transparent/color PNG downloads and restores the accepted job', async ({ page }, testInfo) => {
   const state = await fixture(page);
   expect(state.submissions).toBe(0);

@@ -1,12 +1,15 @@
 import { createHash, randomUUID } from 'node:crypto';
-import { amountSchema, metadataSchema, operationSchema, ProcessingError } from './contracts';
+import { admissionMatchesJob, amountSchema, metadataSchema, operationSchema, ProcessingError } from './contracts';
 import type { AdmissionHistoryCursor, OperationCapability, ProcessingArtifact, ProcessingArtifactStore, ProcessingFinancialStore, ProcessingInspector, ProcessingJob, ProcessingJobStore, ProcessingOperation, ProcessingPriceBook, ProcessingQuote, ProcessingQuoteStore } from './contracts';
 import { operationCatalog } from '../contracts/operation-catalog';
 import type { ImageCreditCosts } from '../payments/image-credit-prices';
+import { creditCost, creditPolicy } from '../credits/credit-policy';
+import type { CreditsConfiguration, WalletState } from '../credits/credit-policy';
 
 export interface QuoteRequest { ownerId: string; operation: ProcessingOperation; inputArtifactId: string; maskArtifactId?: string; parentJobId?: string }
-export interface SubmitRequest { ownerId: string; quoteId: string; idempotencyKey: string }
+export interface SubmitRequest { ownerId: string; quoteId: string; idempotencyKey: string; acceptCredits?: boolean }
 export interface ProcessingServiceOptions {
+  credits?: CreditsConfiguration;
   jobs: ProcessingJobStore;
   artifacts: ProcessingArtifactStore;
   quotes: ProcessingQuoteStore;
@@ -42,6 +45,17 @@ export class ProcessingService {
   async quote(request: QuoteRequest): Promise<ProcessingQuote> {
     operationSchema.parse(request.operation);
     const { input, mask } = await this.validate(request);
+    const wallet = await this.wallet(request.ownerId);
+    if (wallet?.phase === 'draining') throw new ProcessingError('wallet_draining', 'Your previous tasks are being reconciled before the account upgrade', 409);
+    if (wallet?.phase === 'unified') {
+      this.requireCreditsAdmission();
+      const now = this.now();
+      const quote: ProcessingQuote = { ...request, id: this.id(), unit: 'credits', amount: creditCost(request.operation, input.metadata.durationSeconds),
+        environment: wallet.environment, walletEpoch: wallet.epoch, priceVersion: creditPolicy.version,
+        fingerprint: this.fingerprint(request, input, mask), createdAt: now.toISOString(), expiresAt: new Date(now.getTime() + (this.options.quoteTtlMs ?? 10 * 60_000)).toISOString() };
+      await this.options.quotes.create(quote);
+      return quote;
+    }
     const imageCreditOperation = operationCatalog[request.operation].legacyOperation;
     const imageCost = amountSchema.parse((imageCreditOperation ? this.options.imageCreditCosts?.[imageCreditOperation] : undefined) ?? this.options.purchasedImageCreditCost ?? 1);
     let unit: ProcessingQuote['unit'] = 'processingCredits';
@@ -77,6 +91,12 @@ export class ProcessingService {
     if (!quote || quote.ownerId !== request.ownerId) throw new ProcessingError('not_found', 'Quote not found', 404);
     const requestHash = this.requestHash(quote);
     if (Date.parse(quote.expiresAt) <= this.now().getTime()) throw new ProcessingError('quote_expired', 'Confirm a new quote before processing', 409);
+    const wallet = await this.wallet(request.ownerId);
+    if (quote.unit === 'credits') {
+      if (request.acceptCredits === false) throw new ProcessingError('wallet_upgraded', 'Refresh the workspace to confirm the Credits price', 409);
+      this.requireCreditsAdmission();
+      if (wallet?.phase !== 'unified' || quote.environment !== wallet.environment || quote.walletEpoch !== wallet.epoch) throw new ProcessingError('quote_changed', 'Your account changed; confirm a new quote', 409);
+    } else if (wallet && wallet.phase !== 'legacy') throw new ProcessingError('quote_changed', 'Your account changed; confirm a new quote', 409);
     const { input, mask } = await this.validate(quote);
     if (this.fingerprint(quote, input, mask) !== quote.fingerprint || quote.priceVersion !== this.priceVersion(quote.unit, quote.operation)) throw new ProcessingError('quote_changed', 'Input or price changed; confirm a new quote', 409);
     const now = this.now().toISOString();
@@ -86,7 +106,8 @@ export class ProcessingService {
       ...(quote.parentJobId ? { parentJobId: quote.parentJobId } : {}), chargeStatus: 'reserved', createdAt: now, updatedAt: now,
     };
     if (!await this.options.jobs.create(job)) throw new ProcessingError('job_conflict', 'Could not create processing operation', 409);
-    const { admission } = await this.options.finance.reserveAndEnqueue({ jobId: job.id, ownerId: job.ownerId, idempotencyKey: request.idempotencyKey, requestHash, amount: quote.amount, unit: quote.unit, now });
+    const { admission } = await this.options.finance.reserveAndEnqueue({ jobId: job.id, ownerId: job.ownerId, idempotencyKey: request.idempotencyKey, requestHash, amount: quote.amount, unit: quote.unit, now,
+      ...(quote.unit === 'credits' ? { environment: quote.environment, walletEpoch: quote.walletEpoch } : {}) });
     if (admission.jobId !== job.id) return this.get(request.ownerId, admission.jobId);
     const stored = await this.options.jobs.get(job.id);
     if (stored?.job.status === 'PREPARED') await this.options.jobs.compareAndSwap(job.id, stored.version, { ...stored.job, status: 'QUEUED', updatedAt: now });
@@ -96,8 +117,9 @@ export class ProcessingService {
   async get(ownerId: string, jobId: string): Promise<ProcessingJob> {
     const stored = await this.options.jobs.get(jobId);
     if (!stored || stored.job.ownerId !== ownerId) throw new ProcessingError('not_found', 'Task not found', 404);
+    if (stored.job.quote.unit === 'credits' && stored.job.quote.environment !== this.options.credits?.environment) throw new ProcessingError('not_found', 'Task not found', 404);
     const admission = await this.options.finance.getAdmission(jobId);
-    if (!admission || admission.ownerId !== ownerId) throw new ProcessingError('not_found', 'Task not found', 404);
+    if (!admissionMatchesJob(admission, stored.job)) throw new ProcessingError('not_found', 'Task not found', 404);
     return stored.job;
   }
 
@@ -111,7 +133,8 @@ export class ProcessingService {
       const records = await Promise.all(page.admissions.map(async (entry) => {
         if (entry.ownerId !== ownerId) return null;
         const stored = await this.options.jobs.get(entry.jobId);
-        return stored?.job.id === entry.jobId && stored.job.ownerId === ownerId ? stored.job : null;
+        return stored && admissionMatchesJob(entry, stored.job)
+          && (stored.job.quote.unit !== 'credits' || stored.job.quote.environment === this.options.credits?.environment) ? stored.job : null;
       }));
       jobs.push(...records.filter((job): job is ProcessingJob => job !== null));
       before = page.nextCursor;
@@ -163,10 +186,22 @@ export class ProcessingService {
     })).digest('hex');
   }
   private requestHash(quote: ProcessingQuote): string {
-    return createHash('sha256').update(`${quote.id}:${quote.fingerprint}:${quote.amount}:${quote.unit}:${quote.priceVersion}`).digest('hex');
+    const original = `${quote.id}:${quote.fingerprint}:${quote.amount}:${quote.unit}:${quote.priceVersion}`;
+    return createHash('sha256').update(quote.unit === 'credits' ? `credits-v1:${original}:${quote.environment}:${quote.walletEpoch}` : original).digest('hex');
   }
   private priceVersion(unit: ProcessingQuote['unit'], operation: ProcessingOperation) {
+    if (unit === 'credits') return creditPolicy.version;
     return (unit === 'purchasedImageCredits' || ['background-removal', 'object-removal'].includes(operation) && this.options.purchasedImageCreditsEnabled) && this.options.imageCreditPriceVersion
       ? `${this.options.prices.version}:image:${this.options.imageCreditPriceVersion}` : this.options.prices.version;
+  }
+  private async wallet(ownerId: string): Promise<WalletState | undefined> {
+    if (!this.options.credits) return undefined;
+    if (!this.options.finance.getWalletState) throw new ProcessingError('wallet_unavailable', 'Account currency is temporarily unavailable', 503);
+    const wallet = await this.options.finance.getWalletState(ownerId);
+    if (!['legacy', 'draining', 'unified'].includes(wallet.phase) || wallet.environment !== this.options.credits.environment || !Number.isSafeInteger(wallet.epoch) || wallet.epoch < 0) throw new ProcessingError('wallet_unavailable', 'Account currency is temporarily unavailable', 503);
+    return wallet;
+  }
+  private requireCreditsAdmission() {
+    if (!this.options.credits?.admissionEnabled) throw new ProcessingError('credits_admission_closed', 'New Credits processing is temporarily unavailable. Your balance and existing tasks are retained.', 503);
   }
 }

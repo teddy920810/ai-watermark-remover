@@ -10,14 +10,16 @@ import { PostgresPaymentStore } from './postgres-payment-store';
 import { PaymentService } from './payment-service';
 import { getPaymentConfig } from './payment-config';
 import { reservePurchasedImageCredit } from './image-credit-wallet';
-import { ensureFreeBenefitAccount } from '../benefits/free-benefits';
+import { ensureFreeBenefitAccount, lockFinancialOwner } from '../benefits/free-benefits';
+import { PostgresCreditWallet } from '../credits/postgres-credit-wallet';
+import { applyCreditMigration, beginCreditMigration, previewCreditMigration } from '../credits/credit-migration';
 
 // Opt-in only. Credentials are injected by a local operator/ignored runner;
 // ordinary unit tests and CI never connect to a database from this file.
 const databaseUrl = process.env.PAYMENT_TEST_DATABASE_URL;
 const normalizeHost = (host: string) => host.toLowerCase().replace(/-pooler(?=\.)/, '');
 const schema = `paypal_live_qa_${randomUUID().replaceAll('-', '')}`;
-const validSchema = () => /^paypal_live_qa_[a-f0-9]{32}$/.test(schema);
+const validSchema = (candidate = schema) => /^paypal_live_qa_[a-f0-9]{32}$/.test(candidate);
 let created = false;
 let pool: Pool;
 let payments: PostgresPaymentStore;
@@ -30,18 +32,90 @@ const capture = { id: captureId, paypalOrderId, amountCents: 499, currency: 'USD
 const purchase = { sku: 'qa-image-uses', credits: 5, amountCents: 499, currency: 'USD' as const, catalogVersion: 'concurrency-qa' };
 const request = { jobId: 'qa-image-job', ownerId: owner, idempotencyKey: 'qa-operation', requestHash: 'qa-sealed-quote', amount: 1, unit: 'purchasedImageCredits' as const, now: '2026-10-31T00:00:00.000Z' };
 
-function assertIsolation() {
-  if (!databaseUrl || process.env.PAYMENT_TEST_DATABASE_KIND !== 'isolated-sandbox') throw new Error('An explicitly isolated Sandbox database is required');
-  const url = new URL(databaseUrl);
-  const expected = process.env.PAYMENT_TEST_SANDBOX_HOST;
-  const production = process.env.PAYMENT_TEST_PRODUCTION_HOST;
+function assertIsolation(connectionString = databaseUrl, environment: Record<string, string | undefined> = process.env, candidateSchema = schema) {
+  if (connectionString && environment.PAYMENT_TEST_DATABASE_KIND === 'owned-local') {
+    const url = new URL(connectionString);
+    const nonce = environment.PAYMENT_TEST_OWNED_LOCAL_NONCE;
+    const port = environment.PAYMENT_TEST_OWNED_LOCAL_PORT;
+    const role = environment.PAYMENT_TEST_OWNED_LOCAL_ROLE;
+    const name = environment.PAYMENT_TEST_OWNED_LOCAL_DATABASE;
+    if (environment.PAYMENT_TEST_OWNED_LOCAL_OPT_IN !== 'true' || environment.DATABASE_URL
+      || !/^credits-owned-local-postgresql-isolation-and-concurrency\/v[1-9]\d*-\d{8}$/.test(environment.PAYMENT_TEST_OWNED_LOCAL_SCOPE ?? '')
+      || !/^[a-f0-9]{32}$/.test(nonce ?? '') || !/^[1-9]\d{3,4}$/.test(port ?? '')
+      || Number(port) < 1024 || Number(port) > 65535 || port === '5432'
+      || role !== `r3credits_role_${nonce}` || name !== `r3credits_db_${nonce}`
+      || !['postgres:', 'postgresql:'].includes(url.protocol) || url.hostname !== '127.0.0.1'
+      || url.port !== port || url.username !== role || !url.password || url.pathname !== `/${name}`
+      || url.search || url.hash || !validSchema(candidateSchema)) throw new Error('Owned local database isolation checks failed');
+    return;
+  }
+  if (!connectionString || environment.PAYMENT_TEST_DATABASE_KIND !== 'isolated-sandbox') throw new Error('An explicitly isolated Sandbox database is required');
+  const url = new URL(connectionString);
+  const expected = environment.PAYMENT_TEST_SANDBOX_HOST;
+  const production = environment.PAYMENT_TEST_PRODUCTION_HOST;
   const host = normalizeHost(url.hostname);
   // Neon transaction pooling cannot preserve the session search_path used for
   // strict schema isolation: https://neon.com/docs/connect/connection-pooling
   if (/-pooler\./.test(url.hostname)) throw new Error('The isolated schema test requires the direct Sandbox endpoint');
   if (!['postgres:', 'postgresql:'].includes(url.protocol) || !host.endsWith('.neon.tech') || !expected || !production
-    || host !== normalizeHost(expected) || host === normalizeHost(production) || !validSchema()) throw new Error('Database isolation checks failed');
+    || host !== normalizeHost(expected) || host === normalizeHost(production) || !validSchema(candidateSchema)) throw new Error('Database isolation checks failed');
 }
+
+describe('pure database isolation admission without connecting', () => {
+  const nonce = 'a'.repeat(32);
+  const role = `r3credits_role_${nonce}`;
+  const name = `r3credits_db_${nonce}`;
+  const localUrl = `postgresql://${role}:fixture-only@127.0.0.1:25432/${name}`;
+  const local = { DATABASE_URL: '', PAYMENT_TEST_DATABASE_KIND: 'owned-local', PAYMENT_TEST_OWNED_LOCAL_OPT_IN: 'true',
+    PAYMENT_TEST_OWNED_LOCAL_SCOPE: 'credits-owned-local-postgresql-isolation-and-concurrency/v71-20261105',
+    PAYMENT_TEST_OWNED_LOCAL_NONCE: nonce, PAYMENT_TEST_OWNED_LOCAL_PORT: '25432',
+    PAYMENT_TEST_OWNED_LOCAL_ROLE: role, PAYMENT_TEST_OWNED_LOCAL_DATABASE: name };
+  const neonUrl = 'postgresql://fixture:fixture-only@sandbox.branch.neon.tech/test';
+  const neon = { PAYMENT_TEST_DATABASE_KIND: 'isolated-sandbox', PAYMENT_TEST_SANDBOX_HOST: 'sandbox.branch.neon.tech', PAYMENT_TEST_PRODUCTION_HOST: 'production.branch.neon.tech' };
+  it('admits an explicitly owned exact loopback cluster using its new bound identity', () => {
+    expect(() => assertIsolation(localUrl, local)).not.toThrow();
+  });
+  it('preserves the strict existing direct Neon Sandbox contract', () => {
+    expect(() => assertIsolation(neonUrl, neon)).not.toThrow();
+  });
+  it.each([
+    ['no opt-in', localUrl, { ...local, PAYMENT_TEST_OWNED_LOCAL_OPT_IN: undefined }],
+    ['wrong kind', localUrl, { ...local, PAYMENT_TEST_DATABASE_KIND: 'local' }],
+    ['remote', localUrl.replace('127.0.0.1', 'remote.example.test'), local],
+    ['localhost alias', localUrl.replace('127.0.0.1', 'localhost'), local],
+    ['default port', localUrl.replace(':25432/', ':5432/'), { ...local, PAYMENT_TEST_OWNED_LOCAL_PORT: '5432' }],
+    ['unknown expected port', localUrl, { ...local, PAYMENT_TEST_OWNED_LOCAL_PORT: undefined }],
+    ['wrong expected port', localUrl, { ...local, PAYMENT_TEST_OWNED_LOCAL_PORT: '25433' }],
+    ['wrong role', localUrl.replace(role, 'other_role'), local],
+    ['wrong database', localUrl.replace(name, 'other_database'), local],
+    ['unbound role', localUrl, { ...local, PAYMENT_TEST_OWNED_LOCAL_ROLE: 'other_role' }],
+    ['unbound database', localUrl, { ...local, PAYMENT_TEST_OWNED_LOCAL_DATABASE: 'other_database' }],
+    ['missing scope', localUrl, { ...local, PAYMENT_TEST_OWNED_LOCAL_SCOPE: undefined }],
+    ['wrong nonce', localUrl, { ...local, PAYMENT_TEST_OWNED_LOCAL_NONCE: 'b'.repeat(32) }],
+    ['URL options', localUrl + '?options=-csearch_path=public', local],
+    ['URL fragment', localUrl + '#unexpected', local],
+    ['wrong protocol', localUrl.replace('postgresql:', 'https:'), local],
+    ['production configuration present', localUrl, { ...local, DATABASE_URL: neonUrl }],
+    ['foreign Neon target', neonUrl, local],
+  ] as const)('rejects owned-local %s without constructing a database client', (_label, url, environment) => {
+    expect(() => assertIsolation(url, environment)).toThrow();
+  });
+  it.each([
+    ['pooler', neonUrl.replace('sandbox.branch', 'sandbox-pooler.branch'), neon],
+    ['production', neonUrl.replace('sandbox.branch', 'production.branch'), neon],
+    ['foreign host', neonUrl.replace('sandbox.branch', 'unknown.branch'), neon],
+    ['missing expected host', neonUrl, { ...neon, PAYMENT_TEST_SANDBOX_HOST: undefined }],
+    ['missing production host', neonUrl, { ...neon, PAYMENT_TEST_PRODUCTION_HOST: undefined }],
+    ['localhost disguised as Sandbox', localUrl, { ...neon, PAYMENT_TEST_SANDBOX_HOST: '127.0.0.1' }],
+  ] as const)('keeps Neon %s denied', (_label, url, environment) => {
+    expect(() => assertIsolation(url, environment)).toThrow();
+  });
+  it('rejects an unsafe schema under both contracts before any connection', () => {
+    expect(() => assertIsolation(localUrl, local, 'public')).toThrow();
+    expect(() => assertIsolation(neonUrl, neon, 'public')).toThrow();
+  });
+});
+
 const control = () => new Client({ connectionString: databaseUrl, connectionTimeoutMillis: 10_000, options: '-c search_path=pg_catalog -c statement_timeout=30000' });
 
 async function baseline() {
@@ -95,8 +169,86 @@ describe.skipIf(!databaseUrl)('real isolated PostgreSQL payment concurrency', ()
   }, 90_000);
 
   beforeEach(async () => {
-    await pool.query('TRUNCATE payment_orders,payment_events,payment_adjustments,user_benefits,processing_accounts,processing_admissions,processing_outbox CASCADE');
+    await pool.query('TRUNCATE payment_orders,payment_events,payment_adjustments,user_benefits,processing_accounts,processing_admissions,processing_outbox,google_user_profiles CASCADE');
   }, 30_000);
+
+  it('serializes competing unified reservations without partial debit or duplicate outbox', async () => {
+    const wallet = new PostgresCreditWallet(pool, 'sandbox'); await wallet.bootstrap(owner, undefined, true);
+    await wallet.grant(owner, { amount: 100, reference: 'reserve-race', actor: 'admin:isolated-test' });
+    const unified = new PostgresProcessingStore(pool, { credits: { admissionEnabled: true, environment: 'sandbox' } });
+    const outcomes = await Promise.allSettled(['one', 'two'].map(id => unified.reserveAndEnqueue({ ...request, unit: 'credits', amount: 150,
+      environment: 'sandbox', walletEpoch: 1, jobId: id, idempotencyKey: id })));
+    expect(outcomes.filter(result => result.status === 'fulfilled')).toHaveLength(1);
+    expect(await wallet.summary(owner)).toMatchObject({ credits: 50, rewardReserved: 100 });
+    expect((await pool.query('SELECT * FROM processing_outbox')).rows).toHaveLength(1);
+  }, 60_000);
+
+  it('serializes exact-source revoke against reserve without using unrelated reward Credits', async () => {
+    const wallet = new PostgresCreditWallet(pool, 'sandbox'); await wallet.bootstrap(owner, undefined, true);
+    await wallet.grant(owner, { amount: 100, reference: 'original-grant', actor: 'admin:isolated-test' });
+    const unified = new PostgresProcessingStore(pool, { credits: { admissionEnabled: true, environment: 'sandbox' } });
+    const [reserved, revoked] = await Promise.allSettled([
+      unified.reserveAndEnqueue({ ...request, unit: 'credits', amount: 150, environment: 'sandbox', walletEpoch: 1 }),
+      wallet.revoke(owner, { amount: 100, grantReference: 'original-grant', reference: 'exact-revoke', actor: 'admin:isolated-test' }),
+    ]);
+    expect([reserved, revoked].filter(result => result.status === 'fulfilled')).toHaveLength(1);
+    expect((await wallet.summary(owner)).credits).toBe(reserved.status === 'fulfilled' ? 50 : 100);
+    expect((await pool.query('SELECT id FROM credit_lots WHERE available<0 OR available>granted')).rows).toHaveLength(0);
+  }, 60_000);
+
+  async function reviewedLegacy() {
+    const wallet = new PostgresCreditWallet(pool, 'sandbox'); await wallet.bootstrap(owner, undefined, false);
+    await pool.query("INSERT INTO google_user_profiles(google_subject,email,email_verified) VALUES('qa-subject','qa@example.test',true)");
+    await pool.query("INSERT INTO google_account_owners(google_subject,owner_id,verified_email) VALUES('qa-subject',$1,'qa@example.test')", [owner]);
+    return { ownerId: owner, environment: 'sandbox' as const, actor: 'admin:isolated-test', reference: 'qa-cutover', freeVerified: true, formalGrants: [] };
+  }
+
+  it('fences old admission against drain and waits for any winning legacy reservation', async () => {
+    const proof = await reviewedLegacy();
+    const compatible = new PostgresProcessingStore(pool, { credits: { admissionEnabled: false, environment: 'sandbox' } });
+    const [reserved] = await Promise.allSettled([
+      compatible.reserveAndEnqueue({ ...request, unit: 'freeUses' }), beginCreditMigration(pool, proof),
+    ]);
+    const plan = await previewCreditMigration(pool, proof);
+    if (reserved.status === 'fulfilled') {
+      expect(plan.reasons).toContain('inflight_legacy');
+      await expect(applyCreditMigration(pool, proof, plan.digest)).rejects.toMatchObject({ code: 'migration_blocked' });
+      await compatible.refund(request.jobId, owner, 'qa-drain');
+    } else expect(reserved.reason).toMatchObject({ code: 'wallet_upgraded' });
+    const final = await previewCreditMigration(pool, proof);
+    expect(await applyCreditMigration(pool, proof, final.digest)).toMatchObject({ credits: 100, phase: 'unified' });
+    await expect(compatible.reserveAndEnqueue({ ...request, jobId: 'post-cutover', idempotencyKey: 'post-cutover', unit: 'freeUses' })).rejects.toMatchObject({ code: 'wallet_upgraded' });
+  }, 60_000);
+
+  it('preserves a late original capture across cutover exactly once', async () => {
+    const proof = await reviewedLegacy();
+    const order = await payments.createOrder(owner, purchase, 'late-capture'); await payments.attachPaypalOrder(order.id, paypalOrderId);
+    await beginCreditMigration(pool, proof); const plan = await previewCreditMigration(pool, proof);
+    const [applied, fulfilled] = await Promise.allSettled([applyCreditMigration(pool, proof, plan.digest), payments.fulfill(order.id, capture)]);
+    expect(fulfilled.status).toBe('fulfilled');
+    if (applied.status === 'rejected') {
+      expect(applied.reason).toMatchObject({ code: 'migration_changed' });
+      const fresh = await previewCreditMigration(pool, proof); await applyCreditMigration(pool, proof, fresh.digest);
+    }
+    await payments.fulfill(order.id, capture);
+    expect(await new PostgresCreditWallet(pool, 'sandbox').summary(owner)).toMatchObject({ credits: 105 });
+    expect(await payments.getOrder(order.id)).toMatchObject({ credits: 5, amountCents: 499, catalogVersion: 'concurrency-qa', captureId });
+    expect(Number((await pool.query('SELECT COALESCE(SUM(available),0) AS n FROM paid_credit_lots')).rows[0].n)).toBe(0);
+  }, 60_000);
+
+  it('serializes daily issuance with cutover without a second UTC reward', async () => {
+    const proof = await reviewedLegacy(); await beginCreditMigration(pool, proof);
+    const plan = await previewCreditMigration(pool, proof);
+    const compatible = new PostgresBenefitStore(pool, true, 'sandbox', {}, undefined, { admissionEnabled: false, environment: 'sandbox' });
+    const [applied, checked] = await Promise.allSettled([applyCreditMigration(pool, proof, plan.digest), compatible.checkIn(owner)]);
+    expect(checked.status).toBe('fulfilled');
+    if (applied.status === 'rejected') {
+      expect(applied.reason).toMatchObject({ code: 'migration_changed' });
+      const fresh = await previewCreditMigration(pool, proof); await applyCreditMigration(pool, proof, fresh.digest);
+    }
+    const wallet = new PostgresCreditWallet(pool, 'sandbox');
+    expect(await wallet.checkIn(owner)).toMatchObject({ credits: 200, granted: 0 });
+  }, 60_000);
 
   it('recovers a changed-catalog purchase concurrently by its exact owner, environment and original snapshot', async () => {
     const original = await payments.createOrder(owner, purchase, 'original-request');
@@ -134,6 +286,7 @@ describe.skipIf(!databaseUrl)('real isolated PostgreSQL payment concurrency', ()
     try {
       const pids = await Promise.all(clients.map(client => client.query<{ pid: number }>('SELECT pg_backend_pid() AS pid')));
       expect(new Set(pids.map(result => result.rows[0].pid)).size).toBe(6);
+      if (process.env.PAYMENT_TEST_LOG_SCHEMA === 'true') console.info(JSON.stringify({ stage: 'isolated_backend_pids', pids: pids.map(result => result.rows[0].pid) }));
       expect((await clients[0].query('SELECT 1 FROM user_benefits WHERE user_id=$1', [freshOwner])).rows).toHaveLength(0);
       await Promise.all(clients.map(async client => {
         await client.query('BEGIN');
@@ -149,7 +302,10 @@ describe.skipIf(!databaseUrl)('real isolated PostgreSQL payment concurrency', ()
   }, 45_000);
 
   afterAll(async () => {
-    if (pool) await pool.end();
+    if (pool) {
+      await pool.end();
+      if (process.env.PAYMENT_TEST_LOG_SCHEMA === 'true') console.info(JSON.stringify({ stage: 'isolated_clients_closed' }));
+    }
     // Only remove the exact unique schema created by this run. Never clean up
     // an existing namespace, public, or a schema derived from external input.
     if (!created) return;
@@ -174,7 +330,7 @@ describe.skipIf(!databaseUrl)('real isolated PostgreSQL payment concurrency', ()
     expect(pool.totalCount).toBeGreaterThanOrEqual(2);
     expect((await pool.query("SELECT id FROM paid_credit_ledger WHERE reason='purchase'")).rows).toHaveLength(1);
     expect((await pool.query('SELECT id FROM paid_credit_lots')).rows).toHaveLength(1);
-    expect((await benefits.getSummary(owner)).paidBalance).toBe(5);
+    expect(await benefits.getSummary(owner)).toMatchObject({ paidBalance: 5 });
   }, 60_000);
 
   it('serializes admission against a payment refund without negative balances or administrator-credit changes', async () => {
@@ -229,8 +385,8 @@ describe.skipIf(!databaseUrl)('real isolated PostgreSQL payment concurrency', ()
       benefits.refund(request.jobId, 'qa-other-owner'),
     ]);
     expect(attempts.every((result) => result.status === 'rejected')).toBe(true);
-    expect((await benefits.getSummary('qa-other-owner')).balance).toBe(1);
-    expect((await benefits.getSummary('qa-other-owner')).paidBalance).toBe(0);
+    expect(await benefits.getSummary('qa-other-owner')).toMatchObject({ balance: 1 });
+    expect(await benefits.getSummary('qa-other-owner')).toMatchObject({ paidBalance: 0 });
     expect((await finance.getAdmission(request.jobId))?.status).toBe('reserved');
     await invariant(4);
   }, 60_000);
@@ -334,6 +490,7 @@ describe.skipIf(!databaseUrl)('real isolated PostgreSQL payment concurrency', ()
     try {
       await blocker.query('BEGIN');
       transactionOpen = true;
+      await lockFinancialOwner(blocker, owner);
       await blocker.query('SELECT user_id FROM user_benefits WHERE user_id=$1 FOR UPDATE', [owner]);
       const blockerPid = (await blocker.query<{ pid: number }>('SELECT pg_backend_pid() AS pid')).rows[0].pid;
       releaseOutcome = new PostgresJobRequestStore(observedPool, 'sandbox').releaseUnreservedRequest(owner, jobId)
