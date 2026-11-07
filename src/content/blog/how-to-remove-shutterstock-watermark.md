@@ -73,7 +73,7 @@ If your image is yours to edit—or you have explicit permission to remove the s
 
 Try the dedicated tool: [WatermarkGemini Shutterstock Watermark Remover](https://www.watermarkgemini.com/shutterstock-watermark-remover) (for files you are allowed to modify).
 
-![](/uploads/how-to-remove-shutterstock-watermark/image6.png)
+![Figure 1. WatermarkGemini Shutterstock Watermark Remover landing page (screenshot from original article).](/uploads/how-to-remove-shutterstock-watermark/image6.png)
 
 Figure 1. WatermarkGemini Shutterstock Watermark Remover landing page (screenshot from original article).
 
@@ -90,7 +90,7 @@ Figure 1. WatermarkGemini Shutterstock Watermark Remover landing page (screensho
 
 ### How to Use WatermarkGemini Step by Step
 
-![](/uploads/how-to-remove-shutterstock-watermark/image8.png)
+![Figure 2. WatermarkGemini image workspace with a preview and processing controls (screenshot from original article).](/uploads/how-to-remove-shutterstock-watermark/image8.png)
 
 Figure 2. WatermarkGemini image workspace with a preview and processing controls (screenshot from original article).
 

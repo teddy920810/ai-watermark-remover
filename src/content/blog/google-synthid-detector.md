@@ -72,7 +72,7 @@ If you arrived here after searching for “synthid detector portal google,” us
 
 5\. Cross-check with the original publisher, source history, any available Content Credentials, and other contextual evidence before drawing a conclusion.
 
-![](/uploads/google-synthid-detector/image4.png)
+![SynthID Detector portal: welcome and terms screen (interface may change).](/uploads/google-synthid-detector/image4.png)
 
 *SynthID Detector portal: welcome and terms screen (interface may change).*
 
@@ -148,7 +148,7 @@ WatermarkGemini is best considered after—rather than instead of—your Google 
 - Clear usage review: the site shows processing cost before you start; eligible standard image operations can use available free image uses, while advanced operations may require credits.
 - Result inspection: compare the original and processed image, check the corrected area, and download a separate result.
 
-![](/uploads/google-synthid-detector/image7.png)
+![WatermarkGemini image watermark remover: browser upload and preview.](/uploads/google-synthid-detector/image7.png)
 
 *WatermarkGemini image watermark remover: browser upload and preview.*
 
@@ -164,7 +164,7 @@ WatermarkGemini is best considered after—rather than instead of—your Google 
 
 5\. Zoom into edges, hair, patterns, text, and reflections around the cleaned area. If acceptable, download the returned image and retain both versions separately.
 
-![](/uploads/google-synthid-detector/image8.png)
+![WatermarkGemini image workspace: review processing options and result preview.](/uploads/google-synthid-detector/image8.png)
 
 *WatermarkGemini image workspace: review processing options and result preview.*
 
