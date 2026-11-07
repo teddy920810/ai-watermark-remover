@@ -1,12 +1,18 @@
 # 支付实现、验收边界与剩余工作
 
-审计日期：2026-11-01（Asia/Shanghai）。实施基线为已合并 `988656d5f6aeb482a6bf7ba76b79975a25b14adb`，不是未合并候选或旧 Sandbox 部署。支付配置及发布合同见 [PayPal 发布说明](PAYPAL_LIVE_RELEASE.md)。本次修复的 PR、CI、部署和验收结果须绑定最终版本记录，不能把下列历史证据当作新补丁已经通过。
+当前入口状态更新于2026-11-07（Asia/Shanghai），见下方开放记录。2026-11-01工程审计的实施基线为已合并 `988656d5f6aeb482a6bf7ba76b79975a25b14adb`；下文历史审计和旧 Sandbox 证据仅属于其记录版本。支付配置及发布合同见 [PayPal 发布说明](PAYPAL_LIVE_RELEASE.md)。
+
+## 2026-11-07购买入口开放
+
+用户明确要求“开启购买入口”后，现有App生产环境的`PAYPAL_LIVE_APPROVED`和`PAYPAL_ENABLED`改为true，并重新部署既有产物。公开目录回读`environment=live`、`enabled=true`、`creditsEnabled=true`，统一Credits版本为`credits-20261104-v1`；原套餐和金额保持。配置切换部署为`dpl_4E4bx7rShQXtpLDi9C9ZMG1kzAxp`，源码`699c271237c8f2fab21d6ff84e5d1ea21eba2979`，READY。价格及结算页删除不随开关变化的“购买尚未开放”旧提示，实际关闭态仍由支付组件控制。
+
+只读Live OAuth及Webhook查询均为200，正式回调地址和五类订阅匹配；真实登录会话下，官方Live SDK及PayPal付款按钮已显示。此证据只证明入口开放和初始化，不证明真实付款、资金结算、回调投递或退款。本次未创建Live订单、Capture或退款，未新增Provider任务；人工付款与资金退款仍按用户此前要求暂缓。真实交易、精确发点、实际验签回调和资金退款须由账户持有人另行完成或明确授权，不能据按钮或配置成功标记通过。验收记录保存在本机忽略目录`.tools/paypal-open-20261107/`及`output/playwright/paypal-open-20261107/`。
 
 ## 统一Credits与本地候选历史边界
 
 统一Credits的费率、来源转换、奖励、预算和切换以[当前Credits合同](PROCESSING_CREDITS.md)为准，实际部署和逐项验收从[版本发布记录](product/RELEASE_READINESS.md)读取。2026-11-04本地候选窗口的真实发行/DB/Provider为0，仅说明当时的范围，不能覆盖后续已授权的上线验收。下文旧三类权益与支付生产证据继续按原日期/版本阅读。套餐与原订单金额保持，统一处理余额不等于开放购买；真实PG、Provider、人工支付/资金退款和部署仍分别结清。人工付款与资金退款按用户要求暂缓。
 
-## 当前商业与运行边界
+## 历史商业与运行边界（2026-11-01）
 
 2026-11-01 的生产公开 `GET /api/payments/catalog` 回读为 `environment=live`、`enabled=false`、`creditsEnabled=true`，新购买关闭，已购余额支持保留。未开启 Live、支付、退款、充值、自动发额度或新增 Provider 调用。开关是运行事实，未来发布及开放前应重新回读；公开响应不能证明私有批准标志或商户资格。
 

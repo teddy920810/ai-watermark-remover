@@ -2,7 +2,13 @@
 
 This implementation extends the current App and stable account owners. The former Sandbox checkout was tested on an older source tree; its deployment is not a release artifact for this version. Live credentials and successful configuration checks are not evidence of a completed real transaction.
 
-## Current engineering audit — 2026-11-01
+## Checkout activation — 2026-11-07
+
+The account holder explicitly requested opening purchases. Production App flags `PAYPAL_LIVE_APPROVED=true` and `PAYPAL_ENABLED=true` were applied to the existing project; purchased-balance support, universal Credits, approved packages, money amounts and vendor SDK contracts are unchanged. Deployment `dpl_4E4bx7rShQXtpLDi9C9ZMG1kzAxp` (source `699c271237c8f2fab21d6ff84e5d1ea21eba2979`) is READY. Public catalog readback confirms Live checkout enabled and universal version `credits-20261104-v1`. Pricing and the private checkout no longer unconditionally says purchases are unavailable.
+
+Read-only Live OAuth and webhook lookups returned 200 and matched the direct callback and all five required events. The official Live SDK renders payment buttons in the existing authenticated account. No Live order, Capture, refund or additional Provider task was created for this activation. Actual payment, exact grant, verified webhook delivery, purchased-source consumption and cash refund remain unverified; the account holder's earlier manual-transaction deferral still applies. Entry activation is not completed real-money integration acceptance. See the [current payment audit](PAYMENT_AUDIT.md) and [version release record](product/RELEASE_READINESS.md).
+
+## Historical engineering audit — 2026-11-01
 
 The [payment audit and remaining gates](PAYMENT_AUDIT.md) separate the current source, old Sandbox transaction, Live configuration and unverified real-money flows. Production catalog readback still shows new checkout disabled and purchased-image support enabled, with the approved 4,990 / 9,990 / 19,990 packages and 100 / 10 / 10 operation costs. Engineering recovery fixes do not authorize opening checkout or real transactions.
 
@@ -53,7 +59,7 @@ When checkout is enabled, a lost Create response recovers the saved purchase by 
 
 ## Universal Credits compatibility and release evidence
 
-The compatible implementation adds source-aware `credits` and explicit per-account migration; [the Credits contract](PROCESSING_CREDITS.md) owns prices, rewards, conversion evidence, drain/apply and bounded acceptance. The repository defaults off; actual production activation is recorded in [release readiness](product/RELEASE_READINESS.md). `UNIVERSAL_CREDITS_ENABLED=false` preserves legacy accounts and closed new admission for already unified accounts while reads/refunds/settlement remain compatible. Packages and money amounts are unchanged; purchases are not reopened. Pricing and checkout project shared six-operation rates only when activated, and explain that existing accounts require upgrade. Original orders retain quantities, environment, money, catalog version and request/capture references. Captures route once into the current wallet; refunds freeze only the linked source and never revive it. Apply 011 before compatible code, deploy Worker before App, and complete real database/account/Provider gates separately. Manual payment and cash-refund verification remains deferred by user request. No official PayPal SDK or bootstrap contract is changed.
+The compatible implementation adds source-aware `credits` and explicit per-account migration; [the Credits contract](PROCESSING_CREDITS.md) owns prices, rewards, conversion evidence, drain/apply and bounded acceptance. The repository defaults off; actual production activation is recorded in [release readiness](product/RELEASE_READINESS.md). `UNIVERSAL_CREDITS_ENABLED=false` preserves legacy accounts and closed new admission for already unified accounts while reads/refunds/settlement remain compatible. Packages and money amounts are unchanged; universal-wallet activation alone does not reopen purchases. The separate authorized checkout activation is recorded above. Pricing and checkout project shared six-operation rates only when activated, and explain that existing accounts require upgrade. Original orders retain quantities, environment, money, catalog version and request/capture references. Captures route once into the current wallet; refunds freeze only the linked source and never revive it. Apply 011 before compatible code, deploy Worker before App, and complete real database/account/Provider gates separately. Manual payment and cash-refund verification remains deferred by user request. No official PayPal SDK or bootstrap contract is changed.
 
 ## Financial and account invariants
 
