@@ -121,13 +121,17 @@ describe('publicNavigation', () => {
     expect(publicNavigation([link], [])).toEqual([link]);
   });
 
-  it('preserves all 20 current tools and nine Soon labels and excludes the three drafts', () => {
+  it('adds the published Nano Banana tool, preserves the 20 existing tools and excludes drafts', () => {
     const settings = JSON.parse(readFileSync('src/content/settings/site.json', 'utf8'));
     const entries = readdirSync('src/content/landing-pages').filter(file => file.endsWith('.json')).map(file => ({ data: JSON.parse(readFileSync(`src/content/landing-pages/${file}`, 'utf8')) }));
     const result = publicNavigation(settings.header.navigation, entries);
-    expect(result).toEqual(settings.header.navigation);
+    expect(result.map(item => item.children ? { ...item, children: item.children.filter(link => link.href !== '/nano-banana-watermark-remover') } : item)).toEqual(settings.header.navigation);
+    expect(result.find(item => item.label === 'Watermark Removers')?.children).toContainEqual({
+      label: 'Nano Banana Watermark Remover – Keep the Full Picture', href: '/nano-banana-watermark-remover',
+    });
     const links = result.flatMap(item => item.children ?? []);
-    expect(links).toHaveLength(20);
+    expect(links).toHaveLength(21);
+    expect(links.filter(link => link.href === '/nano-banana-watermark-remover')).toHaveLength(1);
     expect(links.filter(link => link.badge === 'Coming Soon')).toHaveLength(9);
     for (const entry of entries.filter(entry => entry.data.draft)) expect(links.some(link => link.href === `/${entry.data.slug}`)).toBe(false);
   });
