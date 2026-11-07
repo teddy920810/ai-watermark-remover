@@ -1,15 +1,8 @@
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { ChevronDown, LogOut, UserRound } from 'lucide-react';
 import { authClient } from './auth-client';
-
-interface BenefitSummary {
-  balance: number;
-  cap: number;
-  dailyReward: number;
-  checkedInToday: boolean;
-  balanceFull?: boolean;
-  paidBalance?: number;
-}
+import type { BenefitSummary } from '../../lib/benefits/benefit-store';
+import { creditsContractVersion } from '../../lib/contracts/credits-client';
 
 export default function AuthControls() {
   const { data: session, isPending } = authClient.useSession();
@@ -26,7 +19,7 @@ export default function AuthControls() {
     if (!session?.user) return;
     setBenefitPending(true);
     try {
-      const response = await fetch('/api/me/benefits');
+      const response = await fetch('/api/me/benefits', { headers: { 'X-Credits-Contract': creditsContractVersion } });
       if (!response.ok) throw new Error('Benefits unavailable');
       setBenefits(await response.json() as BenefitSummary);
       setBenefitError(false);
@@ -80,7 +73,7 @@ export default function AuthControls() {
   async function checkIn() {
     setBenefitPending(true);
     try {
-      const response = await fetch('/api/me/check-in', { method: 'POST' });
+      const response = await fetch('/api/me/check-in', { method: 'POST', headers: { 'X-Credits-Contract': creditsContractVersion } });
       if (!response.ok) throw new Error('Check-in unavailable');
       setBenefits(await response.json() as BenefitSummary);
       setBenefitError(false);
@@ -92,16 +85,18 @@ export default function AuthControls() {
   }
 
   if (session?.user) {
-    const balanceFull = benefits ? benefits.balance >= benefits.cap : false;
+    const unified = benefits?.walletMode === 'unified' ? benefits : null;
+    const legacy = benefits && benefits.walletMode !== 'unified' ? benefits : null;
+    const balanceFull = unified ? unified.dailyRewardAvailable === 0 : legacy ? legacy.balance >= legacy.cap : false;
     const checkInLabel = benefits?.checkedInToday
       ? 'Checked in today'
-      : balanceFull ? 'Balance full' : 'Daily check-in +1';
+      : balanceFull ? 'Balance full' : unified ? `Daily check-in +${unified.dailyRewardAvailable} Credits` : 'Daily check-in +1';
     return (
       <div className="header-user-tools">
-        <section className="header-benefits" aria-label="Free image uses">
-          <span title={benefitError ? 'Balance unavailable — open your account to retry' : 'Free image uses'}>
-            <span className="header-benefit-label">Free uses </span>
-            <strong>{benefitError ? '—' : benefits ? `${benefits.balance}/${benefits.cap}` : '…'}</strong>
+        <section className="header-benefits" aria-label={unified ? 'Credits' : 'Free image uses'}>
+          <span title={benefitError ? 'Balance unavailable — open your account to retry' : unified ? 'Available Credits' : 'Free image uses'}>
+            <span className="header-benefit-label">{unified ? 'Credits ' : 'Free uses '}</span>
+            <strong>{benefitError ? '—' : unified ? unified.credits : legacy ? `${legacy.balance}/${legacy.cap}` : '…'}</strong>
             {benefitError && <span className="sr-only">Balance unavailable</span>}
           </span>
           {!benefitError ? (
@@ -145,13 +140,13 @@ export default function AuthControls() {
           <div id={accountPanelId} className="header-account-panel" role="dialog" aria-label="Account menu" hidden={!accountOpen}>
             <p className="account-name">{session.user.name}</p>
             <p className="account-balance" role="status">
-              {benefitError ? 'Balance unavailable. Please try again.' : benefits ? `Free uses ${benefits.balance}/${benefits.cap}` : 'Loading balance…'}
+              {benefitError ? 'Balance unavailable. Please try again.' : unified ? `${unified.credits} Credits` : legacy ? `Free uses ${legacy.balance}/${legacy.cap}` : 'Loading balance…'}
             </p>
             <a href="/app/image">Open workspace</a>
-            <p className="account-balance">
-              {benefitError ? 'Purchased image credits unavailable' : benefits ? `Purchased image credits ${benefits.paidBalance ?? 0}` : 'Loading image credits…'}
-            </p>
-            <a href="/pricing">Buy image credits</a>
+            {!unified && <p className="account-balance">
+              {benefitError ? 'Purchased image credits unavailable' : legacy ? `Purchased image credits ${legacy.paidBalance ?? 0}` : 'Loading image credits…'}
+            </p>}
+            <a href={unified ? '/app/credits' : '/pricing'}>{unified ? 'Credits & orders' : 'Buy image credits'}</a>
             {benefitError ? <button type="button" onClick={loadBenefits} disabled={benefitPending}>{benefitPending ? 'Updating…' : 'Retry'}</button> : (
               <button className="account-menu-check-in" type="button" onClick={checkIn} disabled={benefitPending || !benefits || benefits.checkedInToday || balanceFull}>
                 {benefitPending ? 'Updating…' : checkInLabel}

@@ -25,6 +25,16 @@ describe('test credit grant planning', () => {
 });
 
 describe('test credit grant database operation', () => {
+  it('refuses the legacy test grant when the source has entered draining or unified mode', async () => {
+    let writes = 0;
+    const client = { release() {}, async query(sql: string) {
+      if (sql.includes('FROM user_benefit_identities identity')) return { rows: [{ user_id: 'owner', balance: 0, upgraded: true }] };
+      if (sql.includes('INSERT INTO benefit_ledger')) { writes++; return { rows: [{ id: 1 }] }; }
+      return { rows: [] };
+    } };
+    await expect(grantTestCredits({ pool: { connect: async () => client }, email: 'qa@example.test', requestedUses: 1, reference: 'qa-closed', apply: true })).rejects.toThrow('current Credits');
+    expect(writes).toBe(0);
+  });
   it('keeps dry runs read-only and returns the capped plan', async () => {
     const query = async (sql: string) => {
       if (sql.includes('FROM user_benefit_identities identity')) return { rows: [{ user_id: 'user-1', balance: 2 }] };

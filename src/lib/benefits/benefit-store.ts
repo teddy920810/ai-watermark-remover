@@ -13,7 +13,8 @@ export class ImagePriceChangedError extends Error {
   constructor() { super('Review the current image credit price and confirm again.'); }
 }
 
-export interface BenefitSummary {
+export interface LegacyBenefitSummary {
+  walletMode?: 'legacy' | 'draining';
   balance: number;
   cap: number;
   dailyReward: number;
@@ -22,14 +23,28 @@ export interface BenefitSummary {
   paidBalance?: number;
 }
 
-export interface CheckInResult extends BenefitSummary {
+export interface UnifiedBenefitSummary {
+  walletMode: 'unified';
+  unit: 'credits';
+  credits: number;
+  cap: number;
+  dailyReward: number;
+  rewardAvailable: number;
+  rewardReserved: number;
+  dailyRewardAvailable: number;
+  checkedInToday: boolean;
+  epoch: number;
+}
+export type BenefitSummary = LegacyBenefitSummary | UnifiedBenefitSummary;
+export type CheckInResult = BenefitSummary & {
   granted: boolean;
   balanceFull: boolean;
-}
+  rewardGranted?: number;
+};
 
 export interface BenefitStore {
   getSummary(userId: string, email?: string): Promise<BenefitSummary>;
-  checkIn(userId: string, email?: string): Promise<CheckInResult>;
+  checkIn(userId: string, email?: string, acceptCredits?: boolean): Promise<CheckInResult>;
   reserve(jobId: string, userId: string, operation?: ImageCreditOperation, consent?: ImageCreditConsent): Promise<void>;
   consume(jobId: string, userId: string): Promise<void>;
   refund(jobId: string, userId: string): Promise<void>;

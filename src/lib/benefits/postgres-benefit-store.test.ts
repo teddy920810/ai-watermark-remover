@@ -125,7 +125,7 @@ describe('PostgresBenefitStore', () => {
   it('links the authenticated email to the benefit account without changing the balance', async () => {
     const fake = createPool({ balance: 2 });
     const summary = await new PostgresBenefitStore(fake.pool).getSummary('user-1', 'Person@Example.com');
-    expect(summary.balance).toBe(2);
+    expect(summary).toMatchObject({ balance: 2 });
     expect(fake.query.mock.calls).toContainEqual([
       expect.stringContaining('INSERT INTO user_benefit_identities'),
       ['user-1', 'person@example.com'],

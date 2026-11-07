@@ -1,6 +1,6 @@
 /** Browser-safe HTTP response types. Private storage and execution records stay server-side. */
 export type Operation = import('./operation-catalog').DurableOperation;
-export type CreditUnit = 'freeUses' | 'purchasedImageCredits' | 'processingCredits';
+export type CreditUnit = 'freeUses' | 'purchasedImageCredits' | 'processingCredits' | 'credits';
 export type JobStatus = 'PREPARED' | 'QUEUED' | 'VALIDATING' | 'TRANSFERRING' | 'SUBMITTING' | 'PROCESSING' | 'SAVING' | 'SETTLING' | 'READY' | 'UNKNOWN' | 'FAILED' | 'REFUNDED' | 'EXPIRED';
 export type ChargeStatus = 'reserved' | 'settled' | 'refunded';
 
@@ -110,8 +110,10 @@ export interface PublicDownload {
   artifactId: string;
 }
 
-export interface PublicBalances {
+export interface LegacyPublicBalances {
+  walletMode?: 'legacy' | 'draining';
   freeUses: number;
   processingCredits: number;
   purchasedImageCredits?: number;
 }
+export type PublicBalances = LegacyPublicBalances | { walletMode: 'unified'; unit: 'credits'; credits: number; admissionEnabled: boolean };

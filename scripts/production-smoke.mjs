@@ -4,6 +4,7 @@ import { resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import sharp from 'sharp';
 import { inspectPngArtifact } from './lib/png-artifact.mjs';
+import { authorizeFunctionalAcceptance } from './lib/acceptance-budget.mjs';
 
 const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=', 'base64');
 
@@ -97,18 +98,25 @@ export async function runAuthenticatedSmoke(baseUrl, sessionCookie, fetcher = fe
     return { status: 'skipped' };
   }
 
-  const operation = options.operation ?? 'watermark-removal';
+  const environment = options.environment ?? process.env;
+  const authorization = await authorizeFunctionalAcceptance({ ...options, baseUrl }, { ...environment, PROCESSING_ACCEPTANCE_SESSION_COOKIE: sessionCookie });
+  if (authorization.unit !== 'freeUses') {
+    const { runProcessingAcceptance } = await import('./processing-acceptance.mjs');
+    return runProcessingAcceptance({ ...options, functional: true, baseUrl, operation: authorization.operation }, {
+      fetcher, environment: { ...environment, PROCESSING_ACCEPTANCE_SESSION_COOKIE: sessionCookie },
+    });
+  }
+
+  if (authorization.amount !== 1 || !['image-watermark', 'background-removal', 'object-removal'].includes(authorization.operation)) throw new Error('The legacy smoke requires its exact reviewed one-use image contract.');
+  const operation = authorization.operation === 'image-watermark' ? 'watermark-removal' : authorization.operation;
+  const reservation = await authorization.budget.reserve('image', `legacy ${operation} acceptance`, { operation: authorization.operation, unit: 'freeUses', amount: 1 });
   const objectFixture = operation === 'object-removal' ? await objectRemovalFixture() : null;
   const fixture = options.fixture ?? (operation === 'background-removal' ? await backgroundRemovalFixture() : objectFixture?.image ?? png);
   const maskFixture = options.maskFixture ?? objectFixture?.mask;
 
   const apiHeaders = { 'Content-Type': 'application/json', Cookie: sessionCookie };
-  await json(`${baseUrl}/api/me/benefits`, fetcher, { headers: { Cookie: sessionCookie } });
-  const checkedIn = await json(`${baseUrl}/api/me/check-in`, fetcher, {
-    method: 'POST',
-    headers: { Cookie: sessionCookie, Origin: baseUrl },
-  });
-  const balanceBefore = benefitBalance(checkedIn);
+  const benefitsBefore = await json(`${baseUrl}/api/me/benefits`, fetcher, { headers: { Cookie: sessionCookie } });
+  const balanceBefore = benefitBalance(benefitsBefore);
   if (balanceBefore < 1) throw new Error('The production smoke account has no available test credit.');
 
   const signed = await json(`${baseUrl}/api/upload-url`, fetcher, {
@@ -169,21 +177,25 @@ export async function runAuthenticatedSmoke(baseUrl, sessionCookie, fetcher = fe
     throw new Error(`Production smoke credit invariant failed: expected ${balanceBefore - 1}, received ${balanceAfter}.`);
   }
 
+  await authorization.budget.finish(reservation, { status: 'passed', creditsBefore: balanceBefore, creditsAfter: balanceAfter });
   return { status: 'passed', operation, balanceBefore, balanceAfter, result };
 }
 
 export async function runProductionSmoke(environment = process.env, fetcher = fetch, options = {}) {
   const baseUrl = (environment.SMOKE_BASE_URL ?? 'https://www.watermarkgemini.com').replace(/\/$/, '');
+  const sessionCookie = environment.SMOKE_SESSION_COOKIE ?? environment.PROCESSING_ACCEPTANCE_SESSION_COOKIE ?? '';
+  if (options.requireAuthentication) await authorizeFunctionalAcceptance({ ...options, baseUrl }, { ...environment, PROCESSING_ACCEPTANCE_SESSION_COOKIE: sessionCookie });
   await runPublicSmoke(baseUrl, fetcher);
   console.log(`Public production smoke passed for ${baseUrl}.`);
 
   if (!options.requireAuthentication) return { status: 'public-passed' };
 
-  const authenticated = await runAuthenticatedSmoke(baseUrl, environment.SMOKE_SESSION_COOKIE ?? '', fetcher, options);
+  const authenticated = await runAuthenticatedSmoke(baseUrl, sessionCookie, fetcher, { ...options, environment });
   if (authenticated.status === 'skipped') {
     console.warn('Authenticated production smoke SKIPPED: SMOKE_SESSION_COOKIE is not configured.');
     return authenticated;
   }
+  if (authenticated.status !== 'passed') throw new Error('Authenticated production smoke is not confirmed; reconcile the original operation without retrying.');
 
   console.log(`Authenticated ${authenticated.operation} production smoke passed for ${baseUrl}; artifact and credit invariants passed, and sensitive URLs were redacted.`);
   return authenticated;

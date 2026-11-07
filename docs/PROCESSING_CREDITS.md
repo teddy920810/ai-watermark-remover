@@ -2,6 +2,49 @@
 
 Implementation and release progress are tracked in [the refactor ledger](product/REFACTOR_LEDGER.md). This document describes the implemented contracts; it does not assert that a migration, production grant or deployment has been completed.
 
+## Universal Credits candidate: default off, no account cutover performed
+
+`UNIVERSAL_CREDITS_ENABLED` defaults to `false`. This candidate adds a fourth explicit unit, `credits`; it does not reinterpret any old amount. The shared price authority is `src/lib/credits/credit-policy.ts`; operation identifiers and limits remain in `operation-catalog.ts`. New and upgraded accounts use that one spendable currency for every operation and every eligible source:
+
+| Operation | New Credits |
+| --- | ---: |
+| Ordinary image watermark removal | 100 |
+| PRO watermark removal | 300 |
+| Brush refinement | 100 |
+| Video watermark removal | `100 * ceil(serverDurationSeconds / 2)` |
+| Background removal | 10 |
+| Object removal | 10 |
+
+Video uses the sealed server duration: 3 seconds costs 200, 5 seconds costs 300. Quotes seal the rule version, environment and wallet epoch. Reservations and refunds use the original amount and source allocations, including after price changes or quote cleanup. Legacy quotes, jobs, orders, units and amounts are not rewritten.
+
+The new first reward is 100 Credits. One UTC daily check-in issues up to 100; only available plus reserved **reward** Credits count toward the 300 issuance cap. Purchased and administrator Credits do not block a reward. A refund or historical entitlement may exceed the cap and is never clipped. Small-tool reward purchasing power increases by the approved factor of ten. The package catalog and money amounts remain unchanged; this candidate does not reopen purchases.
+
+The SQL wallet is source-aware: reward, administrator and purchase lots share spendable units but retain origin, actor, allocations and immutable ledger rows. Consumption uses reward, then administrator, then purchase lots, with FIFO within each source kind. Insufficient funds cause no partial debit. Revocation can remove only the unreserved remainder of the explicitly named administrator grant. Frozen purchases cannot be revived by a failed-task refund. Captures and adjustments keep the original owner, environment, money and order references.
+
+### Compatible rollout and pause
+
+1. Review and apply additive `011_universal_credits.sql` before any compatible App/Worker code that reads its tables. The candidate and local SQL fixtures do not prove a real migration has run.
+2. Deploy compatible Worker and recovery code, then App, with `UNIVERSAL_CREDITS_ENABLED=false` and purchases still closed. Verify actual versions separately.
+3. Review per-owner source evidence, drain old admission, and wait for all old reservations, UNKNOWN/SAVING/SETTLING tasks and durable claims to reconcile. Old reads, settlement, refunds and original-order captures remain recoverable.
+4. Preview again after draining; apply only its exact reviewed digest in one owner-locked transaction. New lots and old migration-out ledger rows commit together. Old purchases convert 1:1; verified formal processing grants and free uses convert 100:1. Unverified processing origins defer the account; a total balance alone is not sufficient proof.
+5. Enable new admission only after real database, compatible Worker, account migration, browser and bounded functional acceptance gates. New accounts receive the new first reward only when explicitly enabled. An existing legacy account never upgrades merely by signing in.
+
+An account progresses `legacy → draining → unified`; the epoch fences old confirmations. The shared transaction-scoped owner fence precedes benefit/account/lot locks, including payment fulfillment. Global source-conversion keys prevent a free or processing source from being converted again into another environment. The browser sends `X-Credits-Contract: credits-v1`; an old client cannot submit a new Credits charge. Pause by disabling new admission, retain all tables and financial history, and keep compatible settlement/refund/read code. Never roll back to a binary that treats an unknown unit as processingCredits.
+
+### Explicit migration and administration
+
+`scripts/migrate-universal-credits.mjs` is import-safe and defaults to a read-only preview. It accepts only an explicit `CREDITS_*DATABASE_URL` selection, never a generic `DATABASE_URL` fallback. Supply `--owner`, `--environment`, `--proof`, `--actor`, `--reference`; `--action drain --apply` establishes draining. Review the fresh preview before `--action apply --apply --expected-digest <digest>`. The proof identifies verified free rights and each formal grant's original ledger ID and remaining quantity. If an old refund changes quantities during drain, an explicit repeated drain with the same actor/reference records the revised proof in append-only history; apply accepts only the latest proof and exact snapshot. A completed identical apply is idempotent. This documentation is not permission to run any command against an account.
+
+The existing administrator tools retain their old default unit. For new Credits, add `--unit credits --environment sandbox` (or an explicitly approved live environment) and pass the amount directly in new Credits; do not multiply it again. Revoke additionally requires `--grant-reference` naming the original grant. Both default to preview; only `--apply` writes. Legacy QA/free grant commands refuse draining, unified or already converted sources. No public grant endpoint is added.
+
+### Bounded real acceptance remains a separate gate
+
+The processing runner accepts `--expected-unit credits` only with the **existing** aggregate ledger, exact `--credit-budget-id`, `--credit-scope-id` and `--credit-environment`. Its reviewed initialized scope binds origin, environment, owner digest, session digest and allowed operations before any authenticated network request. No missing ledger or ready scope is created automatically. All accounts share that ledger: gross issuance plus unknown issuance reservations ≤2,000; gross spend plus unknown spend reservations ≤2,000; at most six Provider invocation slots. Issuance intents use unique source references; reserve the first reward before account initialization within an explicitly reviewed, session-bound scope. Confirmation records issuance but never marks the scope initialized; processing remains closed until the operator reviews the initialized account. No automatic signup, grant or check-in is performed by the processing runner.
+
+Reserve a slot and full quote before the sole submission. Failed, refunded and unknown attempts retain their slot and uncertain spend; successful confirmation records the exact one-quote debit. Re-running does not reclaim totals or silently retry a POST. New-currency authenticated production smoke delegates to this same runner; scheduled/public smoke remains public-only. The local implementation window uses only fixtures and injected fake services: real issuance, database/account activity and Provider calls remain zero. Real PostgreSQL concurrency is opt-in under the existing isolated-sandbox guard; PGlite SQL tests and mocked browser downloads are not evidence of real contention or Provider effects. Manual PayPal payment and cash-refund acceptance is deferred by user request.
+
+## Legacy currency and recovery contract
+
 The private R2 job record is authoritative for processing state. PostgreSQL contains account balances, the credit ledger, admission deduplication and durable delivery coordination. It does not contain provider sessions, result object keys or the job state machine.
 
 Apply migrations in filename order. `005_processing_pipeline.sql` requires the existing benefit tables and preserves their first-use and check-in issuance rules. New `processing_accounts.available_credits` defaults to zero. There is no conversion from old free uses into new processing credits and no automatic grant on registration.

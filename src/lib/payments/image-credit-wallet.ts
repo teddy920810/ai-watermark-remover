@@ -1,4 +1,6 @@
 import type { PoolClient } from 'pg';
+import { lockFinancialOwner } from '../benefits/free-benefits';
+import { assertLegacyCreditAdmission } from '../credits/postgres-credit-wallet';
 
 export type ImageCreditOperation = 'watermark-removal' | 'background-removal' | 'object-removal';
 export type ImageCreditCosts = Partial<Record<ImageCreditOperation, number>>;
@@ -45,6 +47,7 @@ export async function getPurchasedImageBalance(client: QueryClient, ownerId: str
 // owner lock. These helpers never acquire a processing-account or order lock.
 async function lockOwner(client: PoolClient, input: ImageCreditReservationInput) {
   if (!input.jobId || !input.ownerId || !['sandbox', 'live'].includes(input.environment)) throw new Error('Invalid image credit reservation');
+  await lockFinancialOwner(client, input.ownerId);
   const owner = await client.query('SELECT user_id FROM user_benefits WHERE user_id=$1 FOR UPDATE', [input.ownerId]);
   if (!owner.rows[0]) throw new Error('Image credit account is unavailable');
 }
@@ -99,6 +102,7 @@ export async function reservePurchasedImageCredit(client: PoolClient, input: Ima
     await allocations(client, input, existing);
     return true;
   }
+  await assertLegacyCreditAdmission(client, input.ownerId, input.environment);
   const result = await client.query<{ id: string; available: number }>(`
     SELECT l.id,l.available FROM paid_credit_lots l JOIN payment_orders o ON o.id=l.order_id
     WHERE l.user_id=$1 AND l.status='active' AND l.available>0 AND o.environment=$2

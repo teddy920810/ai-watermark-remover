@@ -1,9 +1,14 @@
 import type { ProcessingService } from '../processing/processing-service';
 import type { ProcessingJob, ProcessingQuote } from '../processing/contracts';
 import { ProcessingError, operationSchema } from '../processing/contracts';
+import type { PublicBalances } from '../contracts/processing-public';
+import { creditsContractVersion } from '../contracts/credits-client';
 import { z } from 'zod';
 
 export interface UploadDeclaration { kind: 'image' | 'video' | 'mask'; contentType: string; byteSize: number; inputArtifactId?: string }
+function requireCreditsClient(request: Request) {
+  if (request.headers.get('X-Credits-Contract') !== creditsContractVersion) throw new ProcessingError('wallet_upgraded', 'Refresh the workspace to use your Credits account', 409);
+}
 export interface ProcessingApiRuntime {
   service: Pick<ProcessingService, 'capabilities' | 'quote' | 'submit' | 'get' | 'list'>;
   beginUpload(ownerId: string, declaration: UploadDeclaration): Promise<unknown>;
@@ -11,7 +16,7 @@ export interface ProcessingApiRuntime {
   getUpload(ownerId: string, id: string): Promise<unknown>;
   projectJob(ownerId: string, job: ProcessingJob): Promise<unknown>;
   projectQuote(ownerId: string, quote: ProcessingQuote): Promise<unknown>;
-  balances(ownerId: string, email?: string): Promise<{ processingCredits: number; freeUses: number; purchasedImageCredits?: number }>;
+  balances(ownerId: string, email?: string): Promise<PublicBalances>;
   download(ownerId: string, id: string): Promise<unknown>;
   dispatch(): Promise<void>;
 }
@@ -73,7 +78,11 @@ export function createProcessingHandler(options: ProcessingHandlerOptions) {
       if (request.method === 'POST' && request.headers.get('origin') !== options.origin) return response({ error: 'Request origin is not allowed.', code: 'invalid_origin' }, 403);
       const ownerId = session.user.id;
       const runtime = options.getRuntime();
-      if (request.method === 'GET' && path === 'me') return response(await runtime.balances(ownerId, session.user.email));
+      if (request.method === 'GET' && path === 'me') {
+        const balance = await runtime.balances(ownerId, session.user.email);
+        if (balance.walletMode === 'unified') requireCreditsClient(request);
+        return response(balance);
+      }
       if (request.method === 'POST' && path === 'uploads') return response(await runtime.beginUpload(ownerId, uploadSchema.parse(await body(request))), 201);
       const upload = path.match(/^uploads\/([A-Za-z0-9_-]{1,160})(\/complete)?$/);
       if (upload && request.method === 'POST' && upload[2]) {
@@ -84,21 +93,26 @@ export function createProcessingHandler(options: ProcessingHandlerOptions) {
       if (upload && request.method === 'GET' && !upload[2]) return response(await runtime.getUpload(ownerId, upload[1]));
       if (request.method === 'POST' && path === 'quotes') {
         const quote = await runtime.service.quote({ ...quoteSchema.parse(await body(request)), ownerId });
+        if (quote.unit === 'credits') requireCreditsClient(request);
         return response(await runtime.projectQuote(ownerId, quote), 201);
       }
       if (path === 'jobs' && request.method === 'POST') {
-        const job = await runtime.service.submit({ ...submitSchema.parse(await body(request)), ownerId });
+        const job = await runtime.service.submit({ ...submitSchema.parse(await body(request)), ownerId, acceptCredits: request.headers.get('X-Credits-Contract') === creditsContractVersion });
+        if (job.quote?.unit === 'credits') requireCreditsClient(request);
         await dispatch(runtime);
         return response(await runtime.projectJob(ownerId, job), 202);
       }
       if (path === 'jobs' && request.method === 'GET') {
         const jobs = await runtime.service.list(ownerId);
+        if (jobs.some(job => job.quote?.unit === 'credits')) requireCreditsClient(request);
         return response({ jobs: await Promise.all(jobs.map((job) => runtime.projectJob(ownerId, job))) });
       }
       const jobPath = path.match(/^jobs\/([A-Za-z0-9_-]{1,160})(\/download)?$/);
       if (jobPath && request.method === 'GET') {
         if (jobPath[2]) return response(await runtime.download(ownerId, jobPath[1]));
-        return response(await runtime.projectJob(ownerId, await runtime.service.get(ownerId, jobPath[1])));
+        const job = await runtime.service.get(ownerId, jobPath[1]);
+        if (job.quote?.unit === 'credits') requireCreditsClient(request);
+        return response(await runtime.projectJob(ownerId, job));
       }
       return response({ error: 'Endpoint not found.', code: 'not_found' }, 404);
     } catch (error) {

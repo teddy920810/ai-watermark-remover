@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { publicPaymentCatalog, type PaymentConfig } from './payment-config';
+import { getPaymentConfig, publicPaymentCatalog, type PaymentConfig } from './payment-config';
 
 const config: PaymentConfig & { futurePrivateCredential: string } = {
   enabled: true, creditsEnabled: true, environment: 'live',
@@ -13,6 +13,15 @@ const config: PaymentConfig & { futurePrivateCredential: string } = {
 };
 
 describe('server-rendered public payment catalog', () => {
+  it('keeps the legacy default and exposes all shared rates only after explicit activation', () => {
+    expect(publicPaymentCatalog(getPaymentConfig({}))).not.toHaveProperty('universalCredits');
+    const active = publicPaymentCatalog(getPaymentConfig({ UNIVERSAL_CREDITS_ENABLED: 'true', PAYPAL_ENVIRONMENT: 'sandbox' }));
+    expect(active.enabled).toBe(false);
+    expect(active.universalCredits).toEqual({ version: 'credits-20261104-v1',
+      imageRates: { 'image-watermark': 100, 'image-watermark-pro': 300, 'image-refine': 100, 'background-removal': 10, 'object-removal': 10 },
+      video: { stepSeconds: 2, creditsPerStep: 100 }, rewards: { first: 100, daily: 100, cap: 300 } });
+    expect(active.packages).toEqual(getPaymentConfig({}).packages);
+  });
   it('projects only browser-safe fields, including when future private config is added', () => {
     expect(publicPaymentCatalog(config)).toEqual({
       enabled: true, creditsEnabled: true, environment: 'live', clientId: 'public-client-id',

@@ -19,6 +19,72 @@ export function setup(purchasedImageCreditsEnabled = false, purchasedImageCredit
 }
 
 describe('ProcessingService', () => {
+  it('quotes and admits all six operations in one currency without spending any legacy allowance', async () => {
+    const s = setup(); s.finance.creditBalances.set('user-1', 1000); s.finance.freeBalances.set('user-1', 3); s.finance.imageBalances.set('user-1', 999);
+    Object.assign(s.finance, { getWalletState: async () => ({ phase: 'unified', epoch: 1, environment: 'live' }) });
+    s.capabilities.push(...(['background-removal', 'object-removal'] as const).map(operation => ({ operation, enabled: true, acceptedTypes: ['image/jpeg'], maxBytes: 1000000 })));
+    const service = new ProcessingService({ ...s, credits: { admissionEnabled: true, environment: 'live' }, prices: { version: 'legacy', amount: () => 1 }, now: () => new Date(NOW) });
+    const normal = await service.quote({ ownerId: 'user-1', operation: 'image-watermark', inputArtifactId: 'input-1' });
+    const parent = await service.submit({ ownerId: 'user-1', quoteId: normal.id, idempotencyKey: 'normal' });
+    const result = source({ id: 'result', role: 'result', providerSessionId: 'session' }); s.artifacts.data.set('result', result);
+    const record = (await s.jobs.get(parent.id))!; await s.jobs.compareAndSwap(parent.id, record.version, { ...parent, status: 'READY', resultArtifactId: 'result' });
+    s.artifacts.data.set('mask', source({ id: 'mask', role: 'mask', parentArtifactId: 'input-1', metadata: { ...result.metadata, contentType: 'image/png' } }));
+    s.artifacts.data.set('video', source({ id: 'video', metadata: { kind: 'video', contentType: 'video/mp4', byteSize: 1000, width: 1280, height: 720, durationSeconds: 3, fps: 24 } }));
+    const scenarios = [
+      { operation: 'image-watermark-pro', inputArtifactId: 'input-1', amount: 300 },
+      { operation: 'image-refine', inputArtifactId: 'result', maskArtifactId: 'mask', parentJobId: parent.id, amount: 100 },
+      { operation: 'video-watermark', inputArtifactId: 'video', amount: 200 },
+      { operation: 'background-removal', inputArtifactId: 'input-1', amount: 10 },
+      { operation: 'object-removal', inputArtifactId: 'input-1', maskArtifactId: 'mask', amount: 10 },
+    ] as const;
+    for (const { amount, ...request } of scenarios) {
+      const quote = await service.quote({ ...request, ownerId: 'user-1' }); expect(quote).toMatchObject({ unit: 'credits', amount, environment: 'live', walletEpoch: 1 });
+      await service.submit({ ownerId: 'user-1', quoteId: quote.id, idempotencyKey: request.operation });
+    }
+    expect(await s.finance.getBalance('user-1', 'credits')).toBe(280);
+    expect(await s.finance.getBalance('user-1', 'freeUses')).toBe(3); expect(await s.finance.getBalance('user-1', 'purchasedImageCredits')).toBe(999); expect(await s.finance.getBalance('user-1', 'processingCredits')).toBe(100);
+  });
+  it.each([false, true])('recovers the original accepted task after currency cutover or pause (new currency %s)', async unified => {
+    const s = setup(); const credits = { admissionEnabled: true, environment: 'live' as const };
+    let phase: 'unified' | 'legacy' = unified ? 'unified' : 'legacy';
+    Object.assign(s.finance, { getWalletState: async () => ({ phase, epoch: phase === 'unified' ? 1 : 0, environment: 'live' }) });
+    s.finance.creditBalances.set('user-1', 100);
+    const service = new ProcessingService({ ...s, credits, prices: { version: 'legacy', amount: () => 1 }, now: () => new Date(NOW) });
+    const quote = await service.quote({ ownerId: 'user-1', operation: 'image-watermark', inputArtifactId: 'input-1' });
+    const request = { ownerId: 'user-1', quoteId: quote.id, idempotencyKey: 'accepted' };
+    const accepted = await service.submit(request); phase = 'unified'; credits.admissionEnabled = false; s.quotes.data.clear();
+    expect((await service.submit(request)).id).toBe(accepted.id); expect(s.finance.admissions.size).toBe(1);
+  });
+  it('does not expose a manifest whose sealed Credits epoch differs from admission', async () => {
+    const s = setup(); s.finance.creditBalances.set('user-1', 100);
+    Object.assign(s.finance, { getWalletState: async () => ({ phase: 'unified', epoch: 1, environment: 'live' }) });
+    const service = new ProcessingService({ ...s, credits: { admissionEnabled: true, environment: 'live' }, prices: { version: 'legacy', amount: () => 1 }, now: () => new Date(NOW) });
+    const quote = await service.quote({ ownerId: 'user-1', operation: 'image-watermark', inputArtifactId: 'input-1' });
+    const accepted = await service.submit({ ownerId: 'user-1', quoteId: quote.id, idempotencyKey: 'accepted' });
+    s.finance.admissions.get(accepted.id)!.walletEpoch = 2;
+    await expect(service.get('user-1', accepted.id)).rejects.toMatchObject({ code: 'not_found' });
+    expect(await service.list('user-1')).toEqual([]);
+  });
+  it('quotes the approved currency for a unified account instead of silently using administrator credits', async () => {
+    const s = setup();
+    Object.assign(s.finance, { getWalletState: async () => ({ phase: 'unified', epoch: 1, environment: 'live' }) });
+    const service = new ProcessingService({ jobs: s.jobs, artifacts: s.artifacts, quotes: s.quotes, finance: s.finance,
+      inspector: s.inspector, capabilities: s.capabilities, prices: { version: 'legacy', amount: () => 1 },
+      credits: { admissionEnabled: true, environment: 'live' }, now: () => new Date(NOW) });
+    const quote = await service.quote({ ownerId: 'user-1', operation: 'image-watermark', inputArtifactId: 'input-1' });
+    expect(quote).toMatchObject({ unit: 'credits', amount: 100, environment: 'live', walletEpoch: 1 });
+    await expect(service.submit({ ownerId: 'user-1', quoteId: quote.id, idempotencyKey: 'unsupported-client', acceptCredits: false })).rejects.toMatchObject({ code: 'wallet_upgraded' });
+    expect(s.finance.admissions.size).toBe(0);
+  });
+  it('does not fall back to any legacy unit when a unified account is paused', async () => {
+    const s = setup();
+    Object.assign(s.finance, { getWalletState: async () => ({ phase: 'unified', epoch: 1, environment: 'live' }) });
+    const service = new ProcessingService({ jobs: s.jobs, artifacts: s.artifacts, quotes: s.quotes, finance: s.finance,
+      inspector: s.inspector, capabilities: s.capabilities, prices: { version: 'legacy', amount: () => 1 },
+      credits: { admissionEnabled: false, environment: 'live' }, now: () => new Date(NOW) });
+    await expect(service.quote({ ownerId: 'user-1', operation: 'image-watermark', inputArtifactId: 'input-1' })).rejects.toMatchObject({ code: 'credits_admission_closed' });
+    expect(s.finance.admissions.size).toBe(0);
+  });
   it('seals and charges the configured image-credit amount while preserving the administrator allowance', async () => {
     const s = setup(true, 3); s.finance.imageBalances.set('user-1', 5);
     const quote = await s.service.quote({ ownerId: 'user-1', operation: 'image-watermark', inputArtifactId: 'input-1' });

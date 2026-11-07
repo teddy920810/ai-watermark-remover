@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { metadataSchema, ProcessingError } from './contracts';
+import { admissionMatchesJob, metadataSchema, ProcessingError } from './contracts';
 import type { AttemptResult, ProcessingFinancialStore, ProcessingJob, ProcessingJobStore } from './contracts';
 
 interface RecoveryOptions { jobs: ProcessingJobStore; finance: ProcessingFinancialStore; now?: () => Date; id?: () => string }
@@ -59,7 +59,7 @@ export class ProcessingDispatchRecovery {
     const deadline = job.attempt ? Math.min(attemptDeadline, Number.isFinite(confirmationDeadline) ? confirmationDeadline : Infinity) : Date.parse(job.createdAt) + 15 * 60_000;
     if (!job.refundIntent && !alreadyRefunded && (!Number.isFinite(deadline) || time < deadline)) return job;
     const admission = await finance.getAdmission(jobId);
-    if (!admission || admission.ownerId !== job.ownerId || admission.amount !== job.quote.amount || admission.unit !== job.quote.unit) throw new ProcessingError('admission_missing', 'Task has no valid financial admission', 409);
+    if (!admissionMatchesJob(admission, job)) throw new ProcessingError('admission_missing', 'Task has no valid financial admission', 409);
     if (admission.status === 'settled') return job;
     const intent = job.refundIntent ?? { reason: job.attempt ? 'unknown_timeout' as const : 'dispatch_timeout' as const, requestedAt: this.now().toISOString() };
     const lease = { owner: `recovery-${this.id()}`, epoch: (job.lease?.epoch ?? 0) + 1, expiresAt: new Date(time + 60_000).toISOString() };
@@ -69,7 +69,7 @@ export class ProcessingDispatchRecovery {
     if (!await jobs.compareAndSwap(jobId, record.version, fenced)) return (await jobs.get(jobId))!.job;
     if (admission.status !== 'refunded') await finance.refund(jobId, job.ownerId, intent.reason);
     const confirmed = await finance.getAdmission(jobId);
-    if (confirmed?.status !== 'refunded') throw new Error('Refund acknowledgement needs recovery');
+    if (!admissionMatchesJob(confirmed, job) || confirmed.status !== 'refunded') throw new Error('Refund acknowledgement needs recovery');
     // The deadline still refunds first. Existing immutable results are only
     // scheduled for private-byte verification and saving, never Provider work.
     const late = existingLate ?? (job.attempt ? validLateArtifact(job, await jobs.getAttemptResult(jobId, job.attempt.id)) : undefined);

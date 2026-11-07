@@ -47,6 +47,17 @@ beforeEach(async () => {
 afterAll(async () => { await db.close(); });
 
 describe('PayPal image-use lots on the current production schema', () => {
+  it('takes the shared owner fence before locking or creating the benefit account', async () => {
+    const order = await payments.createOrder('owner-1', purchase, 'lock-order');
+    await payments.attachPaypalOrder(order.id, capture.paypalOrderId);
+    const queries = vi.spyOn(db, 'query');
+    try {
+      await payments.fulfill(order.id, capture);
+      const fence = queries.mock.calls.findIndex(([sql, params]) => String(sql).includes('pg_advisory_xact_lock') && Array.isArray(params) && params.includes('credits-owner:owner-1'));
+      const account = queries.mock.calls.findIndex(([sql]) => /INSERT INTO user_benefits|SELECT user_id FROM user_benefits.*FOR UPDATE/.test(String(sql)));
+      expect(fence).toBeGreaterThanOrEqual(0); expect(account).toBeGreaterThan(fence);
+    } finally { queries.mockRestore(); }
+  });
   it.each(['withdrawn', 'amount', 'credits', 'version'] as const)('recovers a lost create by its original snapshot after catalog %s changes', async (changed) => {
     const original = await payments.createOrder('owner-1', purchase, 'lost-response');
     await payments.attachPaypalOrder(original.id, capture.paypalOrderId);
@@ -129,7 +140,7 @@ describe('PayPal image-use lots on the current production schema', () => {
       await expect(payments.fulfill(order.id, wrong)).rejects.toThrow('does not match');
     }
     expect((await payments.getOrder(order.id))?.status).toBe('created');
-    expect((await benefits.getSummary('owner-1')).paidBalance).toBe(0);
+    expect(await benefits.getSummary('owner-1')).toMatchObject({ paidBalance: 0 });
     await payments.fulfill(order.id, capture);
     await expect(payments.fulfill(order.id, { ...capture, id: 'OTHER' })).rejects.toThrow('does not match');
   });
@@ -165,7 +176,7 @@ describe('PayPal image-use lots on the current production schema', () => {
       await consumePurchasedImageCredit(client, imageReservation('pipeline-job'));
       await refundPurchasedImageCredit(client, imageReservation('pipeline-job'));
     });
-    expect((await benefits.getSummary('owner-1')).paidBalance).toBe(4);
+    expect(await benefits.getSummary('owner-1')).toMatchObject({ paidBalance: 4 });
     expect((await db.query('SELECT * FROM processing_accounts')).rows).toHaveLength(0);
     expect((await db.query('SELECT * FROM paid_credit_ledger WHERE reason=\'job_reserve\'')).rows).toHaveLength(1);
   });
@@ -178,7 +189,7 @@ describe('PayPal image-use lots on the current production schema', () => {
       await refundPurchasedImageCredit(client, imageReservation('pipeline-job'));
       await refundPurchasedImageCredit(client, imageReservation('pipeline-job'));
     });
-    expect((await benefits.getSummary('owner-1')).paidBalance).toBe(0);
+    expect(await benefits.getSummary('owner-1')).toMatchObject({ paidBalance: 0 });
     expect((await payments.getOrder(order.id))?.status).toBe('review');
     expect((await db.query<{ delta: number }>("SELECT delta FROM paid_credit_ledger WHERE reason='job_refund_frozen'")).rows).toEqual([{ delta: 0 }]);
   });
@@ -188,14 +199,14 @@ describe('PayPal image-use lots on the current production schema', () => {
     await payments.applyAdjustment('partial-1', capture.id, 'refund', 100);
     await payments.applyAdjustment('partial-1', capture.id, 'refund', 100);
     expect((await payments.getOrder(first.id))?.status).toBe('review');
-    expect((await benefits.getSummary('owner-1')).paidBalance).toBe(0);
+    expect(await benefits.getSummary('owner-1')).toMatchObject({ paidBalance: 0 });
     const second = await payments.createOrder('owner-1', purchase, 'purchase-2');
     await payments.attachPaypalOrder(second.id, 'PPORDER2');
     await payments.fulfill(second.id, { ...capture, id: 'CAPTURE2', paypalOrderId: 'PPORDER2' });
     await payments.applyAdjustment('full-2', 'CAPTURE2', 'refund', 499);
     await payments.fulfill(second.id, { ...capture, id: 'CAPTURE2', paypalOrderId: 'PPORDER2' });
     expect((await payments.getOrder(second.id))?.status).toBe('refunded');
-    expect((await benefits.getSummary('owner-1')).paidBalance).toBe(0);
+    expect(await benefits.getSummary('owner-1')).toMatchObject({ paidBalance: 0 });
     expect((await db.query("SELECT * FROM paid_credit_ledger WHERE reason='adjustment'")).rows).toHaveLength(2);
   });
 
@@ -208,8 +219,8 @@ describe('PayPal image-use lots on the current production schema', () => {
       await expect(transaction((client) => consumePurchasedImageCredit(client, input))).rejects.toThrow();
       await expect(transaction((client) => refundPurchasedImageCredit(client, input))).rejects.toThrow();
     }
-    expect((await benefits.getSummary('owner-1')).paidBalance).toBe(4);
-    expect((await benefits.getSummary('owner-2')).paidBalance).toBe(0);
+    expect(await benefits.getSummary('owner-1')).toMatchObject({ paidBalance: 4 });
+    expect(await benefits.getSummary('owner-2')).toMatchObject({ paidBalance: 0 });
     await expect(transaction((client) => reservePurchasedImageCredit(client, imageReservation('new-sandbox', 'owner-1', 'sandbox')))).resolves.toBe(false);
   });
 
@@ -218,7 +229,7 @@ describe('PayPal image-use lots on the current production schema', () => {
     await payments.attachPaypalOrder(order.id, capture.paypalOrderId);
     await payments.applyAdjustment('reversal:early', capture.id, 'reversal', 0);
     expect((await payments.fulfill(order.id, capture)).status).toBe('review');
-    expect((await benefits.getSummary('owner-1')).paidBalance).toBe(0);
+    expect(await benefits.getSummary('owner-1')).toMatchObject({ paidBalance: 0 });
   });
 
   it('preserves current free-use restoration above the reward cap and ignores paid reservations for daily reward eligibility', async () => {
@@ -276,7 +287,7 @@ describe('PayPal image-use lots on the current production schema', () => {
     await expect(transaction((client) => refundPurchasedImageCredit(client, imageReservation('missing')))).rejects.toThrow();
     await expect(transaction((client) => reservePurchasedImageCredit(client, imageReservation('', 'owner-1')))).rejects.toThrow();
     await expect(transaction((client) => reservePurchasedImageCredit(client, imageReservation('missing-owner', 'uninitialized')))).rejects.toThrow('account is unavailable');
-    expect((await benefits.getSummary('owner-1')).paidBalance).toBe(5);
+    expect(await benefits.getSummary('owner-1')).toMatchObject({ paidBalance: 5 });
   });
 
   it('makes the additive migration safe to apply again without modifying current records', async () => {
@@ -296,13 +307,13 @@ describe('PayPal image-use lots on the current production schema', () => {
     await priced.consume('free-job', 'owner-1');
     expect(await priced.getSummary('owner-1')).toMatchObject({ balance: 0, paidBalance: 5 });
     await priced.reserve('background-job', 'owner-1', 'background-removal');
-    expect((await priced.getSummary('owner-1')).paidBalance).toBe(2);
+    expect(await priced.getSummary('owner-1')).toMatchObject({ paidBalance: 2 });
     await new PostgresBenefitStore(pool, true, 'live', { 'background-removal': 100 }).reserve('background-job', 'owner-1', 'background-removal');
-    expect((await priced.getSummary('owner-1')).paidBalance).toBe(2);
+    expect(await priced.getSummary('owner-1')).toMatchObject({ paidBalance: 2 });
     await priced.refund('background-job', 'owner-1');
-    expect((await priced.getSummary('owner-1')).paidBalance).toBe(5);
+    expect(await priced.getSummary('owner-1')).toMatchObject({ paidBalance: 5 });
     await priced.reserve('watermark-job', 'owner-1', 'watermark-removal');
-    expect((await priced.getSummary('owner-1')).paidBalance).toBe(3);
+    expect(await priced.getSummary('owner-1')).toMatchObject({ paidBalance: 3 });
     await priced.refund('watermark-job', 'owner-1');
     await priced.reserve('object-job', 'owner-1', 'object-removal');
     await priced.consume('object-job', 'owner-1');
@@ -321,13 +332,13 @@ describe('PayPal image-use lots on the current production schema', () => {
     const allocations = await db.query<{ lot_id: string; amount: number }>('SELECT lot_id,amount FROM paid_credit_allocations WHERE job_id=$1 ORDER BY amount DESC', ['multi-job']);
     expect(allocations.rows).toEqual([{ lot_id: first.id, amount: 5 }, { lot_id: second.id, amount: 2 }]);
     await transaction((client) => reservePurchasedImageCredit(client, { ...imageReservation('multi-job'), amount: 99 }));
-    expect((await benefits.getSummary('owner-1')).paidBalance).toBe(3);
+    expect(await benefits.getSummary('owner-1')).toMatchObject({ paidBalance: 3 });
     // The affected lot is the second allocation, not job_credit_reservations.lot_id.
     await payments.applyAdjustment('refund:second-lot', 'CAPTURE2', 'refund', 499);
     expect((await payments.getOrder(second.id))?.status).toBe('review');
     await transaction((client) => refundPurchasedImageCredit(client, { ...imageReservation('multi-job'), amount: 123 }));
     await transaction((client) => refundPurchasedImageCredit(client, imageReservation('multi-job')));
-    expect((await benefits.getSummary('owner-1')).paidBalance).toBe(5);
+    expect(await benefits.getSummary('owner-1')).toMatchObject({ paidBalance: 5 });
     expect((await db.query<{ available: number }>('SELECT available FROM paid_credit_lots WHERE id=$1', [first.id])).rows[0].available).toBe(5);
     expect((await db.query<{ available: number; status: string }>('SELECT available,status FROM paid_credit_lots WHERE id=$1', [second.id])).rows[0]).toEqual({ available: 0, status: 'frozen' });
     expect((await db.query<{ delta: number }>("SELECT delta FROM paid_credit_ledger WHERE reason='job_refund' AND reference_id='multi-job'")).rows).toEqual([{ delta: 5 }]);
@@ -341,7 +352,7 @@ describe('PayPal image-use lots on the current production schema', () => {
     for (const amount of [0, -1, 1.5, Number.NaN, Number.MAX_SAFE_INTEGER + 1]) {
       await expect(transaction((client) => reservePurchasedImageCredit(client, { ...imageReservation('invalid-quantity'), amount }))).rejects.toThrow('Invalid image credit amount');
     }
-    expect((await benefits.getSummary('owner-1')).paidBalance).toBe(5);
+    expect(await benefits.getSummary('owner-1')).toMatchObject({ paidBalance: 5 });
     expect((await db.query('SELECT job_id FROM paid_credit_allocations')).rows).toHaveLength(0);
     expect((await db.query("SELECT id FROM paid_credit_ledger WHERE reason='job_reserve'")).rows).toHaveLength(0);
   });
@@ -357,7 +368,7 @@ describe('PayPal image-use lots on the current production schema', () => {
     await db.exec(await readFile('db/migrations/008_paypal_image_payments.sql', 'utf8'));
     expect((await db.query<{ amount: number }>('SELECT amount FROM paid_credit_allocations WHERE job_id=$1', ['old-job'])).rows).toEqual([{ amount: 1 }]);
     await transaction((client) => refundPurchasedImageCredit(client, imageReservation('old-job')));
-    expect((await benefits.getSummary('owner-1')).paidBalance).toBe(5);
+    expect(await benefits.getSummary('owner-1')).toMatchObject({ paidBalance: 5 });
   });
 
   it('applies the approved 100/10/10 paid costs while keeping a free operation one use and administrator credits unchanged', async () => {
@@ -377,10 +388,10 @@ describe('PayPal image-use lots on the current production schema', () => {
       await priced.reserve(job, 'owner-1', operation);
       await priced.consume(job, 'owner-1');
     }
-    expect((await priced.getSummary('owner-1')).paidBalance).toBe(4870);
+    expect(await priced.getSummary('owner-1')).toMatchObject({ paidBalance: 4870 });
     await priced.reserve('approved-failure', 'owner-1', 'object-removal');
     await priced.refund('approved-failure', 'owner-1');
-    expect((await priced.getSummary('owner-1')).paidBalance).toBe(4870);
+    expect(await priced.getSummary('owner-1')).toMatchObject({ paidBalance: 4870 });
     expect((await db.query<{ available_credits: number }>('SELECT available_credits FROM processing_accounts')).rows[0].available_credits).toBe(77);
   });
 
@@ -413,10 +424,10 @@ describe('PayPal image-use lots on the current production schema', () => {
     expect((await db.query("SELECT id FROM paid_credit_ledger WHERE reason='job_reserve'")).rows).toHaveLength(0);
     await priced.reserve('consent-accepted', 'owner-1', 'watermark-removal', { imageCostVersion: 'approved-cost-v1', maxImageCredits: 100 });
     await new PostgresBenefitStore(pool, true, 'live', { 'watermark-removal': 1000 }, 'new-cost-v2').reserve('consent-accepted', 'owner-1', 'watermark-removal');
-    expect((await priced.getSummary('owner-1')).paidBalance).toBe(4890);
+    expect(await priced.getSummary('owner-1')).toMatchObject({ paidBalance: 4890 });
     expect(Number((await db.query<{ amount: number }>('SELECT amount FROM job_credit_reservations WHERE job_id=$1', ['consent-accepted'])).rows[0].amount)).toBe(100);
     await priced.refund('consent-accepted', 'owner-1');
-    expect((await priced.getSummary('owner-1')).paidBalance).toBe(4990);
+    expect(await priced.getSummary('owner-1')).toMatchObject({ paidBalance: 4990 });
     expect((await db.query<{ available_credits: number }>('SELECT available_credits FROM processing_accounts')).rows[0].available_credits).toBe(77);
   });
 });

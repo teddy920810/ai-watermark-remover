@@ -1,6 +1,19 @@
 import { describe, expect, it, vi } from 'vitest';
 import { revokeProcessingCredits } from '../../../scripts/revoke-processing-credits.mjs';
 describe('administrator revoke CLI', () => {
+  it('previews and applies only the explicitly named source grant in the matching environment', async () => {
+    const pool = { query: vi.fn(async () => ({ rows: [{ user_id: 'owner' }] })) };
+    const wallet = { environment: 'live', summary: vi.fn(async () => ({ phase: 'unified', credits: 500 })),
+      previewRevoke: vi.fn(async () => ({ balance: 500, alreadyApplied: false })), revoke: vi.fn(async () => ({ changed: true, balance: 470 })) };
+    const store = { wallet, revokeCredits: vi.fn() };
+    const request = { ...options, unit: 'credits', environment: 'live', grantReference: 'original-grant' };
+    expect(await revokeProcessingCredits(request, { pool, store })).toMatchObject({ unit: 'credits', balanceAfter: 470 });
+    expect(wallet.previewRevoke).toHaveBeenCalledWith('owner', { amount: 30, reference: options.reference, actor: 'admin', grantReference: 'original-grant' });
+    expect(await revokeProcessingCredits({ ...request, apply: true }, { pool, store })).toMatchObject({ revoked: true, balanceAfter: 470 });
+    expect(store.revokeCredits).not.toHaveBeenCalled();
+    await expect(revokeProcessingCredits({ ...request, environment: 'sandbox' }, { pool, store })).rejects.toThrow('environment');
+    await expect(revokeProcessingCredits({ ...request, grantReference: undefined }, { pool, store })).rejects.toThrow('grant');
+  });
   const options = { email: 'person@example.com', amount: 30, reference: 'revoke-wrong-owner', actorId: 'admin', apply: false };
   it('previews an unused allocation withdrawal without a financial write or user ID in output', async () => {
     const pool = { query: vi.fn(async () => ({ rows: [{ user_id: 'private-user-id' }] })) }; const store = { getBalance: vi.fn(async () => 30), revokeCredits: vi.fn() };

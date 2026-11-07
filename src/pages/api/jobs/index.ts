@@ -5,6 +5,7 @@ import { publicApiError } from '../../../lib/api/error';
 import { json, readJson } from '../../../lib/api/response';
 import { getServices } from '../../../lib/services';
 import { ImagePriceChangedError, type ImageCreditConsent } from '../../../lib/benefits/benefit-store';
+import { ProcessingError } from '../../../lib/processing/contracts';
 
 export const prerender = false;
 
@@ -31,6 +32,7 @@ export const POST: APIRoute = async ({ request }) => {
       : maskKey ? await jobs.create(inputKey, session.user.id, operation, maskKey) : await jobs.create(inputKey, session.user.id, operation);
     return json({ id: job.id, status: job.status }, { status: 201 });
   } catch (error) {
+    if (error instanceof ProcessingError && error.code === 'wallet_upgraded') return json({ error: 'Open the current workspace to confirm your Credits cost.', code: 'wallet_upgraded' }, { status: 409 });
     if (error instanceof ImagePriceChangedError) return json({ error: 'Review the current image credit price and confirm again.', code: 'image_price_changed' }, { status: 409 });
     const message = publicApiError(error, 'Unable to create job', ['Upload not found', 'Mask not found', 'Invalid uploaded image', 'Invalid mask image', 'No free uses remaining']);
     const status = message === 'Upload not found' || message === 'Mask not found' ? 404 : message === 'Invalid uploaded image' || message === 'Invalid mask image' ? 400 : message === 'No free uses remaining' ? 402 : 503;

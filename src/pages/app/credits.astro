@@ -21,7 +21,7 @@ const appAsset = (path: string) => import.meta.env.BUILD_TARGET === 'app' ? `/_a
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <meta name="robots" content="noindex, follow" />
-    <title>Image credits | {site.name}</title>
+    <title>{initialCatalog.universalCredits ? 'Credits' : 'Image credits'} | {site.name}</title>
     <meta name="description" content="Purchase image credits and review your payment history." />
     <link rel="icon" href={appAsset(site.favicon)} />
   </head>
@@ -34,13 +34,13 @@ const appAsset = (path: string) => import.meta.env.BUILD_TARGET === 'app' ? `/_a
     <main class="pricing-page" aria-labelledby="pricing-heading">
       <a class="credits-back" href="/app/image">Back to image workspace</a>
       <div class="pricing-hero">
-        <h1 id="pricing-heading">Confirm your image credits</h1>
+        <h1 id="pricing-heading">{initialCatalog.universalCredits ? 'Credits and orders' : 'Confirm your image credits'}</h1>
         <p class="pricing-intro">Review your selected plan, complete payment, and manage your orders.</p>
       </div>
       <CreditCheckout initialCatalog={initialCatalog} initialSku={initialSku} initialReturnTo={returnTo} client:load />
       <div class="pricing-terms">
         <p>One-time payment. No automatic renewal. Purchased image credits have no scheduled expiry, cannot be transferred, and cannot be exchanged for cash. Process only images you are authorized to edit.</p>
-        <p>These image credits do not cover PRO, brush refinement, or video processing.</p>
+        {initialCatalog.universalCredits ? <p>Upgraded accounts use one Credits balance across all six operations. Existing orders keep their original quantities and payment amounts. Purchases remain unavailable until checkout opens.</p> : <p>These image credits do not cover PRO, brush refinement, or video processing.</p>}
         <p>Image files and results are temporary and expire after 24 hours. Download your results promptly. For purchase refunds, contact support with your order number before using the credits; used or disputed orders require review.</p>
         <p>Read our <a href="/terms">Terms</a> and <a href="/privacy">Privacy Policy</a> before buying.</p>
       </div>

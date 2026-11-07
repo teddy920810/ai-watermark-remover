@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { DefinitiveProviderError, metadataSchema, ProcessingError } from './contracts';
+import { admissionMatchesJob, DefinitiveProviderError, metadataSchema, ProcessingError } from './contracts';
 import type { ProcessingArtifact, ProcessingArtifactStore, ProcessingFinancialStore, ProcessingJob, ProcessingJobStore } from './contracts';
 import type { ProcessingProviderContext, ProcessingWatermarkProvider, ProviderCheckpoint, ProviderOutcome } from '../providers/watermark-provider';
 import { ProcessingDispatchRecovery } from './dispatch-recovery';
@@ -29,7 +29,7 @@ export class ProcessingWorker {
     if (!record) throw new ProcessingError('not_found', 'Task not found', 404);
     if (dispatchId && record.job.dispatch && record.job.dispatch.id !== dispatchId) return record.job;
     let admission = await finance.getAdmission(jobId);
-    if (!admission || admission.ownerId !== record.job.ownerId || admission.amount !== record.job.quote.amount || admission.unit !== record.job.quote.unit) throw new ProcessingError('admission_missing', 'Task has no valid financial admission', 409);
+    if (!admissionMatchesJob(admission, record.job)) throw new ProcessingError('admission_missing', 'Task has no valid financial admission', 409);
     const currentTime = this.now().getTime();
     if (record.job.lease && Date.parse(record.job.lease.expiresAt) > currentTime) return record.job;
     const epoch = (record.job.lease?.epoch ?? 0) + 1;
@@ -38,7 +38,7 @@ export class ProcessingWorker {
     // Re-read after fencing: another coordinator may have committed a refund
     // between the first financial read and lease acquisition.
     admission = await finance.getAdmission(jobId);
-    if (!admission || admission.ownerId !== record.job.ownerId) throw new ProcessingError('admission_missing', 'Task has no valid financial admission', 409);
+    if (!admissionMatchesJob(admission, record.job)) throw new ProcessingError('admission_missing', 'Task has no valid financial admission', 409);
 
     const read = async () => (await jobs.get(jobId))!.job;
     let updates: Promise<void> = Promise.resolve();

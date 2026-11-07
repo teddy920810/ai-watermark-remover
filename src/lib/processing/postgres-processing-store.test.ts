@@ -39,16 +39,17 @@ describe('PostgresProcessingStore', () => {
     expect(page.nextCursor).toEqual({ createdAt: '2026-10-24 00:00:00.123455+00', jobId: 'job-b' });
     const [sql, values] = f.query.mock.calls[0];
     expect(sql).toContain('created_at::text AS cursor_created_at'); expect(sql).toMatch(/WHERE owner_id = \$1/);
-    expect(sql).toMatch(/ORDER BY created_at DESC, job_id DESC/); expect(values).toEqual(['user-1', null, null, 3]);
+    expect(sql).toMatch(/ORDER BY created_at DESC, job_id DESC/); expect(values).toEqual(['user-1', null, null, 3, null]);
+    expect(sql).toContain("unit <> 'credits' OR environment = $5");
     f.query.mockResolvedValueOnce({ rows: [rows[2]] });
     expect(await store.listAdmissionsForOwner('user-1', 2, page.nextCursor)).toEqual({ admissions: [expect.objectContaining({ jobId: 'job-a', ownerId: 'user-1' })] });
     expect(f.query.mock.calls[1][0]).toMatch(/\(created_at, job_id\) < \(\$2::timestamptz, \$3::text\)/);
-    expect(f.query.mock.calls[1][1]).toEqual(['user-1', '2026-10-24 00:00:00.123455+00', 'job-b', 3]);
+    expect(f.query.mock.calls[1][1]).toEqual(['user-1', '2026-10-24 00:00:00.123455+00', 'job-b', 3, null]);
   });
   it('bounds each admitted history query and reports exhaustion without an extra cursor', async () => {
     const f = fakePool(); const store = new PostgresProcessingStore(f.pool);
     expect(await store.listAdmissionsForOwner('other', 10_000)).toEqual({ admissions: [] });
-    expect(f.query.mock.calls[0][1]).toEqual(['other', null, null, 101]);
+    expect(f.query.mock.calls[0][1]).toEqual(['other', null, null, 101, null]);
     expect(f.query.mock.calls[0][0]).toMatch(/LIMIT \$4/); expect(f.pool.connect).not.toHaveBeenCalled();
   });
   it('revokes unused allocated processing credits atomically with a negative auditable ledger row', async () => {

@@ -3,6 +3,7 @@
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import pg from 'pg';
+import { lockFinancialOwner } from '../src/lib/benefits/free-benefits.ts';
 
 const FREE_USE_CAP = 3;
 const REFERENCE_PATTERN = /^[a-z0-9][a-z0-9._-]{2,63}$/;
@@ -55,14 +56,23 @@ export async function grantTestCredits({ pool, email, requestedUses, reference, 
   const client = await pool.connect();
   try {
     if (apply) await client.query('BEGIN');
-    const result = await client.query(`
-      SELECT identity.user_id, benefits.balance::int AS balance
+    const statement = `
+      SELECT identity.user_id, benefits.balance::int AS balance,
+        (EXISTS(SELECT 1 FROM credit_accounts c WHERE c.owner_id=identity.user_id AND c.phase<>'legacy')
+          OR EXISTS(SELECT 1 FROM credit_source_conversions s WHERE s.owner_id=identity.user_id AND s.source_type IN ('free','processing'))) AS upgraded
       FROM user_benefit_identities identity
       JOIN user_benefits benefits ON benefits.user_id = identity.user_id
       WHERE LOWER(identity.email) = LOWER($1)
-      ${apply ? 'FOR UPDATE OF benefits' : ''}
-    `, [email]);
+    `;
+    let result = await client.query(statement, [email]);
     if (result.rows.length !== 1) throw new Error('No initialized benefit account matches that email.');
+    if (apply) {
+      const owner = result.rows[0].user_id;
+      await lockFinancialOwner(client, owner);
+      result = await client.query(`${statement} FOR UPDATE OF benefits`, [email]);
+      if (result.rows.length !== 1 || result.rows[0].user_id !== owner) throw new Error('The initialized account changed.');
+    }
+    if (result.rows[0].upgraded) throw new Error('Use the current Credits workflow; legacy test grants are closed.');
 
     const currentBalance = result.rows[0].balance;
     const plan = planTestCreditGrant({ currentBalance, requestedUses, reference });

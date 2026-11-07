@@ -14,6 +14,12 @@ export interface PaymentCatalog {
   packages: CreditPackage[];
   imageCosts?: Record<'watermark-removal' | 'background-removal' | 'object-removal', number>;
   imageCostVersion?: string;
+  universalCredits?: {
+    version: string;
+    imageRates: Record<'image-watermark' | 'image-watermark-pro' | 'image-refine' | 'background-removal' | 'object-removal', number>;
+    video: { stepSeconds: number; creditsPerStep: number };
+    rewards: { first: number; daily: number; cap: number };
+  };
 }
 
 export interface PaymentOrder {

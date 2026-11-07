@@ -7,7 +7,7 @@
 - [操作目录](../src/lib/contracts/operation-catalog.ts)拥有六类能力、输入/输出类型、协议、限制、计费来源和执行器映射；`watermark-removal`是普通图片的旧协议ID。六类新客户端操作均通过v1/Worker；旧JobService准入、查询、下载和已接受记录继续兼容。目录不决定运行开关，也不存密钥或复制售价。
 - [路由规则](../src/lib/contracts/route-policy.mjs)分别定义目标归属、私有性、索引与CMS已知入口。公开内容静态生成；精确`/pricing`是App提供的公开SSR例外，使用服务端白名单目录、canonical和no-store，不加载支付SDK/订单。`/app/credits`保留私有确认/支付/订单与原activeAttempt恢复，Site不导入支付私有配置。App入口与未知SEO路径不混为一类。
 - [ProcessingService](../src/lib/processing/processing-service.ts)拥有报价、准入、原始报价保留与任务恢复；服务端运行时组装处理price book。[图片费率](../src/lib/payments/image-credit-prices.ts)拥有三种图片工具的费率/版本；[支付目录](../src/lib/payments/payment-config.ts)投影白名单公开DTO。CMS不覆盖能力、费率、Provider、上传或比较规则。
-- PostgreSQL拥有稳定身份、免费次数、购买图片Credits、管理员处理Credits、金融准入、支付账本和outbox。三类权益分开；免费cap、恰好一次奖励、退款来源和锁顺序保持。
+- PostgreSQL拥有稳定身份、金融准入、支付账本和outbox。旧账户保留免费次数、购买图片Credits、管理员处理Credits三个明确单位；默认关闭的通用Credits候选由`credit-policy.ts`和`postgres-credit-wallet.ts`管理一个可消费单位及奖励/管理员/购买来源批次。逐账户排空、来源证明和原子转换独立于部署；默认不开启、不自动迁移旧账户，详见[Credits合同](PROCESSING_CREDITS.md)。
 - 免费权益初始化共用调用方事务client；账户响应复用当次summary内已读购买余额，恢复候选仅查询一次。Web账户与耐久运行时借用同一受限连接池，Worker拥有独立资源；Provider按真实操作惰性组装，见[后端归属](product/BACKEND_OWNERSHIP.md)。
 - 私有R2拥有媒体、权威任务、CAS/租约、attempt/receipt。新媒体四个前缀与旧`uploads/results/jobs`按现行生命周期管理；恢复控制记录不能设置全局一天TTL。未知供应商结果、迟到结果和退款意图沿原任务恢复，不重复提交。
 - 产物按操作区分：耐久水印图片JPEG/视频MP4/背景RGBA PNG/物体原尺寸PNG；保留原尺寸/透明语义、视频时长/音轨检查、原结果版本及精修关系。真实效果和真实费用单列验收，mock不代表生产能力。

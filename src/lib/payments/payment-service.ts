@@ -1,4 +1,4 @@
-import type { PaymentConfig } from './payment-config';
+import { publicPaymentCatalog, type PaymentConfig } from './payment-config';
 import type { PaymentOrder, PaymentStore } from './payment-store';
 import { cents, PayPalIssueError, type PayPalGateway, type PayPalOrder } from './paypal-client';
 
@@ -8,7 +8,7 @@ export class PaymentError extends Error {
 export class PaymentService {
   constructor(private readonly config: PaymentConfig, private readonly store: PaymentStore, private readonly paypal: PayPalGateway) {}
   catalog() {
-    return { enabled: this.config.enabled, creditsEnabled: this.config.creditsEnabled, environment: this.config.environment, ...(this.config.enabled ? { clientId: this.config.clientId } : {}), packages: this.config.packages, imageCosts: this.config.imageCosts, imageCostVersion: this.config.imageCostVersion };
+    return publicPaymentCatalog(this.config);
   }
   async create(userId: string, sku: string, requestKey: string) {
     if (!this.config.enabled) throw new PaymentError('Checkout is not available.', 503);

@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { canConfirmQuote, canRefineResult, canSubmitConfirmation, creditLabel, jobIsActive, processingLabel } from './workspace-state';
+import { balanceForQuote, canConfirmQuote, canRefineResult, canSubmitConfirmation, creditLabel, jobIsActive, processingLabel } from './workspace-state';
 describe('workspace processing safeguards', () => {
+  it('labels the new currency and selects its real available balance rather than adding legacy allowances', () => {
+    expect(creditLabel(300, 'credits')).toBe('300 Credits');
+    const unified = { walletMode: 'unified' as const, unit: 'credits' as const, credits: 100, admissionEnabled: false };
+    expect(balanceForQuote(unified, 'credits')).toBe(100);
+    expect(balanceForQuote(unified, 'freeUses')).toBeUndefined();
+    expect(balanceForQuote({ freeUses: 1, processingCredits: 3, purchasedImageCredits: 10 }, 'credits')).toBeUndefined();
+  });
   it('keeps purchased image credits distinct from free uses and administrator processing credits', () => {
     expect(creditLabel(100, 'purchasedImageCredits')).toBe('100 image credits');
     expect(creditLabel(1, 'purchasedImageCredits')).toBe('1 image credit');

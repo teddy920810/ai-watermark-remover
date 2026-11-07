@@ -15,6 +15,7 @@ import type { LegacyWatermarkProvider } from './providers/watermark-provider';
 import { R2ObjectStore } from './r2/r2-object-store';
 import { getPaymentConfig } from './payments/payment-config';
 import { PostgresJobRequestStore } from './jobs/postgres-job-request-store';
+import { creditsConfiguration } from './credits/credit-policy';
 
 let cached: ReturnType<typeof createServices> | undefined;
 let cachedAccounts: AccountServices | undefined;
@@ -30,7 +31,7 @@ function createAccountServices(): AccountServices {
   const databaseUrl = z.url().parse(process.env.DATABASE_URL);
   const paymentConfig = getPaymentConfig();
   const pool = getWebDatabasePool(databaseUrl);
-  const benefits = new PostgresBenefitStore(pool, paymentConfig.creditsEnabled, paymentConfig.environment, paymentConfig.imageCosts, paymentConfig.creditsEnabled ? paymentConfig.imageCostVersion : undefined);
+  const benefits = new PostgresBenefitStore(pool, paymentConfig.creditsEnabled, paymentConfig.environment, paymentConfig.imageCosts, paymentConfig.creditsEnabled ? paymentConfig.imageCostVersion : undefined, creditsConfiguration(process.env));
   const requests = paymentConfig.creditsEnabled ? new PostgresJobRequestStore(pool, paymentConfig.environment) : undefined;
   return {
     pool,

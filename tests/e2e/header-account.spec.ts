@@ -14,6 +14,38 @@ async function signedIn(page: Page, options: { benefitsFail?: boolean } = {}) {
     : route.fulfill({ json: { balance: 1, cap: 3, checkedInToday: false, dailyReward: 1 } }));
 }
 
+test('unified Credits account rewards depend on reward eligibility rather than the total balance', async ({ page }, testInfo) => {
+  await signedIn(page); let checked = false; let checkIns = 0;
+  const summary = () => ({ walletMode: 'unified', unit: 'credits', credits: checked ? 1100 : 1000, cap: 300, dailyReward: 100,
+    rewardAvailable: checked ? 200 : 100, rewardReserved: 0, dailyRewardAvailable: checked ? 0 : 100, checkedInToday: checked, epoch: 1 });
+  await page.route('**/api/me/benefits', route => {
+    expect(route.request().headers()['x-credits-contract']).toBe('credits-v1'); return route.fulfill({ json: summary() });
+  });
+  await page.route('**/api/me/check-in', route => {
+    expect(route.request().method()).toBe('POST'); expect(route.request().headers()['x-credits-contract']).toBe('credits-v1');
+    checked = true; checkIns++; return route.fulfill({ json: { ...summary(), granted: true, rewardGranted: 100, balanceFull: false } });
+  });
+  await page.goto('/blog/how-to-remove-watermarks-responsibly');
+  const header = page.locator('.header-benefits');
+  await expect(header).toContainText('1000');
+  const checkIn = header.getByRole('button', { name: 'Daily check-in +100 Credits', exact: true });
+  await expect(checkIn).toBeEnabled(); await checkIn.click();
+  await expect(header).toContainText('1100'); await expect(header.getByRole('button', { name: 'Checked in today' })).toBeDisabled();
+  for (const [name, width, height] of [['desktop', 1440, 900], ['mobile', 390, 844]] as const) {
+    await page.setViewportSize({ width, height });
+    await page.getByRole('button', { name: 'Account menu', exact: true }).click();
+    const menu = page.getByRole('dialog', { name: 'Account menu', exact: true });
+    await expect(menu).toContainText('1100 Credits');
+    await expect(menu.getByRole('link', { name: 'Credits & orders', exact: true })).toHaveAttribute('href', '/app/credits');
+    await expect(menu.getByText(/Purchased image credits/)).toHaveCount(0);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+    await page.screenshot({ path: testInfo.outputPath(`credits-account-${name}.png`), animations: 'disabled', style: 'astro-dev-toolbar{visibility:hidden!important}' });
+    await page.getByRole('button', { name: 'Account menu', exact: true }).press('Escape');
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+  }
+  expect(checkIns).toBe(1);
+});
+
 test('the account opens without signing out and supports keyboard, escape, and outside dismissal', async ({ page }) => {
   await signedIn(page);
   let signOutRequests = 0;

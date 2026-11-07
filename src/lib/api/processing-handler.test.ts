@@ -11,6 +11,21 @@ function fixture() {
 }
 
 describe('processing v1 boundary', () => {
+  it.each(['jobs', 'jobs/job-1'])('does not project a new-unit task to a client without its currency contract (%s)', async path => {
+    const f = fixture(); const job = { id: 'job-1', ownerId: 'owner', quote: { unit: 'credits' } };
+    f.runtime.service.get.mockResolvedValue(job as never); f.runtime.service.list.mockResolvedValue([job] as never);
+    expect((await f.handler(f.request(path))).status).toBe(409);
+    expect(f.runtime.projectJob).not.toHaveBeenCalled();
+    const request = f.request(path); request.headers.set('X-Credits-Contract', 'credits-v1');
+    expect((await f.handler(request)).status).toBe(200);
+  });
+  it('requires an explicit supported currency contract before returning a unified balance', async () => {
+    const f = fixture();
+    f.runtime.balances.mockResolvedValue({ walletMode: 'unified', unit: 'credits', credits: 100, admissionEnabled: false } as never);
+    expect((await f.handler(f.request('me'))).status).toBe(409);
+    const current = f.request('me'); current.headers.set('X-Credits-Contract', 'credits-v1');
+    expect(await (await f.handler(current)).json()).toMatchObject({ credits: 100, unit: 'credits' });
+  });
   it('passes the verified session email only to the account summary, ignoring a query-string identity', async () => {
     const f = fixture();
     f.session.mockResolvedValue({ user: { id: 'owner', email: 'Person@Example.com' } } as never);
@@ -72,7 +87,7 @@ describe('processing v1 boundary', () => {
     const response = await f.handler(f.request('jobs', { quoteId: 'quote-1', idempotencyKey: 'client-key' }));
     expect(response.status).toBe(202);
     expect(f.runtime.service.submit).toHaveBeenCalledOnce();
-    expect(f.runtime.service.submit).toHaveBeenCalledWith({ ownerId: 'owner', quoteId: 'quote-1', idempotencyKey: 'client-key' });
+    expect(f.runtime.service.submit).toHaveBeenCalledWith({ ownerId: 'owner', quoteId: 'quote-1', idempotencyKey: 'client-key', acceptCredits: false });
   });
 
   it('keeps task responses private and retrieves downloads by owner and task ID, never a client-supplied key', async () => {

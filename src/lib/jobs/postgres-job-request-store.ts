@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 import type { Pool, PoolClient } from 'pg';
 import type { Job, JobStatus, ProcessingOperation } from './job';
 import type { JobRequest, JobRequestStore } from './job-request-store';
+import { lockFinancialOwner } from '../benefits/free-benefits';
 
 interface RequestRow {
   job_id: string; owner_id: string; input_key: string; mask_key: string | null;
@@ -22,6 +23,7 @@ export class PostgresJobRequestStore implements JobRequestStore {
   async claim(job: Job): Promise<{ acquired: boolean; request: JobRequest }> {
     const hash = createHash('sha256').update(JSON.stringify([job.ownerId, job.inputKey, job.operation, job.maskKey])).digest('hex');
     return this.transaction(async (client) => {
+      await lockFinancialOwner(client, job.ownerId);
       // ON CONFLICT serializes competing inserts. The subsequent SELECT uses a
       // fresh statement snapshot, including the winning transaction's row.
       const inserted = await client.query<RequestRow>(`
@@ -83,6 +85,7 @@ export class PostgresJobRequestStore implements JobRequestStore {
 
   releaseUnreservedRequest(ownerId: string, id: string): Promise<void> {
     return this.transaction(async (client) => {
+      await lockFinancialOwner(client, ownerId);
       // Match the benefit store's owner-first lock order. A reservation already
       // committing on this owner must become visible before the financial check.
       const owner = await client.query('SELECT user_id FROM user_benefits WHERE user_id=$1 FOR UPDATE', [ownerId]);
@@ -93,6 +96,8 @@ export class PostgresJobRequestStore implements JobRequestStore {
         SELECT EXISTS (
           SELECT 1 FROM job_credit_reservations WHERE job_id=$1
           UNION ALL SELECT 1 FROM processing_admissions WHERE job_id=$1
+            UNION ALL SELECT 1 FROM credit_reservations WHERE job_id=$1
+            UNION ALL SELECT 1 FROM credit_ledger WHERE reference_id=$1 AND reason IN ('reserve','settle','refund','refund_frozen')
           UNION ALL SELECT 1 FROM processing_credit_ledger WHERE reference_id=$1 AND reason IN ('reserve','settle','refund')
           UNION ALL SELECT 1 FROM benefit_ledger WHERE reference_id=$1 AND reason IN ('job_reserve','job_refund')
           UNION ALL SELECT 1 FROM paid_credit_ledger WHERE reference_id=$1 AND reason IN ('job_reserve','job_refund','job_refund_frozen')

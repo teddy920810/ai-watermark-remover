@@ -3,6 +3,19 @@ import { createProcessingRuntime } from './processing-services';
 import { MemoryFinance } from '../processing/test-fixtures';
 
 describe('purchased image allowances in the workspace account response', () => {
+  it('returns the single authoritative Credits balance without reading or adding legacy balances', async () => {
+    const finance = new MemoryFinance();
+    vi.spyOn(finance, 'getBalance').mockRejectedValue(new Error('Do not add legacy units'));
+    const runtime = createProcessingRuntime({
+      r2: { endpoint: 'https://unused.test', accessKeyId: 'fixture', secretAccessKey: 'fixture', bucket: 'fixture' },
+      databaseUrl: 'postgres://unused.test/fixture', providerMode: 'mock', enabled: false,
+      credits: { admissionEnabled: false, environment: 'sandbox' },
+      dependencies: { finance, benefits: { async getSummary() { return { walletMode: 'unified' as const, unit: 'credits' as const, credits: 700,
+        cap: 300, dailyReward: 100, rewardAvailable: 100, rewardReserved: 0, dailyRewardAvailable: 100, checkedInToday: false, epoch: 2 }; } } },
+    });
+    try { expect(await runtime.balances('user-1')).toEqual({ walletMode: 'unified', unit: 'credits', credits: 700, admissionEnabled: false }); }
+    finally { await runtime.close(); }
+  });
   it('reuses only this response summary, including zero, and reads fresh balances on the next call', async () => {
     const finance = new MemoryFinance();
     const read = vi.spyOn(finance, 'getBalance').mockImplementation(async (_owner, unit = 'processingCredits') => {
