@@ -18,6 +18,7 @@
 | [发布记录与兼容观察](product/RELEASE_READINESS.md) | 按版本区分重构发布、后续交付、历史发布前标准与剩余观察 |
 | [App工作区](product/APP_WORKSPACE.md) | 六类新操作的共同协调、选区差异、状态/草稿归属和旧API兼容 |
 | [统一文件入口](product/FILE_INTAKE.md) | 公共入口、App再次选文件/拖入、推荐提示、CMS边界与本地草稿 |
+| [免费 Gemini](product/FREE_GEMINI.md) | 独立浏览器图片/视频操作、原文件付费交接与本地/发布验收边界 |
 | [功能交付](FUNCTIONAL_TOOL_DELIVERY.md) / [贡献指南](../CONTRIBUTING.md) | 操作合同、验证与规范同步 |
 | [后端组装与事务归属](product/BACKEND_OWNERSHIP.md) | 免费权益原语、同次读取、恢复候选及Web/Worker资源责任 |
 | [图片操作迁移](product/IMAGE_OPERATIONS.md) | 逐操作准入、PNG/费用、供应商恢复与旧协议退出边界 |

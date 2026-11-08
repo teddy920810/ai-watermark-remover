@@ -2,6 +2,11 @@
 export const IMAGE_MAX_BYTES = 10 * 1024 * 1024;
 export const VIDEO_MAX_BYTES = 100 * 1024 * 1024;
 const imageTypes = ['image/jpeg', 'image/png', 'image/webp'];
+/** Local operations have no allowance, quote, outbox, R2 or Provider execution. */
+export const localOperationCatalog = {
+  'gemini-image-free': { executor: 'browser', requiresAuthentication: true, charge: 0, output: 'png', capability: { acceptedTypes: imageTypes, maxBytes: IMAGE_MAX_BYTES, maxPixels: 40_000_000 } },
+  'gemini-video-free': { executor: 'browser', requiresAuthentication: true, charge: 0, output: 'mp4', capability: { acceptedTypes: ['video/mp4'], maxBytes: VIDEO_MAX_BYTES } },
+} as const;
 // priceSource retains the legacy book contract; the credits unit uses credit-policy.
 // Runtime account phase and admission configuration determine which unit is usable.
 export const operationCatalog = {

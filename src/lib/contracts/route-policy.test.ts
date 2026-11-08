@@ -1,9 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { routePolicy, knownPageRoutes } from './route-policy.mjs';
+import { routePolicy, knownPageRoutes, toolWorkspaceForSource } from './route-policy.mjs';
 import { collectTargetRoutes } from '../../../scripts/build-target.mjs';
 import { fileURLToPath } from 'node:url';
 
 describe('route ownership and visibility', () => {
+  it('registers Gemini tool entries explicitly without guessing other pages from their names', () => {
+    for (const source of ['gemini-watermark-remover', '/gemini-watermark-remover', '/gemini-watermark-remover/']) expect(toolWorkspaceForSource(source)).toBe('/app/free/gemini');
+    for (const source of ['homepage', '/video-watermark-remover', '/nano-banana-watermark-remover', '/future-gemini-tool', '/tiktok-watermark-remover']) expect(toolWorkspaceForSource(source)).toBeNull();
+  });
   it('separates public Pricing ownership from private App indexing', () => {
     expect(routePolicy('/pricing')).toMatchObject({ owner: 'app', kind: 'public-page', private: false, indexable: true });
     expect(knownPageRoutes).toContain('/pricing');

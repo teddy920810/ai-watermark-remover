@@ -61,6 +61,7 @@
     "better-auth": "1.7.7",
     "google-auth-library": "11.3.1",
     "lucide-react": "^1.33.0",
+    "mediabunny": "1.46.0",
     "parse5": "7.3.0",
     "pg": "^8.23.0",
     "react": "^19.1.1",
