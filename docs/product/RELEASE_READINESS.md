@@ -2,6 +2,23 @@
 
 本页按版本记录交付与观察。PR98重构于2026-11-01以`028a8d2`发布；其后交付如下。历史SHA、部署ID、测试数和预算仅属于对应发布，不能当作后续版本或未来运行状态。图片/alt/正文原值、金融与恢复依据继续保护；当前支付边界见[支付审计](../PAYMENT_AUDIT.md)。
 
+## 2026-11-08 免费 Gemini 图片与视频
+
+用户明确授权上线、保留原工具页视觉。功能 [PR137](https://github.com/teddy920810/ai-watermark-remover/pull/137) 已合并为 `482a93f1cc83d5af98ba9c186c0176173c460f3a`，原上传界面仅改变目标；多个未来入口采用共享 route-policy 的明确登记，本次没有新增其他工具页或 TikTok 输入。
+
+| 门禁 | 本次证据 |
+| --- | --- |
+| 代码 | 最终完整本地门禁：1413 单测、217 浏览器、4 组件通过；既有可选项分别跳过 15/1。必需 Linux CI / 独立三目标产物和 macOS Chromium 通过，阈值未降低。 |
+| 仓库 | PR137 精确 head `3f094e2`，严格必需 verify 与 Required target artifacts 均由 GitHub Actions app15368 成功提供后 squash。既有用户兼容档案差异未提交。 |
+| 部署 | Site `dpl_6WsvMdh2iqN3DAggtf9LZsFxryoo`、App `dpl_FY1iJaTekx1683kEt5C5aTT5TFMA` 均为合并 SHA 的 Git 生产构建，READY 且正式别名已绑定。Worker 行为和环境未修改，无 Worker 发布。 |
+| 域名 | HTTPS / canonical、apex 到 www 308、专用页 private/no-store / noindex 通过，DNS/证书配置未修改。 |
+| 身份 | 真实 Google 登录与生产 0 Credits 会话通过，未改密钥或伪造会话。 |
+| 功能 | 真实上游原图经原工具入口导入并下载 PNG；工作区直接处理真实 MP4 并下载，1280×720 / 10秒，469 个音频包散列保持。免费流程无媒体 POST；手动付费交接在 Standard 报价 100 Credits 停止，余额 0，没有收费任务/购买。公开生产 smoke 通过。 |
+| 视觉与内容 | 同账户桌面/手机前后截图比较通过；标题、main 文本及图片 src/alt 完全相同，手机像素一致，桌面仅微小渲染差异。未改 SEO JSON、FAQ、素材或独立基线。 |
+| 分析 | page_view 收到真实 204，但自定义事件因 Astro 脚本作用域未送达；自有发送处的修复已定向红绿，完整门禁与修复后的生产 collect 尚待记录。来源到购买归因仍未联调。 |
+
+样本、实际下载、脱敏 HTTP/网络回执和完整日志在 `output/gemini-free/release/`。完整合同及限制见 [免费 Gemini](FREE_GEMINI.md#2026-11-08-生产验收)。没有执行付费 Provider、资金、发点或退款测试；真实手机/Safari 和困难样本覆盖未完成，不能据一次样本泛化效果。
+
 ## 2026-11-07工具页状态文案清理
 
 用户明确要求移除工具页正文和header的全部“Coming Soon”。范围为9个工具内容记录及公共导航：Batch、CapCut、Facebook、Instagram、Kling、字幕、Sora、TikTok、Veo。移除状态徽标、标题后缀、上传区覆盖文案，以及正文、FAQ和CTA中对应表述；必要段落保留文件要求、功能限制和未验证结果说明，不据标签删除声明新的处理能力。CMS字段继续兼容，说明不再推荐旧文案，无字段迁移。博客与法律正文不属于本次修改。
