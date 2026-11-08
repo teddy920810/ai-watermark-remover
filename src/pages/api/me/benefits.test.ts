@@ -6,15 +6,13 @@ vi.mock('../../../lib/auth', () => ({ getSession }));
 
 import { GET } from './benefits';
 
-it('recovers only the authenticated account before reporting spendable credits', async () => {
+it('reads the authenticated account summary without the retired recovery dependency', async () => {
   getSession.mockResolvedValue({ user: { id: 'user-1', email: 'person@example.com' } });
-  const recoverUser = vi.fn().mockResolvedValue(undefined);
   const getSummary = vi.fn().mockResolvedValue({ balance: 0, paidBalance: 5 });
-  getAccountServices.mockReturnValue({ recoverUser, benefits: { getSummary } });
+  getAccountServices.mockReturnValue({ benefits: { getSummary } });
   const response = await GET({ request: new Request('https://example.test/api/me/benefits') } as Parameters<typeof GET>[0]);
   expect(response.status).toBe(200);
-  expect(recoverUser).toHaveBeenCalledWith('user-1');
-  expect(recoverUser.mock.invocationCallOrder[0]).toBeLessThan(getSummary.mock.invocationCallOrder[0]);
+  expect(getSummary).toHaveBeenCalledExactlyOnceWith('user-1', 'person@example.com');
 });
 
 const context = { request: new Request('https://example.test/api/me/benefits') } as Parameters<typeof GET>[0];
@@ -51,12 +49,10 @@ describe('GET /api/me/benefits', () => {
     expect(getServices).not.toHaveBeenCalled();
   });
 
-  it.each(['R2 recovery is required but not configured', 'Required recovery failed'])('returns 503 when %s without returning a balance', async (message) => {
-    const getSummary = vi.fn();
-    getAccountServices.mockReturnValue({ recoverUser: vi.fn().mockRejectedValue(new Error(message)), benefits: { getSummary } });
+  it('returns a sanitized 503 when the account database is unavailable', async () => {
+    const getSummary = vi.fn().mockRejectedValue(new Error('Private database failure'));
+    getAccountServices.mockReturnValue({ benefits: { getSummary } });
     const response = await GET(context);
-    expect(response.status).toBe(503);
-    expect(await response.text()).not.toContain(message);
-    expect(getSummary).not.toHaveBeenCalled();
+    expect(response.status).toBe(503); expect(await response.text()).not.toContain('Private database');
   });
 });

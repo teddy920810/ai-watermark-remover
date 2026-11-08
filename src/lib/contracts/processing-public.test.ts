@@ -6,16 +6,24 @@ import { describe, expect, expectTypeOf, it } from 'vitest';
 import type { PublicArtifact, PublicDownload, PublicJob, PublicQuote } from './processing-public';
 import type { PublicArtifact as ClientArtifact, PublicJob as ClientJob, PublicQuote as ClientQuote } from '../../components/workspace/workspace-api';
 import type { PublicProcessingProjection } from '../runtime/public-projection';
+import type { JobStatus, ChargeStatus, CreditUnit } from './processing-public';
+import type { ProcessingStatus, ChargeStatus as StoredChargeStatus, CreditUnit as StoredCreditUnit } from '../processing/contracts';
 
 describe('public processing contract boundary', () => {
   it('shares only type declarations without importing server or provider implementations', async () => {
     const source = readFileSync(new URL('./processing-public.ts', import.meta.url), 'utf8');
     const parsed = ts.createSourceFile('processing-public.ts', source, ts.ScriptTarget.Latest, true);
-    expect(parsed.statements.every(statement => ts.isInterfaceDeclaration(statement) || ts.isTypeAliasDeclaration(statement))).toBe(true);
+    expect(parsed.statements.every(statement => ts.isInterfaceDeclaration(statement) || ts.isTypeAliasDeclaration(statement)
+      || ts.isImportDeclaration(statement) && statement.importClause?.isTypeOnly
+      || ts.isExportDeclaration(statement) && statement.isTypeOnly)).toBe(true);
     expect(Object.keys(await import('./processing-public'))).toEqual([]);
+    expect(Object.keys(await import('./processing-state'))).toEqual([]);
   });
 
   it('uses the same complete wire types in the browser client and server projection', () => {
+    expectTypeOf<ProcessingStatus>().toEqualTypeOf<JobStatus>();
+    expectTypeOf<StoredChargeStatus>().toEqualTypeOf<ChargeStatus>();
+    expectTypeOf<StoredCreditUnit>().toEqualTypeOf<CreditUnit>();
     const client = readFileSync(new URL('../../components/workspace/workspace-api.ts', import.meta.url), 'utf8');
     const projection = readFileSync(new URL('../runtime/public-projection.ts', import.meta.url), 'utf8');
     expect(client).toContain("from '../../lib/contracts/processing-public'");

@@ -26,25 +26,9 @@ Git 页面应保持仓库连接到 `main`；域名页面以 `www.watermarkgemini
 
 ## 发布检查
 
-1. GitHub `main` 出现预期提交。
-2. Vercel 最新 Production 部署为 **Ready**。
-3. 打开首页、一个博客页和一个落地页。
-4. 检查上传流程、`/robots.txt`、`/sitemap.xml`。
-5. 在 GA Realtime 确认访问事件；新站点数据可能延迟。
+确认预期提交已进入 `main`，受影响目标的 Production 部署为 **Ready** 且绑定预期 SHA。检查内容、页面和真实功能的范围统一按[验证矩阵](TESTING_GUIDE.md#动态验证矩阵)与[抽查标准](TESTING_GUIDE.md#抽查标准)执行，本页不另设全站检查清单。
 
-部署后先运行无成本检查：
-
-```sh
-npm run test:smoke:production
-```
-
-该命令只验证域名、静态入口和匿名接口保护，不消耗 Provider 额度。涉及 R2、CORS、鉴权、Provider 或功能流程时，给专用测试账号准备 1 次额度并设置 `SMOKE_SESSION_COOKIE`，再手工运行一次：
-
-```sh
-npm run test:smoke:background-removal
-```
-
-上例只验收`background-removal`，不代表普通/PRO/精修/视频或物体移除通过。旧物体API兼容验收使用`test:smoke:object-removal`；六类新客户端的v1操作使用`test:smoke:processing -- --functional`，明确operation、样本、expected-amount和expected-unit。应按原报价检查产物和一次扣费/退款，不能把所有操作都断言为PNG或减一。脚本不输出Cookie、签名URL或对象Key。失败/UNKNOWN先按原任务恢复，不连续收费重试。完整命令与授权预算见[测试指南](TESTING_GUIDE.md)。
+环境变量或域名变更运行公开只读 smoke；R2、CORS、鉴权、Provider 或处理流程变更运行对应操作的认证验收。命令、单位、预算及失败恢复要求见[运维验收](TESTING_GUIDE.md#运维人员)。GA 改动核对真实 `page_view`/Realtime 信号，普通内容或样式发布不重复验证 GA、登录或收费处理。
 
 ## 常见故障
 

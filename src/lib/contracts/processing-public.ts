@@ -1,8 +1,7 @@
 /** Browser-safe HTTP response types. Private storage and execution records stay server-side. */
+import type { JobStatus, ChargeStatus, CreditUnit } from './processing-state';
+export type { JobStatus, ChargeStatus, CreditUnit } from './processing-state';
 export type Operation = import('./operation-catalog').DurableOperation;
-export type CreditUnit = 'freeUses' | 'purchasedImageCredits' | 'processingCredits' | 'credits';
-export type JobStatus = 'PREPARED' | 'QUEUED' | 'VALIDATING' | 'TRANSFERRING' | 'SUBMITTING' | 'PROCESSING' | 'SAVING' | 'SETTLING' | 'READY' | 'UNKNOWN' | 'FAILED' | 'REFUNDED' | 'EXPIRED';
-export type ChargeStatus = 'reserved' | 'settled' | 'refunded';
 
 export interface MediaMetadata {
   kind: 'image' | 'video' | 'mask';

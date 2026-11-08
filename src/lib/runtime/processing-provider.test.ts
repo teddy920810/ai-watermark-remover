@@ -3,8 +3,6 @@ import sharp from 'sharp';
 import { describe, expect, it, vi } from 'vitest';
 import { DefinitiveProviderError, type ProcessingArtifact, type ProcessingJob, type ProcessingProviderContext } from '../processing/contracts';
 import { DewatermarkClient, DewatermarkRequestError } from '../providers/dewatermark-client';
-import { MockWatermarkProvider } from '../providers/mock-provider';
-import { createWatermarkProvider } from '../providers/watermark-provider-factory';
 import type { WatermarkProvider } from '../providers/watermark-provider';
 import { mediaKey } from './private-media-store';
 import { ProcessingProvider } from './processing-provider';
@@ -28,10 +26,7 @@ async function fixture(operation: ProcessingJob['operation'] = 'image-watermark'
   return { ...memory, input, bytes, job, context };
 }
 function adapter(media: ReturnType<typeof memoryMediaStore>['media'], request: ReturnType<typeof vi.fn>): WatermarkProvider {
-  return createWatermarkProvider(
-    new MockWatermarkProvider({ copyObject: vi.fn().mockResolvedValue(undefined) }),
-    new ProcessingProvider({ media, client: new DewatermarkClient({ apiKey: 'server-key', fetchImpl: request as typeof fetch }), now, id: () => 'result-1' }),
-  );
+  return new ProcessingProvider({ media, client: new DewatermarkClient({ apiKey: 'server-key', fetchImpl: request as typeof fetch }), now, id: () => 'result-1' });
 }
 
 describe('real processing adapter with mocked vendor transport', () => {

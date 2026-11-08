@@ -20,7 +20,7 @@ const request = { ownerId: 'user-1', operation, inputArtifactId: 'input-1', ...(
 
 describe('durable background removal contract', () => {
   it('has a Worker capability while retaining its old-protocol identity and PNG semantics', () => {
-    expect(operationCatalog[operation]).toMatchObject({ protocol: 'v1', executor: 'worker', legacyOperation: operation, output: operation === 'object-removal' ? 'png' : 'rgba-png', units: ['freeUses', 'purchasedImageCredits', 'credits'] });
+    expect(operationCatalog[operation]).toMatchObject({ protocol: 'v1', executor: 'worker', imageCreditOperation: operation, output: operation === 'object-removal' ? 'png' : 'rgba-png', units: ['freeUses', 'purchasedImageCredits', 'credits'] });
     expect(durableCapabilities(true).some(capability => capability.operation === operation)).toBe(true);
   });
   it('uses one free use first, then its configured image cost, never administrator credits', async () => {

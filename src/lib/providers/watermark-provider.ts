@@ -1,15 +1,5 @@
 import type { ProcessingArtifact, ProcessingJob } from '../processing/contracts';
 
-export interface ProviderInput {
-  jobId: string;
-  inputKey: string;
-  maskKey?: string;
-}
-
-export type ProviderResult =
-  | { status: 'completed'; resultKey: string }
-  | { status: 'processing'; providerJobId: string };
-
 export interface ProviderCheckpoint {
   provider?: 'mock' | 'replicate' | 'dewatermark';
   providerJobId?: string;
@@ -30,13 +20,8 @@ export interface ProcessingProviderContext {
   heartbeat(): Promise<void>;
 }
 
-/** The shared boundary for legacy removal and durable image/video operations. */
+/** The provider boundary for durable image/video operations. */
 export interface WatermarkProvider {
-  remove(input: ProviderInput): Promise<ProviderResult>;
   submit(context: ProcessingProviderContext): Promise<ProviderOutcome>;
   poll(context: ProcessingProviderContext): Promise<ProviderOutcome>;
 }
-
-/** Compatibility facets always derive from the canonical provider contract. */
-export type LegacyWatermarkProvider = Pick<WatermarkProvider, 'remove'>;
-export type ProcessingWatermarkProvider = Pick<WatermarkProvider, 'submit' | 'poll'>;

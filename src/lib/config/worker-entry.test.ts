@@ -42,7 +42,7 @@ describe('standalone processing worker entry', () => {
     expect(await runWorker({ ...environment, DISPATCH_ID: 'dispatch-old' }, { createRuntime: s.factory })).toMatchObject({ status: 'superseded' });
     expect(s.runtime.runJob).not.toHaveBeenCalled(); expect(s.runtime.close).toHaveBeenCalled();
   });
-  it('passes only the Worker facet while leaving old-protocol provider settings with JobService', () => {
+  it('ignores retired configuration while using the current Worker provider settings', () => {
     const config = workerConfigFromEnvironment({ ...environment, WATERMARK_PROVIDER: 'dewatermark', DEWATERMARK_BASE_URL: 'https://legacy.test', DEWATERMARK_PREDICT_MODE: '3.0', DEWATERMARK_TIMEOUT_MS: '12000', MOCK_PROCESSING_DELAY_MS: '25' });
     expect(config).toMatchObject({ scope: 'worker', providerMode: 'mock' });
     expect(config).not.toHaveProperty('legacyProvider');

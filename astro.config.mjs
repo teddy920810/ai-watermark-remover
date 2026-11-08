@@ -9,7 +9,7 @@ import { fileURLToPath, URL } from 'node:url';
 import { replaceMissingBlogImages } from './src/lib/content/remark-missing-blog-images';
 import { optimizeBlogImages } from './src/lib/content/remark-optimized-blog-images';
 import { safeLegalMarkdown } from './src/lib/content/remark-safe-legal';
-import { createBuildPlan, prepareBuildInputs, targetIntegration } from './scripts/build-target.mjs';
+import { createBuildPlan, targetIntegration } from './scripts/build-target.mjs';
 
 const siteSettings = JSON.parse(readFileSync(new URL('./src/content/settings/site.json', import.meta.url), 'utf8'));
 const blogContentDirectory = fileURLToPath(new URL('./src/content/blog', import.meta.url));
@@ -18,7 +18,6 @@ const publicDirectory = fileURLToPath(new URL('./public', import.meta.url));
 const target = process.env.BUILD_TARGET || 'combined';
 if (!['combined', 'site', 'app'].includes(target)) throw new Error('BUILD_TARGET must be combined, site or app');
 const plan = target === 'combined' ? null : createBuildPlan(fileURLToPath(new URL('./', import.meta.url)), target);
-if (plan) prepareBuildInputs(plan);
 const boundary = plan ? targetIntegration(plan) : null;
 
 export default defineConfig({

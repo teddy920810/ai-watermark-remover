@@ -1,8 +1,11 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import { verificationCommands } from '../../../scripts/verify.mjs';
 
 const { scripts } = JSON.parse(readFileSync(new URL('../../../package.json', import.meta.url), 'utf8')) as { scripts: Record<string, string> };
 function commands(script: string): string[] {
+  const plan = /^node scripts\/verify\.mjs (\w+)$/.exec(scripts[script]);
+  if (plan) return verificationCommands(plan[1]).flatMap(command => commands(command));
   return scripts[script].split('&&').flatMap((step) => {
     const command = step.trim(); const child = /^npm run ([\w:-]+)$/.exec(command);
     return child ? commands(child[1]) : [command];

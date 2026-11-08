@@ -14,7 +14,7 @@ import { ProcessingService } from '../processing/processing-service';
 import { ProcessingWorker } from '../processing/processing-worker';
 import { R2ProcessingJobStore, R2ProcessingQuoteStore, S3ConditionalJsonStore } from '../processing/r2-processing-store';
 import { DewatermarkClient } from '../providers/dewatermark-client';
-import type { ProcessingProviderContext, ProcessingWatermarkProvider, ProviderOutcome } from '../providers/watermark-provider';
+import type { ProcessingProviderContext, WatermarkProvider, ProviderOutcome } from '../providers/watermark-provider';
 import { CloudRunTriggerError, cloudRunDispatchDiagnostic } from './cloud-run-trigger';
 import { MediaPreflight } from './media-preflight';
 import type { UploadRecord } from './media-preflight';
@@ -52,7 +52,7 @@ export interface ProcessingRuntimeConfig {
     pool?: Pool;
     finance?: ProcessingFinancialStore;
     benefits?: Pick<BenefitStore, 'getSummary'>;
-    provider?: ProcessingWatermarkProvider;
+    provider?: WatermarkProvider;
     signUrl?: typeof getSignedUrl;
     now?: () => Date;
     id?: () => string;
@@ -72,7 +72,7 @@ export interface ProcessingRuntime extends ProcessingApiRuntime {
 }
 
 /** Local simulation writes real private result bytes; it never claims AI removal. */
-class MockPrivateProcessingProvider implements ProcessingWatermarkProvider {
+class MockPrivateProcessingProvider implements WatermarkProvider {
   constructor(private readonly media: PrivateMediaStore, private readonly now: () => Date, private readonly id: () => string) {}
   private receipt(context: ProcessingProviderContext) { return `processing/mock-attempts/${context.job.id}/${context.job.attempt!.id}.json`; }
   async submit(context: ProcessingProviderContext): Promise<ProviderOutcome> {
@@ -141,15 +141,15 @@ export function createProcessingRuntime(config: ProcessingRuntimeConfig): Proces
     quote: (request) => core.quote(request),
     submit: (request) => core.submit(request), get: (owner, jobId) => core.get(owner, jobId), list: (owner, limit) => core.list(owner, limit),
   };
-  const unavailableProvider: ProcessingWatermarkProvider = {
+  const unavailableProvider: WatermarkProvider = {
     submit: async () => { throw new DefinitiveProviderError('Provider configuration is unavailable before processing'); },
     poll: async () => { throw new Error('Provider configuration is required to reconcile the existing operation'); },
   };
   let worker: ProcessingWorker | undefined;
   function executionWorker() {
     if (worker) return worker;
-    let mock: ProcessingWatermarkProvider | undefined; let watermark: ProcessingWatermarkProvider | undefined;
-    const imageAdapters: Partial<Record<'background-removal' | 'object-removal', ProcessingWatermarkProvider>> = {};
+    let mock: WatermarkProvider | undefined; let watermark: WatermarkProvider | undefined;
+    const imageAdapters: Partial<Record<'background-removal' | 'object-removal', WatermarkProvider>> = {};
     const mockProvider = () => (mock ??= new MockPrivateProcessingProvider(media, now, id));
     function selected(context: ProcessingProviderContext) {
       if (deps.provider) return deps.provider;
@@ -160,7 +160,7 @@ export function createProcessingRuntime(config: ProcessingRuntimeConfig): Proces
       const image = config.imageProviders;
       return (imageAdapters[operation] ??= image?.REPLICATE_API_TOKEN ? new ReplicateImageProvider({ media, operation, config: { apiToken: image.REPLICATE_API_TOKEN, baseUrl: image.REPLICATE_BASE_URL, modelVersion: operation === 'object-removal' ? image.REPLICATE_LAMA_MODEL_VERSION : image.REPLICATE_BACKGROUND_MODEL_VERSION, timeoutMs: image.REPLICATE_TIMEOUT_MS, waitSeconds: image.REPLICATE_WAIT_SECONDS }, now, id }) : unavailableProvider);
     }
-    const provider: ProcessingWatermarkProvider = { submit: context => selected(context).submit(context), poll: context => selected(context).poll(context) };
+    const provider: WatermarkProvider = { submit: context => selected(context).submit(context), poll: context => selected(context).poll(context) };
     return (worker = new ProcessingWorker({ jobs, artifacts: media, finance, provider, now, id }));
   }
   let closing: Promise<void> | undefined;

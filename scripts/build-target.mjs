@@ -97,6 +97,7 @@ export function targetIntegration(plan) {
     } },
     hooks: {
       'astro:config:setup': ({ injectRoute }) => {
+        prepareBuildInputs(plan);
         for (const route of plan.routes) injectRoute({ pattern: route.pattern, entrypoint: pathToFileURL(route.entrypoint), ...(plan.target === 'site' ? { prerender: true } : {}) });
       },
       'astro:routes:resolved': ({ routes }) => {
@@ -143,7 +144,6 @@ export function classifyTargetChanges(files) {
     if (/^src\/styles\/(?:global|home-blueprint|home-integration|tool-landing)\.css$/.test(file)) { targets.add('site'); continue; }
     if (/^(?:src\/styles\/(?:workspace|image-editor|payments)\.css$|src\/layouts\/App)/.test(file)) { targets.add('app'); continue; }
     if (/^(?:astro\.config\.mjs$|src\/styles\/|src\/components\/auth\/|src\/lib\/auth-client|src\/content\/settings\/site\.json$|public\/uploads\/watermarkgemini-logo\.svg$)/.test(file)) { targets.add('site'); targets.add('app'); continue; }
-    if (/^(?:apps\/gateway\/)/.test(file)) continue;
     if (/^(?:src\/lib\/(?:runtime\/|processing\/|providers\/|media\/|benefits\/|jobs\/|r2\/|users\/|config\/)|db\/)/.test(file)) { targets.add('app'); targets.add('worker'); continue; }
     if (/^(?:apps\/app\/|src\/pages\/(?:app|api|auth)\/|src\/components\/workspace\/|src\/lib\/(?:api\/|auth\.ts))/.test(file)) { targets.add('app'); continue; }
     if (/^(?:apps\/site\/|src\/content|src\/pages\/|src\/components\/|src\/layouts\/|src\/lib\/content\/|public\/|\.pages\.yml$|scripts\/(?:cms-|optimize-images|verify-responsive))/.test(file)) { targets.add('site'); continue; }
@@ -154,59 +154,35 @@ export function classifyTargetChanges(files) {
 }
 
 function origin(value) {
-  if (typeof value !== 'string' || value.includes('$')) throw new Error('Gateway origins must be literal HTTPS origins');
+  if (typeof value !== 'string' || value.includes('$')) throw new Error('Proxy origins must be literal HTTPS origins');
   const url = new URL(value);
-  if (url.protocol !== 'https:' || url.username || url.password || url.pathname !== '/' || url.search || url.hash) throw new Error('Gateway upstream must be a plain HTTPS origin');
+  if (url.protocol !== 'https:' || url.username || url.password || url.pathname !== '/' || url.search || url.hash) throw new Error('Proxy upstream must be a plain HTTPS origin');
   return url.origin;
 }
 const seoTransforms = () => ['cookie', 'authorization'].map((key) => ({ type: 'request.headers', op: 'delete', target: { key } })).concat([{ type: 'response.headers', op: 'delete', target: { key: 'set-cookie' } }]);
-const legacyAstroSource = '^/_astro/((?!\\.{1,2}(?:/|$))(?!.*\\/\\.{1,2}(?:/|$))[A-Za-z0-9_@+./-]+)$';
 
 /** Retain the original application project and its secrets/domain, but proxy
  * public pages to the independently deployed static site before Astro's 404.
  * Build Output routes use the same Route type as static project configuration:
  * https://vercel.com/docs/build-output-api/configuration#routes
  */
-export function renderAppSiteProxy(config, { siteOrigin, publicOrigin, appOrigins = /** @type {string[]} */ ([]), legacyAssetOrigin = /** @type {string | undefined} */ (undefined) }) {
-  const site = origin(siteOrigin); const gateway = origin(publicOrigin);
-  const applicationOrigins = [gateway, ...appOrigins.map(origin)];
+export function renderAppSiteProxy(config, { siteOrigin, publicOrigin, appOrigins = /** @type {string[]} */ ([]) }) {
+  const site = origin(siteOrigin); const application = origin(publicOrigin);
+  const applicationOrigins = [application, ...appOrigins.map(origin)];
   if (applicationOrigins.includes(site)) throw new Error('SEO proxy must not point back to an application origin');
   if (config.version !== 3 || !Array.isArray(config.routes)) throw new Error('App Build Output routes are unavailable');
-  const legacy = legacyAssetOrigin ? origin(legacyAssetOrigin) : undefined;
-  if (legacy && [...applicationOrigins, site].includes(legacy)) throw new Error('Legacy assets must use an immutable origin distinct from public, App and Site sources');
   const proxy = { src: '^/(?!pricing/?$)((?!(?:api|app|auth|_app-assets|_server-islands|_image|_render)(?:/|$)).*)$', dest: `${site}/$1`, transforms: seoTransforms() };
-  const assets = legacy ? [{ src: legacyAstroSource, dest: `${legacy}/_astro/$1`, methods: ['GET', 'HEAD'], transforms: seoTransforms() }] : [];
-  return { ...config, routes: [...assets, proxy, ...config.routes.filter((route) => route.src !== proxy.src && route.src !== legacyAstroSource)] };
+  return { ...config, routes: [proxy, ...config.routes.filter((route) => route.src !== proxy.src)] };
 }
 export function configureAppSiteProxy(root, source = process.env) {
-  if (!source.APP_SITE_ORIGIN) {
-    if (source.LEGACY_ASSET_ORIGIN) throw new Error('APP_SITE_ORIGIN is required before configuring legacy assets');
-    return false;
-  }
+  if (!source.APP_SITE_ORIGIN) return false;
   const settings = JSON.parse(readFileSync(path.join(root, 'src/content/settings/site.json'), 'utf8'));
   const appOrigins = [source.APP_ORIGIN, source.VERCEL_URL, source.VERCEL_PROJECT_PRODUCTION_URL].filter(Boolean).map((value) => value.startsWith('https://') ? value : `https://${value}`);
   const filename = path.join(root, '.vercel/output/config.json');
-  const config = renderAppSiteProxy(JSON.parse(readFileSync(filename, 'utf8')), { siteOrigin: source.APP_SITE_ORIGIN, publicOrigin: settings.canonicalOrigin, appOrigins, legacyAssetOrigin: source.LEGACY_ASSET_ORIGIN });
+  const config = renderAppSiteProxy(JSON.parse(readFileSync(filename, 'utf8')), { siteOrigin: source.APP_SITE_ORIGIN, publicOrigin: settings.canonicalOrigin, appOrigins });
   writeFileSync(filename, `${JSON.stringify(config, null, 2)}\n`);
   return true;
 }
-export function renderGatewayConfig({ siteOrigin, appOrigin, publicOrigin }) {
-  const site = origin(siteOrigin); const app = origin(appOrigin); const gateway = origin(publicOrigin);
-  if (site === app || site === gateway || app === gateway) throw new Error('Gateway origins must be distinct');
-  const remove = (type, key) => ({ type, op: 'delete', target: { key } });
-  const inherited = JSON.parse(readFileSync(path.join(projectRoot, 'vercel.json'), 'utf8'));
-  const commonHeaders = Object.fromEntries((inherited.headers.find((rule) => rule.source === '/(.*)')?.headers ?? []).map(({ key, value }) => [key, value]));
-  return { $schema: 'https://openapi.vercel.sh/vercel.json', framework: null, trailingSlash: false, routes: [
-    { src: '/(.*)', headers: commonHeaders, continue: true },
-    { src: '^/(?:api|app)(?:/.*)?$|^/auth/popup$', headers: { 'Cache-Control': 'private, no-store', 'X-Robots-Tag': 'noindex, nofollow' }, continue: true },
-    { src: '^/_(?:app|site)-assets/.*$', headers: { 'Cache-Control': 'public, max-age=31536000, immutable' }, continue: true },
-    { src: '^/((?:api|app)(?:/.*)?|pricing/?|auth/popup|_app-assets/.*)$', dest: `${app}/$1`, transforms: [remove('request.headers', 'x-forwarded-host'), remove('request.headers', 'x-forwarded-proto'), { type: 'request.headers', op: 'set', target: { key: 'x-forwarded-host' }, args: new URL(gateway).host }, { type: 'request.headers', op: 'set', target: { key: 'x-forwarded-proto' }, args: 'https' }] },
-    // Static route transforms are the documented API, not middleware internals:
-    // https://vercel.com/docs/project-configuration/vercel-json#transform-examples
-    { src: '^/(.*)$', dest: `${site}/$1`, transforms: seoTransforms() },
-  ] };
-}
-
 export function validateBuildArtifact(root, target) {
   if (!buildTargets.includes(target)) throw new Error('Unknown build target');
   const output = path.join(root, 'dist-target', target);
@@ -259,7 +235,7 @@ export async function buildTarget(target) {
     process.stdout.write('Validated worker artifact: dist-target/worker\n');
     return;
   }
-  const plan = createBuildPlan(projectRoot, target); prepareBuildInputs(plan);
+  const plan = createBuildPlan(projectRoot, target);
   const env = { ...process.env, BUILD_TARGET: target };
   for (const key of Object.keys(env)) if (/^(?:DATABASE_URL$|CONTENT_|R2_|DEWATERMARK_|REPLICATE_|GOOGLE_|GCP_|CLOUD_RUN_|VERCEL_OIDC_TOKEN$|BETTER_AUTH_|PROCESSING_|WORKER_)/.test(key)) delete env[key];
   if (target === 'site') {
@@ -268,11 +244,9 @@ export async function buildTarget(target) {
   const astroPackage = JSON.parse(readFileSync(path.join(projectRoot, 'node_modules/astro/package.json'), 'utf8'));
   const astroBin = typeof astroPackage.bin === 'string' ? astroPackage.bin : astroPackage.bin.astro;
   runNode(path.join(projectRoot, 'node_modules/astro', astroBin), ['build', '--config', slash(path.relative(projectRoot, plan.configFile))], env);
-  if (target === 'site') runNode(path.join(projectRoot, 'scripts/retain-app-assets.mjs'), ['site'], env);
   if (target === 'app') {
     const source = path.join(projectRoot, '.vercel/output');
     if (!existsSync(path.join(source, 'config.json'))) throw new Error('Vercel adapter did not produce app output');
-    runNode(path.join(projectRoot, 'scripts/retain-app-assets.mjs'), [], env);
     configureAppSiteProxy(projectRoot, process.env);
     cpSync(source, path.join(plan.outDir, '.vercel/output'), { recursive: true });
   }
@@ -288,17 +262,12 @@ if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.ar
     else if (command === 'changes') process.stdout.write(JSON.stringify(classifyTargetChanges(changedTargetFiles(args[0], args[1]) ?? ['package.json'])));
     else if (command === 'required') assertRequiredTargetBuilds(JSON.parse(process.env.SELECTED_TARGETS ?? 'null'), process.env.TARGET_BUILD_RESULT, process.env.TARGET_PLAN_RESULT);
     else if (command === 'ignore') {
-      if (!['site', 'app', 'gateway'].includes(args[0])) throw new Error('Unknown deployment target');
+      if (!['site', 'app'].includes(args[0])) throw new Error('Unknown deployment target');
       const files = changedTargetFiles(process.env.VERCEL_GIT_PREVIOUS_SHA, process.env.VERCEL_GIT_COMMIT_SHA);
       // Same-commit redeployments can carry new environment settings despite an empty Git diff.
       const redeploy = process.env.VERCEL_GIT_PREVIOUS_SHA && process.env.VERCEL_GIT_PREVIOUS_SHA === process.env.VERCEL_GIT_COMMIT_SHA;
-      process.exitCode = (redeploy || (args[0] === 'gateway' ? !files || files.some((file) => /^(?:apps\/gateway\/|scripts\/build-target)/.test(file)) : classifyTargetChanges(files ?? ['package.json']).includes(args[0]))) ? 1 : 0;
+      process.exitCode = (redeploy || classifyTargetChanges(files ?? ['package.json']).includes(args[0])) ? 1 : 0;
     }
-    else if (command === 'gateway') {
-      if (!process.env.SITE_ORIGIN || !process.env.APP_ORIGIN) throw new Error('Set SITE_ORIGIN and APP_ORIGIN before rendering a literal gateway configuration');
-      const settings = JSON.parse(readFileSync(path.join(projectRoot, 'src/content/settings/site.json'), 'utf8'));
-      const config = renderGatewayConfig({ siteOrigin: process.env.SITE_ORIGIN, appOrigin: process.env.APP_ORIGIN, publicOrigin: settings.canonicalOrigin });
-      process.stdout.write(`${JSON.stringify(config, null, 2)}\n`);
-    } else throw new Error('Usage: build-target.mjs site|app|worker|changes [base head]|ignore target|gateway');
+    else throw new Error('Usage: build-target.mjs site|app|worker|changes [base head]|ignore target');
   } catch (error) { process.stderr.write(`${error.message}\n`); process.exitCode = 1; }
 }

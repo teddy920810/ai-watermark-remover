@@ -2,7 +2,7 @@ import { createHash, randomUUID } from 'node:crypto';
 import sharp from 'sharp';
 import { z } from 'zod';
 import { DefinitiveProviderError, type ProcessingArtifact } from '../processing/contracts';
-import type { ProcessingProviderContext, ProcessingWatermarkProvider, ProviderOutcome } from '../providers/watermark-provider';
+import type { ProcessingProviderContext, WatermarkProvider, ProviderOutcome } from '../providers/watermark-provider';
 import { mediaKey, PrivateMediaStore, readBytes, safeMediaId } from './private-media-store';
 import { inspectMask } from '../media/image';
 
@@ -19,7 +19,7 @@ export interface ReplicateImageProviderOptions {
 }
 
 /** Existing vendor request contract, with durable prediction/result receipts and no paid replay. */
-export class ReplicateImageProvider implements ProcessingWatermarkProvider {
+export class ReplicateImageProvider implements WatermarkProvider {
   private readonly request: typeof fetch;
   private readonly now: () => Date;
   private readonly id: () => string;

@@ -3,6 +3,7 @@ import type { ProcessingJob, ProcessingQuote } from '../processing/contracts';
 import { ProcessingError, operationSchema } from '../processing/contracts';
 import type { PublicBalances } from '../contracts/processing-public';
 import { creditsContractVersion } from '../contracts/credits-client';
+import { VIDEO_MAX_BYTES } from '../contracts/operation-catalog';
 import { z } from 'zod';
 
 export interface UploadDeclaration { kind: 'image' | 'video' | 'mask'; contentType: string; byteSize: number; inputArtifactId?: string }
@@ -27,7 +28,7 @@ export interface ProcessingHandlerOptions {
 }
 
 const identifier = z.string().regex(/^[A-Za-z0-9_-]{1,160}$/);
-const uploadSchema = z.object({ kind: z.enum(['image', 'video', 'mask']), contentType: z.enum(['image/jpeg', 'image/png', 'image/webp', 'video/mp4']), byteSize: z.number().int().positive().max(100 * 1024 * 1024), inputArtifactId: identifier.optional() });
+const uploadSchema = z.object({ kind: z.enum(['image', 'video', 'mask']), contentType: z.enum(['image/jpeg', 'image/png', 'image/webp', 'video/mp4']), byteSize: z.number().int().positive().max(VIDEO_MAX_BYTES), inputArtifactId: identifier.optional() });
 const quoteSchema = z.object({ operation: operationSchema, inputArtifactId: identifier, maskArtifactId: identifier.optional(), parentJobId: identifier.optional() });
 const submitSchema = z.object({ quoteId: identifier, idempotencyKey: z.string().min(1).max(200) });
 

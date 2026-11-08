@@ -18,7 +18,7 @@ beforeEach(() => {
 afterEach(() => { vi.unstubAllEnvs(); vi.restoreAllMocks(); });
 
 describe('Web and Worker database ownership', () => {
-  it('shares the bounded Web pool with the legacy account store and never closes that borrowed pool', async () => {
+  it('shares the bounded Web pool with the account store and never closes that borrowed pool', async () => {
     const { createProcessingRuntime } = await import('./processing-services');
     const { getAccountServices } = await import('../services');
     const runtime = createProcessingRuntime({ ...config, scope: 'web' });

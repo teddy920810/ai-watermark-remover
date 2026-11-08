@@ -7,7 +7,7 @@
 | [项目规则](../AGENTS.md) | 授权、TDD、唯一维护目录和风险门禁 |
 | [当前架构](CURRENT_ARCHITECTURE.md) | 当前源文件、协议与职责索引 |
 | [开发指南](DEVELOPER_GUIDE.md) | 本地开发；配置与命令以package.json为准 |
-| [测试指南](TESTING_GUIDE.md) | 选择一次覆盖实际风险的本地门禁；公共与真实功能验收分开 |
+| [测试指南](TESTING_GUIDE.md) | 唯一本地检查与生产验收矩阵；选择一次风险门禁，公共与真实功能验收分开 |
 | [独立部署](../apps/DEPLOYMENT_TARGETS.md) | Site/App/Worker构建与路由 |
 | [运维](OPERATIONS_RUNBOOK.md) / [Worker](product/WORKER_DEPLOYMENT.md) | 域名、短期身份、生命周期与恢复 |
 | [账户身份](ACCOUNT_IDENTITY.md) / [Credits与旧额度](PROCESSING_CREDITS.md) / [支付](PAYPAL_LIVE_RELEASE.md) | 统一Credits、旧三类权益兼容、逐账户转换、价格目录、来源退款与发布顺序；仓库默认关闭，生产启用以版本发布记录为准 |

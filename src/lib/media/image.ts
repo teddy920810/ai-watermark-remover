@@ -1,4 +1,5 @@
 import sharp from 'sharp';
+import { IMAGE_MAX_BYTES } from '../contracts/operation-catalog';
 
 export interface ImageInfo {
   format: 'jpeg' | 'png' | 'webp';
@@ -20,7 +21,7 @@ function checkBytes(bytes: Uint8Array, limit: number): void {
 }
 
 export async function inspectImage(bytes: Uint8Array, limits: ImageLimits = {}): Promise<ImageInfo> {
-  checkBytes(bytes, limits.maxBytes ?? 10 * 1024 * 1024);
+  checkBytes(bytes, limits.maxBytes ?? IMAGE_MAX_BYTES);
   const maxPixels = limits.maxPixels ?? 40_000_000;
   if (!Number.isSafeInteger(maxPixels) || maxPixels <= 0) throw new Error('Image pixel limit is invalid');
   try {
@@ -55,12 +56,12 @@ export async function prepareImageForProvider(bytes: Uint8Array, options: ImageL
     .flatten({ background: '#ffffff' })
     .jpeg({ quality: 95 })
     .toBuffer();
-  const info = await inspectImage(result, { ...options, maxBytes: Math.max(options.maxBytes ?? 10 * 1024 * 1024, result.byteLength) });
+  const info = await inspectImage(result, { ...options, maxBytes: Math.max(options.maxBytes ?? IMAGE_MAX_BYTES, result.byteLength) });
   return { bytes: result, info, source, converted: source.format !== 'jpeg' || source.hasAlpha || source.orientation !== undefined || source.width !== info.width || source.height !== info.height };
 }
 
 export async function inspectMask(bytes: Uint8Array, expected: { width: number; height: number; maxBytes?: number }): Promise<{ width: number; height: number; whitePixels: number; blackPixels: number }> {
-  checkBytes(bytes, expected.maxBytes ?? 10 * 1024 * 1024);
+  checkBytes(bytes, expected.maxBytes ?? IMAGE_MAX_BYTES);
   if (![expected.width, expected.height].every((value) => Number.isSafeInteger(value) && value > 0) || expected.width * expected.height > 40_000_000) throw new Error('Mask dimensions are invalid');
   const image = sharp(bytes, { failOn: 'error', limitInputPixels: 40_000_000, animated: true });
   const metadata = await image.metadata();

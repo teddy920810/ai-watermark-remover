@@ -3,14 +3,11 @@ import { readdir, readFile } from 'node:fs/promises';
 import { Client, Pool } from 'pg';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { PostgresBenefitStore } from '../benefits/postgres-benefit-store';
-import { createJob } from '../jobs/job';
-import { PostgresJobRequestStore } from '../jobs/postgres-job-request-store';
 import { PostgresProcessingStore } from '../processing/postgres-processing-store';
 import { PostgresPaymentStore } from './postgres-payment-store';
 import { PaymentService } from './payment-service';
 import { getPaymentConfig } from './payment-config';
-import { reservePurchasedImageCredit } from './image-credit-wallet';
-import { ensureFreeBenefitAccount, lockFinancialOwner } from '../benefits/free-benefits';
+import { ensureFreeBenefitAccount } from '../benefits/free-benefits';
 import { PostgresCreditWallet } from '../credits/postgres-credit-wallet';
 import { applyCreditMigration, beginCreditMigration, previewCreditMigration } from '../credits/credit-migration';
 
@@ -460,66 +457,5 @@ describe.skipIf(!databaseUrl)('real isolated PostgreSQL payment concurrency', ()
     await priced.refund('qa-approved-object', owner);
     expect((await payments.getOrder(order.id))?.status).toBe('review');
     await invariant(0);
-  }, 90_000);
-
-  it('claim release waits for owner financial reservations and refuses to remove committed coordination', async () => {
-    await baseline();
-    const claims = new PostgresJobRequestStore(pool, 'sandbox');
-    await claims.claim(createJob('qa-empty-claim', 'uploads/qa-empty.png', owner));
-    await claims.releaseUnreservedRequest(owner, 'qa-empty-claim');
-    expect(await claims.get('qa-empty-claim')).toBeNull();
-
-    const jobId = 'qa-locked-claim';
-    await claims.claim(createJob(jobId, 'uploads/qa-locked.png', owner));
-    const blocker = await pool.connect();
-    let transactionOpen = false;
-    let releaseOutcome: Promise<{ released: boolean; error?: unknown }> | undefined;
-    let resolveReleaserPid = (_pid: number) => {};
-    const releaserPid = new Promise<number>((resolve) => { resolveReleaserPid = resolve; });
-    const observedPool = {
-      async connect() {
-        const client = await pool.connect();
-        try {
-          await client.query("SET lock_timeout='25000ms'");
-          const pid = await client.query<{ pid: number }>('SELECT pg_backend_pid() AS pid');
-          resolveReleaserPid(pid.rows[0].pid);
-          return client;
-        } catch (error) { client.release(); throw error; }
-      },
-    } as unknown as Pool;
-    try {
-      await blocker.query('BEGIN');
-      transactionOpen = true;
-      await lockFinancialOwner(blocker, owner);
-      await blocker.query('SELECT user_id FROM user_benefits WHERE user_id=$1 FOR UPDATE', [owner]);
-      const blockerPid = (await blocker.query<{ pid: number }>('SELECT pg_backend_pid() AS pid')).rows[0].pid;
-      releaseOutcome = new PostgresJobRequestStore(observedPool, 'sandbox').releaseUnreservedRequest(owner, jobId)
-        .then(() => ({ released: true }), (error: unknown) => ({ released: false, error }));
-      const waiterPid = await Promise.race([
-        releaserPid,
-        releaseOutcome.then(() => { throw new Error('Claim release completed before its blocking connection was observed'); }),
-      ]);
-      let observedOwnerLock = false;
-      const deadline = Date.now() + 10_000;
-      do {
-        const blocked = await pool.query<{ blockers: number[] }>('SELECT pg_blocking_pids($1) AS blockers', [waiterPid]);
-        if (blocked.rows[0].blockers.includes(blockerPid)) { observedOwnerLock = true; break; }
-        await new Promise((resolve) => setTimeout(resolve, 20));
-      } while (Date.now() < deadline);
-      expect(observedOwnerLock).toBe(true);
-      await reservePurchasedImageCredit(blocker, { jobId, ownerId: owner, environment: 'sandbox', amount: 1 });
-      await blocker.query('COMMIT');
-      transactionOpen = false;
-      const outcome = await releaseOutcome;
-      expect(outcome.released).toBe(false);
-      expect(outcome.error).toMatchObject({ message: 'Financial request cannot be released' });
-    } finally {
-      if (transactionOpen) await blocker.query('ROLLBACK');
-      blocker.release();
-      if (releaseOutcome) await releaseOutcome;
-    }
-    expect((await claims.get(jobId))?.status).toBe('processing');
-    expect((await pool.query<{ status: string }>('SELECT status FROM job_credit_reservations WHERE job_id=$1', [jobId])).rows[0].status).toBe('reserved');
-    await invariant(4);
   }, 90_000);
 });

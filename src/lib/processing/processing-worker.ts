@@ -1,14 +1,14 @@
 import { randomUUID } from 'node:crypto';
 import { admissionMatchesJob, DefinitiveProviderError, metadataSchema, ProcessingError } from './contracts';
 import type { ProcessingArtifact, ProcessingArtifactStore, ProcessingFinancialStore, ProcessingJob, ProcessingJobStore } from './contracts';
-import type { ProcessingProviderContext, ProcessingWatermarkProvider, ProviderCheckpoint, ProviderOutcome } from '../providers/watermark-provider';
+import type { ProcessingProviderContext, WatermarkProvider, ProviderCheckpoint, ProviderOutcome } from '../providers/watermark-provider';
 import { ProcessingDispatchRecovery } from './dispatch-recovery';
 
 export interface ProcessingWorkerOptions {
   jobs: ProcessingJobStore;
   artifacts: ProcessingArtifactStore;
   finance: ProcessingFinancialStore;
-  provider: ProcessingWatermarkProvider;
+  provider: WatermarkProvider;
   now?: () => Date;
   id?: () => string;
   leaseMs?: number;

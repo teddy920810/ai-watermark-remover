@@ -11,7 +11,6 @@ export const GET: APIRoute = async ({ request }) => {
   if (!session?.user.id) return json({ error: 'Sign in with Google to view free uses.' }, { status: 401 });
   try {
     const services = getAccountServices();
-    await services.recoverUser(session.user.id);
     const summary = await services.benefits.getSummary(session.user.id, session.user.email);
     if (summary.walletMode === 'unified' && request.headers.get('X-Credits-Contract') !== creditsContractVersion) return json({ error: 'Refresh the workspace to use your Credits account.', code: 'wallet_upgraded' }, { status: 409 });
     return json(summary);
