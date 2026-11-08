@@ -1,0 +1,43 @@
+name: Gemini platform checks
+
+on:
+  pull_request:
+    paths:
+      - '**/gemini*'
+      - 'src/vendor/gemini/**'
+      - 'src/components/launcher/**'
+      - 'src/components/workspace/*Gemini*'
+      - 'src/components/workspace/PaidHandoffEntry.tsx'
+      - 'src/lib/client/media-drafts*'
+      - 'src/lib/contracts/route-policy*'
+      - 'src/lib/contracts/operation-catalog*'
+      - 'tests/e2e/free-gemini*'
+      - 'package*.json'
+      - '.github/workflows/gemini-platform.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  macos:
+    name: macOS browser
+    runs-on: macos-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install chromium
+      - name: Run image, video and entry flows with the real browser engine
+        run: npm run test:e2e -- tests/e2e/free-gemini.spec.ts tests/e2e/free-gemini-entry.spec.ts --workers=1
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: gemini-macos-failure-${{ github.run_id }}
+          path: test-results/
+          if-no-files-found: ignore
+          retention-days: 7
