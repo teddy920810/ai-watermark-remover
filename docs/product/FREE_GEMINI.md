@@ -46,6 +46,22 @@
 
 本轮检查及视觉证据见 `output/gemini-free/` 和根目录 `design-qa.md` 的本轮章节。
 
+## 2026-11-08 生产验收
+
+[PR137](https://github.com/teddy920810/ai-watermark-remover/pull/137) 以 `482a93f1cc83d5af98ba9c186c0176173c460f3a` 合并。Windows 最终完整门禁为 161 文件、1413 单测通过、15 个既有可选跳过，217 浏览器测试通过、1 个既有可选跳过，4 个组件测试通过；必需 Linux verify / Site、App、Worker 独立产物及 macOS 真实 Chromium 图片/视频/入口检查通过。
+
+Site `dpl_6WsvMdh2iqN3DAggtf9LZsFxryoo` 与 App `dpl_FY1iJaTekx1683kEt5C5aTT5TFMA` 的 Git 生产构建已 READY 并绑定正式别名，均为上述合并版本。公开 smoke、HTTPS、apex 308 到 www、工具页 canonical、专用页 noindex 与 private/no-store 通过；DNS、证书配置及身份凭据未修改。
+
+实际 Google 登录、0 Credits 账户下，从原工具页选择固定上游原图，进入免费工作区并下载 1200×896 RGBA PNG；直接在工作区选择真实 1280×720、10 秒 MP4，处理、比较播放和真实下载通过。下载 MP4 的 469 个编码音频包与原片逐包拼接散列一致，尺寸/时长保持；视频重编码，不宣称无损。免费标签页观察到的媒体上传/报价/任务 POST 为 0。不是以校准夹具代替此次真实样本。
+
+主动点击弱付费入口后原图进入 Standard 工作区，显示原图 1200×896 和实时报价 100 Credits；刷新恢复后余额仍为 0，处理按钮禁用，没有任务提交或购买。上传阶段等待较久，首次中间截图保留；未把该中间状态记作完成，也没有借机改动既有云端管线。真实收费处理/购买及来源到购买归因未运行，不属于此次零费用验收。
+
+原工具页同一账户的标题、main 可见文本和图片 src/alt 与发布前完全相同。桌面和手机截图已打开比较；手机像素一致，桌面平均通道差为 0.114/255，无布局或素材变化。视口设置分别为 1440×1000 和 390×844，浏览器截图实际为 1425×990 和 375×812。证据、下载字节与脱敏回执在忽略目录 `output/gemini-free/release/`。
+
+真实收数检查发现 Astro 的 define:vars 将 gtag 限于初始化脚本，原自定义事件调用无效，而 page_view 正常收到 204。修复仅在自有事件发送处使用现有 dataLayer 的 Google arguments 命令队列；原官方初始化片段保持。新增回归先红后绿，锁定真实 Arguments 对象和安全参数；依据 [Google data layer 文档](https://developers.google.com/tag-platform/tag-manager/datalayer)。修复版本的完整门禁、受保护 PR、生产部署及实际自定义 collect 信号仍待后续记录，不能用旧版 page_view 冒充自定义事件通过。
+
+真实手机、Safari 和大量困难样本未验收。上述 macOS/Linux Chromium 证据不代表这些浏览器通过；本节是当前生产记录，下方本地阶段保留为历史。
+
 ## 本轮本地检查记录
 
 - 单元：160文件、1411通过、15个既有可选测试跳过；覆盖率语句81.84%、分支79.91%、函数84.83%、行89.52%，未降低阈值。

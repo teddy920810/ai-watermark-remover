@@ -1,8 +1,18 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { createGeminiEvents } from './gemini-events';
 import { readFileSync } from 'node:fs';
 
 describe('free Gemini analytics boundary', () => {
+  it('queues a real Google arguments command when Astro keeps gtag scoped to its inline script', () => {
+    const dataLayer: IArguments[] = [];
+    vi.stubGlobal('window', { dataLayer });
+    try {
+      createGeminiEvents()('result', 'video', 'run-a', 210.5);
+      expect(dataLayer).toHaveLength(1);
+      expect(Object.prototype.toString.call(dataLayer[0])).toBe('[object Arguments]');
+      expect(Array.from(dataLayer[0])).toEqual(['event', 'gemini_free_result', { media_kind: 'video', run_id: 'run-a', elapsed_ms: 211 }]);
+    } finally { vi.unstubAllGlobals(); }
+  });
   it('uses the existing official Google queue shape only in production', () => {
     const page = readFileSync(new URL('../../pages/app/free/gemini.astro', import.meta.url), 'utf8');
     expect(page).toContain('import.meta.env.PROD');
