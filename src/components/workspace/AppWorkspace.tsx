@@ -3,6 +3,7 @@ import { authClient } from '../auth/auth-client';
 import { claimMediaDraft, clearMediaDrafts, readMediaDraft, type MediaDraft, type MediaKind } from '../../lib/client/media-drafts';
 import { identityHasChanged, resolveAppEntry } from './app-entry';
 import { WorkspaceLoading } from './WorkspaceLoading';
+import { PaidHandoffEntry } from './PaidHandoffEntry';
 
 const DurableWorkspace = lazy(() => import('./WatermarkWorkspace'));
 interface Props { kind: MediaKind | 'auto'; logo: string; siteName: string }
@@ -15,7 +16,11 @@ class WorkspaceBoundary extends Component<{ children: ReactNode }, { failed: boo
     return this.state.failed ? <main className="workspace-loading-shell"><h1>Workspace could not open</h1><p>Reload this page to reopen your saved task or local file. No processing is started by reloading.</p><a className="button button-primary" href="">Reload workspace</a><a href="/">Back to website</a></main> : this.props.children;
   }
 }
-export default function AppWorkspace(props: Props) { return <WorkspaceBoundary><AppWorkspaceContent {...props} /></WorkspaceBoundary>; }
+export default function AppWorkspace(props: Props) {
+  const handoff = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('handoff') : null;
+  const content = <AppWorkspaceContent {...props} />;
+  return <WorkspaceBoundary>{handoff ? <PaidHandoffEntry id={handoff}>{content}</PaidHandoffEntry> : content}</WorkspaceBoundary>;
+}
 
 function AppWorkspaceContent({ kind, logo, siteName }: Props) {
   const { data: session, isPending } = authClient.useSession();

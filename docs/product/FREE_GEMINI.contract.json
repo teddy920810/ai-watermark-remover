@@ -1,0 +1,17 @@
+{
+  "tool": "gemini-free",
+  "route": "/app/free/gemini",
+  "operation": ["gemini-image-free", "gemini-video-free"],
+  "provider": "browser-worker-pinned-gemini-v1.0.46",
+  "input": { "authority": "src/lib/contracts/operation-catalog.ts#localOperationCatalog" },
+  "states": ["initial", "checking", "ready", "sign-in-required", "processing", "completed", "not-detected", "failed", "cancelled"],
+  "artifact": {
+    "image": { "format": "png", "requiredSemantics": ["decodes", "original display dimensions", "applicable alpha", "actual PNG bytes", "no fabricated success"] },
+    "video": { "format": "mp4", "requiredSemantics": ["plays", "correct direction/aspect/duration", "available original primary audio preserved", "complete MP4 bytes"] }
+  },
+  "credits": { "previewDelta": 0, "downloadDelta": 0, "successCharge": 0, "failurePolicy": "no charge", "joinsDurableQueue": false },
+  "handoff": { "input": "original file", "ownership": "same account and unexpired one-hour local draft", "paidConsent": "existing current quote and explicit confirmation", "freeResult": "remains in source tab", "pendingTask": "block import and reopen original task" },
+  "functionalSmoke": { "requiresAuthentication": true, "usesRepositoryFixture": true, "consumesProviderCredit": false, "redactsSensitiveValues": true },
+  "requiredGates": ["targeted-red-green", "browser-e2e", "release-verify"],
+  "releaseOnlyGates": ["required-ci-and-target-artifacts", "real-oauth", "authorized-real-image-and-video-samples", "windows-macos-linux-browser-validation", "paid-handoff", "analytics-signal", "seo-privacy-content-review"]
+}

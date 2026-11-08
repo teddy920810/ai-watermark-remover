@@ -1,0 +1,78 @@
+.free-gemini { min-height: 100vh; background: #fff; color: var(--ink); }
+.gemini-header { min-height: 72px; padding: 16px max(48px, calc((100vw - 1280px) / 2)); display: flex; align-items: center; gap: 28px; border-bottom: 1px solid var(--line); }
+.gemini-header .brand { font-size: 19px; }
+.gemini-tool-label { padding-left: 28px; border-left: 1px solid var(--line); font-size: 14px; font-weight: 650; color: #47546d; }
+.gemini-account { margin-left: auto; display: flex; align-items: center; gap: 12px; font-size: 13px; }
+.gemini-account button, .gemini-text-button { border: 0; padding: 8px 0; color: var(--muted); background: transparent; cursor: pointer; }
+.gemini-avatar { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; color: var(--brand-blue-text); background: var(--brand-soft); font-weight: 750; }
+.gemini-main { max-width: 1376px; margin: 0 auto; padding: 48px 48px 40px; }
+.gemini-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 28px; margin-bottom: 30px; }
+.gemini-heading h1 { margin: 0 0 12px; font-family: var(--font-display); font-size: clamp(28px, 4.8vw, 46px); letter-spacing: -.05em; line-height: 1.2; font-weight: 800; }
+.gemini-heading p { margin: 0; color: var(--muted); font-size: 16px; }
+.gemini-actions { display: grid; justify-items: center; flex-shrink: 0; gap: 9px; }
+.gemini-actions .button { min-width: 300px; min-height: 56px; padding: 0 25px; gap: 12px; color: #fff; background: var(--brand-blue-action); font-size: 18px; }
+.gemini-text-button { font-size: 14px; font-weight: 650; }
+.gemini-text-button:disabled { opacity: .5; cursor: default; }
+.gemini-comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.gemini-comparison figure { position: relative; min-width: 0; margin: 0; display: grid; align-items: center; overflow: hidden; background: #f7f9fc; border-radius: 12px; }
+.gemini-comparison img, .gemini-comparison video { display: block; width: 100%; max-height: 560px; aspect-ratio: 4 / 3; object-fit: contain; }
+.gemini-comparison figcaption { position: absolute; z-index: 1; top: 15px; left: 15px; padding: 5px 12px; border-radius: 6px; background: #172033de; color: white; font-size: 13px; font-weight: 650; }
+.gemini-single { grid-template-columns: 1fr; max-width: 960px; margin: auto; }
+.gemini-single img, .gemini-single video { max-height: 520px; }
+.gemini-video-stage .gemini-comparison video { aspect-ratio: 16 / 9; }
+.gemini-video-controls { display: flex; align-items: center; gap: 16px; padding: 10px 14px; margin-top: 5px; border-radius: 8px; color: #fff; background: var(--brand-navy); }
+.gemini-video-controls button { display: flex; border: 0; padding: 5px; background: transparent; color: inherit; cursor: pointer; }
+.gemini-video-controls span { flex-shrink: 0; font-size: 12px; font-variant-numeric: tabular-nums; }
+.gemini-video-controls input { width: 100%; min-width: 30px; accent-color: var(--brand-blue); }
+.gemini-video-stage:fullscreen { padding: 24px; background: #101725; display: flex; flex-direction: column; justify-content: center; }
+.gemini-assurances { display: flex; flex-wrap: wrap; justify-content: center; gap: 28px; padding: 26px 0; color: var(--muted); font-size: 14px; }
+.gemini-assurances span { display: inline-flex; align-items: center; gap: 10px; }
+.gemini-assurances svg { color: #23805b; }
+.gemini-assurances span + span { border-left: 1px solid var(--line); padding-left: 28px; }
+.gemini-paid { padding: 18px 0 0; text-align: center; border-top: 1px solid var(--line); color: var(--muted); }
+.gemini-paid p { margin: 0; font-size: 14px; }
+.gemini-paid button { display: inline-flex; align-items: center; gap: 4px; padding: 0; border: 0; background: transparent; color: var(--brand-blue-text); font-size: inherit; cursor: pointer; }
+.gemini-paid small { display: block; margin-top: 7px; font-size: 12px; }
+.gemini-intake { min-height: 360px; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px 20px; gap: 16px; border: 1px dashed var(--line-strong); border-radius: 16px; background: var(--brand-soft); text-align: center; }
+.gemini-intake h2 { margin: 0; font-size: 22px; }
+.gemini-intake p, .gemini-intake small { margin: 0; color: var(--muted); }
+.gemini-intake > svg { color: var(--brand-blue-text); }
+.gemini-intake .button { color: #fff; background: var(--brand-blue-action); }
+.gemini-scope, .gemini-note { color: var(--muted); font-size: 12px; text-align: center; margin-top: 28px; }
+.gemini-error, .gemini-notice { margin: 0 0 24px; padding: 12px 16px; border-radius: 8px; font-size: 14px; color: #a12c22; background: #fff2ef; }
+.gemini-notice { color: #41597b; background: var(--brand-soft); }
+.gemini-progress { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; padding: 18px; background: var(--brand-soft); border-radius: 10px; margin-bottom: 24px; }
+.gemini-progress button { margin-left: auto; display: inline-flex; align-items: center; gap: 5px; border: 0; background: transparent; color: var(--muted); cursor: pointer; }
+.gemini-progress small { width: 100%; color: var(--muted); }
+.gemini-spinner { animation: gemini-spin 1s linear infinite; }
+.gemini-progress progress { max-width: 180px; accent-color: var(--brand-blue); }
+.gemini-mobile-tabs { display: none; }
+.free-gemini-loading { padding: 64px; }
+.gemini-open-source { max-width: 1280px; margin: 0 auto 24px; padding: 0 20px; color: var(--muted); font-size: 12px; }
+.gemini-open-source summary { cursor: pointer; }
+.gemini-open-source a { text-decoration: underline; }
+.gemini-open-source pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+@keyframes gemini-spin { to { transform: rotate(360deg); } }
+@media (max-width: 700px) {
+  .gemini-header { padding: 16px 20px; min-height: 76px; gap: 10px; }
+  .gemini-header .brand { font-size: 15px; gap: 8px; }
+  .gemini-header .brand-logo { width: 30px; height: 30px; }
+  .gemini-tool-label { display: none; }
+  .gemini-account { gap: 6px; font-size: 12px; }
+  .gemini-main { padding: 32px 20px; }
+  .gemini-heading { flex-direction: column; gap: 22px; margin-bottom: 25px; }
+  .gemini-actions, .gemini-actions .button { width: 100%; }
+  .gemini-actions .button { min-width: 0; }
+  .gemini-heading p { font-size: 14px; }
+  .gemini-comparison { grid-template-columns: 1fr; }
+  .gemini-comparison.mobile-result .gemini-original, .gemini-comparison.mobile-original .gemini-result { display: none; }
+  .gemini-mobile-tabs { display: flex; gap: 4px; margin-bottom: 12px; }
+  .gemini-mobile-tabs button { padding: 8px 14px; border: 1px solid var(--line); border-radius: 8px; background: #fff; color: var(--muted); }
+  .gemini-mobile-tabs button[aria-pressed=true] { color: #fff; background: var(--brand-blue-action); }
+  .gemini-video-controls { gap: 8px; padding: 8px; }
+  .gemini-assurances { gap: 12px; padding: 22px 0; font-size: 12px; }
+  .gemini-assurances span + span { border: 0; padding-left: 0; }
+  .gemini-intake { min-height: 330px; }
+}
+@media (max-width: 360px) { .gemini-header { padding: 16px; gap: 8px; } .gemini-header .brand { font-size: 14px; } }
+@media (prefers-reduced-motion: reduce) { .gemini-spinner { animation: none; } }

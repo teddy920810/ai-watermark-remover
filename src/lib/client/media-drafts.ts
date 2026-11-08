@@ -5,7 +5,7 @@ export const DRAFT_TTL_MS = 60 * 60 * 1000;
 const DATABASE = 'watermarkgemini-media-drafts-v1';
 const STORE = 'drafts';
 const pointerKey = (kind: MediaKind) => `watermarkgemini:draft:${kind}`;
-export interface MediaDraft { id: string; kind: MediaKind; file: File; createdAt: number; expiresAt: number; source: string; ownerId?: string; recommendation?: MediaRecommendation }
+export interface MediaDraft { id: string; kind: MediaKind; file: File; createdAt: number; expiresAt: number; source: string; ownerId?: string; recommendation?: MediaRecommendation; handoff?: boolean }
 export function draftVisibleToOwner(draft: Pick<MediaDraft, 'ownerId'>, ownerId?: string) { return !draft.ownerId || draft.ownerId === ownerId; }
 export function workspacePath(kind: MediaKind) { return `/app/${kind}`; }
 export function draftIsExpired(draft: Pick<MediaDraft, 'expiresAt'>, now = Date.now()) { return !Number.isFinite(draft.expiresAt) || draft.expiresAt <= now; }
@@ -70,4 +70,21 @@ export async function clearMediaDrafts(): Promise<void> {
 export async function cleanExpiredMediaDrafts(): Promise<void> {
   const drafts = await transact<MediaDraft[]>('readonly', store => store.getAll());
   await Promise.all(drafts.filter(draft => draftIsExpired(draft)).map(draft => deleteMediaDraft(draft.id, draft.kind)));
+}
+
+/** Cross-tab handoff never overwrites an existing editor's draft pointer. */
+export async function savePaidHandoff(file: File, kind: MediaKind, ownerId: string): Promise<MediaDraft> {
+  const validation = validateLocalMedia(file, kind);
+  if (!validation.ok) throw new Error(validation.message);
+  const draft: MediaDraft = { id: crypto.randomUUID(), file, kind, ownerId, handoff: true, source: '/app/free/gemini', createdAt: Date.now(), expiresAt: Date.now() + DRAFT_TTL_MS, recommendation: { operation: kind === 'image' ? 'image-watermark' : 'video-watermark' } };
+  await transact('readwrite', store => store.put(draft));
+  return draft;
+}
+export async function readPaidHandoff(id: string): Promise<MediaDraft | undefined> {
+  if (!/^[\da-f-]{36}$/i.test(id)) throw new Error('This file handoff is invalid.');
+  return transact('readonly', store => store.get(id));
+}
+export function activatePaidHandoff(draft: MediaDraft): void {
+  if (sessionStorage.getItem(`watermarkgemini:confirmation:${draft.kind}`) || sessionStorage.getItem(`watermarkgemini:upload:${draft.kind}`)) throw new Error('Reopen your saved task before importing another file.');
+  sessionStorage.setItem(pointerKey(draft.kind), draft.id);
 }
