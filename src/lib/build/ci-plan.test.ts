@@ -1,7 +1,9 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import ignore from 'ignore';
-import { classifyVerification, verificationCommands } from '../../../scripts/ci-plan.mjs';
+import { classifyVerification } from '../../../scripts/ci-plan.mjs';
+import { verificationCommands as sharedCommands } from '../../../scripts/verify.mjs';
+const verificationCommands = (mode: string) => sharedCommands(mode, true);
 
 describe('required CI risk selection', () => {
   it('checks documentation without installing dependencies or running product tests', () => {
@@ -18,7 +20,8 @@ describe('required CI risk selection', () => {
   });
   it('permits only known public styles in the UI lane', () => {
     expect(classifyVerification(['src/styles/tool-landing.css']).mode).toBe('ui');
-    expect(verificationCommands('ui')).toEqual(['images:optimize', 'check:ui']);
+    expect(verificationCommands('ui')).toEqual(sharedCommands('ui'));
+    expect(verificationCommands('ui')[0]).toBe('images:optimize');
     expect(classifyVerification(['src/components/auth/AuthControls.tsx']).mode).toBe('full');
   });
   it('fails closed for missing diffs, executable content, financial, build and mixed scopes', () => {
@@ -40,9 +43,9 @@ describe('required CI risk selection', () => {
 });
 
 describe('deployment upload closure', () => {
-  it('excludes private and generated material while retaining complete runtime and historical asset inputs', () => {
+  it('excludes private and generated material while retaining complete runtime inputs', () => {
     const rules = ignore().add(readFileSync(new URL('../../../.vercelignore', import.meta.url), 'utf8'));
     for (const file of ['.env.local', '.secrets/key.json', 'dewatermark.txt', 'nero.txt', 'S3-info.txt', '.tools/tool.exe', 'dist-target/site/index.html', 'test-image/private.png', '.playwright-mcp/trace.zip', 'output/evidence.json', 'public/generated/old.webp']) expect(rules.ignores(file), file).toBe(true);
-    for (const file of ['src/content/blog/post.md', 'src/lib/payments/prices.ts', 'public/uploads/original.png', 'apps/app/retained-assets.json', 'apps/site/retained-assets.json', 'scripts/build-target.mjs', 'package-lock.json', '.env.example']) expect(rules.ignores(file), file).toBe(false);
+    for (const file of ['src/content/blog/post.md', 'src/lib/payments/prices.ts', 'public/uploads/original.png', 'scripts/build-target.mjs', 'package-lock.json', '.env.example']) expect(rules.ignores(file), file).toBe(false);
   });
 });

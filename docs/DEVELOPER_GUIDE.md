@@ -29,15 +29,15 @@ Google 登录还需要：
 
 当前操作、协议、数据与文档权威入口见[当前架构](CURRENT_ARCHITECTURE.md)和[总索引](INDEX.md)。每次从已登记维护根目录启动，先运行`npm run project:check -- --read-only`；既有改动分类后用`--classified <本机JSON>`核对。路径登记使用本机环境/已有Codex registry，不写进产品运行依赖。
 
-Astro 负责内容路由和服务端 API；React 只用于上传交互岛。浏览器先请求预签名地址，再直接上传到私有 R2，避免图片经过 Vercel 函数。任务状态保存在 R2；去水印能力通过 `WatermarkProvider` 接口隔离，背景移除通过独立的 `BackgroundRemovalProvider` 接口隔离，物体移除通过 `ObjectRemovalProvider` 隔离，三种任务共用账户权益账本。新背景与物体客户端已逐项接入共同耐久协调器和Worker；旧API的准入、查询、下载和已接受请求继续兼容，费用/PNG/选区与恢复规则见[图片操作规范](product/IMAGE_OPERATIONS.md)。
+Astro 负责静态内容和 v1 服务端 API；React 承接交互工作区。浏览器先请求预签名地址，再直接上传到私有 R2。六类处理共用 v1 报价、明确确认和独立 Worker，费用、PNG、选区与恢复规则见[图片操作规范](product/IMAGE_OPERATIONS.md)。旧上传、`/api/jobs` 与 JobService 在本地第三批退役，部署状态另见发布记录。
 
 新图片/视频工作区位于 `/app/image`、`/app/video`，使用 `/api/v1` 报价、任务和临时下载接口。非收费媒体检查和已确认任务由独立 Worker 执行，金融预留和耐久 outbox 在 PostgreSQL，媒体与权威任务状态在私有 R2。新账户与已审核升级的账户可使用统一 Credits；旧账户、旧单位和已接受任务继续兼容。仓库开关默认关闭，实际启用、逐账户转换和来源账本见 [Credits 合同](PROCESSING_CREDITS.md)与[发布记录](product/RELEASE_READINESS.md)。
 
 新处理配置见 [配置说明](product/PROCESSING_CONFIGURATION.md)，独立 Web 构建见 [部署目标](../apps/DEPLOYMENT_TARGETS.md)，Worker、R2 清理和真实验收见 [部署说明](product/WORKER_DEPLOYMENT.md)。新账号和再次登录的稳定归属见 [Google 账户身份](ACCOUNT_IDENTITY.md)。现行规范从 [总索引](INDEX.md) 进入；重构阶段与原始验收见 [重构台账](product/REFACTOR_LEDGER.md)，后续交付见 [发布记录](product/RELEASE_READINESS.md)。原 [T0–T11 TODO](product/IMPLEMENTATION_TODO.md) 为历史记录，不能继承其中预算或测试结果。
 
-当前 `MockWatermarkProvider` 仅复制对象。接入真实服务时，实现 `src/lib/providers/watermark-provider.ts` 的契约并在 `src/lib/services.ts` 注入，不要改变公开 API 响应格式。选择和预览图片无需登录；创建与查询任务必须有有效会话，并且任务只能由其 `ownerId` 对应的用户读取。
+本地 `PROCESSING_PROVIDER=mock` 使用当前耐久管线的模拟实现。真实去水印由 `src/lib/runtime/processing-provider.ts` 与 `dewatermark-client.ts` 实现，背景/物体由 `replicate-image-provider.ts` 实现；它们共用 `WatermarkProvider` 的 submit/poll 边界。选择和预览无需登录，所有私有媒体、任务和下载仍须校验当前用户归属。
 
-仓库提供 Dewatermark v3 Provider，按官方契约把服务端读取的图片归一化为最大边不超过 6000px 的 JPEG，再把 Base64 结果写回私有 R2。本地和测试环境默认配置仍是 `WATERMARK_PROVIDER=mock`；生产环境只有在 Key 校验、授权样图效果和真实端到端链路通过后，才通过服务端环境变量切换为 `dewatermark`。官方契约见 <https://dewatermark.ai/api-document>。
+仓库提供 Dewatermark v3 Provider，按官方契约把服务端读取的图片归一化为最大边不超过 6000px 的 JPEG，再把 Base64 结果写回私有 R2。本地和测试环境默认配置仍是 `PROCESSING_PROVIDER=mock`；生产环境只有在 Key 校验、授权样图效果和真实端到端链路通过后，才通过服务端环境变量切换为 `dewatermark`。官方契约见 <https://dewatermark.ai/api-document>。
 
 背景移除使用 Replicate 上的 `851-labs/background-remover` 社区模型，并固定模型版本以避免上游无提示漂移。服务端把私有 R2 输入转换成短期签名链接，按供应商契约请求 RGBA PNG，再校验输出域名、体积和 PNG 文件签名后写回私有 R2。浏览器不会收到 `REPLICATE_API_TOKEN`。配置该 Token 后会自动选择 Replicate；测试或离线开发可显式设置 `BACKGROUND_REMOVAL_PROVIDER=mock` 覆盖。模型契约见 <https://replicate.com/851-labs/background-remover/api>，社区模型版本说明见 <https://replicate.com/docs/topics/models/community-models/>。
 
@@ -100,16 +100,9 @@ npm run blog:import-docx -- --input "审核稿.docx" --slug "how-to-remove-examp
 
 ## 测试与发布
 
-```sh
-npm run check:fast       # 普通小改：内容同步 + 全部单元测试
-npm run check:content    # CMS、Blog、落地页、图片：内容测试 + Build
-npm run check:ui         # 布局、样式、公共 UI：相关测试 + 公共页面 E2E
-npm run release:verify   # 高风险改动：依赖审计 + 站点校验 + 完整 verify
-```
+所有行为变化先运行定向红测和绿测，再按[唯一验证矩阵](TESTING_GUIDE.md#动态验证矩阵)选择一次检查。该指南统一维护命令、CI、视觉抽查和真实功能验收要求，本页不复制矩阵。
 
-所有行为变化先运行定向红测和绿测。本地根据改动范围选择上面的检查；PR CI 的稳定必需检查按明确允许名单选择范围，未知/混合或高风险改动运行完整 `npm run verify`，门禁必须成功后才能合并 `main`。API、鉴权、R2、Provider、安全策略、依赖、构建或 CI 修改必须在本地运行 `release:verify`。视觉验收应抽查代表模板的桌面与移动端，并同时检查一个应出现目标行为的正向页面和一个不应出现的负向页面。
-
-完整门禁的类型检查只在 Build 中执行一次；单独 `lint` 和 `build` 仍各自包含类型检查。Site/App/Worker 的独立构建入口、受影响目标和产物验收统一见 [测试与质量指南](TESTING_GUIDE.md#自动化保护) 与 [部署目标](../apps/DEPLOYMENT_TARGETS.md)，不要把 Worker 源码测试当作真实打包或生产执行的证据。
+Site/App/Worker 的构建入口、路由和产物合同见[部署目标](../apps/DEPLOYMENT_TARGETS.md)。构建准备只在 Astro 的 `astro:config:setup` 生命周期执行；配置读取和目标构建调度不清理目录。生成目录白名单、符号链接检查和独立目标隔离继续生效。
 
 Pages CMS在内容分支保存，经受保护PR与必需CI后进入`main`；模板工作流只创建审核分支和草稿PR。推送前执行`git fetch origin main`检查分歧；如远端领先，先安全rebase/merge，禁止force push。合并后Vercel按目标独立发布。
 

@@ -15,7 +15,7 @@ export default defineConfig({
   },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: {
-    command: 'npx astro dev --host 127.0.0.1 --port 4379',
+    command: 'node scripts/test-server.mjs',
     url: e2eOrigin,
     reuseExistingServer: false,
     timeout: 120_000,

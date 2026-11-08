@@ -3,7 +3,7 @@ import { WorkspaceAccount } from './WorkspaceAccount';
 import { appOperationPath } from './app-entry';
 import type { ProductOperation } from '../../lib/contracts/operation-catalog';
 import { listenForAuthCompletion } from '../../lib/client/auth-completion';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
 import { ArrowLeft, ArrowRight, Brush, CloudUpload, Download, Eraser, FileImage, Info, LoaderCircle, LockKeyhole, RefreshCw, RotateCcw, Undo2, Video, X, ZoomIn, ZoomOut } from 'lucide-react';
 import { authClient } from '../auth/auth-client';
 import { imageCreditPurchaseHref } from '../payments/BuyCreditsLink';
@@ -15,6 +15,7 @@ import { BackgroundOptions, downloadWithBackground, TRANSPARENT_BACKGROUND, type
 import { VideoEditor } from './VideoEditor';
 import { balanceForQuote, canConfirmQuote, canRefineResult, canSubmitConfirmation, creditLabel, jobIsActive, processingLabel } from './workspace-state';
 import { displayError, WorkspaceApiError, workspaceApi, type Capability, type MediaMetadata, type Operation, type PublicArtifact, type PublicBalances, type PublicJob, type PublicQuote, type PublicUpload } from './workspace-api';
+import { preparationReducer, quoteReducer } from './workspace-flow-state';
 import '../../styles/payments.css';
 
 interface Props { kind: MediaKind; logo: string; siteName: string; initialMode?: 'standard' | 'pro'; initialOperation?: 'background-removal' | 'object-removal'; onResolvedKind?(kind: MediaKind): void }
@@ -34,16 +35,27 @@ export default function WatermarkWorkspace({ kind, logo, siteName, initialMode =
   const { data: session, isPending: sessionPending, refetch: refetchSession } = authClient.useSession();
   const [capabilities, setCapabilities] = useState<Capability[]>([]); const [capabilityError, setCapabilityError] = useState(false);
   const [balance, setBalance] = useState<PublicBalances | null>(null);
-  const [file, setFile] = useState<File | null>(null); const [draft, setDraft] = useState<MediaDraft | null>(null); const [localUrl, setLocalUrl] = useState(''); const [localMetadata, setLocalMetadata] = useState<MediaMetadata | null>(null); const [pendingUpload, setPendingUpload] = useState(false); const [mediaRevision, setMediaRevision] = useState(0);
+  const [localMedia, setLocalMedia] = useState<{ file: File | null; draft: MediaDraft | null; url: string; metadata: MediaMetadata | null }>({ file: null, draft: null, url: '', metadata: null });
+  const { file, draft, url: localUrl, metadata: localMetadata } = localMedia;
+  const [mediaRevision, setMediaRevision] = useState(0);
   const [inputArtifact, setInputArtifact] = useState<PublicArtifact | null>(null); const [job, setJob] = useState<PublicJob | null>(null); const [jobs, setJobs] = useState<PublicJob[]>([]);
   const [mode, setMode] = useState<'standard' | 'pro' | 'background' | 'object'>(initialOperation === 'object-removal' ? 'object' : initialOperation === 'background-removal' ? 'background' : initialMode); const [fixedArea, setFixedArea] = useState(false); const [refining, setRefining] = useState(false);
   const [selectedBackground, setSelectedBackground] = useState<BackgroundChoice>(TRANSPARENT_BACKGROUND);
-  const [quote, setQuote] = useState<PublicQuote | null>(null); const [busy, setBusy] = useState(''); const [error, setError] = useState(''); const [notice, setNotice] = useState(''); const [uploadProgress, setUploadProgress] = useState(0);
+  const [quoteState, dispatchQuote] = useReducer(quoteReducer, { phase: 'idle' });
+  const quote = 'quote' in quoteState ? quoteState.quote : null;
+  const uncertainSubmission = quoteState.phase === 'uncertain';
+  const quoteStatus = quoteState.phase === 'preparing' ? quoteState.message : '';
+  const quoteFailed = quoteState.phase === 'failed';
+  const [busy, setBusy] = useState(''); const [error, setError] = useState(''); const [notice, setNotice] = useState('');
   const [tool, setTool] = useState<'brush' | 'eraser'>('brush'); const [brushSize, setBrushSize] = useState(36); const [showSelection, setShowSelection] = useState(true); const [hasSelection, setHasSelection] = useState(false); const [undoToken, setUndoToken] = useState(0);
-  const [view, setView] = useState<'original' | 'result' | 'compare'>('original'); const [zoom, setZoom] = useState(100); const [loadingDraft, setLoadingDraft] = useState(true); const [uncertainSubmission, setUncertainSubmission] = useState(false);
+  const [view, setView] = useState<'original' | 'result' | 'compare'>('original'); const [zoom, setZoom] = useState(100); const [loadingDraft, setLoadingDraft] = useState(true);
   const [accountReady, setAccountReady] = useState(false); const [needsSignIn, setNeedsSignIn] = useState(false);
-  const [preparationStatus, setPreparationStatus] = useState(''); const [preparationFailed, setPreparationFailed] = useState(false); const [preparationAttempt, setPreparationAttempt] = useState(0);
-  const [quoteStatus, setQuoteStatus] = useState(''); const [quoteFailed, setQuoteFailed] = useState(false); const [quoteAttempt, setQuoteAttempt] = useState(0);
+  const [preparation, dispatchPreparation] = useReducer(preparationReducer, { phase: 'idle' });
+  const preparationStatus = preparation.phase === 'working' ? preparation.message : '';
+  const preparationFailed = preparation.phase === 'failed';
+  const uploadProgress = preparation.phase === 'working' ? preparation.progress : 0;
+  const [preparationAttempt, setPreparationAttempt] = useState(0);
+  const [quoteAttempt, setQuoteAttempt] = useState(0);
   const [selectionRevision, setSelectionRevision] = useState(0); const [selectionEditing, setSelectionEditing] = useState(false);
   const input = useRef<HTMLInputElement>(null); const downloadLink = useRef<HTMLAnchorElement>(null); const mask = useRef<MaskEditorHandle>(null); const submitLock = useRef(false); const requests = useRef(new Set<XMLHttpRequest>()); const currentQuoteKey = useRef<{ quoteId: string; key: string; scope?: string } | null>(null);
   const uploadGeneration = useRef(0); const quoteGeneration = useRef(0); const viewGeneration = useRef(0); const readingFile = useRef(false); const restartUpload = useRef(false);
@@ -70,10 +82,10 @@ export default function WatermarkWorkspace({ kind, logo, siteName, initialMode =
   const activeQuoteScope = useRef(quoteScope); activeQuoteScope.current = quoteScope;
   const failedRefinement = !refining && job?.operation === 'image-refine' && ['FAILED', 'REFUNDED', 'EXPIRED'].includes(job.status);
 
-  function invalidateQuote() { quoteGeneration.current += 1; currentQuoteKey.current = null; setQuote(null); setQuoteFailed(false); setQuoteStatus(''); }
+  function invalidateQuote() { quoteGeneration.current += 1; currentQuoteKey.current = null; dispatchQuote({ type: 'reset' }); }
   function selectionStarted() { if (submitLock.current || uncertainSubmission) return; invalidateQuote(); setSelectionEditing(true); setSelectionRevision(value => value + 1); }
   function selectionChanged(selected: boolean) { if (submitLock.current || uncertainSubmission) return; invalidateQuote(); setHasSelection(selected); setSelectionEditing(false); setSelectionRevision(value => value + 1); }
-  function stopPreparation() { uploadGeneration.current += 1; for (const request of requests.current) request.abort(); setPreparationStatus(''); setPreparationFailed(false); setPendingUpload(false); }
+  function stopPreparation() { uploadGeneration.current += 1; for (const request of requests.current) request.abort(); dispatchPreparation({ type: 'reset' }); }
 
   useEffect(() => {
     if (!quote || uncertainSubmission) return;
@@ -102,10 +114,10 @@ export default function WatermarkWorkspace({ kind, logo, siteName, initialMode =
     async function restore() {
       try {
         const pending = sessionStorage.getItem(confirmationPointer(kind));
-        if (pending) { const saved = JSON.parse(pending) as { quote: PublicQuote; key: string }; if (saved.quote?.id && saved.key) { currentQuoteKey.current = { quoteId: saved.quote.id, key: saved.key }; setQuote(saved.quote); setUncertainSubmission(true); } }
+        if (pending) { const saved = JSON.parse(pending) as { quote: PublicQuote; key: string }; if (saved.quote?.id && saved.key) { currentQuoteKey.current = { quoteId: saved.quote.id, key: saved.key }; dispatchQuote({ type: 'restore', quote: saved.quote }); } }
         await cleanExpiredMediaDrafts();
         const existing = await readMediaDraft(kind, ownerId);
-        if (!cancelled && existing) { setDraft(existing); setFile(existing.file); setLocalUrl(URL.createObjectURL(existing.file)); const info = await readLocalMetadata(existing.file, kind); if (!cancelled) setLocalMetadata(info); }
+        if (!cancelled && existing) { setLocalMedia({ draft: existing, file: existing.file, url: URL.createObjectURL(existing.file), metadata: null }); const info = await readLocalMetadata(existing.file, kind); if (!cancelled) setLocalMedia(previous => ({ ...previous, metadata: info })); }
       } catch (cause) { if (!cancelled) setNotice(displayError(cause)); }
       finally { if (!cancelled) setLoadingDraft(false); }
     }
@@ -143,8 +155,8 @@ export default function WatermarkWorkspace({ kind, logo, siteName, initialMode =
     if (!ownerId || !accountReady || loadingDraft || uncertainSubmission || needsSignIn || inputArtifact || job || (!file && !sessionStorage.getItem(uploadPointer(kind)))) return;
     let cancelled = false; const generation = ++uploadGeneration.current;
     const current = () => !cancelled && generation === uploadGeneration.current && activeOwner.current === ownerId;
-    const context: UploadContext = { current, stage: value => { if (current()) setPreparationStatus(value); }, progress: value => { if (current()) setUploadProgress(value); } };
-    setPreparationFailed(false); setUploadProgress(0); setPreparationStatus('Preparing your file');
+    const context: UploadContext = { current, stage: value => { if (current()) dispatchPreparation({ type: 'stage', message: value }); }, progress: value => { if (current()) dispatchPreparation({ type: 'progress', value }); } };
+    dispatchPreparation({ type: 'start', message: 'Preparing your file' });
     async function prepare() {
       try {
         const savedId = sessionStorage.getItem(uploadPointer(kind));
@@ -160,11 +172,11 @@ export default function WatermarkWorkspace({ kind, logo, siteName, initialMode =
           context.stage('Uploading your file'); artifact = await uploadBlob(file, kind, context);
         }
         if (!current()) return;
-        setInputArtifact(artifact); setPendingUpload(false); setPreparationStatus('');
-        if (draft) { await deleteMediaDraft(draft.id, kind).catch(() => {}); if (current()) setDraft(null); }
+        setInputArtifact(artifact); dispatchPreparation({ type: 'reset' });
+        if (draft) { await deleteMediaDraft(draft.id, kind).catch(() => {}); if (current()) setLocalMedia(previous => ({ ...previous, draft: null })); }
       } catch (cause) {
         if (!current()) return;
-        setError(displayError(cause)); setPreparationFailed(true); setPreparationStatus('');
+        setError(displayError(cause)); dispatchPreparation({ type: 'fail' });
         if (cause instanceof WorkspaceApiError && cause.status === 401) setNeedsSignIn(true);
         if (cause instanceof WorkspaceApiError && [404, 410].includes(cause.status)) restartUpload.current = true;
       }
@@ -175,13 +187,13 @@ export default function WatermarkWorkspace({ kind, logo, siteName, initialMode =
   useEffect(() => {
     const generation = ++quoteGeneration.current;
     if (loadingDraft || uncertainSubmission || submitLock.current) return;
-    currentQuoteKey.current = null; setQuote(null); setQuoteStatus(''); setQuoteFailed(false);
+    currentQuoteKey.current = null; dispatchQuote({ type: 'reset' });
     if (!ownerId || !accountReady || !currentArtifact || !canOperate || processing || readyResult && !refining || failedRefinement || needsSignIn || needsMask && (!hasSelection || selectionEditing)) return;
     let cancelled = false;
     const scope = quoteScope; const artifactId = currentArtifact.id;
     const current = () => !cancelled && generation === quoteGeneration.current && activeOwner.current === ownerId && activeQuoteScope.current === scope && !submitLock.current;
-    const context: UploadContext = { current, stage: value => { if (current()) setQuoteStatus(value); } };
-    setQuoteStatus(needsMask ? 'Preparing your selection' : 'Calculating cost');
+    const context: UploadContext = { current, stage: value => { if (current()) dispatchQuote({ type: 'stage', message: value }); } };
+    dispatchQuote({ type: 'stage', message: needsMask ? 'Preparing your selection' : 'Calculating cost' });
     const timeout = setTimeout(() => { void (async () => {
       try {
         let maskArtifact: PublicArtifact | undefined;
@@ -200,10 +212,10 @@ export default function WatermarkWorkspace({ kind, logo, siteName, initialMode =
         if (!current()) return;
         if (next.operation !== operation || !canConfirmQuote(next, false)) throw new Error('The processing cost could not be confirmed. Try again.');
         const available = await workspaceApi<PublicBalances>('/me'); if (!current()) return;
-        setBalance(available); currentQuoteKey.current = { quoteId: next.id, key: crypto.randomUUID(), scope }; setQuote(next); setQuoteStatus('');
+        setBalance(available); currentQuoteKey.current = { quoteId: next.id, key: crypto.randomUUID(), scope }; dispatchQuote({ type: 'ready', quote: next });
       } catch (cause) {
         if (!current()) return;
-        setError(displayError(cause)); setQuoteStatus(''); setQuoteFailed(true);
+        setError(displayError(cause)); dispatchQuote({ type: 'fail' });
         if (cause instanceof WorkspaceApiError && cause.status === 401) setNeedsSignIn(true);
       }
     })(); }, needsMask ? 400 : 150);
@@ -246,7 +258,7 @@ export default function WatermarkWorkspace({ kind, logo, siteName, initialMode =
       let stored: MediaDraft | null = null;
       try { stored = await saveMediaDraft(next, kind, '/app', ownerId); } catch { setNotice('This browser cannot keep a recovery draft. Keep this tab open until your file is uploaded.'); }
       if (draft && draft.id !== stored?.id) await deleteMediaDraft(draft.id, kind).catch(() => {});
-      setDraft(stored); setFile(next); setLocalUrl(URL.createObjectURL(next)); setLocalMetadata(info); setInputArtifact(null); setJob(null); setRefining(false); setHasSelection(false); setSelectionEditing(false); setView('original'); setPendingUpload(false); setMediaRevision(value => value + 1); restartUpload.current = false;
+      setLocalMedia({ draft: stored, file: next, url: URL.createObjectURL(next), metadata: info }); setInputArtifact(null); setJob(null); setRefining(false); setHasSelection(false); setSelectionEditing(false); setView('original'); setMediaRevision(value => value + 1); restartUpload.current = false;
       sessionStorage.removeItem(uploadPointer(kind)); window.history.replaceState({}, '', kind === 'image' && mode !== 'standard' ? appOperationPath(mode === 'object' ? 'object-removal' : mode === 'background' ? 'background-removal' : 'image-watermark-pro') : `/app/${kind}`);
     } catch (cause) { if (revision === viewGeneration.current) { setError(displayError(cause)); setPreparationAttempt(value => value + 1); setQuoteAttempt(value => value + 1); } }
     finally { readingFile.current = false; setBusy(''); }
@@ -275,8 +287,8 @@ export default function WatermarkWorkspace({ kind, logo, siteName, initialMode =
   async function discardDraft() {
     if (editingLocked) return; viewGeneration.current += 1; stopPreparation(); invalidateQuote();
     if (draft) await deleteMediaDraft(draft.id, kind).catch(() => {});
-    setDraft(null); setFile(null); setLocalUrl(''); setLocalMetadata(null); setInputArtifact(null); setJob(null); setQuote(null); setNotice('Local draft removed from this browser.');
-    sessionStorage.removeItem(uploadPointer(kind)); setPendingUpload(false);
+    setLocalMedia({ draft: null, file: null, url: '', metadata: null }); setInputArtifact(null); setJob(null); setNotice('Local draft removed from this browser.');
+    sessionStorage.removeItem(uploadPointer(kind));
   }
   async function waitForUpload(id: string, context: UploadContext, media: boolean, initial?: PublicUpload): Promise<PublicArtifact> {
     for (let attempt = 0; attempt < 180; attempt += 1) {
@@ -284,7 +296,7 @@ export default function WatermarkWorkspace({ kind, logo, siteName, initialMode =
       const uploaded = attempt === 0 && initial ? initial : await workspaceApi<PublicUpload>(`/uploads/${encodeURIComponent(id)}`);
       if (!context.current()) throw new Error('Preparation superseded');
       if (uploaded.status === 'failed') {
-        if (media) { restartUpload.current = true; setPendingUpload(false); }
+        if (media) { restartUpload.current = true; }
         throw new Error(uploaded.error ?? 'This file is not compatible. Choose another file.');
       }
       if (uploaded.status === 'ready' && uploaded.artifact) return uploaded.artifact;
@@ -295,7 +307,7 @@ export default function WatermarkWorkspace({ kind, logo, siteName, initialMode =
   async function uploadBlob(blob: Blob, uploadKind: 'image' | 'video' | 'mask', context: UploadContext, inputArtifactId?: string): Promise<PublicArtifact> {
     const created = await workspaceApi<{ id: string; uploadUrl: string }>('/uploads', { kind: uploadKind, contentType: blob.type, byteSize: blob.size, ...(inputArtifactId ? { inputArtifactId } : {}) });
     if (!context.current()) throw new Error('Preparation superseded');
-    if (uploadKind !== 'mask') { sessionStorage.setItem(uploadPointer(kind), created.id); setPendingUpload(true); }
+    if (uploadKind !== 'mask') { sessionStorage.setItem(uploadPointer(kind), created.id); }
     await new Promise<void>((resolve, reject) => {
       const request = new XMLHttpRequest(); requests.current.add(request); request.open('PUT', created.uploadUrl); request.setRequestHeader('Content-Type', blob.type);
       request.upload.onprogress = event => { if (event.lengthComputable && context.current()) context.progress?.(Math.round(event.loaded / event.total * 100)); };
@@ -314,23 +326,23 @@ export default function WatermarkWorkspace({ kind, logo, siteName, initialMode =
     if (editingLocked) return; setError('');
     if (preparationFailed || !currentArtifact) {
       if (restartUpload.current) { sessionStorage.removeItem(uploadPointer(kind)); restartUpload.current = false; }
-      setPreparationFailed(false); setPreparationAttempt(value => value + 1);
+      dispatchPreparation({ type: 'reset' }); setPreparationAttempt(value => value + 1);
     } else { invalidateQuote(); setQuoteAttempt(value => value + 1); }
   }
   async function confirmProcessing() {
     if (!ownerId || !quote || submitLock.current || !canSubmitConfirmation(quote, !!busy, balanceInsufficient || quoteBalance === undefined, uncertainSubmission)) return;
     const key = currentQuoteKey.current; if (!key || key.quoteId !== quote.id) return;
     if (!uncertainSubmission && (key.scope !== activeQuoteScope.current || selectionEditing || preparationStatus || quoteStatus)) return;
-    submitLock.current = true; setBusy('Confirming your task'); setError('');
+    submitLock.current = true; dispatchQuote({ type: 'submit' }); setBusy('Confirming your task'); setError('');
     try {
       try { sessionStorage.setItem(confirmationPointer(kind), JSON.stringify({ quote, key: key.key, ownerId })); } catch { setNotice('Keep this tab open until the task is confirmed. This browser cannot save confirmation recovery.'); }
-      const next = await workspaceApi<PublicJob>('/jobs', { quoteId: quote.id, idempotencyKey: key.key }); acceptJob(next); setQuote(null); setRefining(false); setHasSelection(false); mask.current?.clear(); setUncertainSubmission(false); setView('result'); window.history.replaceState({}, '', `/app/${kind}?job=${encodeURIComponent(next.id)}`); await refreshAccount();
+      const next = await workspaceApi<PublicJob>('/jobs', { quoteId: quote.id, idempotencyKey: key.key }); acceptJob(next); dispatchQuote({ type: 'accepted' }); setRefining(false); setHasSelection(false); mask.current?.clear(); setView('result'); window.history.replaceState({}, '', `/app/${kind}?job=${encodeURIComponent(next.id)}`); await refreshAccount();
       try { sessionStorage.removeItem(confirmationPointer(kind)); } catch { /* The accepted task is already persisted on the server. */ }
     } catch (cause) {
-      if (!(cause instanceof WorkspaceApiError) || cause.status === 408 || cause.status >= 500 || uncertainSubmission && !['quote_expired', 'quote_changed', 'insufficient_balance'].includes(cause.code ?? '')) { setUncertainSubmission(true); setError(cause instanceof WorkspaceApiError && cause.status === 401 ? 'Sign in again to check this same submission. It will not create a second charge.' : 'The connection ended before confirmation arrived. Check this submission using the same confirmation; it will not create a second charge.'); if (cause instanceof WorkspaceApiError && cause.status === 401) setNeedsSignIn(true); }
+      if (!(cause instanceof WorkspaceApiError) || cause.status === 408 || cause.status >= 500 || uncertainSubmission && !['quote_expired', 'quote_changed', 'insufficient_balance'].includes(cause.code ?? '')) { dispatchQuote({ type: 'uncertain' }); setError(cause instanceof WorkspaceApiError && cause.status === 401 ? 'Sign in again to check this same submission. It will not create a second charge.' : 'The connection ended before confirmation arrived. Check this submission using the same confirmation; it will not create a second charge.'); if (cause instanceof WorkspaceApiError && cause.status === 401) setNeedsSignIn(true); }
       else {
         try { sessionStorage.removeItem(confirmationPointer(kind)); } catch { /* No processing was admitted. */ }
-        setUncertainSubmission(false); setError(displayError(cause));
+        dispatchQuote({ type: 'rejected' }); setError(displayError(cause));
         if (cause.status === 401) setNeedsSignIn(true);
         if (['quote_expired', 'quote_changed', 'insufficient_balance'].includes(cause.code ?? '')) { invalidateQuote(); setQuoteAttempt(value => value + 1); void refreshAccount(); }
       }
@@ -343,7 +355,7 @@ export default function WatermarkWorkspace({ kind, logo, siteName, initialMode =
   }
   function startRefinement() { if (editingLocked || !job || !canRefineResult(job)) return; invalidateQuote(); setRefining(true); setHasSelection(false); setSelectionEditing(false); setView('result'); setError(''); }
   function cancelRefinement() { if (editingLocked) return; invalidateQuote(); setRefining(false); mask.current?.clear(); setHasSelection(false); setSelectionEditing(false); }
-  function selectRecent(next: PublicJob) { if (editingLocked) return; viewGeneration.current += 1; stopPreparation(); invalidateQuote(); acceptJob(next); setFile(null); setLocalUrl(''); setLocalMetadata(null); setMediaRevision(value => value + 1); setRefining(false); setHasSelection(false); setSelectionEditing(false); setView('result'); setError(''); window.history.replaceState({}, '', `/app/${kind}?job=${encodeURIComponent(next.id)}`); void refreshCurrentJob(next.id).catch(cause => setError(displayError(cause))); }
+  function selectRecent(next: PublicJob) { if (editingLocked) return; viewGeneration.current += 1; stopPreparation(); invalidateQuote(); acceptJob(next); setLocalMedia(previous => ({ ...previous, file: null, url: '', metadata: null })); setMediaRevision(value => value + 1); setRefining(false); setHasSelection(false); setSelectionEditing(false); setView('result'); setError(''); window.history.replaceState({}, '', `/app/${kind}?job=${encodeURIComponent(next.id)}`); void refreshCurrentJob(next.id).catch(cause => setError(displayError(cause))); }
   const resultSrc = job?.result?.previewUrl;
   const imageSrc = refining ? resultSrc ?? previewUrl : readyResult && view !== 'original' ? resultSrc ?? previewUrl : previewUrl;
   const recent = jobs.filter(value => (value.operation === 'video-watermark') === (kind === 'video'));
@@ -402,7 +414,7 @@ export default function WatermarkWorkspace({ kind, logo, siteName, initialMode =
         {notice && <div className="workspace-notice" role="status"><Info size={17} /><p>{notice}</p><button type="button" aria-label="Dismiss message" onClick={() => setNotice('')}><X size={16} /></button></div>}
         {!canOperate && capabilities.length > 0 && <p className="workspace-notice" role="status">{capability?.reason ?? 'This operation is unavailable. Your file is retained; choose another operation.'}</p>}
         {capabilityError && <div className="workspace-notice">Processing availability could not be loaded.<button type="button" onClick={() => void refreshCapabilities()}>Try again</button></div>}
-        {loadingDraft ? <div className="workspace-empty"><LoaderCircle className="workspace-spinner" size={28} /><p>Opening your workspace…</p></div> : !selectedMedia && !uncertainSubmission && !pendingUpload && !preparationStatus && !preparationFailed ? <div className="workspace-empty"><CloudUpload size={42} /><h2>Choose a file</h2><p>JPG, PNG or WebP · up to 10 MB<br />MP4 · 24 fps · up to 9 minutes · 100 MB</p><button className="button button-primary" type="button" onClick={() => input.current?.click()}><CloudUpload size={20} />Upload file</button><small>File checks are automatic. You choose when to process.</small></div> : <>
+        {loadingDraft ? <div className="workspace-empty"><LoaderCircle className="workspace-spinner" size={28} /><p>Opening your workspace…</p></div> : !selectedMedia && !uncertainSubmission && !preparationStatus && !preparationFailed ? <div className="workspace-empty"><CloudUpload size={42} /><h2>Choose a file</h2><p>JPG, PNG or WebP · up to 10 MB<br />MP4 · 24 fps · up to 9 minutes · 100 MB</p><button className="button button-primary" type="button" onClick={() => input.current?.click()}><CloudUpload size={20} />Upload file</button><small>File checks are automatic. You choose when to process.</small></div> : <>
           <div className={`workspace-editor-grid ${refining ? 'is-refining' : ''}`}>
             {refining && <div className="workspace-tools" aria-label="Refinement tools"><button type="button" aria-pressed={tool === 'brush'} onClick={() => setTool('brush')} disabled={editingLocked}><Brush size={22} />Brush</button><button type="button" aria-pressed={tool === 'eraser'} onClick={() => setTool('eraser')} disabled={editingLocked}><Eraser size={22} />Eraser</button><button type="button" onClick={() => { selectionStarted(); setUndoToken(value => value + 1); }} disabled={editingLocked}><Undo2 size={22} />Undo</button><button type="button" onClick={() => mask.current?.clear()} disabled={editingLocked}><RotateCcw size={22} />Clear</button></div>}
             <section className="workspace-stage-panel" aria-label="Media editor">

@@ -1,6 +1,7 @@
 import type { MediaKind } from './media-drafts';
+import { IMAGE_MAX_BYTES, VIDEO_MAX_BYTES } from '../contracts/operation-catalog';
 
-export const DEFAULT_LAUNCHER_LIMITS = { image: 10 * 1024 * 1024, video: 100 * 1024 * 1024 } as const;
+export const DEFAULT_LAUNCHER_LIMITS = { image: IMAGE_MAX_BYTES, video: VIDEO_MAX_BYTES } as const;
 export type LauncherLimits = Partial<Record<MediaKind, number>>;
 type Identification = { ok: true; kind: MediaKind; file: File } | { ok: false; message: string };
 

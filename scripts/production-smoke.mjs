@@ -1,24 +1,13 @@
-/* global Buffer, URL, console, fetch, process, setTimeout */
-
+/* global Buffer, URL, console, fetch, process */
 import { resolve } from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
-import sharp from 'sharp';
-import { inspectPngArtifact } from './lib/png-artifact.mjs';
+import { pathToFileURL } from 'node:url';
 import { authorizeFunctionalAcceptance } from './lib/acceptance-budget.mjs';
 
 const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=', 'base64');
-
-async function requireOk(url, fetcher, init) {
-  const response = await fetcher(url, init);
+async function requireOk(url, fetcher) {
+  const response = await fetcher(url);
   if (!response.ok) throw new Error(`${new URL(url).pathname} returned ${response.status}`);
   return response;
-}
-
-async function json(url, fetcher, init) {
-  const response = await fetcher(url, init);
-  const body = await response.json();
-  if (!response.ok) throw new Error(`${new URL(url).pathname} returned ${response.status}: ${body.error ?? 'unknown error'}`);
-  return body;
 }
 
 export async function runPublicSmoke(baseUrl, fetcher = fetch) {
@@ -26,13 +15,13 @@ export async function runPublicSmoke(baseUrl, fetcher = fetch) {
   await requireOk(`${baseUrl}/robots.txt`, fetcher);
   await requireOk(`${baseUrl}/sitemap.xml`, fetcher);
 
-  const anonymousSigning = await fetcher(`${baseUrl}/api/upload-url`, {
+  const anonymousSigning = await fetcher(`${baseUrl}/api/v1/uploads`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ contentType: 'image/png', size: png.byteLength }),
+    headers: { 'Content-Type': 'application/json', Origin: baseUrl },
+    body: JSON.stringify({ kind: 'image', contentType: 'image/png', byteSize: png.byteLength }),
   });
   if (anonymousSigning.status !== 401) {
-    throw new Error(`/api/upload-url anonymous check returned ${anonymousSigning.status}; expected 401`);
+    throw new Error(`/api/v1/uploads anonymous check returned ${anonymousSigning.status}; expected 401`);
   }
 
   const anonymousBenefits = await fetcher(`${baseUrl}/api/me/benefits`);
@@ -48,137 +37,13 @@ export async function runPublicSmoke(baseUrl, fetcher = fetch) {
   }
 }
 
-async function backgroundRemovalFixture() {
-  const source = fileURLToPath(new URL('../public/uploads/background-remover-product-photo.png', import.meta.url));
-  return sharp(source)
-    .extract({ left: 250, top: 180, width: 650, height: 700 })
-    .resize({ width: 512, height: 512, fit: 'inside' })
-    .png()
-    .toBuffer();
-}
-
-async function objectRemovalFixture() {
-  const source = fileURLToPath(new URL('../public/uploads/object-remover-upload.png', import.meta.url));
-  const image = await sharp(source).resize({ width: 512, height: 320, fit: 'cover' }).png().toBuffer();
-  const width = 512;
-  const height = 320;
-  const pixels = Buffer.alloc(width * height * 3);
-  for (let y = 0; y < height; y += 1) {
-    for (let x = 0; x < width; x += 1) {
-      const selected = ((x - 426) / 38) ** 2 + ((y - 185) / 70) ** 2 <= 1;
-      if (!selected) continue;
-      const offset = (y * width + x) * 3;
-      pixels[offset] = 255; pixels[offset + 1] = 255; pixels[offset + 2] = 255;
-    }
-  }
-  const mask = await sharp(pixels, { raw: { width, height, channels: 3 } }).png().toBuffer();
-  return { image, mask };
-}
-
-function benefitBalance(body) {
-  const balance = body.balance ?? body.freeUsesRemaining;
-  if (!Number.isInteger(balance)) throw new Error('Benefits response is missing an integer balance.');
-  return balance;
-}
-
-async function inspectWatermarkArtifact(bytes) {
-  const input = Buffer.from(bytes);
-  const image = sharp(input, { failOn: 'warning', limitInputPixels: 40_000_000 });
-  const metadata = await image.metadata();
-  if (metadata.format === 'png') return inspectPngArtifact(input);
-  if (metadata.format !== 'jpeg' || !metadata.width || !metadata.height) throw new Error('Result artifact is not a valid JPEG or PNG image.');
-  // Header metadata alone can accept truncated JPEGs. Decode the actual pixels.
-  await image.stats();
-  return { format: metadata.format, width: metadata.width, height: metadata.height, hasAlpha: metadata.hasAlpha, hasTransparentPixel: false };
-}
-
 export async function runAuthenticatedSmoke(baseUrl, sessionCookie, fetcher = fetch, options = {}) {
   if (!sessionCookie) {
     if (options.requireAuthentication) throw new Error('A production smoke session cookie is required.');
     return { status: 'skipped' };
   }
-
-  const environment = options.environment ?? process.env;
-  const authorization = await authorizeFunctionalAcceptance({ ...options, baseUrl }, { ...environment, PROCESSING_ACCEPTANCE_SESSION_COOKIE: sessionCookie });
-  if (authorization.unit !== 'freeUses') {
-    const { runProcessingAcceptance } = await import('./processing-acceptance.mjs');
-    return runProcessingAcceptance({ ...options, functional: true, baseUrl, operation: authorization.operation }, {
-      fetcher, environment: { ...environment, PROCESSING_ACCEPTANCE_SESSION_COOKIE: sessionCookie },
-    });
-  }
-
-  if (authorization.amount !== 1 || !['image-watermark', 'background-removal', 'object-removal'].includes(authorization.operation)) throw new Error('The legacy smoke requires its exact reviewed one-use image contract.');
-  const operation = authorization.operation === 'image-watermark' ? 'watermark-removal' : authorization.operation;
-  const reservation = await authorization.budget.reserve('image', `legacy ${operation} acceptance`, { operation: authorization.operation, unit: 'freeUses', amount: 1 });
-  const objectFixture = operation === 'object-removal' ? await objectRemovalFixture() : null;
-  const fixture = options.fixture ?? (operation === 'background-removal' ? await backgroundRemovalFixture() : objectFixture?.image ?? png);
-  const maskFixture = options.maskFixture ?? objectFixture?.mask;
-
-  const apiHeaders = { 'Content-Type': 'application/json', Cookie: sessionCookie };
-  const benefitsBefore = await json(`${baseUrl}/api/me/benefits`, fetcher, { headers: { Cookie: sessionCookie } });
-  const balanceBefore = benefitBalance(benefitsBefore);
-  if (balanceBefore < 1) throw new Error('The production smoke account has no available test credit.');
-
-  const signed = await json(`${baseUrl}/api/upload-url`, fetcher, {
-    method: 'POST',
-    headers: apiHeaders,
-    body: JSON.stringify({ contentType: 'image/png', size: fixture.byteLength }),
-  });
-
-  const upload = await fetcher(signed.url, { method: 'PUT', headers: { 'Content-Type': 'image/png' }, body: fixture });
-  if (!upload.ok) throw new Error(`R2 PUT returned ${upload.status}`);
-
-  let signedMask;
-  if (operation === 'object-removal') {
-    if (!maskFixture) throw new Error('Object-removal smoke requires a mask fixture.');
-    signedMask = await json(`${baseUrl}/api/upload-url`, fetcher, {
-      method: 'POST', headers: apiHeaders,
-      body: JSON.stringify({ contentType: 'image/png', size: maskFixture.byteLength }),
-    });
-    const maskUpload = await fetcher(signedMask.url, { method: 'PUT', headers: { 'Content-Type': 'image/png' }, body: maskFixture });
-    if (!maskUpload.ok) throw new Error(`R2 mask PUT returned ${maskUpload.status}`);
-  }
-
-  const created = await json(`${baseUrl}/api/jobs`, fetcher, {
-    method: 'POST',
-    headers: apiHeaders,
-    body: JSON.stringify({ inputKey: signed.key, ...(signedMask ? { maskKey: signedMask.key } : {}), operation }),
-  });
-
-  let job;
-  for (let attempt = 0; attempt < 10; attempt += 1) {
-    job = await json(`${baseUrl}/api/jobs/${created.id}`, fetcher, { headers: { Cookie: sessionCookie } });
-    if (job.status === 'completed' || job.status === 'failed') break;
-    await new Promise((done) => setTimeout(done, 1_000));
-  }
-
-  if (job?.status !== 'completed' || !job.resultUrl || !job.downloadUrl) {
-    throw new Error(`Production job did not complete: ${job?.status ?? 'unknown'}`);
-  }
-
-  let result;
-  for (const [index, signedUrl] of [job.resultUrl, job.downloadUrl].entries()) {
-    const response = await requireOk(signedUrl, fetcher, { headers: { Origin: baseUrl } });
-    if (response.headers.get('access-control-allow-origin') !== baseUrl) {
-      throw new Error('R2 result download is missing the production CORS origin.');
-    }
-    const bytes = await response.arrayBuffer();
-    const inspected = operation === 'watermark-removal'
-      ? await inspectWatermarkArtifact(bytes)
-      : await inspectPngArtifact(bytes, { requireTransparency: operation === 'background-removal' });
-    const expectedType = inspected.format === 'jpeg' ? 'image/jpeg' : 'image/png';
-    if (response.headers.get('content-type')?.split(';')[0].trim().toLowerCase() !== expectedType) throw new Error('Result Content-Type does not match the decoded image format.');
-    if (index === 0) result = inspected;
-  }
-
-  const benefitsAfter = await json(`${baseUrl}/api/me/benefits`, fetcher, { headers: { Cookie: sessionCookie } });
-  const balanceAfter = benefitBalance(benefitsAfter);
-  if (balanceAfter !== balanceBefore - 1) {
-    throw new Error(`Production smoke credit invariant failed: expected ${balanceBefore - 1}, received ${balanceAfter}.`);
-  }
-
-  await authorization.budget.finish(reservation, { status: 'passed', creditsBefore: balanceBefore, creditsAfter: balanceAfter });
-  return { status: 'passed', operation, balanceBefore, balanceAfter, result };
+  const { runProcessingAcceptance } = await import('./processing-acceptance.mjs');
+  return runProcessingAcceptance({ ...options, functional: true, baseUrl }, { fetcher, environment: { ...(options.environment ?? process.env), PROCESSING_ACCEPTANCE_SESSION_COOKIE: sessionCookie } });
 }
 
 export async function runProductionSmoke(environment = process.env, fetcher = fetch, options = {}) {

@@ -7,7 +7,7 @@ import type { CreditEnvironment, WalletState } from './credit-policy';
 
 type Client = Pick<PoolClient, 'query'>;
 type Kind = 'reward' | 'admin' | 'purchase';
-type Status = 'reserved' | 'settled' | 'refunded';
+type Status = import('../contracts/processing-state').ChargeStatus;
 interface Lot { id: string; owner_id: string; environment: CreditEnvironment; kind: Kind; source_id: string; origin_type: string; origin_id: string; actor_id: string | null; granted: string; available: string; status: 'active' | 'frozen' }
 interface Reservation { owner_id: string; environment: CreditEnvironment; amount: string; wallet_epoch: string; status: Status }
 interface Allocation extends Lot { amount: string }

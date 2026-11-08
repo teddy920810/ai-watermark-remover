@@ -25,14 +25,6 @@ export function classifyVerification(files) {
   return { mode, reason: 'allowlisted change range', browser: mode === 'ui' };
 }
 
-export function verificationCommands(mode) {
-  if (mode === 'docs') return [];
-  if (mode === 'content') return ['content:validate', 'test -- src/lib/content src/lib/build/content-ci.test.ts'];
-  if (mode === 'ui') return ['images:optimize', 'check:ui'];
-  if (mode === 'full') return ['audit:dependencies', 'verify'];
-  throw new Error('Unknown verification mode');
-}
-
 export function changedFiles(base, head, cwd = process.cwd()) {
   if (!/^[a-f0-9]{40}$/.test(base ?? '') || !/^[a-f0-9]{40}$/.test(head ?? '') || /^0+$/.test(base)) return null;
   // NUL-delimited names include both sides of renames; deleted executable paths cannot hide.
@@ -128,8 +120,8 @@ if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.ar
     } else if (process.argv[2] === 'run') {
       if (plan.mode === 'docs') requireSuccess('git', ['diff', '--check', process.env.BASE_SHA, process.env.HEAD_SHA, '--']);
       else {
-        if (!process.env.npm_execpath) throw new Error('Run through npm run ci:verify');
-        for (const command of verificationCommands(plan.mode)) requireSuccess(process.execPath, [process.env.npm_execpath, 'run', ...command.split(' ')]);
+        const { runVerification } = await import('./verify.mjs');
+        runVerification(plan.mode, { ci: true });
       }
     } else throw new Error('Usage: ci-plan.mjs plan|run');
   } catch (error) { process.stderr.write(`${error.message}\n`); process.exitCode = 1; }

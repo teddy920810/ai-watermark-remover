@@ -56,7 +56,7 @@ export class ProcessingService {
       await this.options.quotes.create(quote);
       return quote;
     }
-    const imageCreditOperation = operationCatalog[request.operation].legacyOperation;
+    const imageCreditOperation = operationCatalog[request.operation].imageCreditOperation;
     const imageCost = amountSchema.parse((imageCreditOperation ? this.options.imageCreditCosts?.[imageCreditOperation] : undefined) ?? this.options.purchasedImageCreditCost ?? 1);
     let unit: ProcessingQuote['unit'] = 'processingCredits';
     if (['background-removal', 'object-removal'].includes(request.operation)) {

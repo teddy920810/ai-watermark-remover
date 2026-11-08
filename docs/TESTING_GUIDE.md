@@ -1,6 +1,6 @@
 # 测试与质量指南
 
-本指南面向开发者、内容共创者和运维人员。目标不是追求测试数量，而是让测试能够阻止真实线上故障。
+本指南是本地检查与生产验收范围的唯一矩阵；README、开发指南、贡献指南和运维手册引用本页。`package.json` 提供命令入口，`scripts/verify.mjs` 统一步骤和执行，CI 仍由 `scripts/ci-plan.mjs` 从不可变 Git 差异选择范围。目标是让测试阻止真实线上故障。
 
 ## 测试分层
 
@@ -11,13 +11,12 @@
 | 浏览器 E2E | `npm run test:e2e` | 上传 UI、失败提示、GA page_view、SEO、路由、无障碍 | 否，本地 Astro |
 | 独立图片组件 | `npm run test:components` | 真双图、单图、加载失败、键盘/鼠标/触控和切换复位 | 否，独立本地夹具 |
 | 快速本地检查 | `npm run check:fast` | 内容同步和全部单元测试 | 否 |
-| 内容检查 | `npm run check:content` | CMS/Blog/落地页/图片相关测试和生产 Build | 否 |
-| UI 检查 | `npm run check:ui` | 公共布局相关测试和公共页面 Playwright | 否 |
+| 内容检查 | `npm run check:content` | 内容同步、内容测试、类型检查、Site 构建及该产物的响应图片检查 | 否 |
+| UI 检查 | `npm run check:ui` | 响应图片准备、公共布局相关测试和公共页面 Playwright | 否 |
 | 完整验证 | `npm run verify` | 覆盖率、Lint、Build、E2E和独立组件浏览器测试 | 否 |
 | 高风险发布检查 | `npm run release:verify` | 依赖审计、站点配置和完整验证 | 否 |
 | 独立目标产物 | `node scripts/build-target.mjs site` / `app` / `worker` | 静态站、App Build Output 或真实 Worker bundle 与上传白名单 | 否 |
 | Public Production Smoke | `npm run test:smoke:production` | 正式域名、静态入口和匿名保护，不触发 Provider | 是，只读 |
-| 旧图片工具功能验收 | `npm run test:smoke:background-removal` / `test:smoke:object-removal` | 登录、真实 R2/Provider、PNG 产物和额度恰好扣一次 | 是，各消耗 1 次额度 |
 | 新工作区公开检查 | `npm run test:smoke:processing` | 公开页面和 v1 能力接口 | 是，只读 |
 | 新工作区功能验收 | `npm run test:smoke:processing -- --functional ...` | 实际媒体检查、报价、处理、下载和单次扣费 | 是，消耗明确确认的报价额度 |
 
@@ -37,7 +36,7 @@ npm run verify
 
 Pages CMS 保存到内容审核分支，经受保护 PR 与必需检查后合并 `main`，随后由 Vercel 按目标发布。内容编辑不需要在本地运行测试，但必须等待：
 
-1. GitHub Actions 的 **CI / verify** 成功。
+1. GitHub Actions 的 **CI / verify** 和 **Required target artifacts** 成功。
 2. Vercel Production 状态变成 **Ready**。
 3. 打开正式页面检查标题、图片、链接和移动端排版。
 
@@ -49,8 +48,9 @@ Pages CMS 保存到内容审核分支，经受保护 PR 与必需检查后合并
 
 ## 动态验证矩阵
 
-| 改动范围 | 本地必选 | 生产抽查 |
+| 改动范围 | 本地必选 | 生产验收（仅发布时） |
 |---|---|---|
+| 仅文档或项目指令 | Markdown、diff、范围与工作区检查；被构建/自动化消费时按实际风险升级 | 不适用 |
 | 普通小改、局部纯函数 | 定向红/绿测试 + `check:fast` | 仅检查受影响功能 |
 | CMS、Blog、落地页、图片内容 | `check:content` | 全部改动 URL 返回 200；浏览器抽查代表模板 |
 | 布局、全局 CSS、公共 UI | `check:ui` | 首页、工具页、Blog 中受影响模板的桌面/移动端 |
@@ -58,26 +58,39 @@ Pages CMS 保存到内容审核分支，经受保护 PR 与必需检查后合并
 | 依赖、构建、CI、全局配置 | `release:verify` | 核对 CI、Vercel 和相应运行时结果 |
 | 域名、OAuth、第三方集成 | `release:verify` + 专项测试 | 必须验证真实端到端信号 |
 
-低风险改动不需要在本地和 CI 重复运行完整 `verify`；CI 根据明确允许名单选择最小充分门禁。若改动范围不确定、定向检查失败、跨越多个风险类别，升级到 `release:verify`。
+所有行为改动先运行定向红测和绿测，再选择上表的一次风险门禁。低风险改动不在本地和 CI 重复运行完整 `verify`；不要叠加 `check:fast`、`check:content`、`check:ui`、独立 Build 和 `release:verify`。范围扩大、定向检查失败、风险不确定或跨多个风险类别时升级到 `release:verify`。CI/分类器/构建链调整自身始终是高风险，过渡期仍完整验证。
+
+标准门禁因端口、进程或平台问题无法执行时，先安全排查一次；仍不能运行则用覆盖缺失范围的等价验证补齐，并明确环境和剩余限制。已经充分覆盖的部分不重复执行；Windows 本地通过不代表 Linux/macOS 已验收。
 
 `verify` 和 `verify:deploy` 先执行 `lint:code`，类型检查由随后 `build` 中的一次 `astro check` 承担。单独执行 `lint` 或 `build` 仍会检查类型。独立目标产物验证检查不同的路由、依赖和运行环境边界，不能用组合站点 Build 代替；仅构建受影响的目标，且同一工作区的 Astro 构建必须串行。
+
+验证别名共用 Node 执行器，逐步执行并在首次失败时停止，不依赖 PowerShell、Bash 或盘符。`node scripts/verify.mjs content --plan` 可只读查看步骤（其他模式为 fast/ui/full/release/deploy）。本地验证入口将单元测试和 E2E 并发限制为 2，CI 保留原并发配置和全部断言；没有跳过检查的开关。`check:content` 不再构建私有 App/API；CI 内容路径继续由独立必需产物门禁构建 Site，避免同一 CI 任务重复构建。
+
+E2E 使用 `scripts/test-server.mjs` 启动独占的本地 Astro 服务；文件监听排除忽略的工具归档和构建/测试产物，仍监听真实源码。测试服务关闭 Astro 开发工具栏及其后台抓取，产品页面和独立 axe 全站/404 审计继续运行。端口隔离、不复用未知服务、全部浏览器断言与超时保持不变。
 
 ## 抽查标准
 
 - Schema、URL、字段存在性、状态数量等可程序化约束，对全部改动记录执行检查，不抽样。
 - 同一模板影响多个页面时，视觉上至少检查 1 个正向页面和 1 个负向页面；正向页面应出现目标行为，负向页面应保持不变。
-- 全局 UI 改动至少覆盖首页、工具页、Blog 三类模板，以及桌面和移动端两个视口。
+- 只检查受影响的代表模板；全局 UI 影响首页、工具页、Blog 时覆盖这三类及桌面/移动端。低风险局部样式检查一个代表页面的桌面/移动和一个负向区域即可。
 - 内容批量发布时，所有新增 URL 做 HTTP/标题/H1 检查，浏览器重点抽查第一篇、最后一篇和结构最复杂的一篇。
 - 图片链路至少抽查 Blog 与工具页各一张，并验证 `<picture>`、WebP `srcset`、原图 fallback 和尺寸信息。
 - 鉴权、对象归属、越权、安全头和第三方真实业务信号不能用代表页面抽查代替。
+- 所有内容、路由或数据记录实际变化的 URL 做只读 HTTP 检查；共享 CSS/组件的所有引用路由不自动算作改动 URL。低风险 UI 上线后确认部署绑定预期 SHA，再检查正向页面和负向区域。
+- 未受影响的域名、证书、OAuth、R2、CORS、Provider 和 Production Smoke 标记为 `not applicable`；不为凑齐通过而调用真实服务。
 
 ### 运维人员
 
 环境变量或域名变更后先运行无成本的 `npm run test:smoke:production`。R2、CORS、鉴权、Provider 或功能链路变更时，只运行受影响操作的认证功能验收，不用背景移除的结果代替图片去水印或视频验收。
 
-- 旧协议背景/物体兼容验收：通过本机环境设置 `SMOKE_SESSION_COOKIE`，仅在需要核实旧API时运行对应旧命令一次；不能代替新客户端v1验收。
-- 新工作区六类操作（含背景/物体）：通过本机环境设置 `PROCESSING_ACCEPTANCE_SESSION_COOKIE`，按 [Worker 部署说明](product/WORKER_DEPLOYMENT.md#发布验收与恢复操作) 确认操作、样本、报价金额/单位和调用预算，再运行 `--functional` 一次。
+- 六类现行操作（含背景/物体）：通过本机环境设置 `PROCESSING_ACCEPTANCE_SESSION_COOKIE`，按 [Worker 部署说明](product/WORKER_DEPLOYMENT.md#发布验收与恢复操作) 确认操作、样本、报价金额/单位和调用预算，再运行 `--functional` 一次。
 - 功能验收会创建临时对象并消耗额度。缺少认证或预算时不得记为通过；提交结果不明确时查询原任务，不重新提交。
+
+只有涉及生产环境/域名的变更才要求重新运行公开 Production Smoke；R2、CORS、鉴权、Provider 或处理链路变更运行匹配操作的认证功能验收一次，不循环收费重试。新建或修改处理操作还须操作级浏览器测试和部署后一次手动功能验收。定时 smoke 保持公开只读；重复 Provider 成本必须另获授权。适用的认证或 Provider 验收未执行时是阻塞项，不能标记通过。支付和第三方集成还须各自真实信号，不能用脚本存在、按钮显示或 HTTP 200 代替。
+
+### 测试去重边界
+
+内容 schema、安全规则、独立 SEO 基线、厂商协议与金融恢复测试保留。旧执行链专属测试随退役代码移除；现行价格、预算授权、收费幂等、归属、PNG/视频产物和 UNKNOWN 恢复仍由 v1/Worker 测试覆盖。`site-visual-system.test.ts` 维护视觉 token 和尚无等价覆盖的样式约束；首页模块、工具/指南数量和轮播行为由 `site-quality.spec.ts` 验证，图片框架由 `image-display-frames.spec.ts` 验证，不再为相同行为重复锁定源码类名或库的 import 写法。
 
 ## 自动化保护
 

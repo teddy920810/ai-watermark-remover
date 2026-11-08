@@ -125,28 +125,11 @@ describe('common functional entry proof before first fetch or legacy ledger crea
 describe('reviewed legacy fixtures share the aggregate without implicit issuance', () => {
   it.each(['direct-smoke', 'required-wrapper'] as const)('%s preserves the original one-use contract without authenticated check-in', async entry => {
     const state = await legacyFixture();
-    let submitted = false;
+    const current = site(state.sample);
     const fetcher = vi.fn(async (url: string | URL | Request, init?: RequestInit) => {
       const address = new URL(String(url));
-      const authenticated = new Headers(init?.headers).has('Cookie');
-      if (address.hostname.endsWith('r2.cloudflarestorage.com')) {
-        expect(authenticated).toBe(false);
-        return init?.method === 'PUT' ? new Response(null) : new Response(new Uint8Array(state.sample), { headers: { 'Content-Type': 'image/jpeg', 'Access-Control-Allow-Origin': base.baseUrl } });
-      }
-      if (['/', '/robots.txt', '/sitemap.xml'].includes(address.pathname)) return new Response('public');
-      if (!authenticated) return new Response(null, { status: 401 });
-      if (address.pathname === '/api/me/check-in') throw new Error('An authenticated check-in must never be implicit');
-      if (address.pathname === '/api/me/benefits') {
-        expect(JSON.parse(await readFile(state.ledgerPath, 'utf8'))).toMatchObject({ spendReservedUnknown: 100, realProviderInvocationsConsumed: 1 });
-        return Response.json({ balance: submitted ? 2 : 3 });
-      }
-      if (address.pathname === '/api/upload-url') return Response.json({ key: 'fixture-input', url: 'https://account.r2.cloudflarestorage.com/private/input' });
-      if (address.pathname === '/api/jobs' && init?.method === 'POST') {
-        expect(JSON.parse(String(init.body))).toMatchObject({ operation: 'watermark-removal' });
-        submitted = true; return Response.json({ id: 'fixture-job' });
-      }
-      if (address.pathname === '/api/jobs/fixture-job') return Response.json({ status: 'completed', resultUrl: 'https://account.r2.cloudflarestorage.com/private/result', downloadUrl: 'https://account.r2.cloudflarestorage.com/private/download' });
-      throw new Error('Unexpected fixture request');
+      if (address.pathname.startsWith('/api/') && !new Headers(init?.headers).has('Cookie')) return new Response(null, { status: 401 });
+      return current(url, init);
     });
     const log = vi.spyOn(console, 'log').mockImplementation(() => {});
     try {
@@ -154,8 +137,8 @@ describe('reviewed legacy fixtures share the aggregate without implicit issuance
       const result = entry === 'direct-smoke'
         ? await runAuthenticatedSmoke(base.baseUrl, environment.PROCESSING_ACCEPTANCE_SESSION_COOKIE, fetcher, options)
         : await runProductionSmoke({ ...environment, SMOKE_BASE_URL: base.baseUrl }, fetcher, options);
-      expect(result).toMatchObject({ status: 'passed', operation: 'watermark-removal', balanceBefore: 3, balanceAfter: 2 });
-      expect(fetcher.mock.calls.filter(([url, init]) => new URL(String(url)).pathname === '/api/jobs' && init?.method === 'POST')).toHaveLength(1);
+      expect(result).toMatchObject({ status: 'passed', operation: 'image-watermark', unit: 'freeUses', amount: 1 });
+      expect(fetcher.mock.calls.filter(([url, init]) => new URL(String(url)).pathname === '/api/v1/jobs' && init?.method === 'POST')).toHaveLength(1);
       expect(fetcher.mock.calls.filter(([url, init]) => new URL(String(url)).pathname === '/api/me/check-in' && new Headers(init?.headers).has('Cookie'))).toHaveLength(0);
       expect(JSON.parse(await readFile(state.ledgerPath, 'utf8'))).toMatchObject({ grossIssued: 0, grossSpent: 100, spendReservedUnknown: 0, realProviderInvocationsConsumed: 1,
         events: [{ unit: 'freeUses', amount: 1, creditAmount: 100, status: 'passed' }] });
@@ -224,7 +207,7 @@ describe('aggregate new Credits acceptance authorization', () => {
     const state = await fixture(); await creditBudget(state.ledgerPath);
     const delegate = site(state.sample, { creditsAmount: 100, status: 'UNKNOWN' });
     const fetcher = vi.fn(async (url: string | URL | Request, init?: RequestInit) => {
-      if (['/api/upload-url', '/api/me/benefits', '/api/me/check-in'].includes(new URL(String(url)).pathname)) return new Response(null, { status: 401 });
+      if (new URL(String(url)).pathname.startsWith('/api/') && !new Headers(init?.headers).has('Cookie')) return new Response(null, { status: 401 });
       return delegate(url, init);
     });
     const log = vi.spyOn(console, 'log').mockImplementation(() => {});

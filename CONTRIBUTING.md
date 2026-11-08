@@ -11,42 +11,13 @@ Pages CMS 内容通过审核分支、受保护 PR 与必需 CI 进入 `main`。�
 
 ## 开发流程
 
-涉及行为或配置约束的改动遵循 TDD：
-
-1. 添加或更新测试，并确认测试因目标行为尚未实现而失败。
-2. 实现最小改动使测试通过。
-3. 根据改动范围选择本地检查；PR CI 负责按明确风险范围执行稳定必需检查。
-
-```sh
-npm run check:fast       # 普通小改
-npm run check:content    # CMS、Blog、落地页、图片内容
-npm run check:ui         # 布局、全局样式、公共 UI
-npm run release:verify   # API、安全、依赖、构建与 CI 等高风险改动
-```
-
-PR CI 保持 `verify` 与 `Required target artifacts` 必需上下文；明确低风险内容采用内容检查与 Site 产物，未知/混合/高风险采用包含覆盖率、Lint、生产构建和浏览器 E2E 的完整验证，必须通过后才能合并 `main`。首次运行浏览器测试前执行 `npx playwright install chromium`。内容修改使用 `check:content` 在本地验证 schema、SEO 路由和生产构建，无需与 CI 重复运行完整 `verify`。
-
-测试职责：
-
-- 纯函数和服务规则：Vitest 单元测试。
-- API、环境变量和安全错误：Vitest 集成测试。
-- 上传 UI、GA `page_view`、SEO 和无障碍：Playwright E2E。
-- 正式域名与匿名保护：`npm run test:smoke:production`只读、不上传；真实R2/Provider使用匹配operation的认证功能命令，按授权预算运行一次，见[测试指南](docs/TESTING_GUIDE.md)。
-
-完整说明见 `docs/TESTING_GUIDE.md`。
+涉及行为或配置约束的改动先运行定向红测，再做最小实现并运行绿测。本地检查、CI 必需门禁、生产抽查与收费验收统一按[测试指南](docs/TESTING_GUIDE.md#动态验证矩阵)执行；首次运行浏览器测试前执行 `npx playwright install chromium`。
 
 提交应聚焦单一目标，说明用户可见影响。不要绕过类型检查、测试或安全约束。改动内容模型时必须同步更新 `src/content.config.ts`、`.pages.yml` 和 Pages CMS 教程。
 
 ## 第三方集成代码规则
 
-GA、支付、登录、Cloud SDK、Consent 等第三方初始化片段属于“集成协议”，不是普通业务代码：
-
-- 用户提供或厂商官方提供的代码默认逐字保留，只替换官方标明的 ID、域名等占位符。
-- 不得擅自将其改写成看似等价的现代语法，不调整调用顺序、脚本属性、参数对象或加载时机。
-- 确需偏离官方片段时，必须先查阅最新官方文档，向需求方说明差异和风险并取得确认。
-- 修改前增加针对关键语义的失败测试；不能只测试“脚本存在”或“ID 正确”。
-- 部署后验证真实业务信号。例如 GA 必须确认 `page_view` 网络事件或 Realtime/DebugView，而不只是确认 `gtag.js` 返回 200。
-- 无法完成平台侧验证时，必须明确标注尚未验证的环节，不得宣称集成已经完整可用。
+GA、支付、登录、Cloud SDK、Consent 的初始化片段按[项目第三方集成合同](AGENTS.md#third-party-integration-contract-rules)逐字保留；需要偏离时先核对官方依据并取得批准。该合同统一维护回归测试、真实端到端信号和未验证状态要求。
 
 ## 内容与代码的边界
 
@@ -58,7 +29,6 @@ GA、支付、登录、Cloud SDK、Consent 等第三方初始化片段属于“�
 ## 提交前检查
 
 - 工作区不存在密钥和临时文件。
-- 本地按AGENTS只选一次覆盖实际风险的门禁；main合并依赖稳定必需CI成功，高风险仍完整运行`npm run verify`，不在低风险本地重复全量检查。
-- 本地检查目标页面及 `/404`、`/robots.txt`、`/sitemap.xml`。
+- 按[验证矩阵](docs/TESTING_GUIDE.md#动态验证矩阵)完成适用检查；目标页面和 SEO 文件仅在受影响时验收。
 - 已同步远端 `main`，没有覆盖 Pages CMS 新提交。
-- 第三方集成使用官方原始片段，并已验证平台侧真实事件或明确记录未验证项。
+- 第三方集成有改动时，核对官方原始片段和平台侧真实事件，或明确记录未验证项。

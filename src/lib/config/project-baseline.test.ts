@@ -55,7 +55,6 @@ describe('project baseline configuration', () => {
     const packageJson = JSON.parse(readProjectFile('package.json')) as { scripts: Record<string, string> };
     expect(workflow).toContain('cancel-in-progress: true');
     expect(workflow).toContain('npm run ci:verify');
-    expect(readProjectFile('scripts/ci-plan.mjs')).toContain("['audit:dependencies', 'verify']");
     expect(workflow).toContain('actions/upload-artifact@v4');
     expect(workflow).toContain('if: failure()');
     expect(workflow).toContain('test-results/');

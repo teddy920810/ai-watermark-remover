@@ -7,9 +7,6 @@ describe('retired UI and content ownership', () => {
   it.each(['src/components/HomeComparison.astro','src/components/LandingComparison.astro','src/components/workspace/LegacyImageWorkspace.tsx','src/components/uploader/BackgroundRemoverUploader.tsx','src/components/uploader/ObjectRemoverUploader.tsx','src/components/uploader/upload-machine.ts','src/components/payments/useImageCreditPrice.ts','src/components/launcher/launcher-copy.ts','src/lib/upload/direct-upload.ts'])('removes %s after new consumers are verified', file => {
     expect(existsSync(new URL(file,root))).toBe(false);
   });
-  it('preserves old admission/query and Provider/financial recovery owners', () => {
-    for(const file of ['src/pages/api/jobs/index.ts','src/pages/api/jobs/[id].ts','src/pages/api/upload-url.ts','src/lib/jobs/job-service.ts','src/lib/providers/replicate-background-provider.ts','src/lib/providers/replicate-object-provider.ts','apps/app/retained-assets.json']) expect(existsSync(new URL(file,root)),file).toBe(true);
-  });
   it('keeps retired product controls and dead CTA settings outside CMS while retaining record merge', () => {
     const config=YAML.parse(read('.pages.yml'));
     expect(config.components['uploader-copy-override']).toBeUndefined();

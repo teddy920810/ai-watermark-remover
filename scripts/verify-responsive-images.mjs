@@ -1,8 +1,8 @@
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
-import { cwd, stdout } from 'node:process';
+import { argv, cwd, stdout } from 'node:process';
 
-const outputDirectory = resolve(cwd(), 'dist', 'client');
+const outputDirectory = resolve(cwd(), argv[2] ?? 'dist/client');
 const htmlFiles = [];
 
 function collectHtmlFiles(directory) {

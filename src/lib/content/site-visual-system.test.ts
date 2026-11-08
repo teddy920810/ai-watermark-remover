@@ -4,9 +4,10 @@ import { describe, expect, it } from 'vitest';
 const globalCss = readFileSync(new URL('../../styles/design-system.css', import.meta.url), 'utf8') + readFileSync(new URL('../../styles/global.css', import.meta.url), 'utf8');
 const homePage = readFileSync(new URL('../../pages/index.astro', import.meta.url), 'utf8');
 const landingPage = readFileSync(new URL('../../components/LandingPage.astro', import.meta.url), 'utf8');
-const launcher = readFileSync(new URL('../../components/launcher/MediaLauncher.tsx', import.meta.url), 'utf8');
 const launcherCss = readFileSync(new URL('../../components/launcher/launcher.css', import.meta.url), 'utf8');
 
+// Section presence, tool/guide counts and carousel actions are covered in site-quality.spec.ts;
+// image geometry is covered in image-display-frames.spec.ts. Keep distinct visual-token checks here.
 describe('site-wide operations visual system', () => {
   it('defines the supplied mockup blue, ink, cream, surface, and success tokens', () => {
     expect(globalCss).toContain('--brand-blue: #3975ff;');
@@ -34,30 +35,6 @@ describe('site-wide operations visual system', () => {
     expect(globalCss).toContain('.legal-body {');
   });
 
-  it('implements the supplied post-hero section system', () => {
-    expect(homePage).toContain('class="process-step-media"');
-    expect(homePage).toContain('class="removal-grid"');
-    expect(homePage).toContain('class="scenario-showcase"');
-    expect(landingPage).toContain('class="process-step-media"');
-    expect(globalCss).toContain('.process-step-media {');
-    expect(globalCss).toContain('.removal-grid {');
-    expect(globalCss).toContain('.scenario-showcase {');
-    expect(globalCss).toContain('.site-cta {');
-    expect(globalCss).toContain('.footer-group {');
-  });
-
-  it('matches the reference carousel, highlighted headings, tool grid, and guide lists', () => {
-    expect(homePage).toContain('data-scenario-direction="previous"');
-    expect(homePage).toContain('data-scenario-direction="next"');
-    expect(homePage).toContain("getCollection('landingPages')");
-    expect(homePage).toContain('.slice(0, 6)');
-    expect(homePage).toContain('class="guides-list-grid"');
-    expect(globalCss).toContain('.scenario-stage-controls {');
-    expect(globalCss).toContain('.section-heading h2 em');
-    expect(globalCss).toContain('.guides-list-grid {');
-    expect(globalCss).toMatch(/\.section\s*\{[^}]*padding:\s*110px max\(32px, calc\(\(100vw - 1320px\) \/ 2\)\);/s);
-  });
-
   it('keeps shared headings and lower-page spacing aligned with the reference system', () => {
     expect(globalCss).toMatch(/\.steps h3\s*\{[^}]*font:\s*700 19px\/1\.3 var\(--font-display\);/s);
     expect(globalCss).toMatch(/\.feature-copy h3\s*\{[^}]*font:\s*700 clamp\(28px,\s*2\.4vw,\s*39px\)\/1\.18 var\(--font-display\);[^}]*letter-spacing:\s*-1\.5px;/s);
@@ -75,16 +52,6 @@ describe('site-wide operations visual system', () => {
     expect(globalCss).toMatch(/\.feature-media > \.responsive-picture\s*\{[^}]*width:\s*auto;[^}]*height:\s*auto;[^}]*max-width:\s*100%;/s);
     expect(globalCss).toMatch(/\.feature-media\s*\{[^}]*background:\s*transparent;[^}]*box-shadow:\s*none;/s);
     expect(globalCss).toMatch(/\.feature-media img\s*\{[^}]*width:\s*auto;[^}]*height:\s*auto;[^}]*object-fit:\s*contain;[^}]*box-shadow:\s*none;/s);
-  });
-
-  it('uses generated imagery for the journey and library icons for controls', () => {
-    expect(homePage).toContain("from '@lucide/astro'");
-    expect(homePage).toContain('class="process-step-media"');
-    expect(landingPage).toContain("from '@lucide/astro'");
-    expect(landingPage).toContain('class="process-step-media"');
-    expect(launcher).toContain("from 'lucide-react'");
-    expect(launcher).toContain('className="launcher-upload-icon"');
-    expect(launcherCss).toContain('.launcher-drop');
   });
 
   it('keeps the blue system readable on compact screens', () => {

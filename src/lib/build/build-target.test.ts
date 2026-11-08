@@ -3,7 +3,7 @@ import { execFileSync, spawnSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
-import { collectTargetRoutes, createBuildPlan, prepareBuildInputs, targetIntegration, classifyTargetChanges, renderGatewayConfig, renderAppSiteProxy, configureAppSiteProxy, validateBuildArtifact, stageDeploymentArtifact, assertRequiredTargetBuilds, changedTargetFiles } from '../../../scripts/build-target.mjs';
+import { collectTargetRoutes, createBuildPlan, prepareBuildInputs, targetIntegration, classifyTargetChanges, renderAppSiteProxy, configureAppSiteProxy, validateBuildArtifact, stageDeploymentArtifact, assertRequiredTargetBuilds, changedTargetFiles } from '../../../scripts/build-target.mjs';
 
 const directories: string[] = [];
 function fixture() {
@@ -24,7 +24,23 @@ function fixture() {
 afterEach(() => { for (const directory of directories.splice(0)) rmSync(directory, { recursive: true, force: true }); });
 
 describe('independent build targets', () => {
-  it.each(['site', 'app', 'gateway'])('builds an explicit same-commit %s redeployment so environment updates take effect', (target) => {
+  it.each(['site', 'app'])('prepares %s once at lifecycle setup, leaving planning and route injection non-destructive', (target) => {
+    const root = fixture(); const plan = createBuildPlan(root, target);
+    mkdirSync(plan.outDir, { recursive: true });
+    const stale = path.join(plan.outDir, 'obsolete.txt'); writeFileSync(stale, 'old output');
+    const integration = targetIntegration(plan);
+    expect(readFileSync(stale, 'utf8')).toBe('old output');
+    const emitted = path.join(plan.outDir, 'new-output.txt');
+    const injected: string[] = [];
+    integration.hooks['astro:config:setup']!({ injectRoute: (route: { pattern: string }) => {
+      expect(existsSync(stale)).toBe(false);
+      if (injected.length) expect(readFileSync(emitted, 'utf8')).toBe('new output');
+      writeFileSync(emitted, 'new output'); injected.push(route.pattern);
+    } } as never);
+    expect(injected).toEqual(plan.routes.map(route => route.pattern));
+    expect(readFileSync(emitted, 'utf8')).toBe('new output');
+  });
+  it.each(['site', 'app'])('builds an explicit same-commit %s redeployment so environment updates take effect', (target) => {
     const root = path.resolve(import.meta.dirname, '../../..');
     const head = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim();
     const result = spawnSync(process.execPath, ['scripts/build-target.mjs', 'ignore', target], {
@@ -163,7 +179,7 @@ describe('independent build targets', () => {
     const root = fixture(); const plan = createBuildPlan(root, 'app');
     prepareBuildInputs(plan);
     const stale = ['output/build-inputs/app/public/obsolete.png', 'dist-target/app/.vercel/output/functions/obsolete.func/index.mjs', '.vercel/output/functions/obsolete.func/index.mjs'];
-    const protectedFiles = ['public/uploads/marketing.png', 'dist-target/site/index.html', 'output/worker/entry.mjs', '.vercel/project.json', 'apps/app/.vercel/project.json', 'apps/app/retained-assets.json'];
+    const protectedFiles = ['public/uploads/marketing.png', 'dist-target/site/index.html', 'output/worker/entry.mjs', '.vercel/project.json', 'apps/app/.vercel/project.json', 'apps/app/vercel.json'];
     for (const file of [...stale, ...protectedFiles]) {
       mkdirSync(path.dirname(path.join(root, file)), { recursive: true }); writeFileSync(path.join(root, file), file);
     }
@@ -204,7 +220,7 @@ describe('independent build targets', () => {
     stageDeploymentArtifact(root, 'site');
     expect(existsSync(path.join(destination, 'unpublished.html'))).toBe(false); expect(readFileSync(path.join(app, 'sentinel'), 'utf8')).toBe('app');
   });
-  it('stages the complete App output including retained public assets while preserving its project binding', () => {
+  it('stages the complete App output including current public assets while preserving its project binding', () => {
     const root = fixture(); const output = path.join(root, 'dist-target/app/.vercel/output');
     const files = { 'config.json': '{"version":3}', 'functions/api.func/index.mjs': 'export {};', 'static/_app-assets/retained.js': 'retained' };
     for (const [file, value] of Object.entries(files)) { mkdirSync(path.dirname(path.join(output, file)), { recursive: true }); writeFileSync(path.join(output, file), value); }
@@ -225,27 +241,7 @@ describe('independent build targets', () => {
   });
 });
 
-describe('same-origin gateway configuration', () => {
-  it('routes only original public Astro assets to the immutable legacy deployment before SEO', () => {
-    const result = renderAppSiteProxy({ version: 3, routes: [{ handle: 'filesystem' }, { src: '^/.*$', dest: '_render', status: 404 }] }, { siteOrigin: 'https://site.example.test', publicOrigin: 'https://www.example.test', appOrigins: ['https://current-app.example.test'], legacyAssetOrigin: 'https://legacy-snapshot.example.test' });
-    const legacy = result.routes[0]; expect(legacy.dest).toBe('https://legacy-snapshot.example.test/_astro/$1'); expect(legacy.methods).toEqual(['GET', 'HEAD']); expect(legacy.status).toBeUndefined();
-    for (const pathname of ['/_astro/AuthControls.ABC123.js', '/_astro/parts/app.def.css']) expect(new RegExp(legacy.src!).test(pathname)).toBe(true);
-    for (const pathname of ['/', '/blog/post', '/api/v1/jobs', '/app/image', '/auth/popup', '/_app-assets/a.js', '/_site-assets/a.js', '/_astro', '/_astro-other/a.js', '/_astro/../api/jobs', '/_astro/a/../../api/jobs', '/_astro/%2e%2e/api/jobs']) expect(new RegExp(legacy.src!).test(pathname)).toBe(false);
-    expect(legacy.transforms).toContainEqual({ type: 'request.headers', op: 'delete', target: { key: 'cookie' } });
-    expect(legacy.transforms).toContainEqual({ type: 'request.headers', op: 'delete', target: { key: 'authorization' } });
-    expect(legacy.transforms).toContainEqual({ type: 'response.headers', op: 'delete', target: { key: 'set-cookie' } });
-    expect(result.routes[1].dest).toBe('https://site.example.test/$1');
-    expect(renderAppSiteProxy(result, { siteOrigin: 'https://site.example.test', publicOrigin: 'https://www.example.test', legacyAssetOrigin: 'https://legacy-snapshot.example.test' }).routes).toEqual(result.routes);
-  });
-  it('rejects legacy origins pointing to current public, App or Site sources', () => {
-    for (const legacyAssetOrigin of ['https://www.example.test', 'https://current-app.example.test', 'https://site.example.test', 'http://legacy.example.test', '${LEGACY_ASSET_ORIGIN}']) expect(() => renderAppSiteProxy({ version: 3, routes: [] }, { siteOrigin: 'https://site.example.test', publicOrigin: 'https://www.example.test', appOrigins: ['https://current-app.example.test'], legacyAssetOrigin })).toThrow();
-  });
-  it('reads legacy asset configuration into the generated literal routing config', () => {
-    const root = fixture(); const directory = path.join(root, '.vercel/output'); mkdirSync(directory, { recursive: true }); writeFileSync(path.join(directory, 'config.json'), JSON.stringify({ version: 3, routes: [] }));
-    configureAppSiteProxy(root, { APP_SITE_ORIGIN: 'https://site.example.test', LEGACY_ASSET_ORIGIN: 'https://legacy-snapshot.example.test', VERCEL_URL: 'new-app.example.test' });
-    const config = JSON.parse(readFileSync(path.join(directory, 'config.json'), 'utf8')); expect(config.routes[0].dest).toBe('https://legacy-snapshot.example.test/_astro/$1');
-    expect(() => configureAppSiteProxy(root, { APP_SITE_ORIGIN: 'https://site.example.test', LEGACY_ASSET_ORIGIN: 'https://new-app.example.test', VERCEL_URL: 'new-app.example.test' })).toThrow();
-  });
+describe('same-origin App and Site proxy', () => {
   it('adds the SEO proxy before generated catch-alls while keeping App functions and assets local', () => {
     const original = { version: 3, routes: [{ handle: 'filesystem' }, { src: '^/api/v1/(.*)$', dest: '_render' }, { src: '^/app/(.*)$', dest: '_render' }, { src: '^/.*$', dest: '_render', status: 404 }] };
     const result = renderAppSiteProxy(original, { siteOrigin: 'https://site.example.test', publicOrigin: 'https://www.example.test', appOrigins: ['https://app.example.test'] });
@@ -272,19 +268,6 @@ describe('same-origin gateway configuration', () => {
   it('does not apply App noindex headers to SEO proxy responses', () => {
     const config = JSON.parse(readFileSync(new URL('../../../apps/app/vercel.json', import.meta.url), 'utf8'));
     expect(config.headers.filter((rule: { source: string }) => rule.source === '/(.*)').flatMap((rule: { headers: { key: string }[] }) => rule.headers).some((header: { key: string }) => header.key.toLowerCase() === 'x-robots-tag')).toBe(false);
-    const gateway = JSON.parse(readFileSync(new URL('../../../apps/gateway/vercel.json', import.meta.url), 'utf8')); expect(JSON.stringify(gateway)).not.toContain('${');
-  });
-  it('preserves paths and 404s while isolating private identity and caches', () => {
-    const config = renderGatewayConfig({ siteOrigin: 'https://site.example.test', appOrigin: 'https://app.example.test', publicOrigin: 'https://www.example.test' });
-    const seo = config.routes.at(-1)!; expect(seo.dest).toBe('https://site.example.test/$1');
-    const app = config.routes.find((r) => r.dest?.startsWith('https://app.example.test')); expect(app?.src).toContain('app'); expect(app?.src).toContain('api'); expect(app?.src).toContain('_app-assets');
-    expect(seo.transforms).toContainEqual({ type: 'request.headers', op: 'delete', target: { key: 'cookie' } });
-    expect(seo.transforms).toContainEqual({ type: 'response.headers', op: 'delete', target: { key: 'set-cookie' } });
-    expect(config.routes.some((r) => r.headers?.['Cache-Control'] === 'private, no-store')).toBe(true); expect(JSON.stringify(config)).not.toContain('"dest":"/"');
-  });
-  it('rejects unsafe upstreams or rewrites back to the public gateway', () => {
-    expect(() => renderGatewayConfig({ siteOrigin: 'http://site.test', appOrigin: 'https://app.test', publicOrigin: 'https://www.test' })).toThrow();
-    expect(() => renderGatewayConfig({ siteOrigin: 'https://www.test', appOrigin: 'https://app.test', publicOrigin: 'https://www.test' })).toThrow();
   });
   it('preserves required verify and adds a credential-free target packaging workflow', () => {
     const root = new URL('../../../', import.meta.url);

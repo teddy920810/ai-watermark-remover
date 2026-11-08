@@ -1,7 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import sharp from 'sharp';
 import { S3Client } from '@aws-sdk/client-s3';
-import * as providerFactory from '../providers/watermark-provider-factory';
 import { createProcessingRuntime } from './processing-services';
 import { CloudRunTriggerError, createCloudRunTrigger } from './cloud-run-trigger';
 import type { ProcessingRuntimeConfig } from './processing-services';
@@ -133,19 +132,6 @@ describe('processing runtime assembly', () => {
       expect(request.mock.calls.filter(([, init]) => init?.method === 'POST')).toHaveLength(1); expect(s.finance.settlements).toBe(1);
     } finally { await s.runtime.close(); await later?.close(); vi.unstubAllGlobals(); }
   });
-  });
-  it('uses only the durable facet without constructing an unused legacy delegate', async () => {
-    const compose = vi.spyOn(providerFactory, 'createWatermarkProvider');
-    const s = await setup();
-    try {
-      expect(compose).not.toHaveBeenCalled();
-      await s.runtime.completeUpload('user-1', s.upload.id);
-      const ready = await s.runtime.runPreflight('user-1', s.upload.id);
-      const quote = await s.runtime.service.quote({ ownerId: 'user-1', operation: 'image-watermark', inputArtifactId: ready.artifactId! });
-      const job = await s.runtime.service.submit({ ownerId: 'user-1', quoteId: quote.id, idempotencyKey: 'canonical-boundary' });
-      expect((await s.runtime.runJob(job.id)).status).toBe('READY');
-      expect(compose).not.toHaveBeenCalled();
-    } finally { await s.runtime.close(); compose.mockRestore(); }
   });
   it.each(['worker', 'dispatcher'] as const)('clears an expired preflight from durable delivery through the %s without probing or charging', async (path) => {
     const trigger = vi.fn(async () => ({ nextCheckAt: NOW })); const s = await setup({ trigger });

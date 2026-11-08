@@ -1,4 +1,5 @@
 import type { MediaRecommendation } from './media-recommendation';
+import { IMAGE_MAX_BYTES, VIDEO_MAX_BYTES } from '../contracts/operation-catalog';
 export type MediaKind = 'image' | 'video';
 export const DRAFT_TTL_MS = 60 * 60 * 1000;
 const DATABASE = 'watermarkgemini-media-drafts-v1';
@@ -8,7 +9,7 @@ export interface MediaDraft { id: string; kind: MediaKind; file: File; createdAt
 export function draftVisibleToOwner(draft: Pick<MediaDraft, 'ownerId'>, ownerId?: string) { return !draft.ownerId || draft.ownerId === ownerId; }
 export function workspacePath(kind: MediaKind) { return `/app/${kind}`; }
 export function draftIsExpired(draft: Pick<MediaDraft, 'expiresAt'>, now = Date.now()) { return !Number.isFinite(draft.expiresAt) || draft.expiresAt <= now; }
-export function validateLocalMedia(file: Pick<File, 'type' | 'size' | 'name'>, kind: MediaKind, maxBytes = kind === 'image' ? 10 * 1024 * 1024 : 100 * 1024 * 1024): { ok: true } | { ok: false; message: string } {
+export function validateLocalMedia(file: Pick<File, 'type' | 'size' | 'name'>, kind: MediaKind, maxBytes: number = kind === 'image' ? IMAGE_MAX_BYTES : VIDEO_MAX_BYTES): { ok: true } | { ok: false; message: string } {
   const types = kind === 'image' ? ['image/jpeg', 'image/png', 'image/webp'] : ['video/mp4'];
   if (!types.includes(file.type)) return { ok: false, message: kind === 'image' ? 'Choose a JPG, PNG, or WebP image.' : 'Choose an MP4 video. Other video formats are not supported.' };
   if (!Number.isFinite(file.size) || file.size <= 0 || file.size > maxBytes) return { ok: false, message: `Choose a file between 1 byte and ${Math.round(maxBytes / 1024 / 1024)} MB.` };

@@ -1,7 +1,9 @@
 import { z } from 'zod';
 import { durableOperationIds } from '../contracts/operation-catalog';
 import type { WalletState, CreditEnvironment } from '../credits/credit-policy';
-import type { ProviderCheckpoint, ProcessingWatermarkProvider } from '../providers/watermark-provider';
+import type { ProviderCheckpoint, WatermarkProvider } from '../providers/watermark-provider';
+import type { JobStatus as ProcessingStatus, ChargeStatus, CreditUnit } from '../contracts/processing-state';
+export type { JobStatus as ProcessingStatus, ChargeStatus, CreditUnit } from '../contracts/processing-state';
 export type { ProviderCheckpoint, ProviderOutcome, ProcessingProviderContext } from '../providers/watermark-provider';
 
 export const operationSchema = z.enum(durableOperationIds);
@@ -19,9 +21,6 @@ export const metadataSchema = z.object({
   hasAudio: z.boolean().optional(),
 });
 export type MediaMetadata = z.infer<typeof metadataSchema>;
-export type ProcessingStatus = 'PREPARED' | 'QUEUED' | 'VALIDATING' | 'TRANSFERRING' | 'SUBMITTING' | 'PROCESSING' | 'SAVING' | 'SETTLING' | 'READY' | 'UNKNOWN' | 'FAILED' | 'REFUNDED' | 'EXPIRED';
-export type ChargeStatus = 'reserved' | 'settled' | 'refunded';
-export type CreditUnit = 'freeUses' | 'purchasedImageCredits' | 'processingCredits' | 'credits';
 
 /** Internal records contain private keys. HTTP responses must use a public projection. */
 export interface ProcessingArtifact {
@@ -151,7 +150,7 @@ export interface ProcessingFinancialStore {
 }
 
 /** Backwards-compatible name derived from the canonical WatermarkProvider. */
-export type ProcessingProviderPort = ProcessingWatermarkProvider;
+export type ProcessingProviderPort = WatermarkProvider;
 
 export interface ProcessingInspector {
   /** Non-billable: seals and inspects input. Must never invoke a paid Provider. */

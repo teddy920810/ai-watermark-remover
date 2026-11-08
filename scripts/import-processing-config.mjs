@@ -75,4 +75,4 @@ const unmanagedLines = existingEnv
 const managedLines = [...managed].map(([key, value]) => `${key}=${value}`);
 
 await writeFile(envPath, [...unmanagedLines, ...managedLines, ''].join('\n'), { encoding: 'utf8', mode: 0o600 });
-process.stdout.write('Processing credentials imported securely. WATERMARK_PROVIDER remains unchanged.\n');
+process.stdout.write('Processing credentials imported securely. PROCESSING_ENABLED and PROCESSING_PROVIDER remain unchanged.\n');

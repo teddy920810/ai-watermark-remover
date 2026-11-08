@@ -2,7 +2,7 @@ import { createHash, randomUUID } from 'node:crypto';
 import sharp from 'sharp';
 import { inspectMask, prepareImageForProvider } from '../media/image';
 import { DefinitiveProviderError, ProcessingError, type ProcessingArtifact } from '../processing/contracts';
-import type { ProcessingProviderContext, ProcessingWatermarkProvider, ProviderOutcome } from '../providers/watermark-provider';
+import type { ProcessingProviderContext, WatermarkProvider, ProviderOutcome } from '../providers/watermark-provider';
 import { DewatermarkClient, DewatermarkRequestError, type ImageRequest } from '../providers/dewatermark-client';
 import { mediaKey, PrivateMediaStore, safeMediaId, SITE_MAX_IMAGE_BYTES, SITE_MAX_VIDEO_BYTES } from './private-media-store';
 
@@ -30,7 +30,7 @@ export interface ProcessingProviderOptions {
   heartbeatIntervalMs?: number;
 }
 
-export class ProcessingProvider implements ProcessingWatermarkProvider {
+export class ProcessingProvider implements WatermarkProvider {
   private readonly now: () => Date;
   private readonly id: () => string;
   constructor(private readonly options: ProcessingProviderOptions) { this.now = options.now ?? (() => new Date()); this.id = options.id ?? randomUUID; }

@@ -1,28 +1,21 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
-const packageJson = JSON.parse(
-  readFileSync(new URL('../../../package.json', import.meta.url), 'utf8'),
-) as { scripts: Record<string, string> };
 const agents = readFileSync(new URL('../../../AGENTS.md', import.meta.url), 'utf8');
 const testingGuide = readFileSync(new URL('../../../docs/TESTING_GUIDE.md', import.meta.url), 'utf8');
-const contributing = readFileSync(new URL('../../../CONTRIBUTING.md', import.meta.url), 'utf8');
 
 describe('risk-based verification workflow', () => {
-  it('provides cross-platform scoped and release verification commands', () => {
-    expect(packageJson.scripts).toMatchObject({
-      'check:fast': 'npm run content:validate && npm test',
-      'check:content': 'npm run content:validate && vitest run src/lib/content && npm run build',
-      'check:ui': 'vitest run src/layouts src/lib/content/blog-layout.test.ts src/lib/content/site-visual-system.test.ts src/lib/content/landing-pages.test.ts src/lib/content/homepage.test.ts src/lib/content/item-visibility.test.ts && playwright test tests/e2e/site-quality.spec.ts',
-      'release:verify': 'npm run audit:dependencies && npm run site:validate && npm run verify',
-    });
+  // Command execution/coverage is checked by verification-scripts and ci-plan tests.
+  // These docs must link to the same authority instead of duplicating those commands.
+  it.each(['AGENTS.md', 'README.md', 'CONTRIBUTING.md', 'docs/DEVELOPER_GUIDE.md', 'docs/OPERATIONS_RUNBOOK.md'])('%s points contributors to the single verification matrix', file => {
+    const source = readFileSync(new URL(`../../../${file}`, import.meta.url), 'utf8');
+    expect(source).toMatch(/\]\((?:docs\/)?TESTING_GUIDE\.md#动态验证矩阵\)/);
   });
 
   it('keeps stable required CI while allowing scoped checks for known low-risk changes', () => {
     expect(agents).toContain('`CI / verify` 和 `Required target artifacts`');
     expect(agents).toContain('未知或混合范围运行完整 `npm run verify`');
-    expect(agents).toContain('低风险改动不要求在本地与 CI 重复运行完整 `npm run verify`');
+    expect(testingGuide).toContain('低风险改动不在本地和 CI 重复运行完整 `verify`');
     expect(testingGuide).toContain('1 个正向页面和 1 个负向页面');
-    expect(contributing).toContain('根据改动范围选择本地检查');
   });
 });

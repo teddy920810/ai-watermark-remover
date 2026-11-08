@@ -1,14 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { operationCatalog, durableOperationIds, legacyOperationIds, durableCapabilities } from './operation-catalog';
+import { operationCatalog, durableOperationIds, durableCapabilities } from './operation-catalog';
 import { operationSchema } from '../processing/contracts';
-import { processingOperationSchema } from '../jobs/job';
 
 describe('product operation catalog', () => {
-  it('covers all six capabilities and preserves both accepted protocols', () => {
+  it('covers all six capabilities through the current processing protocol', () => {
     expect(Object.keys(operationCatalog)).toEqual(['image-watermark', 'image-watermark-pro', 'image-refine', 'video-watermark', 'background-removal', 'object-removal']);
     expect(durableOperationIds).toEqual(operationSchema.options);
-    expect(legacyOperationIds).toEqual(processingOperationSchema.options);
-    expect(operationCatalog['image-watermark'].legacyOperation).toBe('watermark-removal');
     expect(operationCatalog['background-removal'].protocol).toBe('v1');
     expect(operationCatalog['object-removal'].input).toBe('image-and-mask');
   });
