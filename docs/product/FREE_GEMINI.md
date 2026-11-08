@@ -58,9 +58,21 @@ Site `dpl_6WsvMdh2iqN3DAggtf9LZsFxryoo` 与 App `dpl_FY1iJaTekx1683kEt5C5aTT5TFM
 
 原工具页同一账户的标题、main 可见文本和图片 src/alt 与发布前完全相同。桌面和手机截图已打开比较；手机像素一致，桌面平均通道差为 0.114/255，无布局或素材变化。视口设置分别为 1440×1000 和 390×844，浏览器截图实际为 1425×990 和 375×812。证据、下载字节与脱敏回执在忽略目录 `output/gemini-free/release/`。
 
-真实收数检查发现 Astro 的 define:vars 将 gtag 限于初始化脚本，原自定义事件调用无效，而 page_view 正常收到 204。修复仅在自有事件发送处使用现有 dataLayer 的 Google arguments 命令队列；原官方初始化片段保持。新增回归先红后绿，锁定真实 Arguments 对象和安全参数；依据 [Google data layer 文档](https://developers.google.com/tag-platform/tag-manager/datalayer)。修复版本的完整门禁、受保护 PR、生产部署及实际自定义 collect 信号仍待后续记录，不能用旧版 page_view 冒充自定义事件通过。
+真实收数检查发现 Astro 的 define:vars 将 gtag 限于初始化脚本，原自定义事件调用无效，而 page_view 正常收到 204。修复仅在自有事件发送处使用现有 dataLayer 的 Google arguments 命令队列；原官方初始化片段保持。新增回归先红后绿，锁定真实 Arguments 对象和安全参数；依据 [Google data layer 文档](https://developers.google.com/tag-platform/tag-manager/datalayer)。修复与生产闭环见下节，首失败网络证据保留。
 
 真实手机、Safari 和大量困难样本未验收。上述 macOS/Linux Chromium 证据不代表这些浏览器通过；本节是当前生产记录，下方本地阶段保留为历史。
+
+### 统计修复与最终闭环
+
+[PR139](https://github.com/teddy920810/ai-watermark-remover/pull/139) 以 `d144bd9f230574cc2fdf9760344c72a44143d46d` 合并；过程中同步了内容 owner 已发布的 PR138 三篇文章，文章与素材未改写。修复代码的完整本地门禁为 161 文件、1414 单测通过、15 个既有可选跳过，217 浏览器通过、1 个既有可选跳过，4 组件通过。同步文章后内容校验/静态构建/响应式图片检查通过；合并候选 `deea378c225ea54619f6089585a9a2f2a67f506a` 的严格必需 verify、独立 Site/App 产物及 macOS Chromium 均通过，自有业务源码与本地完整门禁版本一致。
+
+最终 Git 生产构建：App `dpl_2ritV5h3hBch6HwZauTDcAuxvXRk`、Site `dpl_HkdF2uaw2pXgTRXK9KPe5q7U9a4d`，均 READY、正式别名绑定且源码为 `d144bd9`。再次公开 smoke、HTTPS/跳转/canonical、私有缓存/noindex 通过。最终真实 PNG 与首发下载字节相同；再次下载的 MP4 保持 1280×720、10 秒和 469 个原始音频包，容器字节不同，不据此宣称文件逐字节相同。手机 Original/Result 切换保持 3 秒定位。
+
+正式页面的 `gemini_free_*` 事件 visit、selected、start、result、paid_shown、download_started、reuse、paid_entry 均收到 collect 204。图片和视频各一次开始、结果与下载；网络记录只保存事件名/状态与媒体接口方法，未保存 Cookie、分析 client ID、文件名或完整请求。免费标签页从本次文档加载起没有媒体上传/报价/任务 POST。
+
+视频主动付费交接自动完成上传与免费文件检查，显示原片 1280×720、10 秒、24 fps 和实时报价 500 Credits；余额 0，处理按钮禁用，没有收费任务或购买。图片报价 100 Credits 的实际记录保留。来源到付费终态/购买归因仍未联调，不能把 `paid_entry` 当作转化。
+
+证据为 `network-final-smoke.json`、`download-final-receipt.json`、`production-final-image.jpg`、`production-final-video-mobile.jpg` 及图片/视频付费报价截图，均在忽略目录 `output/gemini-free/release/`。当前生产视觉验收通过；根目录 design-qa.md 发布章节的 blocked 是首发前历史截面，由本节的正式验收记录取代，不覆盖首轮证据。PR138 的动态相关文章列表随独立内容发布刷新，不回滚其他 owner 的内容；本功能不改原工具页视觉、SEO JSON、FAQ、素材或 alt。
 
 ## 本轮本地检查记录
 

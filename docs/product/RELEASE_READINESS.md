@@ -15,9 +15,13 @@
 | 身份 | 真实 Google 登录与生产 0 Credits 会话通过，未改密钥或伪造会话。 |
 | 功能 | 真实上游原图经原工具入口导入并下载 PNG；工作区直接处理真实 MP4 并下载，1280×720 / 10秒，469 个音频包散列保持。免费流程无媒体 POST；手动付费交接在 Standard 报价 100 Credits 停止，余额 0，没有收费任务/购买。公开生产 smoke 通过。 |
 | 视觉与内容 | 同账户桌面/手机前后截图比较通过；标题、main 文本及图片 src/alt 完全相同，手机像素一致，桌面仅微小渲染差异。未改 SEO JSON、FAQ、素材或独立基线。 |
-| 分析 | page_view 收到真实 204，但自定义事件因 Astro 脚本作用域未送达；自有发送处的修复已定向红绿，完整门禁与修复后的生产 collect 尚待记录。来源到购买归因仍未联调。 |
+| 分析 | 首次自定义事件因 Astro 脚本作用域未送达，PR139 已修复。正式 visit/selected/start/result/paid_shown/download_started/reuse/paid_entry 均收到 collect 204；来源到购买归因仍未联调，paid_entry 不代表转化。 |
 
 样本、实际下载、脱敏 HTTP/网络回执和完整日志在 `output/gemini-free/release/`。完整合同及限制见 [免费 Gemini](FREE_GEMINI.md#2026-11-08-生产验收)。没有执行付费 Provider、资金、发点或退款测试；真实手机/Safari 和困难样本覆盖未完成，不能据一次样本泛化效果。
+
+最终分析修复 [PR139](https://github.com/teddy920810/ai-watermark-remover/pull/139) 合并 `d144bd9f230574cc2fdf9760344c72a44143d46d`。本地完整 1414 单测 / 217 浏览器 / 4 组件通过；同步最新内容的静态门禁通过，最终候选 `deea378` 的严格 verify / 独立 Site、App 产物 / macOS Chromium 通过。App `dpl_2ritV5h3hBch6HwZauTDcAuxvXRk` 与 Site `dpl_HkdF2uaw2pXgTRXK9KPe5q7U9a4d` 均为该合并源码的 READY 生产构建并绑定正式别名。再次真实 PNG/MP4 下载与公开 smoke 通过；视频付费交接自动得到原片 24fps / 10秒与 500 Credits 报价，余额仍为 0、未启动任务。手机预览切换与免费页媒体 POST=0 已验证。官方 Google 初始化片段、Provider、计费与环境均保持。
+
+并行发布的 PR138 三篇文章及素材完整保留；其动态相关文章列表更新属于独立内容发布。本次收尾只更新文档，不改变上述运行版本或重新声称收费/真实手机验收通过。生产视觉已通过，根目录旧发布前 QA 截面由 [最终闭环记录](FREE_GEMINI.md#统计修复与最终闭环)取代。
 
 ## 2026-11-07工具页状态文案清理
 
