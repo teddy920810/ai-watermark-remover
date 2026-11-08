@@ -200,7 +200,7 @@ test('an unstarted task timeout returns the allowance and never starts a paid re
   await page.route('**/api/v1/me', route => json(route, { freeUses: reads > 1 ? 1 : 0, processingCredits: 0 }));
   await page.route('**/api/v1/jobs/timeout-job', route => {
     reads += 1;
-    return json(route, { ...job, status: reads === 1 ? 'QUEUED' : 'REFUNDED', chargeStatus: reads === 1 ? 'reserved' : 'refunded', charge: { status: reads === 1 ? 'reserved' : 'refunded', amount: 1, unit: 'freeUses' }, ...(reads > 1 ? { errorCode: 'dispatch_timeout', error: message } : {}) });
+    return json(route, { ...job, status: reads === 1 ? 'QUEUED' : 'REFUNDED', charge: { status: reads === 1 ? 'reserved' : 'refunded', amount: 1, unit: 'freeUses' }, ...(reads > 1 ? { errorCode: 'dispatch_timeout', error: message } : {}) });
   });
   await page.route('**/api/v1/jobs', route => {
     if (route.request().method() === 'GET') return json(route, { jobs: [] });

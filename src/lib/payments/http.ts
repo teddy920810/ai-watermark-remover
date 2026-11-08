@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { getSession } from '../auth';
 import { json } from '../api/response';
 import { PaymentError } from './payment-service';
+import { readBoundedBody, RequestBodyLimitError } from '../api/request-body';
 
 export async function buyer(request: Request, mutate = false): Promise<string> {
   const session = await getSession(request);
@@ -15,13 +16,13 @@ export function orderId(id?: string) {
 }
 export async function boundedJson(request: Request, maxBytes = 4096): Promise<unknown> {
   if (!request.headers.get('content-type')?.toLowerCase().startsWith('application/json')) throw new PaymentError('Expected JSON request.', 400);
-  const reader = request.body?.getReader();
-  if (!reader) throw new PaymentError('Invalid JSON request.', 400);
-  const chunks: Uint8Array[] = []; let size = 0;
+  if (!request.body) throw new PaymentError('Invalid JSON request.', 400);
   try {
-    while (true) { const { done, value } = await reader.read(); if (done) break; size += value.length; if (size > maxBytes) { await reader.cancel(); throw new PaymentError('Request is too large.', 413); } chunks.push(value); }
-    return JSON.parse(Buffer.concat(chunks).toString('utf8'));
-  } catch (error) { if (error instanceof PaymentError) throw error; throw new PaymentError('Invalid JSON request.', 400); }
+    return JSON.parse(Buffer.from(await readBoundedBody(request.body, maxBytes)).toString('utf8'));
+  } catch (error) {
+    if (error instanceof RequestBodyLimitError) throw new PaymentError('Request is too large.', 413);
+    throw new PaymentError('Invalid JSON request.', 400);
+  }
 }
 export async function paymentResponse(work: () => Promise<unknown>, status = 200) {
   try { return json(await work(), { status }); }

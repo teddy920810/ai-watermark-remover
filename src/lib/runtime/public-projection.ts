@@ -41,7 +41,7 @@ export class PublicProcessingProjection {
     const expired = Date.parse(artifact.expiresAt) <= this.now().getTime();
     const seconds = Math.min(300, Math.floor((Date.parse(artifact.expiresAt) - this.now().getTime()) / 1000));
     const metadata = publicMetadata(artifact.metadata);
-    return { id: artifact.id, role: artifact.role, ...metadata, metadata, format: format(metadata.contentType), expiresAt: artifact.expiresAt, expired,
+    return { id: artifact.id, role: artifact.role, metadata, format: format(metadata.contentType), expiresAt: artifact.expiresAt, expired,
       ...(seconds > 0 ? { previewUrl: await this.options.signPreview(artifact, seconds) } : {}), canRefine: !expired && canRefine };
   }
   async quote(ownerId: string, quote: ProcessingQuote): Promise<PublicQuote> {
@@ -65,8 +65,8 @@ export class PublicProcessingProjection {
     const expired = Boolean(deadline && Date.parse(deadline) <= this.now().getTime());
     const canRefine = Boolean(!expired && this.options.refinementEnabled && job.status === 'READY' && ['image-watermark', 'image-refine'].includes(job.operation) && result?.providerSessionId && result.metadata.kind === 'image' && Math.max(result.metadata.width, result.metadata.height) <= 1920);
     const code = job.error && errors[job.error] ? job.error : job.error ? 'processing_failed' : undefined;
-    return { id: job.id, operation: job.operation, status: job.status === 'READY' && expired ? 'EXPIRED' : job.status, chargeStatus: job.chargeStatus, charge: { status: job.chargeStatus, amount: job.quote.amount, unit: job.quote.unit },
-      amount: job.quote.amount, unit: job.quote.unit, quote: { id: job.quote.id, amount: job.quote.amount, unit: job.quote.unit },
+    return { id: job.id, operation: job.operation, status: job.status === 'READY' && expired ? 'EXPIRED' : job.status, quoteId: job.quote.id,
+      charge: { status: job.chargeStatus, amount: job.quote.amount, unit: job.quote.unit },
       createdAt: job.createdAt, updatedAt: job.updatedAt, ...(deadline ? { expiresAt: deadline } : {}),
       ...(job.parentJobId ? { parentJobId: job.parentJobId } : {}),
       ...(typeof job.progress === 'number' && Number.isFinite(job.progress) && job.progress >= 0 && job.progress <= 1 ? { progress: job.progress } : {}),
@@ -87,6 +87,6 @@ export class PublicProcessingProjection {
     const extension = ({ 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'video/mp4': 'mp4' } as Record<string, string>)[artifact.metadata.contentType];
     const filename = job.operation === 'object-removal' ? 'object-removed-image.png' : job.operation === 'background-removal' ? 'background-removed-image.png' : artifact.metadata.kind === 'video' ? 'cleaned-video.mp4' : `cleaned-image.${extension ?? 'jpg'}`;
     const url = await this.options.media.createDownloadUrl(artifact.key, filename, ttl);
-    return { url, downloadUrl: url, filename, expiresAt: new Date(this.now().getTime() + ttl * 1000).toISOString(), artifactId: artifact.id };
+    return { url, filename, expiresAt: new Date(this.now().getTime() + ttl * 1000).toISOString(), artifactId: artifact.id };
   }
 }

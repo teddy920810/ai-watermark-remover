@@ -31,7 +31,7 @@ export async function imageOperationFixture(page: Page, options: { initiallySign
       const quote = request.postDataJSON();
       const unit = options.unified ? 'credits' : state.freeUses > 0 ? 'freeUses' : 'purchasedImageCredits'; const amount = unit === 'freeUses' ? 1 : state.cost;
       if (!state.job) { if (unit === 'freeUses') state.freeUses--; else state.purchasedImageCredits -= amount; }
-      state.job ??= { id: 'background-job', operation, status: state.unknown ? 'UNKNOWN' : 'READY', chargeStatus: state.unknown ? 'reserved' : 'settled', amount, unit, quote: { id: quote.quoteId, amount, unit }, charge: { amount, unit, status: state.unknown ? 'reserved' : 'settled' }, input: inputArtifact, ...(state.unknown ? {} : { result }), expiresAt: expires() };
+      state.job ??= { id: 'background-job', operation, status: state.unknown ? 'UNKNOWN' : 'READY', quoteId: quote.quoteId, charge: { amount, unit, status: state.unknown ? 'reserved' : 'settled' }, input: inputArtifact, ...(state.unknown ? {} : { result }), expiresAt: expires() };
       return route.fulfill({ status: 202, json: state.job });
     }
     if (path.endsWith('/jobs/background-job/download')) return route.fulfill({ json: { url: `${downloadOrigin}/result.png`, expiresAt: expires() } });

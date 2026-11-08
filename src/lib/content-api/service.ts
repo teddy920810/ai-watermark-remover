@@ -1,5 +1,6 @@
 import { createHash, timingSafeEqual } from 'node:crypto';
 import YAML from 'yaml';
+import { readBoundedBody, RequestBodyLimitError } from '../api/request-body';
 import blogTemplate from '../../../cms-templates/blog.md?raw';
 import landingTemplate from '../../../cms-templates/landing.json?raw';
 import { parseCmsDocument } from '../../../scripts/lib/cms-document.mjs';
@@ -50,9 +51,11 @@ function tokenValid(request: Request, config: ContentApiConfig) {
 async function requestJson(request: Request) {
   if (request.headers.get('content-type')?.split(';')[0] !== 'application/json') return fail(415, 'JSON_REQUIRED', 'Use application/json.');
   if (Number(request.headers.get('content-length') ?? 0) > limits.requestBytes) return fail(413, 'REQUEST_TOO_LARGE', 'Request is too large.');
-  const reader = request.body?.getReader(); const chunks: Uint8Array[] = []; let size = 0;
-  if (reader) for (;;) { const next = await reader.read(); if (next.done) break; size += next.value.length; if (size > limits.requestBytes) { await reader.cancel(); fail(413, 'REQUEST_TOO_LARGE', 'Request is too large.'); } chunks.push(next.value); }
-  const raw = Buffer.concat(chunks).toString('utf8');
+  const bytes = await readBoundedBody(request.body, limits.requestBytes).catch(error => {
+    if (error instanceof RequestBodyLimitError) fail(413, 'REQUEST_TOO_LARGE', 'Request is too large.');
+    throw error;
+  });
+  const raw = Buffer.from(bytes).toString('utf8');
   try { return { data: object(JSON.parse(raw || '{}')), raw }; } catch (error) { if (error instanceof ContentError) throw error; return fail(400, 'INVALID_JSON', 'Request body is not valid JSON.'); }
 }
 

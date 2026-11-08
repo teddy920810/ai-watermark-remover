@@ -62,6 +62,8 @@ Pages CMS 保存到内容审核分支，经受保护 PR 与必需检查后合并
 
 标准门禁因端口、进程或平台问题无法执行时，先安全排查一次；仍不能运行则用覆盖缺失范围的等价验证补齐，并明确环境和剩余限制。已经充分覆盖的部分不重复执行；Windows 本地通过不代表 Linux/macOS 已验收。
 
+请求体和公开响应精简的定向证据由`request-body.test.ts`、`request-body-policy.test.ts`、`public-projection.test.ts`及`processing-acceptance.test.ts`承担：覆盖实际流式超限、读取中断、解码与错误策略、私有字段隔离、原报价/四类费用单位和规范字段消费者。验收遇到缺失规范字段或报价不匹配时停止，保留原任务标识、调用名额及预算占用，不自动再提交。此类API改动仍运行一次`release:verify`；未来发布时再执行适用的生产验收，本地模拟不代表真实Provider或扣费验证。当前不涉及CMS或内容字段迁移。
+
 本地 `verify` 和 `verify:deploy` 先执行 `lint:code`，类型检查由随后 `build` 中的一次 `astro check` 承担。单独执行 `lint` 或 `build` 仍会检查类型。CI 全量路径将类型检查留在 `verify` 作业，两个 Web 图由独立产物门禁编译，不再另做组合构建。同一工作区的 Astro 构建必须串行。
 
 ### CI 全量检查的覆盖分工

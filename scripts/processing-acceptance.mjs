@@ -56,17 +56,17 @@ async function bytesFrom(response, limit) {
   return bytes;
 }
 function balances(body) {
-  const value = body.balances ?? body;
+  const value = body;
   if (value.walletMode === 'unified') {
     if (value.unit !== 'credits' || !Number.isSafeInteger(value.credits) || value.credits < 0) throw failure('protocol_invalid', 'Unified Credits balance is invalid');
     return { credits: value.credits };
   }
-  const result = { freeUses: value.freeUses ?? value.freeUsesRemaining, processingCredits: value.processingCredits ?? value.processingCreditsRemaining, ...(value.purchasedImageCredits !== undefined ? { purchasedImageCredits: value.purchasedImageCredits } : {}) };
+  const result = { freeUses: value.freeUses, processingCredits: value.processingCredits, ...(value.purchasedImageCredits !== undefined ? { purchasedImageCredits: value.purchasedImageCredits } : {}) };
   if (!Object.values(result).every((amount) => Number.isSafeInteger(amount) && amount >= 0)) throw failure('protocol_invalid', 'Balance response must contain both allowance units');
   return result;
 }
 function metadata(artifact) {
-  const value = artifact?.metadata ?? artifact;
+  const value = artifact?.metadata;
   if (!value || !['image', 'video'].includes(value.kind) || !Number.isSafeInteger(value.width) || value.width <= 0 || !Number.isSafeInteger(value.height) || value.height <= 0 || !Number.isSafeInteger(value.byteSize) || value.byteSize <= 0) throw failure('protocol_invalid', 'Artifact metadata is incomplete');
   return value;
 }
@@ -126,16 +126,16 @@ export async function runProcessingAcceptance(options = {}, dependencies = {}) {
   const pollLimit = Math.max(1, Math.ceil(maxWaitMs / pollIntervalMs));
   async function uploadAsset(bytes, mediaKind, contentType, inputArtifactId) {
     const signed = await api('/api/v1/uploads', { kind: mediaKind, contentType, byteSize: bytes.byteLength, ...(inputArtifactId ? { inputArtifactId } : {}) });
-    const id = identifier(signed.upload?.id ?? signed.id, 'upload');
-    const url = storageUrl(signed.uploadUrl ?? signed.url, origin);
+    const id = identifier(signed.id, 'upload');
+    const url = storageUrl(signed.uploadUrl, origin);
     await request(url, { method: 'PUT', headers: { 'Content-Type': contentType }, body: bytes });
     await api(`/api/v1/uploads/${id}/complete`, {});
     for (let attempt = 0; attempt < pollLimit; attempt++) {
       const response = await api(`/api/v1/uploads/${id}`);
-      const upload = response.upload ?? response;
+      const upload = response;
       if (upload.status === 'ready') {
-        const artifact = upload.artifact ?? response.artifact;
-        identifier(artifact?.id ?? upload.artifactId, 'artifact');
+        const artifact = upload.artifact;
+        identifier(artifact?.id, 'artifact');
         if (!artifact?.metadata) throw failure('protocol_invalid', 'Preflight must return actual artifact metadata');
         metadata(artifact); return artifact;
       }
@@ -149,7 +149,7 @@ export async function runProcessingAcceptance(options = {}, dependencies = {}) {
   const ffprobePath = options.ffprobePath ?? environment.FFPROBE_PATH;
   if (operation === 'image-refine') {
     parentJobId = identifier(options.parentJobId ?? environment.PROCESSING_ACCEPTANCE_PARENT_JOB_ID, 'parent task');
-    const response = await api(`/api/v1/jobs/${parentJobId}`); const parent = response.job ?? response;
+    const parent = await api(`/api/v1/jobs/${parentJobId}`);
     if (parent.status !== 'READY' || parent.result?.canRefine !== true || parent.isDemo !== false) throw failure('parent_unavailable', 'A real completed result supporting refinement is required');
     input = parent.result; sourceInfo = metadata(input);
     const parentArtifactId = options.parentArtifactId ?? environment.PROCESSING_ACCEPTANCE_PARENT_ARTIFACT_ID;
@@ -177,7 +177,7 @@ export async function runProcessingAcceptance(options = {}, dependencies = {}) {
     mask = await uploadAsset(sample.bytes, 'mask', 'image/png', input.id);
   } else if (['image-refine', 'object-removal'].includes(operation)) throw failure('configuration', 'This operation requires a binary PNG mask');
   const quoteBody = await api('/api/v1/quotes', { operation, inputArtifactId: input.id, ...(mask ? { maskArtifactId: mask.id } : {}), ...(parentJobId ? { parentJobId } : {}) });
-  const quote = quoteBody.quote ?? quoteBody;
+  const quote = quoteBody;
   identifier(quote.id, 'quote');
   if (quote.isDemo !== false) throw failure('demo_quote', 'Functional production acceptance requires a real-provider quote');
   if (quote.amount !== expectedAmount || quote.unit !== expectedUnit) throw failure('quote_changed', 'Quoted amount or allowance unit differs from the explicit confirmation');
@@ -192,12 +192,12 @@ export async function runProcessingAcceptance(options = {}, dependencies = {}) {
   try {
     submissionStarted = true;
     const created = await api('/api/v1/jobs', { quoteId: quote.id, idempotencyKey: clientOperationKey });
-    jobId = identifier(created.job?.id ?? created.id, 'task');
+    jobId = identifier(created.id, 'task');
     record = { ...record, jobId };
     await writeEvidence(reportDir, record);
     let job;
     for (let attempt = 0; attempt < pollLimit; attempt++) {
-      const response = await api(`/api/v1/jobs/${jobId}`); job = response.job ?? response;
+      job = await api(`/api/v1/jobs/${jobId}`);
       if (job.status === 'UNKNOWN') {
         record = { ...record, status: 'unknown', reason: 'provider_status_unknown' };
         await budget.finish(recordId, { status: 'unknown', note: 'Existing task awaits reconciliation; no new submission was sent.' });
@@ -208,12 +208,12 @@ export async function runProcessingAcceptance(options = {}, dependencies = {}) {
       await sleep(pollIntervalMs);
     }
     if (job?.status !== 'READY') throw failure('processing_pending', 'Existing task did not complete within the acceptance window');
-    const charge = job.charge ?? { status: job.chargeStatus, amount: job.amount, unit: job.unit };
-    if (job.isDemo !== false || charge.status !== 'settled') throw failure('protocol_invalid', 'Ready task must identify real processing and settled allowance');
+    const charge = job.charge;
+    if (job.quoteId !== quote.id || job.isDemo !== false || !charge || charge.status !== 'settled') throw failure('protocol_invalid', 'Ready task must identify its confirmed quote, real processing and settled allowance');
     if (charge.amount !== quote.amount || charge.unit !== quote.unit) throw failure('credit_invariant', 'Settled task charge differs from the confirmed quote');
     const expected = metadata(job.result);
     const download = await api(`/api/v1/jobs/${jobId}/download`);
-    const response = await request(storageUrl(download.downloadUrl ?? download.url, origin), { headers: { Origin: origin } });
+    const response = await request(storageUrl(download.url, origin), { headers: { Origin: origin } });
     const bytes = await bytesFrom(response, kind === 'video' ? MAX_VIDEO : 48 * 1024 * 1024);
     let artifact;
     try {
