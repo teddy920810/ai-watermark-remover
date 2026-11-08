@@ -68,6 +68,8 @@ Pages CMS 保存到内容审核分支，经受保护 PR 与必需检查后合并
 
 E2E 使用 `scripts/test-server.mjs` 启动独占的本地 Astro 服务；文件监听排除忽略的工具归档和构建/测试产物，仍监听真实源码。测试服务关闭 Astro 开发工具栏及其后台抓取，产品页面和独立 axe 全站/404 审计继续运行。端口隔离、不复用未知服务、全部浏览器断言与超时保持不变。
 
+工作区测试通过 `tests/helpers/workspace.ts` 统一打开、重载和文件入口跳转后的就绪等待。文档加载完成不代表延迟加载的 React 工作区已就绪；先等待工作区外壳，遇到明确的模块加载失败立即报错，再执行原有业务断言。该等待不提交任务、不刷新页面、不自动重试，不改变业务断言和全局超时；专门的加载失败测试仍直接访问页面并检查恢复入口。
+
 ## 抽查标准
 
 - Schema、URL、字段存在性、状态数量等可程序化约束，对全部改动记录执行检查，不抽样。
@@ -96,7 +98,7 @@ E2E 使用 `scripts/test-server.mjs` 启动独占的本地 Astro 服务；文件
 
 - `.github/workflows/ci.yml`：每次 PR 和 `main` 推送始终运行 `verify` 作业，以事件的 base/head SHA 分类并重新计算实际执行范围；不使用 workflow 路径过滤跳过必需检查。文档只检查 diff；纯 Blog/landing 与原始栅格图检查 schema、内容测试与变更内容安全；明确的公共样式先生成响应图片再运行 `check:ui`；其他范围运行依赖审计和完整 `verify`。高风险/未知/混合、空 diff 或读取 diff 失败一律完整验证。源码、MDX、SVG、站点身份设置、基线单独修改和内容 API 协议不进入内容快路径。
 - `.github/workflows/build-targets.yml`：同一份变更分类选择 Site、App 和 Worker，生成并验证对应产物。内容变更只选择 Site；Worker 入口只选择 Worker；共享处理代码选择 App 和 Worker；依赖与构建入口选择全部目标。Worker 验证真实打包和七文件上传上下文，不部署或调用 Provider。
-- `.github/workflows/production-smoke.yml`：每天只运行无成本 Public Smoke；手工选择 operation 时才运行会消耗额度的 Functional Smoke。
+- `.github/workflows/production-smoke.yml`：定时和手动均只运行无成本 Public Smoke，直接使用 Node，无需安装依赖或注入会话。收费验收统一使用 `test:smoke:processing -- --functional` 及既有审阅账本；背景/物体命令别名委托同一入口，不在 GitHub 工作流中保留第二套收费分支。
 - `.github/workflows/cms-content-check.yml`：仅保留显式手动诊断，不再在 main 重复执行已由必需 CI 覆盖的内容同步。
 - 内容 lane 的 `content-ci.test.ts` 从事件固定 base/head Git 对象读取实际变更，以真实 base 记录检查只读 legacy comparison，不能用候选与自身比较；对栅格图做原始字节解码，API 素材额外核对记录的尺寸、格式和限制。草稿、URL、引用与保留 slug 仍由全内容 schema/发布规则和 Site 构建检查，坏 JSON 可能阻断整站。
 - 单个新建 `.content-api/{id}.json` 仅在可信 base 中不存在该 ID、严格结构、真实 Git 普通文件、逐项内容/素材闭包、字节哈希和重算 digest 均匹配时随内容进入同一 lane。修改已有审计 ID 一律完整检查，保留历史发布证明和恢复锚。预安装分类只使用 Node 内建模块；安装后内容安全/图片解码仍必须成功。删除、rename、symlink、额外路径、多个审计、无法读取、未知或混合范围升级完整检查。实际执行重新核对同一事件 SHA 对，不信任 label、actor 或自报检查结果。

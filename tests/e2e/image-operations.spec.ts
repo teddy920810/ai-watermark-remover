@@ -1,3 +1,4 @@
+import { reloadWorkspace } from '../helpers/workspace';
 import { expect, test, type Page } from '@playwright/test';
 import sharp from 'sharp';
 import { createServer, type Server } from 'node:http';
@@ -24,7 +25,7 @@ test('unified Credits paused admission and insufficient balance retain the file 
   await expect(page.getByRole('button', { name: 'Remove background · 10 Credits', exact: true })).toBeDisabled();
   await expect(page.locator('.workspace-balances')).toContainText('New processing is paused');
   await page.route('**/api/v1/me', route => route.fulfill({ json: { walletMode: 'unified', unit: 'credits', credits: 0, admissionEnabled: true } }));
-  await page.reload();
+  await reloadWorkspace(page);
   await expect(page.getByRole('button', { name: 'Remove background · 10 Credits', exact: true })).toBeDisabled();
   await expect(page.getByRole('alert')).toContainText('not have enough Credits');
   await expect(page.locator('.workspace-action-block').getByRole('link', { name: 'Buy image credits', exact: true })).toHaveCount(0);
@@ -49,7 +50,7 @@ for (const operation of ['background-removal', 'object-removal'] as const) test(
   const event = page.waitForEvent('download'); await page.getByRole('button', { name: 'Download PNG', exact: true }).click();
   const path = testInfo.outputPath(`${operation}.png`); await (await event).saveAs(path);
   expect(await inspectPngArtifact(readFileSync(path), { requireTransparency: operation === 'background-removal' })).toMatchObject({ width: 80, height: 60 });
-  await page.reload(); await expect(page.getByRole('button', { name: 'Download PNG', exact: true })).toBeVisible();
+  await reloadWorkspace(page); await expect(page.getByRole('button', { name: 'Download PNG', exact: true })).toBeVisible();
   expect(state.submissions).toBe(1); expect(state.oldRequests).toBe(0); expect(state.purchasedImageCredits).toBe(90);
 });
 
@@ -86,7 +87,7 @@ test('background uses the common durable quote, retains transparent/color PNG do
     await page.getByRole('button', { name: 'Download PNG', exact: true }).scrollIntoViewIfNeeded();
     await page.screenshot({ path: `output/playwright/refactor-p6-background-controls-${label}.png`, animations: 'disabled', style: 'astro-dev-toolbar{visibility:hidden!important}' });
   }
-  await page.reload();
+  await reloadWorkspace(page);
   await expect(page.getByLabel('Choose operation')).toHaveValue('background-removal');
   await expect(page.getByRole('button', { name: 'Download PNG', exact: true })).toBeVisible();
   expect(state.submissions).toBe(1); expect(state.oldRequests).toBe(0);
@@ -110,7 +111,7 @@ test(`${label} UNKNOWN retains the same task without a replacement file or a fre
   await expect(page.getByRole('heading', { name: 'Checking the processing confirmation', exact: true })).toBeVisible();
   await expect(page.getByLabel('Choose operation')).toBeDisabled();
   await expect(page.getByRole('button', { name: 'Upload file', exact: true })).toBeDisabled();
-  await page.reload();
+  await reloadWorkspace(page);
   await expect(page.getByRole('heading', { name: 'Checking the processing confirmation', exact: true })).toBeVisible();
   expect(state.submissions).toBe(1); expect(state.oldRequests).toBe(0);
 });
@@ -196,7 +197,7 @@ test('object uses the durable coordinator with independent tools, opaque binary 
   const event = page.waitForEvent('download'); await page.getByRole('button', { name: 'Download PNG', exact: true }).click();
   const target=testInfo.outputPath('object-result.png'); await (await event).saveAs(target);
   expect(readFileSync(target)).toEqual(output); expect(await sharp(readFileSync(target)).metadata()).toMatchObject({format:'png',width:80,height:60});
-  await page.reload(); await expect(page.getByLabel('Choose operation')).toHaveValue('object-removal');
+  await reloadWorkspace(page); await expect(page.getByLabel('Choose operation')).toHaveValue('object-removal');
   await expect(page.getByRole('button', { name: 'Download PNG', exact: true })).toBeVisible();
   expect(state.submissions).toBe(1); expect(state.purchasedImageCredits).toBe(90); expect(state.oldRequests).toBe(0);
 });

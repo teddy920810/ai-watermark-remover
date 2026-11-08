@@ -1,3 +1,4 @@
+import { openWorkspace, reloadWorkspace, waitForWorkspace } from '../helpers/workspace';
 import { imageOperationFixture } from '../helpers/image-operation-fixture';
 import { expect, test } from '@playwright/test';
 import sharp from 'sharp';
@@ -14,7 +15,7 @@ test('the product entry has a static loading shell and compatibility paths use t
   await page.route('**/api/auth/get-session', route => route.fulfill({ json: null }));
   await page.route('**/api/v1/capabilities', route => route.fulfill({ json: { operations: [] } }));
   for (const path of ['/app', '/app/image', '/app/video']) {
-    await page.goto(path);
+    await openWorkspace(page, path);
     await expect(page.locator('[data-app-shell]')).toBeVisible();
     await expect(page.getByLabel('Choose operation')).toBeVisible();
     await expect(page.locator('main h1')).toHaveCount(1);
@@ -33,7 +34,7 @@ test('a saved task determines its media at the common entry ahead of a new opera
   await page.route('**/saved-video.mp4', route => route.fulfill({ contentType: 'video/mp4', body: video }));
   let writes = 0;
   page.on('request', request => { if (request.method() === 'POST' && /\/api\/v1\/(?:uploads|quotes|jobs)/.test(request.url())) writes++; });
-  await page.goto('/app?operation=background-removal&job=saved-video-task');
+  await openWorkspace(page, '/app?operation=background-removal&job=saved-video-task');
   await expect(page.getByRole('heading', { name: 'Remove video watermarks' })).toBeVisible();
   await expect(page.getByLabel('Choose operation')).toHaveValue('video-watermark');
   await expect(page.locator('.background-tool-card')).toHaveCount(0);
@@ -45,10 +46,10 @@ test('an explicit PRO operation survives selecting a local file and reloading', 
   await page.route('**/api/auth/get-session', route => route.fulfill({ json: null }));
   await page.route('**/api/v1/capabilities', route => route.fulfill({ json: { operations: [{ operation: 'image-watermark-pro', enabled: true, acceptedTypes: ['image/png'], maxBytes: 10485760 }] } }));
   const image = await sharp({ create: { width: 80, height: 60, channels: 3, background: '#95bbaa' } }).png().toBuffer();
-  await page.goto('/app?operation=image-watermark-pro');
+  await openWorkspace(page, '/app?operation=image-watermark-pro');
   await page.getByLabel('Upload file to workspace', { exact: true }).setInputFiles({ name: 'pro-image.png', mimeType: 'image/png', buffer: image });
   await expect(page.getByText('pro-image.png', { exact: true })).toBeVisible();
-  await page.reload();
+  await reloadWorkspace(page);
   await expect(page.getByLabel('Choose operation')).toHaveValue('image-watermark-pro');
 });
 
@@ -60,11 +61,11 @@ test('an authenticated local draft does not cross accounts after a full page rel
   await page.route('**/api/v1/uploads', route => { preparations++; if (owner === 'owner-b') anotherOwnerPreparations++; return route.fulfill({status:503,json:{error:'Offline preparation fixture'}}); });
   page.on('request', request => { if (request.method() === 'POST' && /\/api\/(?:v1\/jobs|jobs)(?:\?|$)/.test(request.url())) writes++; });
   const image = await sharp({ create: { width: 80, height: 60, channels: 3, background: '#8599aa' } }).png().toBuffer();
-  await page.goto('/app?operation=background-removal');
+  await openWorkspace(page, '/app?operation=background-removal');
   await page.getByLabel('Upload file to workspace', { exact: true }).setInputFiles({ name: 'owner-a-private.png', mimeType: 'image/png', buffer: image });
   await expect(page.getByText('owner-a-private.png', { exact: true })).toBeVisible();
-  await page.reload(); await expect(page.getByText('owner-a-private.png', { exact: true })).toBeVisible();
-  owner = 'owner-b'; await page.reload();
+  await reloadWorkspace(page); await expect(page.getByText('owner-a-private.png', { exact: true })).toBeVisible();
+  owner = 'owner-b'; await reloadWorkspace(page);
   await expect(page.locator('[data-app-shell]')).toBeVisible();
   await expect(page.getByText('owner-a-private.png', { exact: true })).toHaveCount(0);
   expect(writes).toBe(0); expect(preparations).toBeGreaterThan(0); expect(anotherOwnerPreparations).toBe(0);
@@ -82,7 +83,7 @@ test('background and object operations open in the same App with the same anonym
   await page.getByTestId('media-launcher-file').setInputFiles({ name: 'same-file.png', mimeType: 'image/png', buffer: image });
   await expect(page.locator('[data-app-shell]')).toBeVisible();
   await page.getByLabel('Choose operation').selectOption('background-removal');
-  await expect(page).toHaveURL(/\/app\?operation=background-removal$/);
+  await expect(page).toHaveURL(/\/app\?operation=background-removal$/); await waitForWorkspace(page);
   await expect(page.getByRole('heading', { name: 'Remove background', exact: true })).toBeVisible();
   await expect(page.getByText('same-file.png', { exact: true })).toBeVisible();
   await page.getByLabel('Choose operation').selectOption('object-removal');
@@ -102,7 +103,7 @@ test('an operation bundle failure leaves a readable recovery action and reload c
   await expect.poll(() => blocked).toBe(true);
   await expect(page.getByRole('heading', { name: 'Workspace could not open' })).toBeVisible();
   await expect(page.getByRole('link', { name: 'Reload workspace' })).toBeVisible();
-  await page.unroute(bundle); await page.reload();
+  await page.unroute(bundle); await reloadWorkspace(page);
   await expect(page.locator('[data-app-shell]')).toBeVisible();
 });
 
@@ -115,7 +116,7 @@ test('initial object sign-in retains its selection, waits for a quote and does n
   const action=page.getByRole('button',{name:'Remove object · 10 image credits',exact:true}); await expect(action).toBeEnabled();
   expect(state.submissions).toBe(0); expect(state.masks).toHaveLength(1);
   await action.click(); await expect(page.getByRole('button',{name:'Download PNG',exact:true})).toBeVisible();
-  expect(state.submissions).toBe(1); state.owner='another-owner'; state.job=null; await page.reload();
+  expect(state.submissions).toBe(1); state.owner='another-owner'; state.job=null; await reloadWorkspace(page);
   await expect(page.locator('[data-app-shell]')).toBeVisible(); await expect(page.getByText('background-source.png',{exact:true})).toHaveCount(0);
   expect(state.submissions).toBe(1); expect(state.oldRequests).toBe(0);
 });
@@ -137,7 +138,7 @@ test('switching same-size recent object sources clears painted pixels and undo h
     return job ? route.fulfill({ json: job }) : route.fulfill({ status: 503, json: { error: 'Quote preparation unavailable in this selection-only test' } });
   });
   await page.route('**/fixture/*.png', route => route.fulfill({ contentType: 'image/png', body: image }));
-  await page.goto('/app?job=first');
+  await openWorkspace(page, '/app?job=first');
   const canvas = page.getByLabel('Object removal mask canvas');
   await expect(canvas).toBeVisible();
   const paint = async (fraction: number) => { const box = (await canvas.boundingBox())!; await page.mouse.move(box.x + box.width * fraction, box.y + box.height * .5); await page.mouse.down(); await page.mouse.move(box.x + box.width * (fraction + .02), box.y + box.height * .5); await page.mouse.up(); };

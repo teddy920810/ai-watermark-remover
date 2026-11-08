@@ -1,3 +1,4 @@
+import { openWorkspace } from './workspace';
 import { expect, type Page } from '@playwright/test';
 import sharp from 'sharp';
 const expires = () => new Date(Date.now() + 86_400_000).toISOString();
@@ -42,7 +43,7 @@ export async function imageOperationFixture(page: Page, options: { initiallySign
   await page.route('**/fixture/durable-upload-*', route => { const id = new URL(route.request().url()).pathname.split('/').at(-1)!; if (uploads.get(id)?.kind === 'mask') state.masks.push(route.request().postDataBuffer()!); return route.fulfill({ status: 200 }); });
   await page.route('**/fixture/durable-input.png', route => route.fulfill({ contentType: 'image/png', body: input }));
   await page.route('**/fixture/durable-result.png', route => route.fulfill({ contentType: 'image/png', body: output }));
-  await page.goto(`/app?operation=${operation}`);
+  await openWorkspace(page, `/app?operation=${operation}`);
   await page.getByLabel('Upload file to workspace').setInputFiles({ name: 'background-source.png', mimeType: 'image/png', buffer: input });
   if (operation === 'object-removal' && autoSelect) await stroke(page);
   if (initiallySignedIn && autoSelect && !options.quoteUnavailable) await expect(page.getByRole('button', { name: `${operation === 'object-removal' ? 'Remove object' : 'Remove background'} · 10 ${options.unified ? 'Credits' : 'image credits'}`, exact: true })).toBeVisible();

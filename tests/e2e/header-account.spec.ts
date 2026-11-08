@@ -1,3 +1,4 @@
+import { openWorkspace } from '../helpers/workspace';
 import { expect, test, type Page } from '@playwright/test';
 import { mkdirSync } from 'node:fs';
 
@@ -155,7 +156,7 @@ test('public navigation folding leaves image and video workspace headers on one 
   for (const width of [1280, 1024]) {
     await page.setViewportSize({ width, height: 900 });
     for (const kind of ['image', 'video']) {
-      await page.goto(`/app/${kind}`);
+      await openWorkspace(page, `/app/${kind}`);
       const header = page.locator('.workspace-header');
       await expect(header.getByRole('button', { name: 'Sign in with Google', exact: true })).toBeEnabled();
       const box = (await header.boundingBox())!;

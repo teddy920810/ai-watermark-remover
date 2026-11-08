@@ -1,3 +1,4 @@
+import { waitForWorkspace } from '../helpers/workspace';
 import { expect, test, type Locator, type Page } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import sharp from 'sharp';
@@ -125,14 +126,14 @@ test('focused image and video landing entries hand local files to their matching
     await page.goto('/gemini-watermark-remover', { waitUntil: 'domcontentloaded' });
     await expect(page.getByTestId('media-launcher-file')).toBeEnabled();
     await page.getByTestId('media-launcher-file').setInputFiles({ name: 'landing-image.png', mimeType: 'image/png', buffer: image });
-    await expect(page).toHaveURL(/\/app\/image$/);
+    await expect(page).toHaveURL(/\/app\/image$/); await waitForWorkspace(page);
     await expect(page.getByText('landing-image.png', { exact: true })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Sign in to continue', exact: true })).toBeVisible();
     await page.goto('/video-watermark-remover', { waitUntil: 'domcontentloaded' });
     await expect(page.getByTestId('media-launcher-file')).toBeEnabled();
     await expect(page.getByTestId('media-launcher-file')).toHaveAttribute('accept', 'image/jpeg,image/png,image/webp,video/mp4');
     await page.getByTestId('media-launcher-file').setInputFiles({ name: 'landing-video.mp4', mimeType: 'video/mp4', buffer: videoBytes });
-    await expect(page).toHaveURL(/\/app\/video$/);
+    await expect(page).toHaveURL(/\/app\/video$/); await waitForWorkspace(page);
     await expect(page.getByText('landing-video.mp4', { exact: true })).toBeVisible();
     await expect(page.locator('video')).toHaveAttribute('src', /^blob:/);
     await expect(page.getByRole('button', { name: 'Sign in to continue', exact: true })).toBeVisible();

@@ -185,17 +185,17 @@ npm run test:smoke:production
 npm run test:smoke:processing -- --base-url https://APP_ORIGIN
 ```
 
-需要真实功能验收时，发布负责人从本机环境注入 `PROCESSING_ACCEPTANCE_SESSION_COOKIE`，显式指定 `--functional`、样本与已确认价格/单位。普通图片示例仅适用于报价确为 1 次免费额度的账号：
+需要真实功能验收时，发布负责人从本机环境注入 `PROCESSING_ACCEPTANCE_SESSION_COOKIE`，统一使用 `test:smoke:processing`，显式指定 `--functional`、样本、已确认价格/单位和既有审阅账本。以下普通图片示例仅适用于报价确为 100 Credits 的统一账户，示例占位符必须对应已有授权，不能据此创建新预算：
 
 ```text
-npm run test:smoke:processing -- --functional --base-url https://APP_ORIGIN --operation image-watermark --sample "IMAGE_SAMPLE" --expected-amount 1 --expected-unit freeUses --image-limit 8
+npm run test:smoke:processing -- --functional --base-url https://APP_ORIGIN --operation image-watermark --sample "IMAGE_SAMPLE" --expected-amount 100 --expected-unit credits --ledger "EXISTING_REVIEWED_LEDGER" --credit-budget-id "EXISTING_BUDGET_ID" --credit-scope-id "EXISTING_SCOPE_ID" --credit-environment live
 ```
 
-PRO / refine / video 分别使用 `image-watermark-pro`、`image-refine`、`video-watermark`；精修还需 `--parent-job`、`--parent-artifact`、`--mask`，视频本地探测需 `--ffprobe`。背景/物体使用 `background-removal` / `object-removal`，物体必需同尺寸二值PNG的 `--mask`。费用必须逐项确认；背景/物体只能是 `freeUses` 或 `purchasedImageCredits`，脚本核对全部返回余额，要求原尺寸PNG，背景还核对实际透明像素。原JPEG/视频验收规则保持。Cookie 不接受命令行参数，不能进入文档、报告或日志。
+PRO / refine / video 分别使用 `image-watermark-pro`、`image-refine`、`video-watermark`；精修还需 `--parent-job`、`--parent-artifact`、`--mask`，视频本地探测需 `--ffprobe`。背景/物体使用 `background-removal` / `object-removal`，物体必需同尺寸二值PNG的 `--mask`。保留的背景/物体 npm 别名仅补充 `--functional` 和 operation，其余授权参数相同。费用与单位必须按审阅账户逐项确认：统一账户使用 `credits`，已审阅旧账户仍按其原单位和报价验证，不合并或重解释账户余额。脚本核对全部返回余额，背景/物体要求原尺寸PNG，背景还核对实际透明像素；原JPEG/视频验收规则保持。Cookie 不接受命令行参数，不能进入文档、报告或日志。
 
-所有功能脚本与直连接口诊断必须共享当前权威账本；有历史账本时通过`ACCEPTANCE_LEDGER_PATH`指向原文件，不能新建路径恢复默认额度。默认图片调用上限5，既有授权最多10；2026-11-01新增授权明确为10个processingCredits，另限本轮5项图片调用，累计调用上限15，视频仍为原5次且仅剩1次。扩展模式使用`--image-limit 15`，必须读取原账本中的单独Credits授权才能运行，不能仅传更大数字。
+所有功能脚本与直连接口诊断必须共享当前权威账本，可通过 `--ledger` 或 `ACCEPTANCE_LEDGER_PATH` 指向既有文件，并提供一致的 budget ID、scope ID、环境、会话、操作及审阅价格。`CreditsAcceptanceBudget` 是唯一执行类：必须先核对已初始化的审阅范围，首次网络请求前拒绝不匹配的授权，创建任务前原子预留预算。旧 `AcceptanceBudget` 执行类随第四批精简退役，旧次数账本仅作离线历史依据，不能通过 `--image-limit`、更换文件或重新导出旧类恢复调用额度。
 
-预算保留既有14条记录，新窗口分别限制调用次数和已预留processingCredits；免费次数记录为freeUses、不扣此Credits预算，purchasedImageCredits不在本次新增授权内。单次先核对服务端报价和账户现有余额，再在唯一创建job请求前预留对应预算。失败/UNKNOWN也占用调用槽和已预留Credits；不循环重试，不购买或充值。账户测试额度须另有用户明确授权并使用管理员审计工具；2026-11-01用户后续“你直接补足”的单次范围见发布台账，不视作未来发放授权。权威账本与授权证明的本机位置见发布台账，不写入产品运行路径依赖。
+历史调用次数、14条旧记录及2026-11-01的单次补足授权仍以既有账本和发布台账为准，本轮不改写、续期或删除。当前聚合分别限制发放、消费和真实调用次数；旧账户的验收预算换算只用于审阅范围计量，不改变账户实际单位。失败/UNKNOWN继续占用调用槽和已预留Credits；不循环重试，不购买或充值。账户测试额度须另有用户明确授权并使用管理员审计工具；历史“你直接补足”不视作未来发放授权。账本与授权证明保存在本机忽略目录，不写入产品运行路径依赖。公开 smoke 始终无会话，旧 `--require-auth` 参数会在发出请求前拒绝并提示统一功能入口。
 
 验收应留存脱敏 record ID、任务 ID、实际格式/尺寸/时长/音轨信息、报价单位及扣费前后数值，并确认只扣一次。脚本返回 `UNKNOWN`、请求超时或断开后，先按已保存任务与操作键恢复，禁止重复 POST。`READY` 还需实际下载、播放和去水印效果人工检查；图片应检查精修前后版本，视频应检查同步预览、声音与输出。
 

@@ -2,15 +2,6 @@ name: Production smoke
 
 on:
   workflow_dispatch:
-    inputs:
-      functional_operation:
-        description: 'Optional credit-consuming functional smoke operation'
-        required: false
-        type: choice
-        options:
-          - public-only
-          - background-removal
-        default: public-only
   schedule:
     - cron: '17 2 * * *'
 
@@ -25,15 +16,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
-      - run: npm ci
       - name: Run public production smoke
-        run: npm run test:smoke:production
+        run: node scripts/production-smoke.mjs
         env:
           SMOKE_BASE_URL: https://www.watermarkgemini.com
-      - name: Run background-removal functional smoke
-        if: github.event_name == 'workflow_dispatch' && inputs.functional_operation == 'background-removal'
-        run: npm run test:smoke:background-removal
-        env:
-          SMOKE_BASE_URL: https://www.watermarkgemini.com
-          SMOKE_SESSION_COOKIE: ${{ secrets.PRODUCTION_SMOKE_SESSION_COOKIE }}
