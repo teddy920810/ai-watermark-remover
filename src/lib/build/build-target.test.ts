@@ -271,7 +271,7 @@ describe('same-origin App and Site proxy', () => {
   });
   it('preserves required verify and adds a credential-free target packaging workflow', () => {
     const root = new URL('../../../', import.meta.url);
-    expect(readFileSync(new URL('.github/workflows/ci.yml', root), 'utf8')).toContain('npm run verify');
+    expect(readFileSync(new URL('.github/workflows/ci.yml', root), 'utf8')).toContain('npm run ci:verify');
     const targets = readFileSync(new URL('.github/workflows/build-targets.yml', root), 'utf8'); expect(targets).toContain('matrix.target'); expect(targets).not.toContain('secrets.VERCEL_TOKEN');
   });
   it('preserves existing SEO redirects and security headers in independent deployment manifests', () => {

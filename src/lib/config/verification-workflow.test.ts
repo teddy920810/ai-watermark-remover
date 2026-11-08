@@ -14,7 +14,8 @@ describe('risk-based verification workflow', () => {
 
   it('keeps stable required CI while allowing scoped checks for known low-risk changes', () => {
     expect(agents).toContain('`CI / verify` 和 `Required target artifacts`');
-    expect(agents).toContain('未知或混合范围运行完整 `npm run verify`');
+    expect(agents).toContain('未知或混合范围执行全量回归');
+    expect(agents).toContain('独立产物门禁必须构建 Site/App 并追加所需 Worker');
     expect(testingGuide).toContain('低风险改动不在本地和 CI 重复运行完整 `verify`');
     expect(testingGuide).toContain('1 个正向页面和 1 个负向页面');
   });

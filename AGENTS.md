@@ -62,7 +62,7 @@
 - 所有行为改动先运行证明目标行为的红测，再做最小修改并运行绿测。
 - [测试指南](docs/TESTING_GUIDE.md#动态验证矩阵)是本地检查、抽查范围、失败处理和生产 smoke 的唯一矩阵；只选一次覆盖实际风险的门禁，不叠加重合检查。
 - API、鉴权、R2、Provider、安全响应头、构建链、依赖、CI、全局配置、范围不确定或定向检查失败，必须在本地运行 `npm run release:verify`。CI/构建链精简自身仍按高风险验证。
-- `CI / verify` 和 `Required target artifacts` 是合并 `main` 的稳定必需门禁，保持严格更新与可信 GitHub Actions 来源。CI 按 `scripts/ci-plan.mjs` 的明确允许名单选择 docs/content/ui/full；未知或混合范围运行完整 `npm run verify`，不降低覆盖率或安全阈值。门禁未通过不得合并。
+- `CI / verify` 和 `Required target artifacts` 是合并 `main` 的稳定必需门禁，保持严格更新与可信 GitHub Actions 来源。CI 按 `scripts/ci-plan.mjs` 的明确允许名单选择 docs/content/ui/full；未知或混合范围执行全量回归，独立产物门禁必须构建 Site/App 并追加所需 Worker，不降低覆盖率或安全阈值。本地 `verify`/`release:verify` 保留组合构建。门禁未通过不得合并。
 - 标准门禁受端口、进程或平台问题阻塞时，先安全排查一次；仍不能运行则补充覆盖缺失范围的等价验证并明确限制，不重复已有充分证据。
 - 仅文档/指令修改只检查 Markdown、diff、范围和工作区；被构建或自动化消费的文档按实际风险验证。未受影响的发布门禁标记为 `not applicable`，不能用额外检查凑成全部通过。
 

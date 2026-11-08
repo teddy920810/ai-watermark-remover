@@ -1,39 +1,46 @@
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
 import { argv, cwd, stdout } from 'node:process';
+import { pathToFileURL } from 'node:url';
 
-const outputDirectory = resolve(cwd(), argv[2] ?? 'dist/client');
-const htmlFiles = [];
+export function verifyResponsiveImages(outputDirectory) {
+  const htmlFiles = [];
 
-function collectHtmlFiles(directory) {
-  for (const entry of readdirSync(directory)) {
-    const path = join(directory, entry);
-    if (statSync(path).isDirectory()) collectHtmlFiles(path);
-    else if (entry.endsWith('.html')) htmlFiles.push(path);
-  }
-}
-
-collectHtmlFiles(outputDirectory);
-
-const failures = [];
-const imagePattern = /<img\b[^>]*\bsrc="(\/uploads\/[a-z0-9/_-]+\.(?:jpe?g|png))"[^>]*>/gi;
-
-for (const path of htmlFiles) {
-  const html = readFileSync(path, 'utf8');
-  for (const match of html.matchAll(imagePattern)) {
-    const source = match[1];
-    const imageIndex = match.index ?? 0;
-    const pictureStart = html.lastIndexOf('<picture', imageIndex);
-    const pictureEnd = html.lastIndexOf('</picture>', imageIndex);
-    const picturePrefix = pictureStart > pictureEnd ? html.slice(pictureStart, imageIndex) : '';
-    if (!picturePrefix.includes(`srcset="/generated${source}-`)) {
-      failures.push(`${relative(outputDirectory, path)}: ${source}`);
+  function collectHtmlFiles(directory) {
+    for (const entry of readdirSync(directory)) {
+      const path = join(directory, entry);
+      if (statSync(path).isDirectory()) collectHtmlFiles(path);
+      else if (entry.endsWith('.html')) htmlFiles.push(path);
     }
   }
+
+  collectHtmlFiles(outputDirectory);
+
+  const failures = [];
+  const imagePattern = /<img\b[^>]*\bsrc="(\/uploads\/[a-z0-9/_-]+\.(?:jpe?g|png))"[^>]*>/gi;
+
+  for (const path of htmlFiles) {
+    const html = readFileSync(path, 'utf8');
+    for (const match of html.matchAll(imagePattern)) {
+      const source = match[1];
+      const imageIndex = match.index ?? 0;
+      const pictureStart = html.lastIndexOf('<picture', imageIndex);
+      const pictureEnd = html.lastIndexOf('</picture>', imageIndex);
+      const picturePrefix = pictureStart > pictureEnd ? html.slice(pictureStart, imageIndex) : '';
+      if (!picturePrefix.includes(`srcset="/generated${source}-`)) {
+        failures.push(`${relative(outputDirectory, path)}: ${source}`);
+      }
+    }
+  }
+
+  if (failures.length > 0) {
+    throw new Error(`CMS raster images are missing responsive WebP sources:\n${failures.join('\n')}`);
+  }
+
+  return htmlFiles.length;
 }
 
-if (failures.length > 0) {
-  throw new Error(`CMS raster images are missing responsive WebP sources:\n${failures.join('\n')}`);
+if (argv[1] && import.meta.url === pathToFileURL(resolve(argv[1])).href) {
+  const count = verifyResponsiveImages(resolve(cwd(), argv[2] ?? 'dist/client'));
+  stdout.write(`[images] Verified responsive WebP markup in ${count} HTML files.\n`);
 }
-
-stdout.write(`[images] Verified responsive WebP markup in ${htmlFiles.length} HTML files.\n`);

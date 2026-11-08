@@ -29,7 +29,7 @@ describe('required CI risk selection', () => {
       expect(classifyVerification(files).mode, String(files)).toBe('full');
     }
     expect(classifyVerification(['docs/notes.md', 'src/content/blog/example.md']).mode).toBe('content');
-    expect(verificationCommands('full')).toEqual(['audit:dependencies', 'verify']);
+    expect(verificationCommands('full')).toEqual(['audit:dependencies', 'test:coverage', 'lint:code', 'typecheck', 'images:optimize', 'test:e2e', 'test:components']);
     expect(() => verificationCommands('unknown')).toThrow();
   });
   it('always emits the existing trusted verify context and plans from immutable event SHAs', () => {

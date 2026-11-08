@@ -32,7 +32,7 @@ jobs:
         if: steps.plan.outputs.mode != 'docs'
       - run: npx playwright install --with-deps chromium
         if: steps.plan.outputs.browser == 'true'
-      - name: Run selected verification (full mode runs npm run verify)
+      - name: Run selected verification (full regression; builds use Required target artifacts)
         run: npm run ci:verify
       - name: Upload E2E failure evidence
         if: failure()

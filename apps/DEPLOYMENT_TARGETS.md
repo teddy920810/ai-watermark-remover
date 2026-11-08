@@ -1,5 +1,7 @@
 # Independent web deployment targets
 
+CI uses `build-target.mjs ci-changes BASE HEAD` to complement full regression with both Site and App compilation; Worker remains selected by its actual dependencies. Public `changes` and Vercel `ignore` retain production deployment selection. Every selected web artifact runs the responsive-image check on its own final HTML before staging/upload. Both mandatory contexts must pass; coverage ownership is maintained in the [test guide](../docs/TESTING_GUIDE.md#ci-全量检查的覆盖分工). Local combined build commands remain available and unchanged.
+
 An explicit redeployment whose previous and current Git SHAs are identical must still build: production environment variables may have changed. The `ignore` decision returns Vercel's build status (exit 1) for App and Site in this case. Ordinary commits continue to use the target change classifier. This does not bypass verification, install, build, artifact validation or deployment acceptance. Changing environment variables alone does not update an already running deployment; verify the replacement deployment and its runtime policy.
 
 Current ownership is tracked in [current architecture](../docs/CURRENT_ARCHITECTURE.md), verification gates in [the test guide](../docs/TESTING_GUIDE.md), and published versions in [release records](../docs/product/RELEASE_READINESS.md). Earlier planning statements describe their historical baseline. This document specifies the selected topology and does not claim production or DNS acceptance for local changes.
