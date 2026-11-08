@@ -1,5 +1,5 @@
 import sharp from 'sharp';
-import { IMAGE_MAX_BYTES } from '../contracts/operation-catalog';
+import { IMAGE_MAX_BYTES } from '../contracts/operation-catalog.ts';
 
 export interface ImageInfo {
   format: 'jpeg' | 'png' | 'webp';
