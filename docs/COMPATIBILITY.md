@@ -73,3 +73,9 @@ R2媒体TTL、短期下载票据和敏感字段擦除的24小时恢复缓冲均�
 所有者：App/API 与验收维护者。替代：`processing-public.ts` 的单一公开合同和 `api/request-body.ts` 的受限字节读取器。复核阶段：本地验证已通过；本次发布须通过两个必需CI门禁并核对生产版本与适用验收。用户已确认没有线上真实用户，并授权同步迁移本仓库消费者与验收脚本。媒体顶层重复属性改用 `metadata`；任务顶层金额/单位/结算状态与重复 `quote` 改用 `charge`、`quoteId`；上传 `uploadId`、顶层 `artifactId/previewUrl` 改用 `id`、`artifact`；下载 `downloadUrl` 改用 `url`。
 
 退役依据：仓库字段引用盘点、真实投影的精确字段测试、四类费用单位及 UNKNOWN/结算/退款投影、浏览器恢复/下载与验收脚本负例。内部 UploadRecord/ProcessingJob、报价快照、幂等键、账本和任务恢复格式保持原样，不删除任何数据库、R2 或预算记录。读取器只共享字节收集，各接口原有解析和安全策略保留。生产缓存客户端的公开字段切换仍须随本次受保护发布与适用生产验收核对，本地通过不代表已上线。
+
+## 免费 Gemini 固定浏览器适配器（本地实现）
+
+所有者：免费 Gemini 功能维护者。现有适配：src/lib/client/gemini-engine.ts、gemini-worker.ts 与 src/vendor/gemini/ 的 MIT v1.0.46 固定 bundle；依赖 mediabunny@1.46.0。来源 commit、源码及产物散列保存在 provenance.json，显式再生成命令见 docs/product/FREE_GEMINI.md。替代：上游正式发布可直接消费、同时支持图片和浏览器视频的 SDK 后评估替换。
+
+复核阶段：本地图片/视频及原文件交接验证；发布前复核许可、授权原样本效果和跨平台浏览器。退役证据须包括正式 SDK 等价的检测、音轨、取消、真实 PNG/MP4 下载和付费隔离回归，以及已部署静态资源的兼容窗口。不得仅因上游版本更新或文件可生成而自动删除；本轮不清理旧工作区、旧 API 或历史资产。

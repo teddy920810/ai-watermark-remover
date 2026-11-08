@@ -94,11 +94,12 @@ test('focused tool launchers keep the designed upload target and workspace entry
     ]) {
       await page.goto(route, { waitUntil: 'domcontentloaded' });
       const launcher = page.locator('.tool-landing #tool .media-launcher');
+      const isFreeGemini = route === '/gemini-watermark-remover';
       await expect(launcher).toHaveAttribute('data-media-launcher', 'auto');
       const button = launcher.getByRole('button', { name: 'Upload file', exact: true });
       await expect(button).toBeEnabled();
       await expect(launcher.locator('.launcher-modes')).toHaveCount(0);
-      await expect(launcher.locator('.launcher-workspace-link')).toHaveAttribute('href', kind === 'video' ? '/app/video' : '/app');
+      await expect(launcher.locator('.launcher-workspace-link')).toHaveAttribute('href', isFreeGemini ? '/app/free/gemini' : kind === 'video' ? '/app/video' : '/app');
       await expect(launcher.locator('.launcher-workspace-link')).toBeVisible();
       const drop = await launcher.locator('.launcher-drop').boundingBox();
       const action = await button.boundingBox();
@@ -126,9 +127,9 @@ test('focused image and video landing entries hand local files to their matching
     await page.goto('/gemini-watermark-remover', { waitUntil: 'domcontentloaded' });
     await expect(page.getByTestId('media-launcher-file')).toBeEnabled();
     await page.getByTestId('media-launcher-file').setInputFiles({ name: 'landing-image.png', mimeType: 'image/png', buffer: image });
-    await expect(page).toHaveURL(/\/app\/image$/); await waitForWorkspace(page);
-    await expect(page.getByText('landing-image.png', { exact: true })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Sign in to continue', exact: true })).toBeVisible();
+    await expect(page).toHaveURL(/\/app\/free\/gemini$/);
+    await expect(page.getByAltText('Original image')).toBeVisible({ timeout: 20000 });
+    await expect(page.getByRole('button', { name: 'Sign in to process for free', exact: true })).toBeVisible();
     await page.goto('/video-watermark-remover', { waitUntil: 'domcontentloaded' });
     await expect(page.getByTestId('media-launcher-file')).toBeEnabled();
     await expect(page.getByTestId('media-launcher-file')).toHaveAttribute('accept', 'image/jpeg,image/png,image/webp,video/mp4');

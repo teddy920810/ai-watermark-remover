@@ -4,6 +4,7 @@ import { cleanExpiredMediaDrafts, saveMediaDraft, workspacePath, type MediaKind 
 import { formatLauncherLimit, identifyLauncherMedia, launcherLimit } from '../../lib/client/media-identification';
 import type { MediaRecommendation } from '../../lib/client/media-recommendation';
 import type { Capability } from '../workspace/workspace-api';
+import { toolWorkspaceForSource } from '../../lib/contracts/route-policy.mjs';
 import './launcher.css';
 
 // Public guide metadata only. App admission, balances and prices remain authoritative and uncached here.
@@ -40,7 +41,8 @@ export default function MediaLauncher({ source = 'landing', recommendation, comp
   const imageLimit = launcherLimit('image', capabilityFor(capabilities, 'image')?.maxBytes);
   const videoCapability = capabilityFor(capabilities, 'video');
   const videoLimit = launcherLimit('video', videoCapability?.maxBytes);
-  const workspaceHref = recommendation?.operation === 'video-watermark' ? workspacePath('video') : '/app';
+  const dedicatedWorkspace = !onFileSelected ? toolWorkspaceForSource(source) : null;
+  const workspaceHref = dedicatedWorkspace ?? (recommendation?.operation === 'video-watermark' ? workspacePath('video') : '/app');
   useEffect(() => {
     mounted.current = true;
     setHydrated(true);
@@ -56,14 +58,14 @@ export default function MediaLauncher({ source = 'landing', recommendation, comp
     if (!file || pending || selecting.current) return;
     selecting.current = true; setPending(true); setError('');
     try {
-      const values = await capabilityRequest.current ?? capabilities;
-      const identified = await identifyLauncherMedia(file, { image: capabilityFor(values, 'image')?.maxBytes, video: capabilityFor(values, 'video')?.maxBytes });
+      const values = dedicatedWorkspace ? [] : await capabilityRequest.current ?? capabilities;
+      const identified = await identifyLauncherMedia(file, dedicatedWorkspace ? undefined : { image: capabilityFor(values, 'image')?.maxBytes, video: capabilityFor(values, 'video')?.maxBytes });
       if (!mounted.current) return;
       if (!identified.ok) throw new Error(identified.message);
       if (onFileSelected) { await onFileSelected(identified.file, identified.kind); setPending(false); }
       else {
-        await saveMediaDraft(identified.file, identified.kind, source, undefined, recommendation);
-        if (mounted.current) window.location.assign(workspacePath(identified.kind));
+        await saveMediaDraft(identified.file, identified.kind, dedicatedWorkspace ?? source, undefined, dedicatedWorkspace ? undefined : recommendation);
+        if (mounted.current) window.location.assign(dedicatedWorkspace ?? workspacePath(identified.kind));
       }
     } catch (cause) { setError(cause instanceof Error ? cause.message : 'This file could not be saved. Choose it directly in the workspace.'); setPending(false); }
     finally { selecting.current = false; }
