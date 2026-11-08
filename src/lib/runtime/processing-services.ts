@@ -169,8 +169,8 @@ export function createProcessingRuntime(config: ProcessingRuntimeConfig): Proces
   const projectUpload = async (owner: string, record: UploadRecord): Promise<PublicUpload> => {
     const artifact = record.artifactId ? await media.get(record.artifactId) : null;
     const view = artifact ? await projection.artifact(owner, artifact) : undefined;
-    return { id: record.id, uploadId: record.id, kind: record.kind, status: record.status, createdAt: record.createdAt, expiresAt: view?.expiresAt ?? record.expiresAt,
-      ...(view ? { artifactId: view.id, artifact: view, ...(view.previewUrl ? { previewUrl: view.previewUrl } : {}) } : {}),
+    return { id: record.id, kind: record.kind, status: record.status, createdAt: record.createdAt, expiresAt: view?.expiresAt ?? record.expiresAt,
+      ...(view ? { artifact: view } : {}),
       ...(record.status === 'failed' ? { error: 'File validation failed. Select a compatible file and try again.' } : {}),
       ...(record.status === 'expired' ? { error: 'Upload has expired. Select the file again.' } : {}) };
   };

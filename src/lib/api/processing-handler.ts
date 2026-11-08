@@ -5,6 +5,7 @@ import type { PublicBalances } from '../contracts/processing-public';
 import { creditsContractVersion } from '../contracts/credits-client';
 import { VIDEO_MAX_BYTES } from '../contracts/operation-catalog';
 import { z } from 'zod';
+import { readBoundedBody, RequestBodyLimitError } from './request-body';
 
 export interface UploadDeclaration { kind: 'image' | 'video' | 'mask'; contentType: string; byteSize: number; inputArtifactId?: string }
 function requireCreditsClient(request: Request) {
@@ -40,24 +41,10 @@ async function body(request: Request): Promise<unknown> {
   const length = request.headers.get('content-length');
   if (length && (!/^\d+$/.test(length) || Number(length) > 32_768)) throw new ProcessingError('body_limit', 'Request is too large', 413);
   if (!request.body) throw new ProcessingError('invalid_body', 'Send a valid JSON request');
-  const reader = request.body.getReader();
-  const chunks: Uint8Array[] = [];
-  let size = 0;
-  try {
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      size += value.byteLength;
-      if (size > 32_768) {
-        await reader.cancel().catch(() => undefined);
-        throw new ProcessingError('body_limit', 'Request is too large', 413);
-      }
-      chunks.push(value);
-    }
-  } finally { reader.releaseLock(); }
-  const bytes = new Uint8Array(size);
-  let offset = 0;
-  for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.byteLength; }
+  const bytes = await readBoundedBody(request.body, 32_768).catch(error => {
+    if (error instanceof RequestBodyLimitError) throw new ProcessingError('body_limit', 'Request is too large', 413);
+    throw error;
+  });
   const text = new TextDecoder().decode(bytes);
   try { return JSON.parse(text); } catch { throw new ProcessingError('invalid_body', 'Send a valid JSON request'); }
 }

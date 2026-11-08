@@ -25,7 +25,7 @@ export interface Capability {
   reason?: string;
 }
 
-export interface PublicArtifact extends MediaMetadata {
+export interface PublicArtifact {
   id: string;
   role: 'source' | 'mask' | 'result';
   metadata: MediaMetadata;
@@ -65,11 +65,8 @@ export interface PublicJob {
   id: string;
   operation: Operation;
   status: JobStatus;
-  chargeStatus: ChargeStatus;
   charge: { status: ChargeStatus; amount: number; unit: CreditUnit };
-  amount: number;
-  unit: CreditUnit;
-  quote: { id: string; amount: number; unit: CreditUnit };
+  quoteId: string;
   createdAt: string;
   updatedAt: string;
   expiresAt?: string;
@@ -84,14 +81,11 @@ export interface PublicJob {
 
 export interface PublicUpload {
   id: string;
-  uploadId: string;
   kind: 'image' | 'video' | 'mask';
   status: 'created' | 'validating' | 'ready' | 'failed' | 'expired';
   createdAt: string;
   expiresAt: string;
-  artifactId?: string;
   artifact?: PublicArtifact;
-  previewUrl?: string;
   error?: string;
 }
 
@@ -103,7 +97,6 @@ export interface PublicUploadTicket extends PublicUpload {
 
 export interface PublicDownload {
   url: string;
-  downloadUrl: string;
   filename: string;
   expiresAt: string;
   artifactId: string;

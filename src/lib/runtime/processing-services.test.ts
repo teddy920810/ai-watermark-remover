@@ -42,7 +42,7 @@ async function setup(overrides: Partial<ProcessingRuntimeConfig> = {}) {
 async function queueProcessing(s: Awaited<ReturnType<typeof setup>>, operation: 'image-watermark' | 'image-watermark-pro' = 'image-watermark-pro') {
   await s.runtime.completeUpload('user-1', s.upload.id);
   const ready = await s.runtime.runPreflight('user-1', s.upload.id);
-  const quote = await s.runtime.service.quote({ ownerId: 'user-1', operation, inputArtifactId: ready.artifactId! });
+  const quote = await s.runtime.service.quote({ ownerId: 'user-1', operation, inputArtifactId: ready.artifact!.id });
   const job = await s.runtime.service.submit({ ownerId: 'user-1', quoteId: quote.id, idempotencyKey: 'dispatch-test' });
   vi.spyOn(s.finance as ProcessingFinancialStore, 'claimDue').mockResolvedValue([{ id: 'process-outbox', jobId: job.id, ownerId: job.ownerId, action: 'process', attempts: 1 }]);
   return job;
@@ -61,7 +61,7 @@ async function imageRequest(s: Awaited<ReturnType<typeof setup>>, operation: 'ba
   s.memory.objects.set(record.stagingKey, { bytes, contentType: 'image/png', metadata: {}, etag: 'mask-browser-upload' });
   await s.runtime.completeUpload('user-1', upload.id);
   const mask = await s.runtime.runPreflight('user-1', upload.id);
-  return { operation, inputArtifactId, maskArtifactId: mask.artifactId! };
+  return { operation, inputArtifactId, maskArtifactId: mask.artifact!.id };
 }
 
 describe('processing runtime assembly', () => {
@@ -72,7 +72,7 @@ describe('processing runtime assembly', () => {
     try {
       await s.runtime.completeUpload('user-1', s.upload.id);
       const input = await s.runtime.runPreflight('user-1', s.upload.id);
-      const quote = await s.runtime.service.quote({ ownerId: 'user-1', ...await imageRequest(s, operation, input.artifactId!) });
+      const quote = await s.runtime.service.quote({ ownerId: 'user-1', ...await imageRequest(s, operation, input.artifact!.id) });
       expect(quote).toMatchObject({ amount: operation === 'object-removal' ? 4 : 10, unit: 'purchasedImageCredits' });
       const job = await s.runtime.service.submit({ ownerId: 'user-1', quoteId: quote.id, idempotencyKey: 'background-finance' });
       const result = await s.runtime.runJob(job.id);
@@ -90,7 +90,7 @@ describe('processing runtime assembly', () => {
       expect(s.runtime.service.capabilities().find(value => value.operation === 'image-watermark')?.enabled).toBe(false);
       await s.runtime.completeUpload('user-1', s.upload.id);
       const input = await s.runtime.runPreflight('user-1', s.upload.id);
-      const quote = await s.runtime.service.quote({ ownerId: 'user-1', ...await imageRequest(s, operation, input.artifactId!) });
+      const quote = await s.runtime.service.quote({ ownerId: 'user-1', ...await imageRequest(s, operation, input.artifact!.id) });
       expect(await s.runtime.projectQuote('user-1', quote)).toMatchObject({ isDemo: true });
     } finally { await s.runtime.close(); }
   });
@@ -99,7 +99,7 @@ describe('processing runtime assembly', () => {
     const request = vi.fn<typeof fetch>().mockRejectedValue(new Error('A mock attempt must stay mock')); vi.stubGlobal('fetch', request);
     try {
       await s.runtime.completeUpload('user-1', s.upload.id); const input = await s.runtime.runPreflight('user-1', s.upload.id);
-      const quote = await s.runtime.service.quote({ ownerId: 'user-1', ...await imageRequest(s, operation, input.artifactId!) });
+      const quote = await s.runtime.service.quote({ ownerId: 'user-1', ...await imageRequest(s, operation, input.artifact!.id) });
       const job = await s.runtime.service.submit({ ownerId: 'user-1', quoteId: quote.id, idempotencyKey: 'mock-background-recovery' });
       const original = s.memory.send.getMockImplementation()!; let failed = false;
       s.memory.send.mockImplementation(async command => {
@@ -121,7 +121,7 @@ describe('processing runtime assembly', () => {
     try {
       request.mockResolvedValueOnce(Response.json({ id: 'accepted-background', status: 'processing' }));
       await s.runtime.completeUpload('user-1', s.upload.id); const input = await s.runtime.runPreflight('user-1', s.upload.id);
-      const quote = await s.runtime.service.quote({ ownerId: 'user-1', ...await imageRequest(s, operation, input.artifactId!) });
+      const quote = await s.runtime.service.quote({ ownerId: 'user-1', ...await imageRequest(s, operation, input.artifact!.id) });
       const job = await s.runtime.service.submit({ ownerId: 'user-1', quoteId: quote.id, idempotencyKey: 'real-background-recovery' });
       expect(await s.runtime.runJob(job.id)).toMatchObject({ status: 'PROCESSING', attempt: { checkpoint: { provider: 'replicate', providerJobId: 'accepted-background' } } });
       expect(JSON.parse(String(request.mock.calls[0][1]?.body)).version).toBe(operation === 'object-removal' ? `allenhooo/lama:${imageProviders.REPLICATE_LAMA_MODEL_VERSION}` : `851-labs/background-remover:${imageProviders.REPLICATE_BACKGROUND_MODEL_VERSION}`);
@@ -175,13 +175,15 @@ describe('processing runtime assembly', () => {
     expect([...s.memory.objects.keys()].some((k) => k.startsWith('processing/artifacts/'))).toBe(false);
     expect(await s.runtime.runPreflight('user-1', s.upload.id)).toMatchObject({ status: 'ready', artifact: { previewUrl: expect.stringContaining('https://private-r2.test/') } });
     const publicUpload = await s.runtime.getUpload('user-1', s.upload.id);
+    expect(Object.keys(publicUpload).sort()).toEqual(['id', 'kind', 'status', 'createdAt', 'expiresAt', 'artifact'].sort());
+    expect(publicUpload.artifact?.id).toBeTruthy();
     expect(JSON.stringify(publicUpload)).not.toContain('stagingKey'); expect(JSON.stringify(publicUpload)).not.toContain('ownerId');
     await expect(s.runtime.getUpload('other', s.upload.id)).rejects.toMatchObject({ status: 404 });
   });
   it('runs a complete mock job with real private result bytes, proper JPG output and fresh downloads', async () => {
     const s = await setup(); await s.runtime.completeUpload('user-1', s.upload.id);
     const ready = await s.runtime.runPreflight('user-1', s.upload.id);
-    const q = await s.runtime.service.quote({ ownerId: 'user-1', operation: 'image-watermark', inputArtifactId: ready.artifactId! });
+    const q = await s.runtime.service.quote({ ownerId: 'user-1', operation: 'image-watermark', inputArtifactId: ready.artifact!.id });
     const publicQuote = await s.runtime.projectQuote('user-1', q);
     expect(publicQuote).toMatchObject({ unit: 'freeUses', isDemo: true, expectedOutput: { format: 'JPG', width: 8, height: 6 } });
     const job = await s.runtime.service.submit({ ownerId: 'user-1', quoteId: q.id, idempotencyKey: 'click' });
@@ -190,7 +192,7 @@ describe('processing runtime assembly', () => {
     expect((await s.runtime.service.get('user-1', job.id)).status).toBe('READY');
     expect((await s.runtime.service.list('user-1')).map((item) => item.id)).toEqual([job.id]);
     expect(await s.runtime.service.list('another-user')).toEqual([]);
-    expect(await s.runtime.projectJob('user-1', result)).toMatchObject({ isDemo: true, result: { contentType: 'image/jpeg', width: 8, height: 6, canRefine: true } });
+    expect(await s.runtime.projectJob('user-1', result)).toMatchObject({ isDemo: true, result: { metadata: { contentType: 'image/jpeg', width: 8, height: 6 }, canRefine: true } });
     const a = await s.runtime.download('user-1', job.id); const b = await s.runtime.download('user-1', job.id);
     expect(a).not.toEqual(b); expect(a).toMatchObject({ filename: 'cleaned-image.jpg' });
     await expect(s.runtime.download('other', job.id)).rejects.toMatchObject({ status: 404 });

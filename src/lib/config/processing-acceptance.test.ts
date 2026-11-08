@@ -37,7 +37,7 @@ function site(sample: Uint8Array, options: { status?: string; lostSubmit?: boole
     if (route === '/api/v1/quotes') return Response.json({ id: 'quote-1', amount: options.creditsAmount ?? (options.purchased ? 10 : 1), unit: options.creditsAmount ? 'credits' : options.purchased ? 'purchasedImageCredits' : options.video || options.parent ? 'processingCredits' : 'freeUses', isDemo: false, expectedOutput: metadata });
     if (route === '/api/v1/jobs' && init?.method === 'POST') { submitted = true; if (options.lostSubmit) throw new Error('private session=value; private signed URL'); return Response.json({ id: 'job-1', status: 'QUEUED' }, { status: 201 }); }
     if (route === '/api/v1/jobs/parent-1') return Response.json({ id: 'parent-1', status: 'READY', isDemo: false, result: { id: 'parent-result', canRefine: true, metadata } });
-    if (route === '/api/v1/jobs/job-1') return Response.json({ id: 'job-1', status: options.status ?? 'READY', charge: { status: 'settled', amount: options.creditsAmount ?? (options.incorrectCharge ? 2 : options.purchased ? 10 : 1), unit: options.creditsAmount ? 'credits' : options.purchased ? 'purchasedImageCredits' : options.video || options.parent ? 'processingCredits' : 'freeUses' }, isDemo: false, result: { id: 'result-1', metadata } });
+    if (route === '/api/v1/jobs/job-1') return Response.json({ id: 'job-1', quoteId: 'quote-1', status: options.status ?? 'READY', charge: { status: 'settled', amount: options.creditsAmount ?? (options.incorrectCharge ? 2 : options.purchased ? 10 : 1), unit: options.creditsAmount ? 'credits' : options.purchased ? 'purchasedImageCredits' : options.video || options.parent ? 'processingCredits' : 'freeUses' }, isDemo: false, result: { id: 'result-1', metadata } });
     if (route === '/api/v1/jobs/job-1/download') return Response.json({ url: 'https://account.r2.cloudflarestorage.com/private/result?X-Amz-Signature=private-download' });
     throw new Error(`Unexpected test route ${route}`);
   });
@@ -72,6 +72,27 @@ async function legacyFixture(charges: Record<string, { unit: string; amount: num
   } } });
   return { ...state, ...proofOptions };
 }
+
+describe('canonical acceptance responses', () => {
+  it.each(['charge-alias', 'metadata-alias', 'download-alias', 'different-quote'])('rejects %s without creating another paid task or releasing its budget', async mode => {
+    const state = await legacyFixture(), current = site(state.sample);
+    const fetcher = vi.fn(async (url: string | URL | Request, init?: RequestInit) => {
+      const response = await current(url, init), route = new URL(String(url)).pathname;
+      if (route === '/api/v1/jobs/job-1') {
+        const data = await response.json();
+        if (mode === 'charge-alias') { Object.assign(data, { amount: data.charge.amount, unit: data.charge.unit, chargeStatus: data.charge.status }); delete data.charge; }
+        if (mode === 'metadata-alias') { Object.assign(data.result, data.result.metadata); delete data.result.metadata; }
+        if (mode === 'different-quote') data.quoteId = 'other-quote';
+        return Response.json(data);
+      }
+      if (mode === 'download-alias' && route.endsWith('/download')) return Response.json({ downloadUrl: (await response.json()).url });
+      return response;
+    });
+    await expect(runProcessingAcceptance({ ...base, ...state }, { environment, fetcher })).rejects.toMatchObject({ code: 'protocol_invalid' });
+    expect(fetcher.mock.calls.filter(([url, init]) => new URL(String(url)).pathname === '/api/v1/jobs' && init?.method === 'POST')).toHaveLength(1);
+    expect(JSON.parse(await readFile(state.ledgerPath, 'utf8'))).toMatchObject({ grossSpent: 0, spendReservedUnknown: 100, realProviderInvocationsConsumed: 1 });
+  });
+});
 
 describe('common functional entry proof before first fetch or legacy ledger creation', () => {
   function bootstrapFetcher() {
