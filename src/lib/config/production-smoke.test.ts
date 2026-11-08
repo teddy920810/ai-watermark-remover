@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { runAuthenticatedSmoke, runProductionSmoke, runPublicSmoke } from '../../../scripts/production-smoke.mjs';
+import { runProductionSmoke, runPublicSmoke } from '../../../scripts/production-smoke.mjs';
 function publicFetcher(failed = '') {
   return vi.fn(async (url: string | URL | Request, _init?: RequestInit) => new Response('{}', { status: String(url).endsWith(failed) && failed ? 500 : String(url).includes('/api/') ? 401 : 200 }));
 }
@@ -19,16 +19,5 @@ describe('production smoke follows current processing without implicit paid work
     await expect(runProductionSmoke({ SMOKE_BASE_URL: 'https://example.test', SMOKE_SESSION_COOKIE: 'session=fixture' }, fetcher)).resolves.toEqual({ status: 'public-passed' });
     expect(fetcher.mock.calls).toHaveLength(6);
     expect(fetcher.mock.calls.every(([, init]) => !new Headers(init?.headers).has('Cookie'))).toBe(true);
-  });
-  it('never starts functional acceptance without a session', async () => {
-    const fetcher = vi.fn();
-    await expect(runAuthenticatedSmoke('https://example.test', '', fetcher)).resolves.toEqual({ status: 'skipped' });
-    await expect(runAuthenticatedSmoke('https://example.test', '', fetcher, { requireAuthentication: true })).rejects.toThrow('session cookie');
-    expect(fetcher).not.toHaveBeenCalled();
-  });
-  it('requires reviewed authorization before even public work in a required functional run', async () => {
-    const fetcher = vi.fn();
-    await expect(runProductionSmoke({ SMOKE_BASE_URL: 'https://example.test' }, fetcher, { requireAuthentication: true })).rejects.toThrow();
-    expect(fetcher).not.toHaveBeenCalled();
   });
 });

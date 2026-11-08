@@ -1,3 +1,4 @@
+import { openWorkspace, reloadWorkspace, waitForWorkspace } from '../helpers/workspace';
 import { expect, test, type Page, type Route } from '@playwright/test';
 import sharp from 'sharp';
 import { readFileSync } from 'node:fs';
@@ -53,7 +54,7 @@ for (const viewport of [{ name: 'desktop', width: 1440, height: 900 }, { name: '
       await account(page, false);
       const writes: string[] = [];
       page.on('request', request => { if (request.method() === 'POST' && /\/api\/v1\/(uploads|quotes|jobs)/.test(request.url())) writes.push(request.url()); });
-      await page.goto('/app/video');
+      await openWorkspace(page, '/app/video');
       await expect(page.getByRole('heading', { name: 'Choose a file' })).toBeVisible();
       const explanation = page.getByText(/Video processing uses administrator-allocated processing credits/);
       await expect(explanation).toBeVisible();
@@ -83,7 +84,7 @@ for (const viewport of [{ name: 'desktop', width: 1440, height: 900 }, { name: '
         if (route.request().method() === 'GET') return json(route, { jobs: [] });
         submissions += 1; return json(route, { error: 'No video processing is authorized.' }, 409);
       });
-      await page.goto('/app/video');
+      await openWorkspace(page, '/app/video');
       await expect(page.getByText(/Video processing uses administrator-allocated processing credits/)).toBeVisible();
       await page.getByLabel('Upload file to workspace').setInputFiles({ name: 'allowance.mp4', mimeType: 'video/mp4', buffer: video });
       await expect(page.getByRole('button', { name: 'Remove watermarks · 1 processing credit', exact: true })).toBeDisabled();
@@ -101,10 +102,10 @@ test('landing hands an anonymous file to the workspace and restores it without a
   await page.goto('/');
   await expect(page.getByTestId('media-launcher-file')).toBeEnabled();
   await page.getByTestId('media-launcher-file').setInputFiles({ name: 'my-product.png', mimeType: 'image/png', buffer: image });
-  await expect(page).toHaveURL(/\/app\/image$/);
+  await expect(page).toHaveURL(/\/app\/image$/); await waitForWorkspace(page);
   await expect(page.getByText('my-product.png', { exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Sign in to continue', exact: true })).toBeVisible();
-  await page.reload();
+  await reloadWorkspace(page);
   await expect(page.getByText('my-product.png', { exact: true })).toBeVisible();
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);
   expect(processingRequests).toBe(0);
@@ -139,7 +140,7 @@ for (const scenario of [
   await page.route('**/api/v1/jobs/job-image', route => json(route, job));
   downloadFiles.set('/image.jpg', { contentType: 'image/jpeg', name: 'watermark-removed-image.jpg', bytes: resultBytes });
   await page.route('**/api/v1/jobs/job-image/download', route => { downloads += 1; return json(route, { url: `${downloadOrigin}/image.jpg`, expiresAt: quoteExpiration() }); });
-  await page.goto('/app/image');
+  await openWorkspace(page, '/app/image');
   await page.getByLabel('Upload file to workspace').setInputFiles({ name: 'product.png', mimeType: 'image/png', buffer: image });
   if (scenario.operation === 'image-watermark-pro') await page.getByLabel('Choose operation').selectOption('image-watermark-pro');
   const process = page.getByRole('button', { name: `Remove watermarks · ${scenario.cost}`, exact: true });
@@ -181,7 +182,7 @@ test('unknown provider status never offers a fresh paid replay or a false refund
   const image = await sharp({ create: { width: 60, height: 40, channels: 3, background: '#c9b07b' } }).jpeg().toBuffer();
   await page.route('**/fixture/input.jpg', route => route.fulfill({ status: 200, contentType: 'image/jpeg', body: image }));
   await page.route('**/api/v1/jobs/unknown-job', route => json(route, { id: 'unknown-job', operation: 'image-watermark', status: 'UNKNOWN', input: { id: 'input', role: 'input', metadata: { kind: 'image', contentType: 'image/jpeg', byteSize: image.length, width: 60, height: 40 }, previewUrl: `${origin}/fixture/input.jpg`, expiresAt: expiration() }, charge: { status: 'reserved', amount: 1, unit: 'freeUses' }, createdAt: new Date().toISOString() }));
-  await page.goto('/app/image?job=unknown-job');
+  await openWorkspace(page, '/app/image?job=unknown-job');
   await expect(page.getByRole('heading', { name: 'Checking the processing confirmation' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Refresh status' })).toBeVisible();
   await expect(page.getByRole('button', { name: /^Remove watermarks/ })).toHaveCount(0);
@@ -209,7 +210,7 @@ test('an unstarted task timeout returns the allowance and never starts a paid re
     quotes += 1; expect(route.request().postDataJSON()).toEqual({ operation: 'image-watermark', inputArtifactId: input.id });
     return json(route, { id: 'timeout-retry-quote', operation: 'image-watermark', amount: 1, unit: 'freeUses', expiresAt: quoteExpiration(), expectedOutput: { contentType: 'image/jpeg', format: 'JPG', width: 60, height: 40 } });
   });
-  await page.goto('/app/image?job=timeout-job');
+  await openWorkspace(page, '/app/image?job=timeout-job');
   await expect(page.getByRole('heading', { name: 'Waiting to start' })).toBeVisible();
   await expect(page.locator('.workspace-balances').getByText('0 free image uses', { exact: true })).toBeVisible();
   await page.clock.fastForward(3100);
@@ -220,7 +221,7 @@ test('an unstarted task timeout returns the allowance and never starts a paid re
   await expect(page.getByRole('button', { name: 'Remove watermarks · 1 free image use', exact: true })).toBeEnabled();
   expect(submissions).toBe(0); expect(quotes).toBe(1);
   await expect(page.getByRole('dialog')).toHaveCount(0);
-  await page.reload(); await page.clock.fastForward(1000);
+  await reloadWorkspace(page); await page.clock.fastForward(1000);
   await expect(page.getByText(message, { exact: true })).toBeVisible();
   await expect(page.getByRole('dialog')).toHaveCount(0); expect(submissions).toBe(0);
 });
@@ -249,7 +250,7 @@ for (const unified of [false, true]) test(unified ? 'unified Credits refinement 
   await page.route('**/api/v1/uploads/mask-upload/complete', route => json(route, { id: 'mask-upload', status: 'validating' }, 202));
   await page.route('**/api/v1/uploads/mask-upload', route => json(route, { id: 'mask-upload', status: 'ready', artifact: { id: 'binary-mask', role: 'mask', metadata: { kind: 'mask', contentType: 'image/png', width: 160, height: 120, byteSize: 100 }, expiresAt: expiration() } }));
   await page.route('**/api/v1/quotes', route => { expect(route.request().postDataJSON()).toEqual({ operation: 'image-refine', inputArtifactId: 'previous-result', maskArtifactId: 'binary-mask', parentJobId: 'previous-job' }); return json(route, { id: 'refinement-quote', amount: unified ? 100 : 1, unit: unified ? 'credits' : 'processingCredits', operation: 'image-refine', expiresAt: quoteExpiration(), expectedOutput: { format: 'JPG', contentType: 'image/jpeg', width: 160, height: 120 } }); });
-  await page.goto('/app/image?job=previous-job');
+  await openWorkspace(page, '/app/image?job=previous-job');
   await page.getByRole('button', { name: 'Refine remaining marks' }).click();
   await expect(page.getByRole('button', { name: 'Refine image', exact: true })).toBeDisabled();
   const canvas = page.getByLabel('Watermark refinement selection'); const box = await canvas.boundingBox(); expect(box).toBeTruthy();
@@ -299,7 +300,7 @@ for (const unified of [false, true]) test(unified ? 'unified Credits video spend
   await page.route('**/api/v1/jobs/video-job', route => json(route, job));
   downloadFiles.set('/video.mp4', { contentType: 'video/mp4', name: 'watermark-removed-video.mp4', bytes: video });
   await page.route('**/api/v1/jobs/video-job/download', route => json(route, { url: `${downloadOrigin}/video.mp4`, expiresAt: quoteExpiration() }));
-  await page.goto('/app/video');
+  await openWorkspace(page, '/app/video');
   await page.getByLabel('Upload file to workspace').setInputFiles({ name: 'clip.mp4', mimeType: 'video/mp4', buffer: video });
   await page.getByLabel('Fixed area', { exact: false }).check();
   const stage = page.locator('.workspace-video-stage'); const box = await stage.boundingBox(); expect(box).toBeTruthy();
@@ -343,10 +344,10 @@ test('an admitted request returning HTTP 408 restores the same confirmation afte
     if (confirmations.length === 1) { balance = 0; return json(route, { error: 'Confirmation timed out after admission.', code: 'REQUEST_TIMEOUT' }, 408); }
     return json(route, { id: 'recovered-job', operation: 'image-watermark', status: 'UNKNOWN', input, charge: { status: 'reserved', amount: 1, unit: 'freeUses' }, createdAt: new Date().toISOString() }, 202);
   });
-  await page.goto('/app/image'); await page.getByLabel('Upload file to workspace').setInputFiles({ name: 'recover.jpg', mimeType: 'image/jpeg', buffer: image });
+  await openWorkspace(page, '/app/image'); await page.getByLabel('Upload file to workspace').setInputFiles({ name: 'recover.jpg', mimeType: 'image/jpeg', buffer: image });
   await page.getByRole('button', { name: 'Remove watermarks · 1 free image use', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Check submission' })).toBeEnabled();
-  await page.reload(); await expect(page.getByRole('button', { name: 'Check submission' })).toBeEnabled();
+  await reloadWorkspace(page); await expect(page.getByRole('button', { name: 'Check submission' })).toBeEnabled();
   await expect(page.getByRole('dialog')).toHaveCount(0);
   await expect(page.locator('.workspace-balances').getByText('0 free image uses', { exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Check submission' }).click();
@@ -371,7 +372,7 @@ test('a late cost response cannot overwrite the selected cleanup mode or submit 
     return json(route, { id: 'mode-job', status: 'UNKNOWN', operation: 'image-watermark-pro', input: artifact, charge: { status: 'reserved', amount: 3, unit: 'processingCredits' }, createdAt: new Date().toISOString() }, 202);
   });
   await page.route('**/api/v1/jobs/mode-job', route => json(route, { id: 'mode-job', status: 'UNKNOWN', operation: 'image-watermark-pro', input: artifact, charge: { status: 'reserved', amount: 3, unit: 'processingCredits' }, createdAt: new Date().toISOString() }));
-  await page.goto('/app/image'); await page.getByLabel('Upload file to workspace').setInputFiles({ name: 'mode.jpg', mimeType: 'image/jpeg', buffer: image });
+  await openWorkspace(page, '/app/image'); await page.getByLabel('Upload file to workspace').setInputFiles({ name: 'mode.jpg', mimeType: 'image/jpeg', buffer: image });
   await expect.poll(() => operations).toEqual(['image-watermark']);
   await page.getByLabel('Choose operation').selectOption('image-watermark-pro');
   const process = page.getByRole('button', { name: 'Remove watermarks · 3 processing credits', exact: true });
@@ -389,7 +390,7 @@ test('expired cost refreshes automatically without creating a task or charging t
     return json(route, imageQuote(`expiry-quote-${quotes}`, 'image-watermark', quotes === 1 ? 1 : 2, 'freeUses', quotes === 1 ? new Date(Date.now() + 2000).toISOString() : quoteExpiration()));
   });
   await page.route('**/api/v1/jobs', route => { if (route.request().method() === 'GET') return json(route, { jobs: [] }); submissions += 1; return json(route, { error: 'A task requires a deliberate click.' }, 409); });
-  await page.goto('/app/image'); await page.getByLabel('Upload file to workspace').setInputFiles({ name: 'expiry.jpg', mimeType: 'image/jpeg', buffer: image });
+  await openWorkspace(page, '/app/image'); await page.getByLabel('Upload file to workspace').setInputFiles({ name: 'expiry.jpg', mimeType: 'image/jpeg', buffer: image });
   await page.clock.fastForward(1000);
   await expect(page.getByRole('button', { name: 'Remove watermarks · 1 free image use', exact: true })).toBeEnabled();
   await page.clock.fastForward(4000);
@@ -405,7 +406,7 @@ test('insufficient balance shows the full processing cost inline and never submi
   let submissions = 0;
   await page.route('**/api/v1/quotes', route => json(route, imageQuote('no-balance')));
   await page.route('**/api/v1/jobs', route => { if (route.request().method() === 'GET') return json(route, { jobs: [] }); submissions += 1; return json(route, { error: 'Insufficient balance.' }, 409); });
-  await page.goto('/app/image'); await page.getByLabel('Upload file to workspace').setInputFiles({ name: 'balance.jpg', mimeType: 'image/jpeg', buffer: image });
+  await openWorkspace(page, '/app/image'); await page.getByLabel('Upload file to workspace').setInputFiles({ name: 'balance.jpg', mimeType: 'image/jpeg', buffer: image });
   await expect(page.getByRole('button', { name: 'Remove watermarks · 1 free image use', exact: true })).toBeDisabled();
   await expect(page.getByText(/not have enough free image uses/i)).toBeVisible();
   await expect(page.getByRole('dialog')).toHaveCount(0); expect(submissions).toBe(0);
@@ -417,10 +418,10 @@ test('a restored anonymous draft prepares itself after sign-in without starting 
   await page.route('**/api/auth/get-session', route => json(route, signedIn ? { user: { id: 'workspace-test-user', name: 'Test user' }, session: { id: 'workspace-session' } } : null));
   page.on('request', request => { if (request.method() !== 'POST') return; if (request.url().endsWith('/api/v1/uploads')) uploads += 1; if (request.url().endsWith('/api/v1/quotes')) quotes += 1; if (request.url().endsWith('/api/v1/jobs')) submissions += 1; });
   await page.route('**/api/v1/quotes', route => json(route, imageQuote('signed-in-quote')));
-  await page.goto('/app/image'); await page.getByLabel('Upload file to workspace').setInputFiles({ name: 'keep-my-draft.jpg', mimeType: 'image/jpeg', buffer: image });
+  await openWorkspace(page, '/app/image'); await page.getByLabel('Upload file to workspace').setInputFiles({ name: 'keep-my-draft.jpg', mimeType: 'image/jpeg', buffer: image });
   await expect(page.getByRole('button', { name: 'Sign in to continue', exact: true })).toBeVisible();
   expect(uploads).toBe(0); expect(quotes).toBe(0); expect(submissions).toBe(0);
-  signedIn = true; await page.reload();
+  signedIn = true; await reloadWorkspace(page);
   await expect(page.getByText('keep-my-draft.jpg', { exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Remove watermarks · 1 free image use', exact: true })).toBeEnabled();
   expect(uploads).toBe(1); expect(quotes).toBe(1); expect(submissions).toBe(0);
@@ -442,7 +443,7 @@ test('replacing a file ignores its pending old quote and uses the newly checked 
     submitted.push(route.request().postDataJSON() as { quoteId: string });
     return json(route, { id: 'replace-job', status: 'UNKNOWN', operation: 'image-watermark', input: { ...artifact, id: 'replace-input-2' }, charge: { status: 'reserved', amount: 1, unit: 'freeUses' }, createdAt: new Date().toISOString() }, 202);
   });
-  await page.goto('/app/image'); await page.getByLabel('Upload file to workspace').setInputFiles({ name: 'first.jpg', mimeType: 'image/jpeg', buffer: image });
+  await openWorkspace(page, '/app/image'); await page.getByLabel('Upload file to workspace').setInputFiles({ name: 'first.jpg', mimeType: 'image/jpeg', buffer: image });
   await expect.poll(() => quotedInputs).toEqual(['replace-input-1']);
   await expect(page.getByRole('button', { name: 'Upload file', exact: true })).toBeEnabled();
   await page.getByLabel('Upload file to workspace').setInputFiles({ name: 'replacement.jpg', mimeType: 'image/jpeg', buffer: image });
@@ -456,7 +457,7 @@ test('a corrupt replacement keeps the valid file usable and restores its process
   await account(page); const { image } = await imageUploadFixture(page); let submissions = 0;
   await page.route('**/api/v1/quotes', route => json(route, imageQuote('valid-file-quote')));
   await page.route('**/api/v1/jobs', route => { if (route.request().method() === 'GET') return json(route, { jobs: [] }); submissions += 1; return json(route, { error: 'Processing requires a deliberate click.' }, 409); });
-  await page.goto('/app/image'); await page.getByLabel('Upload file to workspace').setInputFiles({ name: 'valid-product.jpg', mimeType: 'image/jpeg', buffer: image });
+  await openWorkspace(page, '/app/image'); await page.getByLabel('Upload file to workspace').setInputFiles({ name: 'valid-product.jpg', mimeType: 'image/jpeg', buffer: image });
   const process = page.getByRole('button', { name: 'Remove watermarks · 1 free image use', exact: true }); await expect(process).toBeEnabled();
   await page.getByLabel('Upload file to workspace').setInputFiles({ name: 'corrupt.jpg', mimeType: 'image/jpeg', buffer: Buffer.concat([Buffer.from([0xff, 0xd8, 0xff]), Buffer.from('This is not a decodable JPEG.')]) });
   await expect(page.getByText('This image could not be opened. Choose another JPG, PNG, or WebP.', { exact: true })).toBeVisible();
@@ -470,7 +471,7 @@ test('a corrupt replacement during file checking resumes the same valid upload a
   page.on('request', request => { if (request.method() !== 'POST') return; if (request.url().endsWith('/api/v1/uploads')) uploads += 1; if (request.url().endsWith('/api/v1/jobs')) submissions += 1; });
   await page.route('**/api/v1/uploads/automatic-upload', route => { checks += 1; return json(route, !replacementChosen ? { id: 'automatic-upload', status: 'validating' } : { id: 'automatic-upload', status: 'ready', artifact }); });
   await page.route('**/api/v1/quotes', route => json(route, imageQuote('resumed-valid-file-quote')));
-  await page.goto('/app/image'); await page.getByLabel('Upload file to workspace').setInputFiles({ name: 'checking-product.jpg', mimeType: 'image/jpeg', buffer: image });
+  await openWorkspace(page, '/app/image'); await page.getByLabel('Upload file to workspace').setInputFiles({ name: 'checking-product.jpg', mimeType: 'image/jpeg', buffer: image });
   await expect.poll(() => checks).toBeGreaterThan(0); replacementChosen = true;
   await page.getByLabel('Upload file to workspace').setInputFiles({ name: 'corrupt.jpg', mimeType: 'image/jpeg', buffer: Buffer.concat([Buffer.from([0xff, 0xd8, 0xff]), Buffer.from('This is not a decodable JPEG.')]) });
   await expect(page.getByText('This image could not be opened. Choose another JPG, PNG, or WebP.', { exact: true })).toBeVisible();
@@ -501,7 +502,7 @@ test('refinement redraws replace the quoted mask while keeping one deliberate pa
     expect(route.request().postDataJSON()).toEqual({ operation: 'image-refine', inputArtifactId: 'redraw-result', maskArtifactId: `redraw-mask-${quotes}`, parentJobId: 'redraw-parent' });
     return json(route, imageQuote(`redraw-quote-${quotes}`, 'image-refine', 1, 'processingCredits'));
   });
-  await page.goto('/app/image?job=redraw-parent'); await page.getByRole('button', { name: 'Refine remaining marks' }).click();
+  await openWorkspace(page, '/app/image?job=redraw-parent'); await page.getByRole('button', { name: 'Refine remaining marks' }).click();
   const canvas = page.getByLabel('Watermark refinement selection');
   const draw = async (x: number, y: number) => {
     await canvas.scrollIntoViewIfNeeded();
@@ -527,7 +528,7 @@ test('undo beyond retained brush history keeps the remaining selection processab
   await page.route('**/api/v1/uploads/undo-mask-upload/complete', route => json(route, { status: 'validating' }, 202));
   await page.route('**/api/v1/uploads/undo-mask-upload', route => json(route, { id: 'undo-mask-upload', status: 'ready', artifact: { id: 'undo-mask', role: 'mask', metadata: { kind: 'mask', contentType: 'image/png', width: 80, height: 60, byteSize: 100 }, expiresAt: expiration() } }));
   await page.route('**/api/v1/quotes', route => { quotes += 1; return json(route, imageQuote(`undo-quote-${quotes}`, 'image-refine', 1, 'processingCredits')); });
-  await page.goto('/app/image?job=undo-parent'); await page.getByRole('button', { name: 'Refine remaining marks' }).click();
+  await openWorkspace(page, '/app/image?job=undo-parent'); await page.getByRole('button', { name: 'Refine remaining marks' }).click();
   const canvas = page.getByLabel('Watermark refinement selection'); const box = await canvas.boundingBox(); expect(box).toBeTruthy();
   for (let stroke = 0; stroke < 9; stroke += 1) {
     await page.mouse.move(box!.x + box!.width * .3, box!.y + box!.height * .3); await page.mouse.down();

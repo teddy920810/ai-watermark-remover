@@ -1,3 +1,4 @@
+import { openWorkspace } from '../helpers/workspace';
 import { expect, test, type Page } from '@playwright/test';
 import sharp from 'sharp';
 
@@ -142,7 +143,7 @@ async function imageUseWorkspace(page: Page, options: { purchased?: number; proc
 
 test('standard image quotes show and use the purchased-image balance without administrator credits', async ({ page }) => {
   const image = await imageUseWorkspace(page);
-  await page.goto('/app/image');
+  await openWorkspace(page, '/app/image');
   await expect(page.locator('.workspace-balances')).toContainText('Purchased image credits 500');
   await expect(page.locator('.workspace-balances')).toContainText('0 processing credits');
   await expect(page.locator('.workspace-balances').getByRole('link', { name: 'Buy image credits', exact: true })).toHaveAttribute('href', '/pricing?returnTo=%2Fapp%2Fimage');
@@ -157,7 +158,7 @@ test('standard image quotes show and use the purchased-image balance without adm
 
 test('PRO processing stays unavailable with only purchased image credits', async ({ page }) => {
   const image = await imageUseWorkspace(page);
-  await page.goto('/app/image');
+  await openWorkspace(page, '/app/image');
   await page.getByLabel('Upload file to workspace').setInputFiles({ name: 'image-use.jpg', mimeType: 'image/jpeg', buffer: image });
   await page.getByLabel('Choose operation').selectOption('image-watermark-pro');
   await expect(page.getByRole('button', { name: 'Remove watermarks · 3 processing credits', exact: true })).toBeDisabled();
@@ -168,7 +169,7 @@ test('PRO processing stays unavailable with only purchased image credits', async
 
 test('older account responses default image credits to zero and leave the file ready for purchase recovery', async ({ page }) => {
   const image = await imageUseWorkspace(page, { omitPurchased: true });
-  await page.goto('/app/image');
+  await openWorkspace(page, '/app/image');
   await page.getByLabel('Upload file to workspace').setInputFiles({ name: 'recover-image.jpg', mimeType: 'image/jpeg', buffer: image });
   await expect(page.locator('.workspace-balances')).toContainText('Purchased image credits 0');
   await expect(page.getByRole('button', { name: 'Remove watermarks · 100 image credits', exact: true })).toBeDisabled();
@@ -182,7 +183,7 @@ test('older account responses default image credits to zero and leave the file r
 
 test('video workspace shows administrator credits without offering image-credit purchases', async ({ page }) => {
   await imageUseWorkspace(page);
-  await page.goto('/app/video');
+  await openWorkspace(page, '/app/video');
   await expect(page.locator('.workspace-balances')).toContainText('0 processing credits');
   await expect(page.locator('.workspace-balances')).not.toContainText('Purchased image credits');
   await expect(page.getByRole('link', { name: 'Buy image credits', exact: true })).toHaveCount(0);

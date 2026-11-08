@@ -3,10 +3,9 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import sharp from 'sharp';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { AcceptanceBudget, CreditsAcceptanceBudget } from '../../../scripts/lib/acceptance-budget.mjs';
+import { CreditsAcceptanceBudget } from '../../../scripts/lib/acceptance-budget.mjs';
 import { createHash } from 'node:crypto';
 import { acceptanceCliOptions, runProcessingAcceptance } from '../../../scripts/processing-acceptance.mjs';
-import { runAuthenticatedSmoke, runProductionSmoke } from '../../../scripts/production-smoke.mjs';
 
 const directories: string[] = [];
 afterEach(async () => { await Promise.all(directories.splice(0).map((directory) => rm(directory, { recursive: true, force: true }))); });
@@ -89,7 +88,7 @@ describe('common functional entry proof before first fetch or legacy ledger crea
     expect({ calls: f.fetcher.mock.calls.length, issued: f.issued() }).toEqual({ calls: 1, issued: 100 });
   });
   for (const scenario of ['unknown-legacy-unit', 'uninitialized-purchased-unit', 'reviewed-unified-processing-unit', 'omitted-unit', 'wrong-session-legacy-unit', 'missing-wallet-review', 'missing-review-reference', 'wrong-wallet-owner', 'wrong-origin', 'wrong-environment', 'wrong-reviewed-amount'] as const) {
-    it.each(['v1', 'direct-smoke', 'required-wrapper'] as const)(`${scenario}: %s refuses before every fetch and any old ledger creation`, async entry => {
+    it(`${scenario}: refuses before every fetch and any old ledger creation`, async () => {
       const state = await fixture();
       if (!['unknown-legacy-unit', 'omitted-unit'].includes(scenario)) await creditBudget(state.ledgerPath, {
         readyScope: { ...ready, initialized: scenario !== 'uninitialized-purchased-unit',
@@ -111,10 +110,8 @@ describe('common functional entry proof before first fetch or legacy ledger crea
       const f = bootstrapFetcher();
       const proofOnly = ['missing-wallet-review', 'missing-review-reference', 'wrong-wallet-owner', 'wrong-origin', 'wrong-environment', 'wrong-reviewed-amount'].includes(scenario);
       const expectedUnit = proofOnly ? 'credits' : scenario === 'omitted-unit' ? undefined : scenario === 'uninitialized-purchased-unit' ? 'purchasedImageCredits' : scenario === 'reviewed-unified-processing-unit' ? 'processingCredits' : 'freeUses';
-      const options = { ...base, ...state, expectedUnit, expectedAmount: proofOnly ? 100 : 1, creditBudgetId: 'credits-local-implementation-20261104', creditScopeId: ready.scopeId, creditEnvironment: 'sandbox', requireAuthentication: true };
-      const result = entry === 'v1' ? runProcessingAcceptance(options, { environment, fetcher: f.fetcher })
-        : entry === 'direct-smoke' ? runAuthenticatedSmoke(base.baseUrl, environment.PROCESSING_ACCEPTANCE_SESSION_COOKIE, f.fetcher, { ...options, environment })
-          : runProductionSmoke({ ...environment, SMOKE_BASE_URL: base.baseUrl, SMOKE_SESSION_COOKIE: environment.PROCESSING_ACCEPTANCE_SESSION_COOKIE }, f.fetcher, options);
+      const options = { ...base, ...state, expectedUnit, expectedAmount: proofOnly ? 100 : 1, creditBudgetId: 'credits-local-implementation-20261104', creditScopeId: ready.scopeId, creditEnvironment: 'sandbox' };
+      const result = runProcessingAcceptance(options, { environment, fetcher: f.fetcher });
       await expect(result).rejects.toThrow();
       expect({ calls: f.fetcher.mock.calls.length, issued: f.issued(), ledger: await readFile(state.ledgerPath, 'utf8').catch(() => null) }).toEqual({ calls: 0, issued: 0, ledger: before });
     });
@@ -123,7 +120,7 @@ describe('common functional entry proof before first fetch or legacy ledger crea
 
 
 describe('reviewed legacy fixtures share the aggregate without implicit issuance', () => {
-  it.each(['direct-smoke', 'required-wrapper'] as const)('%s preserves the original one-use contract without authenticated check-in', async entry => {
+  it('preserves the original one-use contract without authenticated check-in', async () => {
     const state = await legacyFixture();
     const current = site(state.sample);
     const fetcher = vi.fn(async (url: string | URL | Request, init?: RequestInit) => {
@@ -133,10 +130,7 @@ describe('reviewed legacy fixtures share the aggregate without implicit issuance
     });
     const log = vi.spyOn(console, 'log').mockImplementation(() => {});
     try {
-      const options = { ...base, ...state, fixture: state.sample, requireAuthentication: true, environment };
-      const result = entry === 'direct-smoke'
-        ? await runAuthenticatedSmoke(base.baseUrl, environment.PROCESSING_ACCEPTANCE_SESSION_COOKIE, fetcher, options)
-        : await runProductionSmoke({ ...environment, SMOKE_BASE_URL: base.baseUrl }, fetcher, options);
+      const result = await runProcessingAcceptance({ ...base, ...state }, { environment, fetcher });
       expect(result).toMatchObject({ status: 'passed', operation: 'image-watermark', unit: 'freeUses', amount: 1 });
       expect(fetcher.mock.calls.filter(([url, init]) => new URL(String(url)).pathname === '/api/v1/jobs' && init?.method === 'POST')).toHaveLength(1);
       expect(fetcher.mock.calls.filter(([url, init]) => new URL(String(url)).pathname === '/api/me/check-in' && new Headers(init?.headers).has('Cookie'))).toHaveLength(0);
@@ -192,18 +186,18 @@ describe('reviewed legacy fixtures share the aggregate without implicit issuance
 });
 
 describe('aggregate new Credits acceptance authorization', () => {
-  it('honors the supplied production-smoke environment and refuses a missing Credits scope before authenticated work', async () => {
+  it('honors the supplied functional environment and refuses a missing Credits scope before authenticated work', async () => {
     const fetcher = vi.fn(async (url: string | URL | Request, init?: RequestInit) => {
       expect(new Headers(init?.headers).has('Cookie')).toBe(false);
       return new URL(String(url)).pathname.startsWith('/api/') ? new Response(null, { status: 401 }) : new Response('public');
     });
     const log = vi.spyOn(console, 'log').mockImplementation(() => {});
     try {
-      await expect(runProductionSmoke({ SMOKE_BASE_URL: base.baseUrl, SMOKE_SESSION_COOKIE: environment.PROCESSING_ACCEPTANCE_SESSION_COOKIE,
-        PROCESSING_ACCEPTANCE_EXPECTED_UNIT: 'credits', PROCESSING_ACCEPTANCE_EXPECTED_AMOUNT: '100' }, fetcher, { requireAuthentication: true })).rejects.toMatchObject({ code: 'budget_authorization' });
+      await expect(runProcessingAcceptance({ functional: true }, { environment: { SMOKE_BASE_URL: base.baseUrl, SMOKE_SESSION_COOKIE: environment.PROCESSING_ACCEPTANCE_SESSION_COOKIE,
+        PROCESSING_ACCEPTANCE_EXPECTED_UNIT: 'credits', PROCESSING_ACCEPTANCE_EXPECTED_AMOUNT: '100' }, fetcher })).rejects.toMatchObject({ code: 'budget_authorization' });
     } finally { log.mockRestore(); }
   });
-  it('does not report authenticated production smoke passed when its original Credits operation is UNKNOWN', async () => {
+  it('does not report functional acceptance passed when its original Credits operation is UNKNOWN', async () => {
     const state = await fixture(); await creditBudget(state.ledgerPath);
     const delegate = site(state.sample, { creditsAmount: 100, status: 'UNKNOWN' });
     const fetcher = vi.fn(async (url: string | URL | Request, init?: RequestInit) => {
@@ -212,8 +206,7 @@ describe('aggregate new Credits acceptance authorization', () => {
     });
     const log = vi.spyOn(console, 'log').mockImplementation(() => {});
     try {
-      await expect(runProductionSmoke({ SMOKE_BASE_URL: base.baseUrl, SMOKE_SESSION_COOKIE: environment.PROCESSING_ACCEPTANCE_SESSION_COOKIE }, fetcher,
-        { ...base, ...state, requireAuthentication: true, expectedUnit: 'credits', expectedAmount: 100, creditBudgetId: 'credits-local-implementation-20261104', creditScopeId: ready.scopeId, creditEnvironment: 'sandbox' })).rejects.toThrow(/not confirmed|reconcile/i);
+      await expect(runProcessingAcceptance({ ...base, ...state, expectedUnit: 'credits', expectedAmount: 100, ...proofOptions }, { environment, fetcher })).resolves.toMatchObject({ status: 'unknown' });
       expect(log.mock.calls.flat().join(' ')).not.toMatch(/Authenticated.*passed/);
       expect(JSON.parse(await readFile(state.ledgerPath, 'utf8'))).toMatchObject({ spendReservedUnknown: 100, realProviderInvocationsConsumed: 1 });
     } finally { log.mockRestore(); }
@@ -345,13 +338,6 @@ describe('authenticated v1 processing acceptance runner', () => {
     const source = await readFile(state.ledgerPath, 'utf8'); expect(source).not.toContain('private');
     expect(JSON.parse(await readFile(state.ledgerPath, 'utf8')).events[0].status).toBe('unknown');
   });
-  it('blocks before network work when the shared five-image budget has already been spent', async () => {
-    const state = await fixture(); const budget = new AcceptanceBudget(state.ledgerPath);
-    for (let index = 0; index < 5; index++) await budget.reserve('image', `previous sample ${index}`);
-    const fetcher = vi.fn();
-    await expect(runProcessingAcceptance({ ...base, ...state }, { environment, fetcher })).rejects.toMatchObject({ code: 'budget_authorization' });
-    expect(fetcher).not.toHaveBeenCalled(); expect((await budget.summary()).used.image).toBe(5);
-  });
   it('rejects malformed output bytes and an incorrect debit rather than reporting successful HTTP as passed', async () => {
     const first = await legacyFixture();
     await expect(runProcessingAcceptance({ ...base, ...first }, { environment, fetcher: site(first.sample, { invalidDownload: true }) })).rejects.toMatchObject({ code: 'artifact_invalid' });
@@ -415,64 +401,20 @@ describe('authenticated v1 processing acceptance runner', () => {
     expect(JSON.parse(await readFile(state.ledgerPath, 'utf8')).events[0].status).toBe('unknown');
     expect(fetcher.mock.calls.filter(([url, init]) => String(url).endsWith('/api/v1/jobs') && init?.method === 'POST')).toHaveLength(1);
   });
-  it.each(['option', 'environment'])('keeps historical eight-image records offline while refusing functional authority through %s', async (source) => {
+  it.each(['aggregate', 'option', 'environment'])('keeps historical ledgers byte-identical and refuses new authority through %s', async source => {
     const state = await fixture();
-    await new AcceptanceBudget(state.ledgerPath).authorizeIncrease({ image: 8, video: 5 }, 'Explicit approval for additional image contract acceptance');
-    const options = { ...base, ...state, ...(source === 'option' ? { imageLimit: 8 } : {}) };
-    const env = { ...environment, ...(source === 'environment' ? { PROCESSING_ACCEPTANCE_IMAGE_LIMIT: '8' } : {}) };
+    const historical = JSON.stringify({ version: 1, limits: { image: 15, video: 5 },
+      records: [{ id: 'previous-unknown', kind: 'image', status: 'unknown', creditUnit: 'freeUses', quotedAmount: 1, reservedCredits: 0 }],
+      authorizations: [{ previous: { image: 10, video: 5 }, next: { image: 15, video: 5 }, reason: 'Historical fixture only' }],
+      imageCreditBudget: { id: 'old-budget', unit: 'processingCredits', limit: 10, reserved: 10, additionalCalls: 5, firstRecordIndex: 10 },
+    });
+    await writeFile(state.ledgerPath, historical);
+    const options = { ...base, ...state, ...proofOptions, ...(source === 'option' ? { imageLimit: 15 } : {}) };
+    const env = { ...environment, ...(source === 'environment' ? { PROCESSING_ACCEPTANCE_IMAGE_LIMIT: '15' } : {}) };
     const fetcher = vi.fn();
     await expect(runProcessingAcceptance(options, { environment: env, fetcher })).rejects.toMatchObject({ code: 'budget_authorization' });
     expect(fetcher).not.toHaveBeenCalled();
-    const historical = new AcceptanceBudget(state.ledgerPath, { image: 8, video: 5 });
-    await historical.finish(await historical.reserve('image', 'offline historical fixture'), { status: 'passed' });
-    const summary = await new AcceptanceBudget(state.ledgerPath, { image: 8, video: 5 }).summary();
-    expect(summary.used).toEqual({ image: 1, video: 0 }); expect(summary.remaining).toEqual({ image: 7, video: 5 });
-  });
-  it('retains the historical ninth image offline without authorizing a functional request', async () => {
-    const state = await fixture();
-    const budget = new AcceptanceBudget(state.ledgerPath, { image: 8, video: 5 });
-    for (let index = 0; index < 8; index++) await budget.reserve('image', `previous acceptance ${index}`);
-    await budget.authorizeIncrease({ image: 9, video: 5 }, 'User approved one additional image for single-click production acceptance');
-    const fetcher = vi.fn();
-    await expect(runProcessingAcceptance({ ...base, ...state, imageLimit: 9 }, { environment, fetcher })).rejects.toMatchObject({ code: 'budget_authorization' });
-    expect(fetcher).not.toHaveBeenCalled();
-    await budget.finish(await budget.reserve('image', 'offline ninth fixture'), { status: 'passed' });
-    const summary = await new AcceptanceBudget(state.ledgerPath, { image: 9, video: 5 }).summary();
-    expect(summary.used).toEqual({ image: 9, video: 0 });
-    expect(summary.remaining).toEqual({ image: 0, video: 5 });
-    await expect(budget.reserve('image', 'unapproved extra acceptance')).rejects.toThrow(/exhausted/i);
-  });
-  it.each(['option', 'environment'])('preserves historical tenth-image authorization through %s as offline evidence only', async (source) => {
-    const state = await fixture(); const budget = new AcceptanceBudget(state.ledgerPath, { image: 9, video: 5 });
-    for (let index = 0; index < 9; index++) await budget.reserve('image', `previous approved image ${index}`);
-    const previous = (await budget.summary()).records;
-    const options = { ...base, ...state, ...(source === 'option' ? { imageLimit: 10 } : {}) };
-    const env = { ...environment, ...(source === 'environment' ? { PROCESSING_ACCEPTANCE_IMAGE_LIMIT: '10' } : {}) };
-    const fetcher = site(state.sample);
-    await expect(runProcessingAcceptance(options, { environment: env, fetcher })).rejects.toMatchObject({ code: 'budget_authorization' });
-    expect(fetcher).not.toHaveBeenCalled();
-    await budget.authorizeIncrease({ image: 10, video: 5 }, 'User approved one additional image for project simplification acceptance');
-    await expect(runProcessingAcceptance(options, { environment: env, fetcher })).rejects.toMatchObject({ code: 'budget_authorization' });
-    expect(fetcher).not.toHaveBeenCalled();
-    await budget.finish(await budget.reserve('image', 'offline tenth fixture'), { status: 'passed' });
-    const summary = await new AcceptanceBudget(state.ledgerPath, { image: 10, video: 5 }).summary();
-    expect(summary.used).toEqual({ image: 10, video: 0 }); expect(summary.remaining).toEqual({ image: 0, video: 5 });
-    expect(summary.records.slice(0, 9)).toEqual(previous); expect(summary.records[9].status).toBe('passed');
-    const exhaustedFetcher = vi.fn();
-    await expect(runProcessingAcceptance(options, { environment: env, fetcher: exhaustedFetcher })).rejects.toMatchObject({ code: 'budget_authorization' });
-    expect(exhaustedFetcher).not.toHaveBeenCalled();
-  });
-  it('retains historical free-use quote bookkeeping offline without granting functional authority', async () => {
-    const state = await fixture(); const budget = new AcceptanceBudget(state.ledgerPath, { image: 1, video: 5 });
-    await budget.reserve('image', 'original authorized call');
-    await budget.authorizeImageCredits({ amount: 10, unit: 'processingCredits', additionalCalls: 5, reason: 'User approved processing Credits for the release checks' });
-    const fetcher = vi.fn();
-    await expect(runProcessingAcceptance({ ...base, ...state, imageLimit: 6 }, { environment, fetcher })).rejects.toMatchObject({ code: 'budget_authorization' });
-    expect(fetcher).not.toHaveBeenCalled();
-    await budget.finish(await budget.reserve('image', 'offline free-use fixture', { amount: 1, unit: 'freeUses' }), { status: 'passed' });
-    const summary = await budget.summary();
-    expect(summary.imageCreditBudget).toMatchObject({ unit: 'processingCredits', reserved: 0 });
-    expect(summary.records.at(-1)).toMatchObject({ status: 'passed', creditUnit: 'freeUses', quotedAmount: 1, reservedCredits: 0 });
+    expect(await readFile(state.ledgerPath, 'utf8')).toBe(historical);
   });
   it('rejects an unapproved expanded image limit before any network request', async () => {
     const state = await fixture(); const fetcher = vi.fn();

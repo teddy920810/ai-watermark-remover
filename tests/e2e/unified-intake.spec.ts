@@ -1,3 +1,4 @@
+import { openWorkspace, waitForWorkspace } from '../helpers/workspace';
 import { imageOperationFixture } from '../helpers/image-operation-fixture';
 import { expect, test, type Page } from '@playwright/test';
 import fs from 'node:fs';
@@ -55,7 +56,7 @@ test('a tool without a status badge explains the compatible workspace and hands 
 });
 test('choosing another file in App automatically switches media while keeping the original bytes local', async ({ page }) => {
   const writes = await localOnly(page);
-  await page.goto('/app/image');
+  await openWorkspace(page, '/app/image');
   const input = page.getByLabel('Upload file to workspace', { exact: true }); await expect(input).toBeEnabled();
   await input.setInputFiles({ name: 'replacement.mp4', mimeType: 'video/mp4', buffer: video });
   await expect(page.getByLabel('Choose operation')).toHaveValue('video-watermark');
@@ -71,14 +72,14 @@ test('a pending object replacement blocks confirmation and an invalid file prese
   await expect.poll(()=>page.evaluate(()=>(window as typeof window & {pickerWaiting?:boolean}).pickerWaiting)).toBe(true);
   await expect(page.getByRole('button',{name:'Opening your file',exact:true})).toBeDisabled();await expect(page.getByLabel('Choose operation')).toBeDisabled();expect(state.submissions).toBe(0);
   await page.evaluate(()=>(window as typeof window & {releasePicker?():void}).releasePicker?.());
-  await expect(page.getByRole('alert')).toContainText('not a supported');await expect(page).toHaveURL(/\/app\?operation=object-removal$/);
+  await expect(page.getByRole('alert')).toContainText('not a supported');await expect(page).toHaveURL(/\/app\?operation=object-removal$/); await waitForWorkspace(page);
   await expect(page.getByText('background-source.png',{exact:true})).toBeVisible();await expect(page.getByRole('button',{name:'Remove object · 10 image credits',exact:true})).toBeEnabled();
   expect(state.uploads).toBe(2);expect(state.submissions).toBe(0);expect(state.oldRequests).toBe(0);
 });
 
 test('dropping a file in App uses the same media detection as the file picker', async ({ page }) => {
   const writes = await localOnly(page);
-  await page.goto('/app/image'); await expect(page.locator('[data-app-shell]')).toBeVisible();
+  await openWorkspace(page, '/app/image'); await expect(page.locator('[data-app-shell]')).toBeVisible();
   const transfer = await page.evaluateHandle(base64 => {
     const data = new DataTransfer();
     data.items.add(new File([Uint8Array.from(atob(base64), value => value.charCodeAt(0))], 'dropped-in-app.mp4', { type: 'video/mp4' }));

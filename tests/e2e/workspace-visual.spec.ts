@@ -1,3 +1,4 @@
+import { openWorkspace } from '../helpers/workspace';
 import { expect, test, type Route } from '@playwright/test';
 import sharp from 'sharp';
 import { readFileSync } from 'node:fs';
@@ -20,7 +21,7 @@ test('image editor keeps refinement controls usable on desktop and mobile', asyn
   await page.route('**/api/v1/uploads/visual-mask-upload/complete', route => json(route, { status: 'validating' }));
   await page.route('**/api/v1/uploads/visual-mask-upload', route => json(route, { id: 'visual-mask-upload', status: 'ready', artifact: { id: 'visual-mask', role: 'mask', metadata: { kind: 'mask', contentType: 'image/png', width: metadata.width!, height: metadata.height!, byteSize: 100 }, expiresAt: until() } }));
   await page.route('**/api/v1/quotes', route => json(route, { id: 'visual-quote', operation: 'image-refine', amount: 1, unit: 'processingCredits', expiresAt: until(), expectedOutput: { format: 'JPG', contentType: 'image/jpeg', width: metadata.width!, height: metadata.height! } }));
-  await page.setViewportSize({ width: 1487, height: 1058 }); await page.goto('/app/image?job=visual-job');
+  await page.setViewportSize({ width: 1487, height: 1058 }); await openWorkspace(page, '/app/image?job=visual-job');
   await page.addStyleTag({ content: 'astro-dev-toolbar{display:none}' });
   await page.getByRole('button', { name: 'Refine remaining marks' }).click();
   const canvas = page.getByLabel('Watermark refinement selection'); const box = await canvas.boundingBox(); expect(box).toBeTruthy();

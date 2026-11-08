@@ -1,3 +1,4 @@
+import { reloadWorkspace, waitForWorkspace } from '../helpers/workspace';
 import { expect, test, type Page, type Route } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import sharp from 'sharp';
@@ -33,9 +34,9 @@ test('an image with no MIME is recognized, restored after reload, and never uplo
   await page.goto('/');
   await expect(page.getByTestId('media-launcher-file')).toBeEnabled();
   await page.getByTestId('media-launcher-file').setInputFiles({ name: 'camera-file', mimeType: '', buffer: await photo() });
-  await expect(page).toHaveURL(/\/app\/image$/);
+  await expect(page).toHaveURL(/\/app\/image$/); await waitForWorkspace(page);
   await expect(page.getByText('camera-file', { exact: true })).toBeVisible();
-  await page.reload();
+  await reloadWorkspace(page);
   await expect(page.getByText('camera-file', { exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Sign in to continue', exact: true })).toBeVisible();
   expect(writes).toEqual([]);
@@ -46,7 +47,7 @@ test('an MP4 goes directly to the video workspace with its local draft and no up
   await page.goto('/');
   await expect(page.getByTestId('media-launcher-file')).toBeEnabled();
   await page.getByTestId('media-launcher-file').setInputFiles({ name: 'holiday.mp4', mimeType: 'video/mp4', buffer: videoBytes });
-  await expect(page).toHaveURL(/\/app\/video$/);
+  await expect(page).toHaveURL(/\/app\/video$/); await waitForWorkspace(page);
   await expect(page.getByText('holiday.mp4', { exact: true })).toBeVisible();
   await expect(page.locator('video')).toHaveAttribute('src', /^blob:/);
   await expect(page.getByRole('button', { name: 'Sign in to continue', exact: true })).toBeVisible();
@@ -63,7 +64,7 @@ test('dropping a video uses the same automatic handoff', async ({ page }) => {
     return data;
   }, videoBytes.toString('base64'));
   await page.locator('.launcher-drop').dispatchEvent('drop', { dataTransfer: transfer });
-  await expect(page).toHaveURL(/\/app\/video$/);
+  await expect(page).toHaveURL(/\/app\/video$/); await waitForWorkspace(page);
   await expect(page.getByText('dropped.mp4', { exact: true })).toBeVisible();
   expect(writes).toEqual([]);
 });
@@ -124,7 +125,7 @@ for (const viewport of [{ name: 'desktop', width: 1440, height: 900 }, { name: '
       const open = page.locator('#tool').getByRole('link', { name: 'Open workspace' });
       await expect(open).toHaveAttribute('href', '/app/video');
       await open.click();
-      await expect(page).toHaveURL(/\/app\/video$/);
+      await expect(page).toHaveURL(/\/app\/video$/); await waitForWorkspace(page);
       await expect(page.getByLabel('Choose operation')).toHaveValue('video-watermark');
       await expect(page.getByRole('heading', { name: 'Remove video watermarks' })).toBeVisible();
       expect(writes).toEqual([]);
@@ -150,7 +151,7 @@ for (const viewport of [{ name: 'desktop', width: 1440, height: 900 }, { name: '
       await expect(picker).toBeEnabled();
       const name = kind === 'image' ? 'video-page-image.png' : 'video-page-clip.mp4';
       await picker.setInputFiles({ name, mimeType: kind === 'image' ? 'image/png' : 'video/mp4', buffer: kind === 'image' ? await photo() : videoBytes });
-      await expect(page).toHaveURL(new RegExp(`/app/${kind}$`));
+      await expect(page).toHaveURL(new RegExp(`/app/${kind}$`)); await waitForWorkspace(page);
       await expect(page.getByLabel('Choose operation')).toHaveValue(kind === 'image' ? 'image-watermark' : 'video-watermark');
       await expect(page.getByText(name, { exact: true })).toBeVisible();
       if (kind === 'image') await expect(page.locator('.app-entry-notice')).toContainText(/image|compatible/i);
@@ -167,7 +168,7 @@ for (const viewport of [{ name: 'desktop', width: 1440, height: 900 }, { name: '
       await expect(page.getByLabel('Choose operation')).toHaveValue('image-watermark');
       await expect(page.getByText(/Video processing uses administrator-allocated/)).toHaveCount(0);
       await page.getByLabel('Upload file to workspace').setInputFiles({ name: 'homepage-image.png', mimeType: 'image/png', buffer: await photo() });
-      await expect(page).toHaveURL(/\/app\/image$/);
+      await expect(page).toHaveURL(/\/app\/image$/); await waitForWorkspace(page);
       await expect(page.getByText('homepage-image.png', { exact: true })).toBeVisible();
       expect(writes).toEqual([]);
     });

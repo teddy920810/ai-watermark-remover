@@ -1,3 +1,4 @@
+import { openWorkspace, reloadWorkspace } from '../helpers/workspace';
 import { expect, test, type Browser, type Page } from '@playwright/test';
 import { createServer, type Server } from 'node:http';
 import { mkdirSync, readFileSync } from 'node:fs';
@@ -96,7 +97,7 @@ async function restore(page: Page, scenario: typeof scenarios[number]) {
     if (path.endsWith('/jobs')) return route.fulfill({ json: { jobs: [publicJob] } });
     return route.fulfill({ json: publicJob });
   });
-  await page.goto(`/app/${video ? 'video' : 'image'}?job=${job.id}`);
+  await openWorkspace(page, `/app/${video ? 'video' : 'image'}?job=${job.id}`);
   return { data, counts: () => ({ mutations, tickets }) };
 }
 
@@ -106,7 +107,7 @@ for (const viewport of [{ name: 'desktop', width: 1440, height: 1000 }, { name: 
     const button = page.getByRole('button', { name: scenario.contentType === 'video/mp4' ? 'Download video' : scenario.contentType === 'image/png' ? 'Download PNG' : 'Download JPG', exact: true });
     await expect(button).toBeVisible();
     for (let attempt = 0; attempt < 2; attempt++) {
-      if (attempt) { await page.reload(); await expect(button).toBeVisible(); await page.getByRole('button', { name: 'Refresh preview link' }).click(); }
+      if (attempt) { await reloadWorkspace(page); await expect(button).toBeVisible(); await page.getByRole('button', { name: 'Refresh preview link' }).click(); }
       if (attempt === 0) {
         const pending = page.waitForEvent('download'); await button.click(); const download = await pending;
         // Inspect the browser's name before touching bytes; saveAs would hide a missing suffix.
