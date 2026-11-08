@@ -11,7 +11,9 @@ const uiTests = 'test -- src/layouts src/lib/content/blog-layout.test.ts src/lib
 export function verificationCommands(mode, ci = false) {
   if (ci && mode === 'docs') return [];
   if (ci && mode === 'content') return ['content:validate', 'test -- src/lib/content src/lib/build/content-ci.test.ts'];
-  if (ci && mode === 'full') return ['audit:dependencies', 'verify'];
+  // Required target artifacts compiles both web graphs for this lane. Keep every
+  // non-build check here, including types and the assets needed by dev-server E2E.
+  if (ci && mode === 'full') return ['audit:dependencies', 'test:coverage', 'lint:code', 'typecheck', 'images:optimize', 'test:e2e', 'test:components'];
   const plans = {
     fast: ['content:validate', 'test'],
     content: ['content:validate', 'test -- src/lib/content', 'typecheck', 'build:site', 'verify:responsive-images -- dist-target/site'],

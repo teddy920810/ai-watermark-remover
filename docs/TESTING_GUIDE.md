@@ -62,7 +62,20 @@ Pages CMS 保存到内容审核分支，经受保护 PR 与必需检查后合并
 
 标准门禁因端口、进程或平台问题无法执行时，先安全排查一次；仍不能运行则用覆盖缺失范围的等价验证补齐，并明确环境和剩余限制。已经充分覆盖的部分不重复执行；Windows 本地通过不代表 Linux/macOS 已验收。
 
-`verify` 和 `verify:deploy` 先执行 `lint:code`，类型检查由随后 `build` 中的一次 `astro check` 承担。单独执行 `lint` 或 `build` 仍会检查类型。独立目标产物验证检查不同的路由、依赖和运行环境边界，不能用组合站点 Build 代替；仅构建受影响的目标，且同一工作区的 Astro 构建必须串行。
+本地 `verify` 和 `verify:deploy` 先执行 `lint:code`，类型检查由随后 `build` 中的一次 `astro check` 承担。单独执行 `lint` 或 `build` 仍会检查类型。CI 全量路径将类型检查留在 `verify` 作业，两个 Web 图由独立产物门禁编译，不再另做组合构建。同一工作区的 Astro 构建必须串行。
+
+### CI 全量检查的覆盖分工
+
+| 原有检查 | 去重后的执行位置 |
+| --- | --- |
+| 依赖审计、全部单元覆盖率、Lint、类型检查 | `CI / verify`，类型检查显式执行一次 |
+| E2E 所需响应图片准备、全部 E2E 与独立组件浏览器测试 | `CI / verify`，保持原断言、并发和失败策略 |
+| 全部公开页面与 App/API 编译 | `Required target artifacts`：full 范围始终构建 Site 和 App，包括仅测试、CI 文件或 Worker 改动 |
+| 最终 HTML 中的响应图片约束 | 每个 Site/App 独立产物验证实际输出目录；失败阻断产物上传和必需门禁 |
+| Worker、路由隔离、秘密边界、上传白名单 | 独立目标原有验证；Worker 继续按实际依赖选择，未知范围选择全部目标 |
+| 组合构建兼容入口 | 本地 `verify`、`release:verify`、显式 `build` 与保留的 `verify:deploy`，继续完整执行 |
+
+两个必需门禁须同时通过才算覆盖完整，不能只看 `CI / verify`。文档/content/ui 快路径不扩大；Vercel 仍按原实际目标分类部署。依赖/公共构建等原本构建全部目标的 full 范围减少一次组合构建；仅测试等范围会从一次组合构建改为两个独立 Web 构建，不承诺每类 PR 都更快。CI 调整自身按 full 范围执行，不能借过渡修改跳过完整回归。
 
 验证别名共用 Node 执行器，逐步执行并在首次失败时停止，不依赖 PowerShell、Bash 或盘符。`node scripts/verify.mjs content --plan` 可只读查看步骤（其他模式为 fast/ui/full/release/deploy）。本地验证入口将单元测试和 E2E 并发限制为 2，CI 保留原并发配置和全部断言；没有跳过检查的开关。`check:content` 不再构建私有 App/API；CI 内容路径继续由独立必需产物门禁构建 Site，避免同一 CI 任务重复构建。
 
@@ -96,8 +109,8 @@ E2E 使用 `scripts/test-server.mjs` 启动独占的本地 Astro 服务；文件
 
 ## 自动化保护
 
-- `.github/workflows/ci.yml`：每次 PR 和 `main` 推送始终运行 `verify` 作业，以事件的 base/head SHA 分类并重新计算实际执行范围；不使用 workflow 路径过滤跳过必需检查。文档只检查 diff；纯 Blog/landing 与原始栅格图检查 schema、内容测试与变更内容安全；明确的公共样式先生成响应图片再运行 `check:ui`；其他范围运行依赖审计和完整 `verify`。高风险/未知/混合、空 diff 或读取 diff 失败一律完整验证。源码、MDX、SVG、站点身份设置、基线单独修改和内容 API 协议不进入内容快路径。
-- `.github/workflows/build-targets.yml`：同一份变更分类选择 Site、App 和 Worker，生成并验证对应产物。内容变更只选择 Site；Worker 入口只选择 Worker；共享处理代码选择 App 和 Worker；依赖与构建入口选择全部目标。Worker 验证真实打包和七文件上传上下文，不部署或调用 Provider。
+- `.github/workflows/ci.yml`：每次 PR 和 `main` 推送始终运行 `verify` 作业，以事件的 base/head SHA 分类并重新计算实际执行范围；不使用 workflow 路径过滤跳过必需检查。文档只检查 diff；纯 Blog/landing 与原始栅格图检查 schema、内容测试与变更内容安全；明确的公共样式先生成响应图片再运行 `check:ui`；其他范围执行上表的全量回归与独立产物编译。高风险/未知/混合、空 diff 或读取 diff 失败一律完整验证。源码、MDX、SVG、站点身份设置、基线单独修改和内容 API 协议不进入内容快路径。
+- `.github/workflows/build-targets.yml`：从同一事件 SHA 对重新计算风险与实际目标；full 范围补齐 Site/App 编译，所需 Worker 不减少。内容变更仍只选择 Site，文档不构建；缺失范围选择全部目标。生成并验证实际产物，文件缺失、失败、取消或应构建却跳过均不能通过 `Required target artifacts`。Worker 验证真实打包和七文件上传上下文，不部署或调用 Provider。
 - `.github/workflows/production-smoke.yml`：定时和手动均只运行无成本 Public Smoke，直接使用 Node，无需安装依赖或注入会话。收费验收统一使用 `test:smoke:processing -- --functional` 及既有审阅账本；背景/物体命令别名委托同一入口，不在 GitHub 工作流中保留第二套收费分支。
 - `.github/workflows/cms-content-check.yml`：仅保留显式手动诊断，不再在 main 重复执行已由必需 CI 覆盖的内容同步。
 - 内容 lane 的 `content-ci.test.ts` 从事件固定 base/head Git 对象读取实际变更，以真实 base 记录检查只读 legacy comparison，不能用候选与自身比较；对栅格图做原始字节解码，API 素材额外核对记录的尺寸、格式和限制。草稿、URL、引用与保留 slug 仍由全内容 schema/发布规则和 Site 构建检查，坏 JSON 可能阻断整站。

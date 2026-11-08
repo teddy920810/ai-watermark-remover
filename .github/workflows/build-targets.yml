@@ -22,7 +22,7 @@ jobs:
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
           HEAD_SHA: ${{ github.sha }}
-        run: echo "targets=$(node scripts/build-target.mjs changes "$BASE_SHA" "$HEAD_SHA")" >> "$GITHUB_OUTPUT"
+        run: echo "targets=$(node scripts/build-target.mjs ci-changes "$BASE_SHA" "$HEAD_SHA")" >> "$GITHUB_OUTPUT"
   build:
     needs: targets
     if: needs.targets.outputs.targets != '[]'
@@ -44,6 +44,7 @@ jobs:
           name: ${{ matrix.target }}-${{ github.sha }}
           path: dist-target/${{ matrix.target }}
           include-hidden-files: true
+          if-no-files-found: error
           retention-days: 3
   required:
     name: Required target artifacts

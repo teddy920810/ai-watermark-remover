@@ -20,7 +20,7 @@ describe('shared local and CI verification paths', () => {
     const full = ['test:coverage', 'lint:code', 'build', 'test:e2e', 'test:components'];
     expect(verificationCommands('full')).toEqual(full);
     expect(verificationCommands('release')).toEqual(['audit:dependencies', 'site:validate', ...full]);
-    expect(verificationCommands('full', true)).toEqual(['audit:dependencies', 'verify']);
+    expect(verificationCommands('full', true)).toEqual(['audit:dependencies', 'test:coverage', 'lint:code', 'typecheck', 'images:optimize', 'test:e2e', 'test:components']);
     expect(verificationCommands('ui')).toEqual(verificationCommands('ui', true));
     expect(verificationCommands('ui')[0]).toBe('images:optimize');
     expect(verificationCommands('docs', true)).toEqual([]);

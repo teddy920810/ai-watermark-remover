@@ -5,6 +5,8 @@ import process from 'node:process';
 import { fileURLToPath, pathToFileURL, URL } from 'node:url';
 import { buildWorker, prepareWorkerContext, workerContextFiles } from './build-worker.mjs';
 import { isAppOwnedRoute as isAppPath } from '../src/lib/contracts/route-policy.mjs';
+import { planVerification } from './ci-plan.mjs';
+import { verifyResponsiveImages } from './verify-responsive-images.mjs';
 
 const projectRoot = fileURLToPath(new URL('../', import.meta.url));
 const slash = (value) => value.replaceAll('\\', '/');
@@ -153,6 +155,15 @@ export function classifyTargetChanges(files) {
   return buildTargets.filter((target) => targets.has(target));
 }
 
+/** CI replaces the combined build with both web graphs, even for test-only
+ * changes. Production deployment selection remains classifyTargetChanges. */
+export function ciBuildTargets(files, mode) {
+  if (!files?.length) return [...buildTargets];
+  const selected = new Set(classifyTargetChanges(files));
+  if (!['docs', 'content', 'ui'].includes(mode)) { selected.add('site'); selected.add('app'); }
+  return buildTargets.filter(target => selected.has(target));
+}
+
 function origin(value) {
   if (typeof value !== 'string' || value.includes('$')) throw new Error('Proxy origins must be literal HTTPS origins');
   const url = new URL(value);
@@ -190,10 +201,12 @@ export function validateBuildArtifact(root, target) {
   if (target === 'site') {
     for (const name of ['api', 'app', 'auth', 'server', '.vercel', 'functions']) if (existsSync(path.join(output, name))) throw new Error(`site artifact contains forbidden ${name}`);
     if (!existsSync(path.join(output, 'index.html'))) throw new Error('site artifact has no homepage');
+    verifyResponsiveImages(output);
   } else if (target === 'app') {
     if (!existsSync(path.join(output, '.vercel/output/config.json'))) throw new Error('app artifact has no Vercel Build Output');
     const report = JSON.parse(readFileSync(path.join(root, 'output/build-target-reports/app.json'), 'utf8'));
     for (const route of report.routes) if (!isAppPath(route.pattern)) throw new Error(`app route contains marketing: ${route.pattern}`);
+    verifyResponsiveImages(path.join(output, '.vercel/output/static'));
   } else {
     const files = [];
     function walk(directory, prefix = '') {
@@ -260,6 +273,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.ar
     const [command, ...args] = process.argv.slice(2);
     if (buildTargets.includes(command)) await buildTarget(command);
     else if (command === 'changes') process.stdout.write(JSON.stringify(classifyTargetChanges(changedTargetFiles(args[0], args[1]) ?? ['package.json'])));
+    else if (command === 'ci-changes') process.stdout.write(JSON.stringify(ciBuildTargets(changedTargetFiles(args[0], args[1]), planVerification(args[0], args[1]).mode)));
     else if (command === 'required') assertRequiredTargetBuilds(JSON.parse(process.env.SELECTED_TARGETS ?? 'null'), process.env.TARGET_BUILD_RESULT, process.env.TARGET_PLAN_RESULT);
     else if (command === 'ignore') {
       if (!['site', 'app'].includes(args[0])) throw new Error('Unknown deployment target');
@@ -268,6 +282,6 @@ if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.ar
       const redeploy = process.env.VERCEL_GIT_PREVIOUS_SHA && process.env.VERCEL_GIT_PREVIOUS_SHA === process.env.VERCEL_GIT_COMMIT_SHA;
       process.exitCode = (redeploy || classifyTargetChanges(files ?? ['package.json']).includes(args[0])) ? 1 : 0;
     }
-    else throw new Error('Usage: build-target.mjs site|app|worker|changes [base head]|ignore target');
+    else throw new Error('Usage: build-target.mjs site|app|worker|changes|ci-changes [base head]|ignore target');
   } catch (error) { process.stderr.write(`${error.message}\n`); process.exitCode = 1; }
 }
