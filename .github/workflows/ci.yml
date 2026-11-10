@@ -28,12 +28,27 @@ jobs:
           cache: npm
       - id: plan
         run: node scripts/ci-plan.mjs plan
+      # Data only: a hit never skips verification. https://github.com/actions/cache/tree/v6/restore
+      - name: Restore optimized image cache
+        id: image-cache
+        if: steps.plan.outputs.mode == 'full' || steps.plan.outputs.mode == 'ui'
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: .vercel/cache/optimized-images
+          key: images-v1-${{ runner.os }}-${{ runner.arch }}-node22-${{ hashFiles('package-lock.json', 'scripts/lib/optimized-images.mjs', 'scripts/optimize-images.mjs') }}-${{ github.sha }}
+          restore-keys: images-v1-${{ runner.os }}-${{ runner.arch }}-node22-${{ hashFiles('package-lock.json', 'scripts/lib/optimized-images.mjs', 'scripts/optimize-images.mjs') }}-
       - run: npm ci
         if: steps.plan.outputs.mode != 'docs'
       - run: npx playwright install --with-deps chromium
         if: steps.plan.outputs.browser == 'true'
       - name: Run selected verification (full regression; builds use Required target artifacts)
         run: npm run ci:verify
+      - name: Save optimized image cache
+        if: success() && (steps.plan.outputs.mode == 'full' || steps.plan.outputs.mode == 'ui') && steps.image-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: .vercel/cache/optimized-images
+          key: ${{ steps.image-cache.outputs.cache-primary-key }}
       - name: Upload E2E failure evidence
         if: failure()
         uses: actions/upload-artifact@v4
