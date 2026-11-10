@@ -6,6 +6,9 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: targets-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   targets:
     runs-on: ubuntu-latest
@@ -37,8 +40,23 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      # Separate steps expose actual restore/save duration in job timing.
+      - name: Restore optimized image cache
+        id: image-cache
+        if: matrix.target == 'site'
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: .vercel/cache/optimized-images
+          key: images-v1-${{ runner.os }}-${{ runner.arch }}-node24-${{ hashFiles('package-lock.json', 'scripts/lib/optimized-images.mjs', 'scripts/optimize-images.mjs') }}-${{ github.sha }}
+          restore-keys: images-v1-${{ runner.os }}-${{ runner.arch }}-node24-${{ hashFiles('package-lock.json', 'scripts/lib/optimized-images.mjs', 'scripts/optimize-images.mjs') }}-
       - name: Build and validate the selected Site, App or Worker artifact
         run: node scripts/build-target.mjs ${{ matrix.target }}
+      - name: Save optimized image cache
+        if: success() && matrix.target == 'site' && steps.image-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: .vercel/cache/optimized-images
+          key: ${{ steps.image-cache.outputs.cache-primary-key }}
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.target }}-${{ github.sha }}
@@ -46,6 +64,9 @@ jobs:
           include-hidden-files: true
           if-no-files-found: error
           retention-days: 3
+          # Same-SHA job reruns still rebuild and validate before replacing the artifact.
+          # https://github.com/actions/upload-artifact/tree/v4#overwriting-an-artifact
+          overwrite: true
   required:
     name: Required target artifacts
     if: always()
