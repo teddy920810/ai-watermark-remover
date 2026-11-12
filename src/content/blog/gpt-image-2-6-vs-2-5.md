@@ -137,11 +137,11 @@ For migration, retain a known-good 2.5 baseline while you test representative ta
 
 ## Clean authorized static assets with WatermarkGemini
 
-[https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image2.png](https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image2.png)
+![WatermarkGemini upload entry for an image or compatible MP4. This source image shows the entry or preparation state.](/uploads/best-ai-watermark-remover/image2.png)
 
 *WatermarkGemini upload entry for an image or compatible MP4. This source image shows the entry or preparation state.*
 
-[https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image4.png](https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image4.png)
+![WatermarkGemini image workspace with Standard and PRO choices before processing. This source image shows the entry or preparation state.](/uploads/best-ai-watermark-remover/image4.png)
 
 *WatermarkGemini image workspace with Standard and PRO choices before processing. This source image shows the entry or preparation state.*
 

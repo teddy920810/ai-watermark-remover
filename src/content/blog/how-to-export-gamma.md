@@ -97,7 +97,7 @@ The browser image workflow can help you review these photos before replacing the
 
 ### Choose the separate source image
 
-[https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image2.png](https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image2.png)
+![The public upload entry for choosing the separate raster image.](/uploads/best-ai-watermark-remover/image2.png)
 
 *The public upload entry for choosing the separate raster image.*
 
@@ -105,7 +105,7 @@ Keep the original deck and original picture. Open [WatermarkGemini](https://www.
 
 ### Review the available mode and run the cleanup
 
-[https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image4.png](https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image4.png)
+![The image workspace shows the mode choices before processing.](/uploads/best-ai-watermark-remover/image4.png)
 
 *The image workspace shows the mode choices before processing.*
 

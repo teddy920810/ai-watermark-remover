@@ -77,7 +77,7 @@ WatermarkGemini offers a browser video workflow for compatible local MP4 files. 
 
 ### Choose a compatible local copy
 
-[https://www.watermarkgemini.com/uploads/remove-hardcoded-subtitles-from-video/image6.png](https://www.watermarkgemini.com/uploads/remove-hardcoded-subtitles-from-video/image6.png)
+![WatermarkGemini’s MP4 upload entry.](/uploads/remove-hardcoded-subtitles-from-video/image6.png)
 
 *WatermarkGemini’s MP4 upload entry.*
 
@@ -85,7 +85,7 @@ Use one MP4 at 24 fps, up to nine minutes and 100 MB under the published workflo
 
 ### Inspect the mark and check the quote
 
-[https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image3.png](https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image3.png)
+![Fixed-region setup on the publisher’s example clip. The view precedes a quoted job.](/uploads/best-ai-watermark-remover/image3.png)
 
 *Fixed-region setup on the publisher’s example clip. The view precedes a quoted job.*
 
