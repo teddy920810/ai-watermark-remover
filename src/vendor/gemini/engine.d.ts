@@ -1,5 +1,5 @@
-export interface ImagePixels { width: number; height: number; data: Uint8ClampedArray }
-export function removeWatermarkFromImageDataSync(data: ImagePixels): { imageData: ImagePixels; meta: { applied: boolean; bestEffort?: boolean } };
+export interface ImagePixels<TBuffer extends ArrayBufferLike = ArrayBufferLike> { width: number; height: number; data: Uint8ClampedArray<TBuffer> }
+export function removeWatermarkFromImageDataSync(data: ImagePixels): { imageData: ImagePixels<ArrayBuffer>; meta: { applied: boolean; bestEffort?: boolean } };
 export function getEmbeddedAlphaMap(size: number | string): Float32Array;
 export function getVideoAlphaMap(size: number): Float32Array;
 export function inspectGeminiVideoFile(file: Blob): Promise<{ width: number; height: number; duration: number; frameRate: number }>;
