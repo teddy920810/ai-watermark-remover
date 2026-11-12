@@ -109,7 +109,7 @@ An owned product shot may still show an old promotional label, or an authorized 
 
 ### Prepare the separate picture
 
-![The first-party image upload entry for the separate raster picture.](https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image2.png)
+![The first-party image upload entry for the separate raster picture.](/uploads/best-ai-watermark-remover/image2.png)
 
 *The first-party image upload entry for the separate raster picture.*
 
@@ -117,7 +117,7 @@ Keep the source deck and the original picture. Choose one authorized JPG, PNG or
 
 ### Review the processing quote and inspect the result
 
-![The image workspace shows the documented modes before processing.](https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image4.png)
+![The image workspace shows the documented modes before processing.](/uploads/best-ai-watermark-remover/image4.png)
 
 *The image workspace shows the documented modes before processing.*
 

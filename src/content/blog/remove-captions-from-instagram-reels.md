@@ -82,7 +82,7 @@ If you cannot get the original project, decide what the words cover. An optional
 
 ### Prepare a sample and inspect the preview
 
-![WatermarkGemini video upload entry.](https://www.watermarkgemini.com/uploads/remove-hardcoded-subtitles-from-video/image6.png)
+![WatermarkGemini video upload entry.](/uploads/remove-hardcoded-subtitles-from-video/image6.png)
 
 *WatermarkGemini video upload entry.*
 
@@ -90,7 +90,7 @@ Use one MP4 at 24 fps, up to nine minutes and 100 MB, according to the documente
 
 ### Select the relevant area and check the cost
 
-![Fixed selection and sign-in entry in the public preview.](https://www.watermarkgemini.com/uploads/remove-hardcoded-subtitles-from-video/image8.png)
+![Fixed selection and sign-in entry in the public preview.](/uploads/remove-hardcoded-subtitles-from-video/image8.png)
 
 *Fixed selection and sign-in entry in the public preview.*
 

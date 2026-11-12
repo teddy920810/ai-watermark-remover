@@ -86,7 +86,7 @@ Sometimes the image you own is already flattened. A product photo may contain an
 
 ### Choose the flattened source
 
-![WatermarkGemini’s upload entry for optional still-image cleanup.](https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image2.png)
+![WatermarkGemini’s upload entry for optional still-image cleanup.](/uploads/best-ai-watermark-remover/image2.png)
 
 *WatermarkGemini’s upload entry for optional still-image cleanup.*
 
@@ -94,7 +94,7 @@ Open the image workflow and select one authorized JPG, PNG or WebP up to 10 MB. 
 
 ### Check the quote and process the still
 
-![Image workspace with processing mode choices.](https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image4.png)
+![Image workspace with processing mode choices.](/uploads/best-ai-watermark-remover/image4.png)
 
 *Image workspace with processing mode choices.*
 
