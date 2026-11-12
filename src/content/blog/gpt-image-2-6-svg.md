@@ -115,7 +115,7 @@ A website can use an SVG badge next to a raster product photo, and a campaign ca
 
 ### Open the companion image
 
-[https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image2.png](https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image2.png)
+![WatermarkGemini image upload entry for the separate raster companion.](https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image2.png)
 
 *WatermarkGemini image upload entry for the separate raster companion.*
 
@@ -123,7 +123,7 @@ Choose one authorized JPG, PNG or WebP up to 10 MB. Keep the source SVG and phot
 
 ### Review the mode and run a sample
 
-[https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image4.png](https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image4.png)
+![The publisher’s image workspace shows the modes before processing.](https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image4.png)
 
 *The publisher’s image workspace shows the modes before processing.*
 

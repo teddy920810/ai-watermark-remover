@@ -72,7 +72,7 @@ Shotcut is useful for a laptop or lower-powered PC when the project is kept with
 
 ## 3 Kdenlive for multiple tracks and subtitles
 
-[https://www.watermarkgemini.com/uploads/remove-hardcoded-subtitles-from-video/image5.png](https://www.watermarkgemini.com/uploads/remove-hardcoded-subtitles-from-video/image5.png)
+![Editable subtitle track in Kdenlive. Kdenlive documentation, CC BY-SA 4.0. This illustrates editable text rather than burned-in pixels.](https://www.watermarkgemini.com/uploads/remove-hardcoded-subtitles-from-video/image5.png)
 
 *Editable subtitle track in Kdenlive. Kdenlive documentation, CC BY-SA 4.0. This illustrates editable text rather than burned-in pixels.*
 
@@ -154,11 +154,11 @@ Use another editor when the installed version lacks the layered control or workf
 
 ## Prepare image assets with WatermarkGemini
 
-[https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image2.png](https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image2.png)
+![WatermarkGemini upload entry for an image or compatible MP4. This source image shows the entry or preparation state.](https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image2.png)
 
 *WatermarkGemini upload entry for an image or compatible MP4. This source image shows the entry or preparation state.*
 
-[https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image4.png](https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image4.png)
+![WatermarkGemini image workspace with Standard and PRO choices before processing. This source image shows the entry or preparation state.](https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image4.png)
 
 *WatermarkGemini image workspace with Standard and PRO choices before processing. This source image shows the entry or preparation state.*
 

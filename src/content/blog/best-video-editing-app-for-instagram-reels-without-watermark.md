@@ -112,7 +112,7 @@ The browser route is convenient, but it is not an anonymous no-login editor. Per
 
 ## 6 CapCut for flexible editing with export conditions
 
-[https://www.watermarkgemini.com/uploads/how-to-remove-capcut-watermark/image2.png](https://www.watermarkgemini.com/uploads/how-to-remove-capcut-watermark/image2.png)
+![CapCut web editor timeline showing a selected video clip and editing track.](https://www.watermarkgemini.com/uploads/how-to-remove-capcut-watermark/image2.png)
 
 *CapCut web editor timeline showing a selected video clip and editing track.*
 
@@ -124,11 +124,11 @@ CapCut's own help describes different circumstances around branding and Pro expo
 
 ## Prepare supporting still images with WatermarkGemini
 
-[https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image2.png](https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image2.png)
+![WatermarkGemini upload entry for an image or compatible MP4. This source image shows the entry or preparation state.](https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image2.png)
 
 *WatermarkGemini upload entry for an image or compatible MP4. This source image shows the entry or preparation state.*
 
-[https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image4.png](https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image4.png)
+![WatermarkGemini image workspace with Standard and PRO choices before processing. This source image shows the entry or preparation state.](https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image4.png)
 
 *WatermarkGemini image workspace with Standard and PRO choices before processing. This source image shows the entry or preparation state.*
 

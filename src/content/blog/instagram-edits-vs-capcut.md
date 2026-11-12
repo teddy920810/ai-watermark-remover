@@ -113,7 +113,7 @@ Record the time spent correcting captions, finding controls, and resolving expor
 
 ## Resolve branding before choosing a remover
 
-[https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image3.png](https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image3.png)
+![WatermarkGemini video workspace with Fixed area selected before processing. This source image shows the entry or preparation state.](https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image3.png)
 
 *WatermarkGemini video workspace with Fixed area selected before processing. This source image shows the entry or preparation state.*
 
@@ -142,7 +142,7 @@ WatermarkGemini is a browser-based tool for cleaning visible marks from a finish
 
 ### Choose the cover file
 
-[https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image2.png](https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image2.png)
+![WatermarkGemini upload entry for an image or compatible MP4. This source image shows the entry or preparation state.](https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image2.png)
 
 *WatermarkGemini upload entry for an image or compatible MP4. This source image shows the entry or preparation state.*
 
@@ -150,7 +150,7 @@ Open [WatermarkGemini](https://www.watermarkgemini.com/) and select one JPG, PNG
 
 ### Sign in and review the processing cost
 
-[https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image4.png](https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image4.png)
+![WatermarkGemini image workspace with Standard and PRO choices before processing. This source image shows the entry or preparation state.](https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image4.png)
 
 *WatermarkGemini image workspace with Standard and PRO choices before processing. This source image shows the entry or preparation state.*
 

@@ -104,7 +104,7 @@ If a campaign photo includes an old promo badge or an event photo includes a dat
 
 ### Choose the raster asset
 
-[https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image2.png](https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image2.png)
+![WatermarkGemini’s separate image upload entry.](https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image2.png)
 
 *WatermarkGemini’s separate image upload entry.*
 
@@ -112,7 +112,7 @@ Open the image workspace and choose one authorized JPG, PNG or WebP up to 10 MB.
 
 ### Check the mode and compare the returned photo
 
-[https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image4.png](https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image4.png)
+![WatermarkGemini’s image workspace before processing.](https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image4.png)
 
 *WatermarkGemini’s image workspace before processing.*
 

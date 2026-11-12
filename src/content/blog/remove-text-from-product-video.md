@@ -85,7 +85,7 @@ If neither route works, look for a clean alternate take, a short cutaway, or a p
 
 ### Prepare a short compatible sample
 
-[https://www.watermarkgemini.com/uploads/remove-hardcoded-subtitles-from-video/image6.png](https://www.watermarkgemini.com/uploads/remove-hardcoded-subtitles-from-video/image6.png)
+![WatermarkGemini video upload entry.](https://www.watermarkgemini.com/uploads/remove-hardcoded-subtitles-from-video/image6.png)
 
 *WatermarkGemini video upload entry.*
 
@@ -93,7 +93,7 @@ Keep the master and use a duplicate. The published video route accepts a single 
 
 ### Inspect the preview and mark area
 
-[https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image5.png](https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image5.png)
+![The fixed-area control and selection shown on the publisher’s sample clip.](https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image5.png)
 
 *The fixed-area control and selection shown on the publisher’s sample clip.*
 

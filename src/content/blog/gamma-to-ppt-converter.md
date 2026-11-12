@@ -120,7 +120,7 @@ Use Gamma’s plan or export options to address the Gamma branding on a deck. A 
 
 ### Work from the best image source
 
-[https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image2.png](https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image2.png)
+![WatermarkGemini upload entry for an individual image.](https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image2.png)
 
 *WatermarkGemini upload entry for an individual image.*
 
@@ -128,7 +128,7 @@ Choose a separate JPG, PNG or WebP up to 10 MB. Keep the original and load a cop
 
 ### Process and check the result
 
-[https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image4.png](https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image4.png)
+![WatermarkGemini image workspace before processing.](https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image4.png)
 
 *WatermarkGemini image workspace before processing.*
 

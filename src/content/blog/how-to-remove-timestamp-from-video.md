@@ -37,7 +37,7 @@ Watch more than the opening frame. Some timestamps move, appear intermittently, 
 
 ### Check selectable text in VLC
 
-[https://www.watermarkgemini.com/uploads/remove-hardcoded-subtitles-from-video/image3.png](https://www.watermarkgemini.com/uploads/remove-hardcoded-subtitles-from-video/image3.png)
+![VLC subtitle preferences. VideoLAN Documentation Team, CC BY-SA 4.0. These settings control display, not burned-in pixels.](https://www.watermarkgemini.com/uploads/remove-hardcoded-subtitles-from-video/image3.png)
 
 *VLC subtitle preferences. VideoLAN Documentation Team, CC BY-SA 4.0. These settings control display, not burned-in pixels.*
 
@@ -86,7 +86,7 @@ The fixed region does not track a moving stamp. It also applies when no timestam
 
 ### Prepare a compatible video
 
-[https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image2.png](https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image2.png)
+![WatermarkGemini upload entry for an image or compatible MP4. This source image shows the entry or preparation state.](https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image2.png)
 
 *WatermarkGemini upload entry for an image or compatible MP4. This source image shows the entry or preparation state.*
 
@@ -96,11 +96,11 @@ Converting a clip to 24 fps is an additional edit that can affect motion. Do not
 
 ### Review the preview and selection
 
-[https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image3.png](https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image3.png)
+![WatermarkGemini video workspace with Fixed area selected before processing. This source image shows the entry or preparation state.](https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image3.png)
 
 *WatermarkGemini video workspace with Fixed area selected before processing. This source image shows the entry or preparation state.*
 
-[https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image5.png](https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image5.png)
+![WatermarkGemini fixed region applies to the entire clip. This source image shows the entry or preparation state.](https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image5.png)
 
 *WatermarkGemini fixed region applies to the entire clip. This source image shows the entry or preparation state.*
 

@@ -120,7 +120,7 @@ When moving a deck, you may discover an old campaign mark on a product photo or 
 
 ### Identify the original photo
 
-[https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image2.png](https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image2.png)
+![Upload entry for a separate raster slide picture.](https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image2.png)
 
 *Upload entry for a separate raster slide picture.*
 
@@ -128,7 +128,7 @@ Find the source picture instead of taking a screenshot of the entire slide. Choo
 
 ### Check the mode and process
 
-[https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image4.png](https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image4.png)
+![Image workspace and modes before processing.](https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image4.png)
 
 *Image workspace and modes before processing.*
 

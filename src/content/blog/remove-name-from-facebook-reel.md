@@ -69,7 +69,7 @@ Export a short sample from the modified project. Open it outside the editor and 
 
 ## Choose a method for a name baked into the picture
 
-[https://www.watermarkgemini.com/uploads/remove-hardcoded-subtitles-from-video/image9.png](https://www.watermarkgemini.com/uploads/remove-hardcoded-subtitles-from-video/image9.png)
+![Kdenlive’s Crop Scale and Tilt panel shows how top and bottom crop values are set.](https://www.watermarkgemini.com/uploads/remove-hardcoded-subtitles-from-video/image9.png)
 
 *Kdenlive’s Crop Scale and Tilt panel shows how top and bottom crop values are set.*
 
@@ -90,7 +90,7 @@ When the purpose is to hide sensitive information, use a method that fully cover
 
 ### Prepare a supported video
 
-[https://www.watermarkgemini.com/uploads/remove-hardcoded-subtitles-from-video/image6.png](https://www.watermarkgemini.com/uploads/remove-hardcoded-subtitles-from-video/image6.png)
+![WatermarkGemini’s public MP4 upload entry.](https://www.watermarkgemini.com/uploads/remove-hardcoded-subtitles-from-video/image6.png)
 
 *WatermarkGemini’s public MP4 upload entry.*
 
@@ -98,7 +98,7 @@ Use an authorized copy of the Reel. The published video route accepts one MP4 at
 
 ### Inspect the region and confirm the allowance
 
-[https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image5.png](https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image5.png)
+![WatermarkGemini’s fixed-area and automatic options in the public setup preview.](https://www.watermarkgemini.com/uploads/best-ai-watermark-remover/image5.png)
 
 *WatermarkGemini’s fixed-area and automatic options in the public setup preview.*
 
