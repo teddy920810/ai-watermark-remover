@@ -41,7 +41,7 @@ scope.onmessage = async (event: MessageEvent<{ file: File; mode: 'inspect' | 'pr
         scope.postMessage({ stage: 'Processing your image' });
         const result = removeWatermarkFromImageDataSync(context.getImageData(0, 0, image.width, image.height));
         if (!result.meta.applied) throw new Error('No supported Gemini watermark detected. Your original file is unchanged.');
-        context.putImageData(new ImageData(new Uint8ClampedArray(result.imageData.data), image.width, image.height), 0, 0);
+        context.putImageData(new ImageData(result.imageData.data, image.width, image.height), 0, 0);
         scope.postMessage({ stage: 'Generating your PNG' });
         scope.postMessage({ info, blob: await canvas.convertToBlob({ type: 'image/png' }), bestEffort: result.meta.bestEffort });
       } finally { image.close(); }
