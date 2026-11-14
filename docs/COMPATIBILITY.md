@@ -79,3 +79,9 @@ R2媒体TTL、短期下载票据和敏感字段擦除的24小时恢复缓冲均�
 所有者：免费 Gemini 功能维护者。现有适配：src/lib/client/gemini-engine.ts、gemini-worker.ts 与 src/vendor/gemini/ 的 MIT v1.0.46 固定 bundle；依赖 mediabunny@1.46.0。来源 commit、源码及产物散列保存在 provenance.json，显式再生成命令见 docs/product/FREE_GEMINI.md。替代：上游正式发布可直接消费、同时支持图片和浏览器视频的 SDK 后评估替换。
 
 复核阶段：PR137/PR139 已生产发布，许可、Windows/Linux/macOS Chromium、真实图片/视频下载及原文件交接报价已验证，未运行收费任务。当前生产记录见 docs/product/FREE_GEMINI.md；真实手机/Safari 和困难样本持续单列，不据 Chromium 证据扩大承诺。退役证据须包括正式 SDK 等价的检测、音轨、取消、真实 PNG/MP4 下载和付费隔离回归，以及已部署静态资源的兼容窗口。不得仅因上游版本更新或文件可生成而自动删除；本轮不清理旧工作区、旧 API 或历史资产。
+
+## TikTok 本地实验退出登记
+
+| 项目 | Owner / 替代 | 复核与退出证据 |
+| --- | --- | --- |
+| 被忽略的 `output/tiktok-m1-20261114/server.mjs`、`resolver.mjs`、`decode-response.mjs` 单样本实验 | 本地 MVP 任务；替代为 `src/lib/tiktok/` 与 `/app/free/tiktok` | M1 实验端口已停止；新 MVP 通过本地真实下载后保留脱敏证据。实验文件仅用于回溯，不进入构建、不作为第二套产品入口；后续由本任务 owner 确认不再需要时清理。 |

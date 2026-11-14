@@ -127,14 +127,14 @@ test('focused image and video landing entries hand local files to their matching
     await page.goto('/gemini-watermark-remover', { waitUntil: 'domcontentloaded' });
     await expect(page.getByTestId('media-launcher-file')).toBeEnabled();
     await page.getByTestId('media-launcher-file').setInputFiles({ name: 'landing-image.png', mimeType: 'image/png', buffer: image });
-    await expect(page).toHaveURL(/\/app\/free\/gemini$/);
     await expect(page.getByAltText('Original image')).toBeVisible({ timeout: 20000 });
+    await expect(page).toHaveURL(/\/app\/free\/gemini$/);
     await expect(page.getByRole('button', { name: 'Sign in to process for free', exact: true })).toBeVisible();
     await page.goto('/video-watermark-remover', { waitUntil: 'domcontentloaded' });
     await expect(page.getByTestId('media-launcher-file')).toBeEnabled();
     await expect(page.getByTestId('media-launcher-file')).toHaveAttribute('accept', 'image/jpeg,image/png,image/webp,video/mp4');
     await page.getByTestId('media-launcher-file').setInputFiles({ name: 'landing-video.mp4', mimeType: 'video/mp4', buffer: videoBytes });
-    await expect(page).toHaveURL(/\/app\/video$/); await waitForWorkspace(page);
+    await waitForWorkspace(page); await expect(page).toHaveURL(/\/app\/video$/);
     await expect(page.getByText('landing-video.mp4', { exact: true })).toBeVisible();
     await expect(page.locator('video')).toHaveAttribute('src', /^blob:/);
     await expect(page.getByRole('button', { name: 'Sign in to continue', exact: true })).toBeVisible();
