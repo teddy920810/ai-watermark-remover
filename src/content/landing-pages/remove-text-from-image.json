@@ -2,170 +2,262 @@
   "heroSamples": [
     {
       "id": "preview-1",
-      "label": "Café window lettering",
-      "image": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-hero-01-before-2700c7b5172f007f.webp",
-      "afterImage": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-hero-01-after-a635c077de284938.webp",
-      "imageAlt": "Illustrative café window scene with and without CITY STORIES lettering; not a tested product output."
+      "label": "Photo Caption",
+      "image": "/uploads/landing-20261114/remove-text-from-image/Hero_1280x694/hero-01-before.webp",
+      "afterImage": "/uploads/landing-20261114/remove-text-from-image/Hero_1280x694/hero-01-after.webp",
+      "imageAlt": "Original photo caption with a visible sample mark → matching authorized cleanup view; Show whether reflections and window frames remain continuous."
     },
     {
       "id": "preview-2",
-      "label": "Vacation photo date",
-      "image": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-hero-02-before-fd4fa4f7b6de6e7f.webp",
-      "afterImage": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-hero-02-after-6e6aeadc5ba16633.webp",
-      "imageAlt": "Illustrative vacation portrait with and without the added date 2026.08.15; not a tested product output."
+      "label": "Camera Date Stamp",
+      "image": "/uploads/landing-20261114/remove-text-from-image/Hero_1280x694/hero-02-before.webp",
+      "afterImage": "/uploads/landing-20261114/remove-text-from-image/Hero_1280x694/hero-02-after.webp",
+      "imageAlt": "Original camera date stamp with a visible sample mark → matching authorized cleanup view; Show preservation of sand grain and original frame."
     },
     {
       "id": "preview-3",
-      "label": "Skincare product label",
-      "image": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-hero-03-before-8fcb751fca0f327a.webp",
-      "afterImage": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-hero-03-after-4ffcc47c14779d2b.webp",
-      "imageAlt": "Illustrative skincare product scene with and without BOTANICAL LAB lettering; not a tested product output."
+      "label": "Product Label",
+      "image": "/uploads/landing-20261114/remove-text-from-image/Hero_1280x694/hero-03-before.webp",
+      "afterImage": "/uploads/landing-20261114/remove-text-from-image/Hero_1280x694/hero-03-after.webp",
+      "imageAlt": "Original product label with a visible sample mark → matching authorized cleanup view; Show legible edges of the jar and a natural wall after removal."
     }
   ],
   "relatedTools": {
     "enabled": true,
     "eyebrow": "Popular tools",
-    "heading": "All AI Tools of WatermarkGemini",
-    "intro": "Select the tool that matches the file and cleanup task you actually have."
+    "heading": "Explore More Image Cleanup Tools",
+    "intro": "Choose a tool for the type of file and visible mark you actually need to edit.",
+    "items": [
+      {
+        "title": "Background Remover",
+        "href": "https://www.watermarkgemini.com/remove-background",
+        "description": "Clean the background from authorized portraits and product photos."
+      },
+      {
+        "title": "Object Remover",
+        "href": "https://www.watermarkgemini.com/remove-object",
+        "description": "Remove distracting objects from approved images using the dedicated image editor."
+      },
+      {
+        "title": "Remove Text from Image",
+        "href": "https://www.watermarkgemini.com/remove-text-from-image",
+        "description": "Clean visible captions, dates and unwanted text on photos you may edit."
+      },
+      {
+        "title": "Remove Logo from Image",
+        "href": "https://www.watermarkgemini.com/remove-logo-from-image",
+        "description": "Review visible logos and old brand marks on authorized pictures."
+      },
+      {
+        "title": "ChatGPT Watermark Remover",
+        "href": "https://www.watermarkgemini.com/chatgpt-watermark-remover",
+        "description": "Learn about image-specific visible marks and their cleanup limits."
+      },
+      {
+        "title": "Gemini Watermark Remover",
+        "href": "https://www.watermarkgemini.com/gemini-watermark-remover",
+        "description": "Clean a supported visible Gemini sparkle on an authorized still image."
+      },
+      {
+        "title": "Remove Date Stamp",
+        "href": "https://www.watermarkgemini.com/",
+        "description": "Use the main image workflow for supported visible photo date stamps."
+      },
+      {
+        "title": "Remove Signature",
+        "href": "https://www.watermarkgemini.com/",
+        "description": "Review visible signatures on images only when you have permission."
+      }
+    ]
   },
   "guides": {
     "enabled": true,
     "eyebrow": "Helpful guides",
-    "heading": "Learn More About Free AI Watermark Remover from Image",
-    "intro": "Practical tutorials for improving the images and videos you are allowed to edit."
+    "heading": "Helpful Guides for Remove Text from Image",
+    "intro": "Practical background reading about authorized cleanup methods, file limitations and related editing tasks.",
+    "items": [
+      {
+        "title": "Best AI Watermark Remover in 2026: 7 Tools Compared",
+        "href": "https://www.watermarkgemini.com/blog/best-ai-watermark-remover"
+      },
+      {
+        "title": "How to Turn Off Gemini Watermark",
+        "href": "https://www.watermarkgemini.com/blog/how-to-turn-off-gemini-watermark"
+      },
+      {
+        "title": "How to Remove an iStock Watermark from an Image",
+        "href": "https://www.watermarkgemini.com/blog/how-to-remove-istock-watermark"
+      },
+      {
+        "title": "How to Remove Moving Watermark From Video Without Flicker",
+        "href": "https://www.watermarkgemini.com/blog/remove-moving-watermark-from-video"
+      },
+      {
+        "title": "How to Remove CapCut Watermark from Videos",
+        "href": "https://www.watermarkgemini.com/blog/how-to-remove-capcut-watermark"
+      },
+      {
+        "title": "How to Remove a TikTok Watermark from a Video You Own",
+        "href": "https://www.watermarkgemini.com/blog/how-to-remove-watermark-tiktok"
+      }
+    ]
   },
   "slug": "remove-text-from-image",
   "draft": false,
   "toolKind": "watermark-remover",
-  "title": "Remove Text from Image Online | AI Text Remover",
-  "description": "Remove text from images online with WatermarkGemini. Clean captions, date stamps, labels and unwanted words from JPG, PNG or WebP images. Preview before download.",
+  "title": "Remove Text from Image Online with AI | WatermarkGemini",
+  "description": "Remove text from image online with AI. Clean captions, date stamps and labels from authorized photos without cropping; compare the edit before downloading.",
   "eyebrow": "ONLINE TEXT REMOVER",
   "heading": "Remove Text from Image Online with AI",
-  "intro": "An old caption, date stamp or label can make a useful photo hard to reuse. Upload an image you own or have permission to edit and use WatermarkGemini to clean the unwanted text area. Review the background, edges and fine details before downloading your edited JPG. The comparisons are illustrative scenes with added text, not tested WatermarkGemini outputs.",
+  "intro": "Remove unwanted captions, date stamps, labels and printed overlays from a photo you own or may edit. WatermarkGemini works on visible text areas instead of cutting away the picture. Check fine edges and background detail in the preview, then download the edited image.\n\nIllustrative comparisons until replaced by tested WatermarkGemini results. Individual cleanup results depend on the image and marked area.",
   "benefits": [
-    "Remove unwanted text overlays",
-    "Keep the original image framing",
-    "Preview the edited area"
+    "Remove Captions and Labels",
+    "Keep the Full Image Frame",
+    "Preview Background Details"
   ],
   "process": {
     "eyebrow": "How it works",
     "heading": "How to Remove Text from an Image Online",
-    "intro": "Follow the three steps below. Always confirm the file type and actual processing status shown in the tool before you submit content.",
+    "intro": "Use the actual source file, check your rights and review the processing cost or availability before starting.",
     "steps": [
       {
         "number": "01",
-        "title": "Upload the Image with Unwanted Text",
-        "description": "Choose a JPG, PNG or WebP photo, screenshot or graphic up to 10 MB. Use the clearest original you have, especially when text crosses faces or detailed surfaces."
+        "title": "Upload an Image with Unwanted Text",
+        "description": "Choose a JPG, PNG or WebP file up to 10 MB. Keep your original image and check that the words you want removed are not required labels or attribution.",
+        "image": "/uploads/landing-20261114/remove-text-from-image/Steps_Concept/step-01-concept.webp",
+        "imageAlt": "Upload an Image with Unwanted Text"
       },
       {
         "number": "02",
-        "title": "Process the Visible Text Area",
-        "description": "Sign in with Google, review the processing cost and start the available image-cleanup workflow. The system attempts to blend the edited area with nearby colors and textures."
+        "title": "Process the Text Area",
+        "description": "Sign in with Google and review the current processing cost. Start the supported image-cleanup operation; the result may vary for small lettering or busy backgrounds.",
+        "image": "/uploads/landing-20261114/remove-text-from-image/Steps_Concept/step-02-concept.webp",
+        "imageAlt": "Process the Text Area"
       },
       {
         "number": "03",
-        "title": "Check the Background and Download",
-        "description": "Compare the original with the result. Inspect lines, faces, patterns and any text you wanted to keep, then download the JPG if the result meets your needs."
+        "title": "Compare and Download",
+        "description": "Inspect the former text area at full size. Check faces, straight edges and fine textures, then download the edited image when you are satisfied.",
+        "image": "/uploads/landing-20261114/remove-text-from-image/Steps_Concept/step-03-concept.webp",
+        "imageAlt": "Compare and Download"
       }
     ]
   },
   "features": {
     "eyebrow": "Why choose WatermarkGemini",
-    "heading": "AI Text Remover for Real Photos, Screenshots and Graphics",
-    "intro": "Text removal succeeds when the surrounding image still looks believable. These three advantages address background detail, common text types and a straightforward review process. The images illustrate text overlays and the same scenes without those overlays; they are not tested product results.",
+    "heading": "Why Choose WatermarkGemini for Remove Text from Image?",
+    "intro": "Compare the cleanup task, the detail behind the visible mark and the actual file workflow before deciding whether to use Remove Text from Image.",
     "items": [
       {
         "enabled": true,
         "eyebrow": "FEATURE 1",
-        "heading": "Remove Text While Keeping Backgrounds Natural",
-        "description": "Erase a distracting label without replacing it with an equally distracting blur patch. WatermarkGemini works on the visible text region and attempts to blend its replacement with nearby image detail. A simple sky or wall may be easier to reconstruct than lettering printed across a face, woven fabric or repeated pattern. Inspect the result closely before use.",
-        "listItems": [],
-        "image": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-feature-04-before-e08fc72daec9ad8e.webp",
-        "afterImage": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-feature-04-after-95709d8ec7b5ce9b.webp",
-        "imageAlt": "Illustrative coastal travel poster with and without SUMMER ESCAPE lettering; not a tested product output.",
-        "imagePosition": "right"
+        "heading": "Remove Text While Keeping the Background Natural",
+        "description": "Captions often cross windows, fabric, skies or product edges. Covering them with a solid box creates another distraction. WatermarkGemini processes the selected text region and aims to blend it into the surrounding image; inspect sharp lines and repeated textures before accepting the result.",
+        "image": "/uploads/landing-20261114/remove-text-from-image/Feature_1076x872/feature-01-before.webp",
+        "imageAlt": "Café storefront sign overlay over reflective glass; same framed photograph; detail crop of letters and window mullion.",
+        "imagePosition": "left",
+        "afterImage": "/uploads/landing-20261114/remove-text-from-image/Feature_1076x872/feature-01-after.webp"
       },
       {
         "enabled": true,
         "eyebrow": "FEATURE 2",
-        "heading": "Clean Captions, Date Stamps and Old Labels",
-        "description": "Use the tool for text that you added to your own visuals or have permission to remove: a date stamp on a family photo, an outdated promotion on a product image, a caption on a social graphic or a temporary label on a presentation asset. For editable design files, removing the original text layer is often more accurate than repairing a flattened image.",
-        "listItems": [],
-        "image": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-feature-05-before-4513846f077b7df2.webp",
-        "afterImage": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-feature-05-after-69269989b0bae489.webp",
-        "imageAlt": "Illustrative fashion portrait with and without FALL EDITION lettering; not a tested product output.",
-        "imagePosition": "left"
+        "heading": "Clean Captions, Date Stamps and Image Labels",
+        "description": "One tool can help with several common visible-text tasks: a date printed by an older camera, a caption added to a draft social post, or an outdated promotional callout on an owned product photo. Use the original file when available and keep any text that must remain for context or compliance.",
+        "image": "/uploads/landing-20261114/remove-text-from-image/Feature_1076x872/feature-02-before.webp",
+        "imageAlt": "Travel-photo timestamp on textured beach; local date area enlarged.",
+        "imagePosition": "right",
+        "afterImage": "/uploads/landing-20261114/remove-text-from-image/Feature_1076x872/feature-02-after.webp"
       },
       {
         "enabled": true,
         "eyebrow": "FEATURE 3",
-        "heading": "Remove Text from Images Online Without Manual Cloning",
-        "description": "You do not have to rebuild the picture in a desktop editor just to try a text cleanup. Upload your original image, sign in, check the displayed processing cost, preview the edited region and save the JPG. The result is not guaranteed to restore text-covered pixels exactly, so review small type and detailed edges.",
-        "listItems": [],
-        "image": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-feature-06-before-a85b7d7db460cc54.webp",
-        "afterImage": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-feature-06-after-688e3444fba5289c.webp",
-        "imageAlt": "Illustrative neon city scene with and without TOKYO NIGHTS lettering; not a tested product output.",
-        "imagePosition": "right"
+        "heading": "Remove Text Without Cropping Your Photo",
+        "description": "Cutting off a caption can also cut off a person, product or carefully placed negative space. A targeted cleanup lets you retain the original aspect ratio and composition. Compare the full image before and after, not only the small repaired area, especially for posts and presentations.",
+        "image": "/uploads/landing-20261114/remove-text-from-image/Feature_1076x872/feature-03-before.webp",
+        "imageAlt": "Lifestyle portrait with small caption near important subject; side crop-vs-full-frame comparison.",
+        "imagePosition": "left",
+        "afterImage": "/uploads/landing-20261114/remove-text-from-image/Feature_1076x872/feature-03-after.webp"
+      },
+      {
+        "enabled": true,
+        "eyebrow": "FEATURE 4",
+        "heading": "Edit Text Overlays Online with Clear Usage Costs",
+        "description": "Upload a supported JPG, PNG or WebP file, sign in with Google, check the processing quote and inspect the result before downloading. Eligible standard image tasks can use limited free uses; other operations may require credits. Temporary uploads are privately stored and scheduled to expire, as described in the privacy policy.",
+        "image": "/uploads/landing-20261114/remove-text-from-image/Feature_1076x872/feature-04-before.webp",
+        "imageAlt": "Real laptop browser workspace with text cleanup preview, no fictional buttons or prices; actual UI screenshot required.",
+        "imagePosition": "right",
+        "afterImage": "/uploads/landing-20261114/remove-text-from-image/Feature_1076x872/feature-04-after.webp"
       }
     ]
   },
   "cta": {
     "eyebrow": "Ready when you are",
-    "heading": "Review Your Remove Text from Image Result",
-    "description": "Choose a file you are authorized to edit, review any displayed processing cost, and compare the edited result with the original before downloading.",
-    "buttonLabel": "Upload your image",
+    "heading": "Clean Unwanted Text from Your Image",
+    "description": "Have an image you own or are authorized to edit? Upload a supported file, review the processing quote and inspect the cleaned area before downloading. Keep your original.",
+    "buttonLabel": "Open Workspace",
     "buttonHref": "#tool"
   },
   "faq": {
-    "eyebrow": "COMMON QUESTIONS",
-    "heading": "FAQs About Removing Text from Images",
-    "intro": "Clear answers about supported inputs, editing quality, limits and responsible use.",
+    "eyebrow": "Frequently asked questions",
+    "heading": "Frequently Asked Questions About Removing Text from Image",
+    "intro": "Answers about supported media, image/video quality, usage requirements and responsible editing.",
     "items": [
       {
         "enabled": true,
         "question": "How do I remove text from an image online?",
-        "answer": "Upload a JPG, PNG or WebP image, sign in with Google, review the processing details and start the cleanup. Compare the returned picture with the original, particularly where letters crossed fine edges or patterns. Download the result as a JPG when you are satisfied."
+        "answer": "Upload a photo that you own or may edit, sign in with Google and start the supported image operation after reviewing its cost. Compare the cleaned area with the original image. Download the resulting JPG if surrounding edges and background details look acceptable."
       },
       {
         "enabled": true,
         "question": "Can I remove text from an image online for free?",
-        "answer": "WatermarkGemini may provide limited free processing allowances, but you should review the cost shown in the uploader before starting. Google sign-in is required for processing. Do not assume unlimited free removals."
+        "answer": "Eligible standard image tasks can use limited free image uses. WatermarkGemini is not an unlimited, no-sign-in service: Google sign-in is required and some tasks may need credits. The workspace displays the charge or available free allowance before processing."
       },
       {
         "enabled": true,
-        "question": "Can AI remove text from a picture without damaging the background?",
-        "answer": "AI can attempt to reconstruct the area behind flattened text using nearby visual clues. Results vary with letter size, opacity and what sits underneath. Complex textures and faces are harder than flat backgrounds, so always inspect the cleaned region."
+        "question": "How can I remove text without removing the background?",
+        "answer": "Use a workflow that repairs only the visible lettering area instead of deleting the whole backdrop. The tool aims to fill that area using surrounding visual information. Review patterns, faces and high-contrast lines carefully; no image editor can guarantee the hidden pixels are reproduced exactly."
       },
       {
         "enabled": true,
-        "question": "What types of text can I erase from photos?",
-        "answer": "Common examples include date stamps, captions, old promotional copy, labels and annotations on images you own or are authorized to edit. The tool changes pixels in an image; it does not remove an editable text layer from a design project."
+        "question": "Can AI remove words from a photo automatically?",
+        "answer": "AI-assisted cleanup can target captions, labels or stamped words on many images. Tiny, decorative, low-contrast or curved lettering may be harder to locate and repair. Preview the actual result rather than assuming every character will disappear."
       },
       {
         "enabled": true,
-        "question": "Can I remove text from a screenshot?",
-        "answer": "You can process a supported screenshot image, but be careful with small UI labels, tables and interfaces because removing one phrase may disturb nearby details. For an editable screenshot source, changing the original content before recapturing it often looks better."
+        "question": "Can I erase a date stamp from a picture?",
+        "answer": "A visible date stamp can be treated as a small text overlay on an authorized image. Upload the original rather than a heavily compressed screenshot. Check textured backgrounds and the original capture information before using the edited version."
       },
       {
         "enabled": true,
-        "question": "Does the tool support JPG, PNG and WebP?",
-        "answer": "Yes. The image workflow accepts JPG, PNG and WebP uploads up to 10 MB. The current image download format is JPG, so a transparent PNG may not retain its original transparency."
+        "question": "Can I remove captions from screenshots?",
+        "answer": "Yes, you can try visible captions and unwanted text added to screenshots you are allowed to modify. Do not remove safety warnings, mandatory attribution or source information you must preserve. Small user-interface text close to the caption may be affected, so inspect it carefully."
       },
       {
         "enabled": true,
-        "question": "Can I remove just one word or caption?",
-        "answer": "The available workspace controls determine which region you can select. Review the unwanted word or caption and any text you want to keep after processing; exact reconstruction is not guaranteed."
+        "question": "Does removing text lower image quality?",
+        "answer": "Some detail can change where the lettering was removed because the area must be reconstructed. The current image workflow downloads JPG, which may also introduce compression compared with your source. Review the edit at full size before publishing or printing."
       },
       {
         "enabled": true,
-        "question": "Do I need an account to remove text?",
-        "answer": "You can select an image before signing in, but the current processing flow requires Google sign-in. The tool shows processing cost information before you begin."
+        "question": "Can I remove a text watermark from a photo?",
+        "answer": "For a photo you own or have licensed appropriately, the tool can attempt visible text-overlay cleanup. Removing an overlay does not provide rights to an unlicensed stock preview or someone else’s work; obtain the authorized clean original whenever possible."
       },
       {
         "enabled": true,
-        "question": "How long does WatermarkGemini keep uploaded images?",
-        "answer": "Uploaded files, masks and results are generally scheduled to expire after about 24 hours; deletion may occur later. Temporary links can expire sooner. Account and processing records may be retained longer. See the Privacy Policy for details."
+        "question": "Which formats can I upload and download?",
+        "answer": "The current still-image flow accepts one JPG, PNG or WebP file up to 10 MB and returns a JPG result. It is not a native PDF or batch text-removal workflow. Keep the source file in case a different export format is needed."
+      },
+      {
+        "enabled": true,
+        "question": "Do I need Photoshop or an app to erase text?",
+        "answer": "No desktop installation is needed for the supported browser workflow. You do need Google sign-in for processing. Upload, review the processing quote, inspect the comparison and download the result directly from the workspace."
+      },
+      {
+        "enabled": true,
+        "question": "Are my uploaded images kept private?",
+        "answer": "The selected file remains on your device until you sign in and submit it. Submitted files and results use private temporary storage and are generally scheduled to expire after about 24 hours; actual deletion timing can vary. Consult the site’s privacy policy before uploading sensitive work."
       }
     ]
-  }
+  },
+  "toolNote": "Choose supported file. Sign in and review the processing cost before starting."
 }

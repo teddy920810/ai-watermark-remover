@@ -655,155 +655,276 @@
     },
     {
       "file": "src/content/landing-pages/facebook-watermark-remover.json",
-      "semanticSha256": "214135711fb7f425b24843ac57d7aca14f8fff90d23a3c33d94648d07ffd7ced",
+      "semanticSha256": "15a3ea23584c0e43eee0d7b11b6e2a6609e420f2730388c0f13a3a24050a2b6f",
       "images": [
         {
           "path": "/heroSamples/0/image",
-          "value": "/uploads/workflow-upload-step.png"
+          "value": "/uploads/landing-20261114/facebook-watermark-remover/Hero_640x347/hero-01-before.webp"
         },
         {
           "path": "/heroSamples/0/imageAlt",
-          "value": "Image entering the secure upload workflow"
-        },
-        {
-          "path": "/heroSamples/1/image",
-          "value": "/uploads/workflow-ai-detection-step.png"
-        },
-        {
-          "path": "/heroSamples/1/imageAlt",
-          "value": "AI detecting a visible watermark area in an image"
-        },
-        {
-          "path": "/heroSamples/2/image",
-          "value": "/uploads/workflow-download-step.png"
-        },
-        {
-          "path": "/heroSamples/2/imageAlt",
-          "value": "Before and after image ready for secure download"
-        }
-      ],
-      "contentOwnerApproval": "https://github.com/teddy920810/ai-watermark-remover/pull/130"
-    },
-    {
-      "file": "src/content/landing-pages/gemini-watermark-remover.json",
-      "semanticSha256": "f03cacb78cdcb8dd5a09d2a1a3dcc4ec344f568860c63cd16ccc438e09ea5eb8",
-      "images": [
-        {
-          "path": "/heroSamples/0/image",
-          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-hero-01-water-portrait-before-f6d51d6e3dfb908d.webp"
+          "value": "Clean a Reels Overlay from Your Own Clip — authorized source image before cleanup or illustrative mark."
         },
         {
           "path": "/heroSamples/0/afterImage",
-          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-hero-01-water-portrait-after-3b5732c40d10a859.webp"
-        },
-        {
-          "path": "/heroSamples/0/imageAlt",
-          "value": "Illustrative water portrait with and without an added repeating Gemini mark; not a tested product output."
+          "value": "/uploads/landing-20261114/facebook-watermark-remover/Hero_640x347/hero-01-after.webp"
         },
         {
           "path": "/heroSamples/1/image",
-          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-hero-02-santorini-travel-before-b34188f03be17e2a.webp"
+          "value": "/uploads/landing-20261114/facebook-watermark-remover/Hero_640x347/hero-02-before.webp"
+        },
+        {
+          "path": "/heroSamples/1/imageAlt",
+          "value": "Prepare an Old Brand Video for a New Campaign — authorized source image before cleanup or illustrative mark."
         },
         {
           "path": "/heroSamples/1/afterImage",
-          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-hero-02-santorini-travel-after-31f2223eee037f6a.webp"
-        },
-        {
-          "path": "/heroSamples/1/imageAlt",
-          "value": "Illustrative santorini travel portrait with a dog, with and without an added repeating Gemini mark; not a tested product output."
+          "value": "/uploads/landing-20261114/facebook-watermark-remover/Hero_640x347/hero-02-after.webp"
         },
         {
           "path": "/heroSamples/2/image",
-          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-hero-03-serum-product-before-d397e6da83740ca6.webp"
+          "value": "/uploads/landing-20261114/facebook-watermark-remover/Hero_640x347/hero-03-before.webp"
+        },
+        {
+          "path": "/heroSamples/2/imageAlt",
+          "value": "Review Username and Attribution Areas Carefully — authorized source image before cleanup or illustrative mark."
         },
         {
           "path": "/heroSamples/2/afterImage",
-          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-hero-03-serum-product-after-44c2fbd00eb9ebfd.webp"
-        },
-        {
-          "path": "/heroSamples/2/imageAlt",
-          "value": "Illustrative skincare serum product scene with and without an added repeating Gemini mark; not a tested product output."
+          "value": "/uploads/landing-20261114/facebook-watermark-remover/Hero_640x347/hero-03-after.webp"
         },
         {
           "path": "/features/items/0/image",
-          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-feature-01-full-frame-before-c36c792986f4af98.webp"
-        },
-        {
-          "path": "/features/items/0/afterImage",
-          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-feature-01-full-frame-after-4899599429f7223e.webp"
+          "value": "/uploads/landing-20261114/facebook-watermark-remover/Feature_538x436/feature-01-before.webp"
         },
         {
           "path": "/features/items/0/imageAlt",
-          "value": "Illustrative alpine landscape and hiker with and without an added repeating Gemini mark; not a tested product output."
+          "value": "A Dedicated Workflow for Visible Facebook Video Marks — same camera frame and matched target region."
+        },
+        {
+          "path": "/features/items/0/afterImage",
+          "value": "/uploads/landing-20261114/facebook-watermark-remover/Feature_538x436/feature-01-after.webp"
         },
         {
           "path": "/features/items/1/image",
-          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-feature-02-fine-texture-before-26d64285e1ad1897.webp"
-        },
-        {
-          "path": "/features/items/1/afterImage",
-          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-feature-02-fine-texture-after-98f3b7fafbcd23b0.webp"
+          "value": "/uploads/landing-20261114/facebook-watermark-remover/Feature_538x436/feature-02-before.webp"
         },
         {
           "path": "/features/items/1/imageAlt",
-          "value": "Illustrative portrait and embroidered fabric with and without an added repeating Gemini mark; not a tested product output."
+          "value": "Preserve the Framing of Reels and Short Videos — same camera frame and matched target region."
+        },
+        {
+          "path": "/features/items/1/afterImage",
+          "value": "/uploads/landing-20261114/facebook-watermark-remover/Feature_538x436/feature-02-after.webp"
         },
         {
           "path": "/features/items/2/image",
-          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-feature-03-browser-workflow-before-2035d37b7cc40748.webp"
-        },
-        {
-          "path": "/features/items/2/afterImage",
-          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-feature-03-browser-workflow-after-ae7bc9dee63c9714.webp"
+          "value": "/uploads/landing-20261114/facebook-watermark-remover/Feature_538x436/feature-03-before.webp"
         },
         {
           "path": "/features/items/2/imageAlt",
-          "value": "Illustrative laptop browser workflow illustration with and without an added repeating Gemini mark; not a tested product output."
+          "value": "Plan for Static Logos and Username Overlays — same camera frame and matched target region."
+        },
+        {
+          "path": "/features/items/2/afterImage",
+          "value": "/uploads/landing-20261114/facebook-watermark-remover/Feature_538x436/feature-03-after.webp"
         },
         {
           "path": "/features/items/3/image",
-          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-feature-04-private-processing-before-e48149c6cfc455f8.webp"
-        },
-        {
-          "path": "/features/items/3/afterImage",
-          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-feature-04-private-processing-after-37cba2e12d93172a.webp"
+          "value": "/uploads/landing-20261114/facebook-watermark-remover/Feature_538x436/feature-04-before.webp"
         },
         {
           "path": "/features/items/3/imageAlt",
-          "value": "Illustrative laptop privacy and free-use diagram with and without an added repeating Gemini mark; not a tested product output."
+          "value": "Clear Availability, Rights and Processing Terms — same camera frame and matched target region."
+        },
+        {
+          "path": "/features/items/3/afterImage",
+          "value": "/uploads/landing-20261114/facebook-watermark-remover/Feature_538x436/feature-04-after.webp"
         }
       ],
-      "contentOwnerApproval": "https://github.com/teddy920810/ai-watermark-remover/pull/114#issuecomment-6566751391"
+      "contentOwnerApproval": "User-authorized operations content package 2026-11-14; use supplied _CLEAN_COPY.txt without editorial changes. PR reference added when created."
     },
     {
-      "file": "src/content/landing-pages/grok-watermark-remover.json",
-      "semanticSha256": "32fa6c1a0786116ce136c9b44479f1c836df60f1e9ae0b467999f790bd12e0fe",
+      "file": "src/content/landing-pages/gemini-watermark-remover.json",
+      "semanticSha256": "90e7188f1944a692694c578f25616b9ff08977539750449cb76481c4d37d9fbb",
       "images": [
         {
           "path": "/heroSamples/0/image",
-          "value": "/uploads/workflow-upload-step.png"
+          "value": "/uploads/landing-20261114/gemini-watermark-remover/Hero_640x347/hero-01-before.webp"
+        },
+        {
+          "path": "/heroSamples/0/afterImage",
+          "value": "/uploads/landing-20261114/gemini-watermark-remover/Hero_640x347/hero-01-after.webp"
         },
         {
           "path": "/heroSamples/0/imageAlt",
-          "value": "Image entering the secure upload workflow"
+          "value": "Illustrative Gemini-style mark over a portrait in water"
         },
         {
           "path": "/heroSamples/1/image",
-          "value": "/uploads/workflow-ai-detection-step.png"
+          "value": "/uploads/landing-20261114/gemini-watermark-remover/Hero_640x347/hero-02-before.webp"
+        },
+        {
+          "path": "/heroSamples/1/afterImage",
+          "value": "/uploads/landing-20261114/gemini-watermark-remover/Hero_640x347/hero-02-after.webp"
         },
         {
           "path": "/heroSamples/1/imageAlt",
-          "value": "AI detecting a visible watermark area in an image"
+          "value": "Illustrative Gemini-style mark over detailed AI artwork"
         },
         {
           "path": "/heroSamples/2/image",
-          "value": "/uploads/workflow-download-step.png"
+          "value": "/uploads/landing-20261114/gemini-watermark-remover/Hero_640x347/hero-03-before.webp"
+        },
+        {
+          "path": "/heroSamples/2/afterImage",
+          "value": "/uploads/landing-20261114/gemini-watermark-remover/Hero_640x347/hero-03-after.webp"
         },
         {
           "path": "/heroSamples/2/imageAlt",
-          "value": "Before and after image ready for secure download"
+          "value": "Illustrative Gemini-style mark over a serum product image"
+        },
+        {
+          "path": "/features/items/0/image",
+          "value": "/uploads/landing-20261114/gemini-watermark-remover/Feature_538x436/feature-01-before.webp"
+        },
+        {
+          "path": "/features/items/0/imageAlt",
+          "value": "Illustrative no-crop comparison on a mountain landscape"
+        },
+        {
+          "path": "/features/items/0/afterImage",
+          "value": "/uploads/landing-20261114/gemini-watermark-remover/Feature_538x436/feature-01-after.webp"
+        },
+        {
+          "path": "/features/items/1/image",
+          "value": "/uploads/landing-20261114/gemini-watermark-remover/Feature_538x436/feature-02-before.webp"
+        },
+        {
+          "path": "/features/items/1/imageAlt",
+          "value": "Illustrative textured fabric watermark comparison"
+        },
+        {
+          "path": "/features/items/1/afterImage",
+          "value": "/uploads/landing-20261114/gemini-watermark-remover/Feature_538x436/feature-02-after.webp"
+        },
+        {
+          "path": "/features/items/2/image",
+          "value": "/uploads/landing-20261114/gemini-watermark-remover/Feature_538x436/feature-03-before.webp"
+        },
+        {
+          "path": "/features/items/2/imageAlt",
+          "value": "Illustrative laptop workflow showing original and edited states"
+        },
+        {
+          "path": "/features/items/2/afterImage",
+          "value": "/uploads/landing-20261114/gemini-watermark-remover/Feature_538x436/feature-03-after.webp"
+        },
+        {
+          "path": "/features/items/3/image",
+          "value": "/uploads/landing-20261114/gemini-watermark-remover/Feature_538x436/feature-04-before.webp"
+        },
+        {
+          "path": "/features/items/3/imageAlt",
+          "value": "Illustrative upload and private workflow concept"
+        },
+        {
+          "path": "/features/items/3/afterImage",
+          "value": "/uploads/landing-20261114/gemini-watermark-remover/Feature_538x436/feature-04-after.webp"
         }
-      ]
+      ],
+      "contentOwnerApproval": "User-authorized operations content package 2026-11-14; use supplied _CLEAN_COPY.txt without editorial changes. PR reference added when created."
+    },
+    {
+      "file": "src/content/landing-pages/grok-watermark-remover.json",
+      "semanticSha256": "1a79e30e56b100920abba1ed5b4ff279c3baf1aaeb1b44261c31f44db59e3179",
+      "images": [
+        {
+          "path": "/heroSamples/0/image",
+          "value": "/uploads/landing-20261114/grok-watermark-remover/Hero_640x347/hero-01-before.webp"
+        },
+        {
+          "path": "/heroSamples/0/imageAlt",
+          "value": "Original grok portrait with a visible sample mark → matching authorized cleanup view; Inspect delicate hair edges and glass reflections."
+        },
+        {
+          "path": "/heroSamples/0/afterImage",
+          "value": "/uploads/landing-20261114/grok-watermark-remover/Hero_640x347/hero-01-after.webp"
+        },
+        {
+          "path": "/heroSamples/1/image",
+          "value": "/uploads/landing-20261114/grok-watermark-remover/Hero_640x347/hero-02-before.webp"
+        },
+        {
+          "path": "/heroSamples/1/imageAlt",
+          "value": "Original ai concept artwork with a visible sample mark → matching authorized cleanup view; Illustrate varied background complexity and local cleanup."
+        },
+        {
+          "path": "/heroSamples/1/afterImage",
+          "value": "/uploads/landing-20261114/grok-watermark-remover/Hero_640x347/hero-02-after.webp"
+        },
+        {
+          "path": "/heroSamples/2/image",
+          "value": "/uploads/landing-20261114/grok-watermark-remover/Hero_640x347/hero-03-before.webp"
+        },
+        {
+          "path": "/heroSamples/2/imageAlt",
+          "value": "Original video poster frame with a visible sample mark → matching authorized cleanup view; Explain still-frame cleanup is not whole-video processing."
+        },
+        {
+          "path": "/heroSamples/2/afterImage",
+          "value": "/uploads/landing-20261114/grok-watermark-remover/Hero_640x347/hero-03-after.webp"
+        },
+        {
+          "path": "/features/items/0/image",
+          "value": "/uploads/landing-20261114/grok-watermark-remover/Features_538x436/feature-01-before.webp"
+        },
+        {
+          "path": "/features/items/0/imageAlt",
+          "value": "Surreal portrait with corner mark region magnified; illustrative mark declared sample."
+        },
+        {
+          "path": "/features/items/0/afterImage",
+          "value": "/uploads/landing-20261114/grok-watermark-remover/Features_538x436/feature-01-after.webp"
+        },
+        {
+          "path": "/features/items/1/image",
+          "value": "/uploads/landing-20261114/grok-watermark-remover/Features_538x436/feature-02-before.webp"
+        },
+        {
+          "path": "/features/items/1/imageAlt",
+          "value": "Desert artwork crop boundary versus intact full frame with sample mark."
+        },
+        {
+          "path": "/features/items/1/afterImage",
+          "value": "/uploads/landing-20261114/grok-watermark-remover/Features_538x436/feature-02-after.webp"
+        },
+        {
+          "path": "/features/items/2/image",
+          "value": "/uploads/landing-20261114/grok-watermark-remover/Features_538x436/feature-03-before.webp"
+        },
+        {
+          "path": "/features/items/2/imageAlt",
+          "value": "Greenhouse glass and botanical leaves in close-up with before/after sample marking."
+        },
+        {
+          "path": "/features/items/2/afterImage",
+          "value": "/uploads/landing-20261114/grok-watermark-remover/Features_538x436/feature-03-after.webp"
+        },
+        {
+          "path": "/features/items/3/image",
+          "value": "/uploads/landing-20261114/grok-watermark-remover/Features_538x436/feature-04-before.webp"
+        },
+        {
+          "path": "/features/items/3/imageAlt",
+          "value": "Real image workspace screenshot with quoted costs, not a fabricated tool UI."
+        },
+        {
+          "path": "/features/items/3/afterImage",
+          "value": "/uploads/landing-20261114/grok-watermark-remover/Features_538x436/feature-04-after.webp"
+        }
+      ],
+      "contentOwnerApproval": "User-authorized operations content package 2026-11-14; use supplied _CLEAN_COPY.txt without editorial changes. PR reference added when created."
     },
     {
       "file": "src/content/landing-pages/instagram-watermark-remover.json",
@@ -838,143 +959,348 @@
     },
     {
       "file": "src/content/landing-pages/kling-watermark-remover.json",
-      "semanticSha256": "04dcf2e49cfe6af6e50ce02d68eb4792daba5885319eb4d61d697617bc32ca6a",
+      "semanticSha256": "ac025d82e4f6b92c471a41ded6926644fc6aa352fd8d84d409d67e4873ed925b",
       "images": [
         {
-          "path": "/heroSamples/0/image",
-          "value": "/uploads/workflow-upload-step.png"
+          "path": "/process/steps/0/image",
+          "value": "/uploads/landing-20261114/kling-watermark-remover/Steps_Concept/step-01-concept.webp"
         },
         {
-          "path": "/heroSamples/0/imageAlt",
-          "value": "Image entering the secure upload workflow"
+          "path": "/process/steps/0/imageAlt",
+          "value": "Export a Still Frame You May Edit"
         },
         {
-          "path": "/heroSamples/1/image",
-          "value": "/uploads/workflow-ai-detection-step.png"
+          "path": "/process/steps/1/image",
+          "value": "/uploads/landing-20261114/kling-watermark-remover/Steps_Concept/step-02-concept.webp"
         },
         {
-          "path": "/heroSamples/1/imageAlt",
-          "value": "AI detecting a visible watermark area in an image"
+          "path": "/process/steps/1/imageAlt",
+          "value": "Review the Image Operation"
         },
         {
-          "path": "/heroSamples/2/image",
-          "value": "/uploads/workflow-download-step.png"
+          "path": "/process/steps/2/image",
+          "value": "/uploads/landing-20261114/kling-watermark-remover/Steps_Concept/step-03-concept.webp"
         },
         {
-          "path": "/heroSamples/2/imageAlt",
-          "value": "Before and after image ready for secure download"
-        }
-      ],
-      "contentOwnerApproval": "https://github.com/teddy920810/ai-watermark-remover/pull/130"
-    },
-    {
-      "file": "src/content/landing-pages/notebooklm-watermark-remover.json",
-      "semanticSha256": "1fb6c8aa4bb30982a847c4c33f2f78f280bb218a25bc1698f733019462c0d544",
-      "images": [
-        {
-          "path": "/heroSamples/0/image",
-          "value": "/uploads/workflow-upload-step.png"
-        },
-        {
-          "path": "/heroSamples/0/imageAlt",
-          "value": "Image entering the secure upload workflow"
-        },
-        {
-          "path": "/heroSamples/1/image",
-          "value": "/uploads/workflow-ai-detection-step.png"
-        },
-        {
-          "path": "/heroSamples/1/imageAlt",
-          "value": "AI detecting a visible watermark area in an image"
-        },
-        {
-          "path": "/heroSamples/2/image",
-          "value": "/uploads/workflow-download-step.png"
-        },
-        {
-          "path": "/heroSamples/2/imageAlt",
-          "value": "Before and after image ready for secure download"
-        }
-      ]
-    },
-    {
-      "file": "src/content/landing-pages/pdf-watermark-remover.json",
-      "semanticSha256": "a6a7af76c70af9d681225779dfc23a51fa5752a2e0e54f5253f13c861edb6e77",
-      "images": [
-        {
-          "path": "/features/items/0/image",
-          "value": "/uploads/landing-phase2-20261103/pdf-watermark-remover/feature-04-before.webp"
-        },
-        {
-          "path": "/features/items/0/imageAlt",
-          "value": "Illustrative Invoice summary comparison; not a tested product output."
-        },
-        {
-          "path": "/features/items/0/afterImage",
-          "value": "/uploads/landing-phase2-20261103/pdf-watermark-remover/feature-04-after.webp"
-        },
-        {
-          "path": "/features/items/1/image",
-          "value": "/uploads/landing-phase2-20261103/pdf-watermark-remover/feature-05-before.webp"
-        },
-        {
-          "path": "/features/items/1/imageAlt",
-          "value": "Illustrative Legal agreement comparison; not a tested product output."
-        },
-        {
-          "path": "/features/items/1/afterImage",
-          "value": "/uploads/landing-phase2-20261103/pdf-watermark-remover/feature-05-after.webp"
-        },
-        {
-          "path": "/features/items/2/image",
-          "value": "/uploads/landing-phase2-20261103/pdf-watermark-remover/feature-06-before.webp"
-        },
-        {
-          "path": "/features/items/2/imageAlt",
-          "value": "Illustrative Research report comparison; not a tested product output."
-        },
-        {
-          "path": "/features/items/2/afterImage",
-          "value": "/uploads/landing-phase2-20261103/pdf-watermark-remover/feature-06-after.webp"
+          "path": "/process/steps/2/imageAlt",
+          "value": "Check the Result Before Download"
         },
         {
           "path": "/heroSamples/0/image",
-          "value": "/uploads/landing-phase2-20261103/pdf-watermark-remover/hero-01-before.webp"
+          "value": "/uploads/landing-20261114/kling-watermark-remover/Hero_1280x694/hero-01-before.webp"
         },
         {
           "path": "/heroSamples/0/imageAlt",
-          "value": "Illustrative NDA contract comparison; not a tested product output."
+          "value": "Original kling portrait frame with a visible sample mark → matching authorized cleanup view; Inspect skin, steam and motion blur as still-image detail."
         },
         {
           "path": "/heroSamples/0/afterImage",
-          "value": "/uploads/landing-phase2-20261103/pdf-watermark-remover/hero-01-after.webp"
+          "value": "/uploads/landing-20261114/kling-watermark-remover/Hero_1280x694/hero-01-after.webp"
         },
         {
           "path": "/heroSamples/1/image",
-          "value": "/uploads/landing-phase2-20261103/pdf-watermark-remover/hero-02-before.webp"
+          "value": "/uploads/landing-20261114/kling-watermark-remover/Hero_1280x694/hero-02-before.webp"
         },
         {
           "path": "/heroSamples/1/imageAlt",
-          "value": "Illustrative Annual finance report comparison; not a tested product output."
+          "value": "Original science fiction still with a visible sample mark → matching authorized cleanup view; Show difficult gradients and reflections."
         },
         {
           "path": "/heroSamples/1/afterImage",
-          "value": "/uploads/landing-phase2-20261103/pdf-watermark-remover/hero-02-after.webp"
+          "value": "/uploads/landing-20261114/kling-watermark-remover/Hero_1280x694/hero-02-after.webp"
         },
         {
           "path": "/heroSamples/2/image",
-          "value": "/uploads/landing-phase2-20261103/pdf-watermark-remover/hero-03-before.webp"
+          "value": "/uploads/landing-20261114/kling-watermark-remover/Hero_1280x694/hero-03-before.webp"
         },
         {
           "path": "/heroSamples/2/imageAlt",
-          "value": "Illustrative Client proposal comparison; not a tested product output."
+          "value": "Original fantasy artwork with a visible sample mark → matching authorized cleanup view; Inspect textures while maintaining full frame."
         },
         {
           "path": "/heroSamples/2/afterImage",
-          "value": "/uploads/landing-phase2-20261103/pdf-watermark-remover/hero-03-after.webp"
+          "value": "/uploads/landing-20261114/kling-watermark-remover/Hero_1280x694/hero-03-after.webp"
+        },
+        {
+          "path": "/features/items/0/image",
+          "value": "/uploads/landing-20261114/kling-watermark-remover/Feature_1076x872/feature-01-before.webp"
+        },
+        {
+          "path": "/features/items/0/imageAlt",
+          "value": "Kitchen portrait frame and enlarged sample mark; annotate example not official Kling output."
+        },
+        {
+          "path": "/features/items/0/afterImage",
+          "value": "/uploads/landing-20261114/kling-watermark-remover/Feature_1076x872/feature-01-after.webp"
+        },
+        {
+          "path": "/features/items/1/image",
+          "value": "/uploads/landing-20261114/kling-watermark-remover/Feature_1076x872/feature-02-before.webp"
+        },
+        {
+          "path": "/features/items/1/imageAlt",
+          "value": "Forest temple still and safe-crop overlay."
+        },
+        {
+          "path": "/features/items/1/afterImage",
+          "value": "/uploads/landing-20261114/kling-watermark-remover/Feature_1076x872/feature-02-after.webp"
+        },
+        {
+          "path": "/features/items/2/image",
+          "value": "/uploads/landing-20261114/kling-watermark-remover/Feature_1076x872/feature-03-before.webp"
+        },
+        {
+          "path": "/features/items/2/imageAlt",
+          "value": "Neon bike reflection close-up before/after; same photo shot."
+        },
+        {
+          "path": "/features/items/2/afterImage",
+          "value": "/uploads/landing-20261114/kling-watermark-remover/Feature_1076x872/feature-03-after.webp"
+        },
+        {
+          "path": "/features/items/3/image",
+          "value": "/uploads/landing-20261114/kling-watermark-remover/Feature_1076x872/feature-04-before.webp"
+        },
+        {
+          "path": "/features/items/3/imageAlt",
+          "value": "Actual image-upload interface showing a permitted still; separate Coming Soon status, not a fake video timeline."
+        },
+        {
+          "path": "/features/items/3/afterImage",
+          "value": "/uploads/landing-20261114/kling-watermark-remover/Feature_1076x872/feature-04-after.webp"
         }
       ],
-      "contentOwnerApproval": "https://github.com/teddy920810/ai-watermark-remover/pull/114#issuecomment-6591790363"
+      "contentOwnerApproval": "User-authorized operations content package 2026-11-14; use supplied _CLEAN_COPY.txt without editorial changes. PR reference added when created."
+    },
+    {
+      "file": "src/content/landing-pages/notebooklm-watermark-remover.json",
+      "semanticSha256": "ca13a8a8416fa270c968575746832e6d973877a3a7bc8b9750ce1cbbca415161",
+      "images": [
+        {
+          "path": "/process/steps/0/image",
+          "value": "/uploads/landing-20261114/notebooklm-watermark-remover/Steps_Concept/step-01-concept.webp"
+        },
+        {
+          "path": "/process/steps/0/imageAlt",
+          "value": "Export One Slide or Infographic as an Image"
+        },
+        {
+          "path": "/process/steps/1/image",
+          "value": "/uploads/landing-20261114/notebooklm-watermark-remover/Steps_Concept/step-02-concept.webp"
+        },
+        {
+          "path": "/process/steps/1/imageAlt",
+          "value": "Process the Visible Mark in the Image"
+        },
+        {
+          "path": "/process/steps/2/image",
+          "value": "/uploads/landing-20261114/notebooklm-watermark-remover/Steps_Concept/step-03-concept.webp"
+        },
+        {
+          "path": "/process/steps/2/imageAlt",
+          "value": "Inspect the Returned Slide Image"
+        },
+        {
+          "path": "/heroSamples/0/image",
+          "value": "/uploads/landing-20261114/notebooklm-watermark-remover/Hero_1280x694/hero-01-before.webp"
+        },
+        {
+          "path": "/heroSamples/0/imageAlt",
+          "value": "Original infographic with a visible sample mark → matching authorized cleanup view; Preserve diagram captions and vector-like edges."
+        },
+        {
+          "path": "/heroSamples/0/afterImage",
+          "value": "/uploads/landing-20261114/notebooklm-watermark-remover/Hero_1280x694/hero-01-after.webp"
+        },
+        {
+          "path": "/heroSamples/1/image",
+          "value": "/uploads/landing-20261114/notebooklm-watermark-remover/Hero_1280x694/hero-02-before.webp"
+        },
+        {
+          "path": "/heroSamples/1/imageAlt",
+          "value": "Original presentation slide with a visible sample mark → matching authorized cleanup view; Preserve text legibility and grid alignment."
+        },
+        {
+          "path": "/heroSamples/1/afterImage",
+          "value": "/uploads/landing-20261114/notebooklm-watermark-remover/Hero_1280x694/hero-02-after.webp"
+        },
+        {
+          "path": "/heroSamples/2/image",
+          "value": "/uploads/landing-20261114/notebooklm-watermark-remover/Hero_1280x694/hero-03-before.webp"
+        },
+        {
+          "path": "/heroSamples/2/imageAlt",
+          "value": "Original research visual with a visible sample mark → matching authorized cleanup view; Preserve thin rules, footnote readability and original crop."
+        },
+        {
+          "path": "/heroSamples/2/afterImage",
+          "value": "/uploads/landing-20261114/notebooklm-watermark-remover/Hero_1280x694/hero-03-after.webp"
+        },
+        {
+          "path": "/features/items/0/image",
+          "value": "/uploads/landing-20261114/notebooklm-watermark-remover/Feature_1076x872/feature-01-before.webp"
+        },
+        {
+          "path": "/features/items/0/imageAlt",
+          "value": "Colorful ocean infographic with corner badge, detailed crop showing caption intact."
+        },
+        {
+          "path": "/features/items/0/afterImage",
+          "value": "/uploads/landing-20261114/notebooklm-watermark-remover/Feature_1076x872/feature-01-after.webp"
+        },
+        {
+          "path": "/features/items/1/image",
+          "value": "/uploads/landing-20261114/notebooklm-watermark-remover/Feature_1076x872/feature-02-before.webp"
+        },
+        {
+          "path": "/features/items/1/imageAlt",
+          "value": "Business slide mockup with chart labels, corner region visible, authentic-looking deck imagery not fictional UI."
+        },
+        {
+          "path": "/features/items/1/afterImage",
+          "value": "/uploads/landing-20261114/notebooklm-watermark-remover/Feature_1076x872/feature-02-after.webp"
+        },
+        {
+          "path": "/features/items/2/image",
+          "value": "/uploads/landing-20261114/notebooklm-watermark-remover/Feature_1076x872/feature-03-before.webp"
+        },
+        {
+          "path": "/features/items/2/imageAlt",
+          "value": "Side-by-side conceptual visual: slide screenshot vs vector PDF/PPTX layer schematic; label educational illustration."
+        },
+        {
+          "path": "/features/items/2/afterImage",
+          "value": "/uploads/landing-20261114/notebooklm-watermark-remover/Feature_1076x872/feature-03-after.webp"
+        },
+        {
+          "path": "/features/items/3/image",
+          "value": "/uploads/landing-20261114/notebooklm-watermark-remover/Feature_1076x872/feature-04-before.webp"
+        },
+        {
+          "path": "/features/items/3/imageAlt",
+          "value": "Real workspace screenshot with PNG slide preview; no invented PDF-upload control."
+        },
+        {
+          "path": "/features/items/3/afterImage",
+          "value": "/uploads/landing-20261114/notebooklm-watermark-remover/Feature_1076x872/feature-04-after.webp"
+        }
+      ],
+      "contentOwnerApproval": "User-authorized operations content package 2026-11-14; use supplied _CLEAN_COPY.txt without editorial changes. PR reference added when created."
+    },
+    {
+      "file": "src/content/landing-pages/pdf-watermark-remover.json",
+      "semanticSha256": "e1d0ed8f7dd40ac46a79a98cb2a0ad160129c23cadc5089c24be1ff4220ff2e0",
+      "images": [
+        {
+          "path": "/process/steps/0/image",
+          "value": "/uploads/landing-20261114/pdf-watermark-remover/Steps_Concept/step-01-concept.webp"
+        },
+        {
+          "path": "/process/steps/0/imageAlt",
+          "value": "Inspect the Original PDF and Your Editing Rights"
+        },
+        {
+          "path": "/process/steps/1/image",
+          "value": "/uploads/landing-20261114/pdf-watermark-remover/Steps_Concept/step-02-concept.webp"
+        },
+        {
+          "path": "/process/steps/1/imageAlt",
+          "value": "Export One Page Only if Image Cleanup Fits"
+        },
+        {
+          "path": "/process/steps/2/image",
+          "value": "/uploads/landing-20261114/pdf-watermark-remover/Steps_Concept/step-03-concept.webp"
+        },
+        {
+          "path": "/process/steps/2/imageAlt",
+          "value": "Review Text and Keep the Original PDF"
+        },
+        {
+          "path": "/features/items/0/image",
+          "value": "/uploads/landing-20261114/pdf-watermark-remover/Feature_1076x872/feature-01-before.webp"
+        },
+        {
+          "path": "/features/items/0/imageAlt",
+          "value": "Fictional contract page with layered DRAFT overlay as an illustrative diagram; keep text readable."
+        },
+        {
+          "path": "/features/items/0/afterImage",
+          "value": "/uploads/landing-20261114/pdf-watermark-remover/Feature_1076x872/feature-01-after.webp"
+        },
+        {
+          "path": "/features/items/1/image",
+          "value": "/uploads/landing-20261114/pdf-watermark-remover/Feature_1076x872/feature-02-before.webp"
+        },
+        {
+          "path": "/features/items/1/imageAlt",
+          "value": "Quarterly report with translucent status stamp; emphasize preserved typography and footnotes."
+        },
+        {
+          "path": "/features/items/1/afterImage",
+          "value": "/uploads/landing-20261114/pdf-watermark-remover/Feature_1076x872/feature-02-after.webp"
+        },
+        {
+          "path": "/features/items/2/image",
+          "value": "/uploads/landing-20261114/pdf-watermark-remover/Feature_1076x872/feature-03-before.webp"
+        },
+        {
+          "path": "/features/items/2/imageAlt",
+          "value": "Diagram of PDF selectable text and image scan in split view; label educational schematic."
+        },
+        {
+          "path": "/features/items/2/afterImage",
+          "value": "/uploads/landing-20261114/pdf-watermark-remover/Feature_1076x872/feature-03-after.webp"
+        },
+        {
+          "path": "/features/items/3/image",
+          "value": "/uploads/landing-20261114/pdf-watermark-remover/Feature_1076x872/feature-04-before.webp"
+        },
+        {
+          "path": "/features/items/3/imageAlt",
+          "value": "Real current upload UI with exported PNG page; clearly no PDF option in screenshot."
+        },
+        {
+          "path": "/features/items/3/afterImage",
+          "value": "/uploads/landing-20261114/pdf-watermark-remover/Feature_1076x872/feature-04-after.webp"
+        },
+        {
+          "path": "/heroSamples/0/image",
+          "value": "/uploads/landing-20261114/pdf-watermark-remover/Hero_1280x694/hero-01-before.webp"
+        },
+        {
+          "path": "/heroSamples/0/imageAlt",
+          "value": "Original draft contract with a visible sample mark → matching authorized cleanup view; Show a layered-document case; do not claim direct PDF processing."
+        },
+        {
+          "path": "/heroSamples/0/afterImage",
+          "value": "/uploads/landing-20261114/pdf-watermark-remover/Hero_1280x694/hero-01-after.webp"
+        },
+        {
+          "path": "/heroSamples/1/image",
+          "value": "/uploads/landing-20261114/pdf-watermark-remover/Hero_1280x694/hero-02-before.webp"
+        },
+        {
+          "path": "/heroSamples/1/imageAlt",
+          "value": "Original confidential report with a visible sample mark → matching authorized cleanup view; Highlight why flattening and inpainting can damage text."
+        },
+        {
+          "path": "/heroSamples/1/afterImage",
+          "value": "/uploads/landing-20261114/pdf-watermark-remover/Hero_1280x694/hero-02-after.webp"
+        },
+        {
+          "path": "/heroSamples/2/image",
+          "value": "/uploads/landing-20261114/pdf-watermark-remover/Hero_1280x694/hero-03-before.webp"
+        },
+        {
+          "path": "/heroSamples/2/imageAlt",
+          "value": "Original scanned invoice with a visible sample mark → matching authorized cleanup view; Show pixel-based cleanup, not editable PDF layer removal."
+        },
+        {
+          "path": "/heroSamples/2/afterImage",
+          "value": "/uploads/landing-20261114/pdf-watermark-remover/Hero_1280x694/hero-03-after.webp"
+        }
+      ],
+      "contentOwnerApproval": "User-authorized operations content package 2026-11-14; use supplied _CLEAN_COPY.txt without editorial changes. PR reference added when created."
     },
     {
       "file": "src/content/landing-pages/remove-background.json",
@@ -1056,513 +1382,827 @@
     },
     {
       "file": "src/content/landing-pages/remove-logo-from-image.json",
-      "semanticSha256": "249806d1cceffafe4394c1c68e60ea45073bce7406ac1164e0725ffbd9421dbd",
+      "semanticSha256": "9d40b292acca9d2f9f5a69f6c63052c3df0d3293f7312c3a2c8167ef10533073",
       "images": [
         {
+          "path": "/process/steps/0/image",
+          "value": "/uploads/landing-20261114/remove-logo-from-image/Steps_Concept/step-01-concept.webp"
+        },
+        {
+          "path": "/process/steps/0/imageAlt",
+          "value": "Upload a Logo Image You May Edit"
+        },
+        {
+          "path": "/process/steps/1/image",
+          "value": "/uploads/landing-20261114/remove-logo-from-image/Steps_Concept/step-02-concept.webp"
+        },
+        {
+          "path": "/process/steps/1/imageAlt",
+          "value": "Process the Visible Logo"
+        },
+        {
+          "path": "/process/steps/2/image",
+          "value": "/uploads/landing-20261114/remove-logo-from-image/Steps_Concept/step-03-concept.webp"
+        },
+        {
+          "path": "/process/steps/2/imageAlt",
+          "value": "Review Surface Detail and Download"
+        },
+        {
           "path": "/features/items/0/image",
-          "value": "/uploads/landing-phase2-20261103/remove-logo-from-image/feature-04-before.webp"
+          "value": "/uploads/landing-20261114/remove-logo-from-image/Feature_1076x872/feature-01-before.webp"
         },
         {
           "path": "/features/items/0/imageAlt",
-          "value": "Illustrative Leather sneaker comparison; not a tested product output."
+          "value": "Amber serum bottle with obsolete small mark; precise same-frame comparison and enlarged label edge."
         },
         {
           "path": "/features/items/0/afterImage",
-          "value": "/uploads/landing-phase2-20261103/remove-logo-from-image/feature-04-after.webp"
+          "value": "/uploads/landing-20261114/remove-logo-from-image/Feature_1076x872/feature-01-after.webp"
         },
         {
           "path": "/features/items/1/image",
-          "value": "/uploads/landing-phase2-20261103/remove-logo-from-image/feature-05-before.webp"
+          "value": "/uploads/landing-20261114/remove-logo-from-image/Feature_1076x872/feature-02-before.webp"
         },
         {
           "path": "/features/items/1/imageAlt",
-          "value": "Illustrative Cotton hoodie comparison; not a tested product output."
+          "value": "Branded tote with corner logo; cropped alternative versus full-frame cleaned photo."
         },
         {
           "path": "/features/items/1/afterImage",
-          "value": "/uploads/landing-phase2-20261103/remove-logo-from-image/feature-05-after.webp"
+          "value": "/uploads/landing-20261114/remove-logo-from-image/Feature_1076x872/feature-02-after.webp"
         },
         {
           "path": "/features/items/2/image",
-          "value": "/uploads/landing-phase2-20261103/remove-logo-from-image/feature-06-before.webp"
+          "value": "/uploads/landing-20261114/remove-logo-from-image/Feature_1076x872/feature-03-before.webp"
         },
         {
           "path": "/features/items/2/imageAlt",
-          "value": "Illustrative Skincare packaging comparison; not a tested product output."
+          "value": "Close-up sweater fabric with embroidered badge; detailed grain comparison."
         },
         {
           "path": "/features/items/2/afterImage",
-          "value": "/uploads/landing-phase2-20261103/remove-logo-from-image/feature-06-after.webp"
+          "value": "/uploads/landing-20261114/remove-logo-from-image/Feature_1076x872/feature-03-after.webp"
+        },
+        {
+          "path": "/features/items/3/image",
+          "value": "/uploads/landing-20261114/remove-logo-from-image/Feature_1076x872/feature-04-before.webp"
+        },
+        {
+          "path": "/features/items/3/imageAlt",
+          "value": "Actual workspace screenshot with logo image preview and cost quote; do not invent feature buttons."
+        },
+        {
+          "path": "/features/items/3/afterImage",
+          "value": "/uploads/landing-20261114/remove-logo-from-image/Feature_1076x872/feature-04-after.webp"
         },
         {
           "path": "/heroSamples/0/image",
-          "value": "/uploads/landing-phase2-20261103/remove-logo-from-image/hero-01-before.webp"
+          "value": "/uploads/landing-20261114/remove-logo-from-image/Hero_1280x694/hero-01-before.webp"
         },
         {
           "path": "/heroSamples/0/imageAlt",
-          "value": "Illustrative Embroidered cap comparison; not a tested product output."
+          "value": "Original product packaging with a visible sample mark → matching authorized cleanup view; Preserve round bottle edges and realistic printed-label texture."
         },
         {
           "path": "/heroSamples/0/afterImage",
-          "value": "/uploads/landing-phase2-20261103/remove-logo-from-image/hero-01-after.webp"
+          "value": "/uploads/landing-20261114/remove-logo-from-image/Hero_1280x694/hero-01-after.webp"
         },
         {
           "path": "/heroSamples/1/image",
-          "value": "/uploads/landing-phase2-20261103/remove-logo-from-image/hero-02-before.webp"
+          "value": "/uploads/landing-20261114/remove-logo-from-image/Hero_1280x694/hero-02-before.webp"
         },
         {
           "path": "/heroSamples/1/imageAlt",
-          "value": "Illustrative Insulated coffee tumbler comparison; not a tested product output."
+          "value": "Original apparel badge with a visible sample mark → matching authorized cleanup view; Preserve knit weave, seams and natural folds."
         },
         {
           "path": "/heroSamples/1/afterImage",
-          "value": "/uploads/landing-phase2-20261103/remove-logo-from-image/hero-02-after.webp"
+          "value": "/uploads/landing-20261114/remove-logo-from-image/Hero_1280x694/hero-02-after.webp"
         },
         {
           "path": "/heroSamples/2/image",
-          "value": "/uploads/landing-phase2-20261103/remove-logo-from-image/hero-03-before.webp"
+          "value": "/uploads/landing-20261114/remove-logo-from-image/Hero_1280x694/hero-03-before.webp"
         },
         {
           "path": "/heroSamples/2/imageAlt",
-          "value": "Illustrative Canvas tote bag comparison; not a tested product output."
+          "value": "Original sign and surface with a visible sample mark → matching authorized cleanup view; Preserve wood texture and perspective of the sign."
         },
         {
           "path": "/heroSamples/2/afterImage",
-          "value": "/uploads/landing-phase2-20261103/remove-logo-from-image/hero-03-after.webp"
+          "value": "/uploads/landing-20261114/remove-logo-from-image/Hero_1280x694/hero-03-after.webp"
         }
       ],
-      "contentOwnerApproval": "https://github.com/teddy920810/ai-watermark-remover/pull/114#issuecomment-6591790363"
+      "contentOwnerApproval": "User-authorized operations content package 2026-11-14; use supplied _CLEAN_COPY.txt without editorial changes. PR reference added when created."
     },
     {
       "file": "src/content/landing-pages/remove-subtitle-from-video.json",
-      "semanticSha256": "a90bfcd217a3ccfa9fe28cb6650fcc32a4862aa67b2de25152eb577adcca8039",
+      "semanticSha256": "4133d7d4329c208a7e3feec4f0e478be504cbcb9113e6c72296738a568aadea3",
       "images": [
         {
           "path": "/heroSamples/0/image",
-          "value": "/uploads/workflow-upload-step.png"
+          "value": "/uploads/landing-20261114/remove-subtitle-from-video/Hero_640x347/hero-01-before.webp"
         },
         {
           "path": "/heroSamples/0/imageAlt",
-          "value": "Image entering the secure upload workflow"
+          "value": "Remove Burned-In Dialogue Subtitles — authorized source image before cleanup or illustrative mark."
+        },
+        {
+          "path": "/heroSamples/0/afterImage",
+          "value": "/uploads/landing-20261114/remove-subtitle-from-video/Hero_640x347/hero-01-after.webp"
         },
         {
           "path": "/heroSamples/1/image",
-          "value": "/uploads/workflow-ai-detection-step.png"
+          "value": "/uploads/landing-20261114/remove-subtitle-from-video/Hero_640x347/hero-02-before.webp"
         },
         {
           "path": "/heroSamples/1/imageAlt",
-          "value": "AI detecting a visible watermark area in an image"
+          "value": "Clean Two-Line Subtitles from Your Own Clip — authorized source image before cleanup or illustrative mark."
+        },
+        {
+          "path": "/heroSamples/1/afterImage",
+          "value": "/uploads/landing-20261114/remove-subtitle-from-video/Hero_640x347/hero-02-after.webp"
         },
         {
           "path": "/heroSamples/2/image",
-          "value": "/uploads/workflow-download-step.png"
+          "value": "/uploads/landing-20261114/remove-subtitle-from-video/Hero_640x347/hero-03-before.webp"
         },
         {
           "path": "/heroSamples/2/imageAlt",
-          "value": "Before and after image ready for secure download"
+          "value": "Prepare an Old Captioned Video for Re-Editing — authorized source image before cleanup or illustrative mark."
+        },
+        {
+          "path": "/heroSamples/2/afterImage",
+          "value": "/uploads/landing-20261114/remove-subtitle-from-video/Hero_640x347/hero-03-after.webp"
+        },
+        {
+          "path": "/features/items/0/image",
+          "value": "/uploads/landing-20261114/remove-subtitle-from-video/Feature_538x436/feature-01-before.webp"
+        },
+        {
+          "path": "/features/items/0/imageAlt",
+          "value": "Understand Hardcoded vs. Soft Subtitles First — same camera frame and matched target region."
+        },
+        {
+          "path": "/features/items/0/afterImage",
+          "value": "/uploads/landing-20261114/remove-subtitle-from-video/Feature_538x436/feature-01-after.webp"
+        },
+        {
+          "path": "/features/items/1/image",
+          "value": "/uploads/landing-20261114/remove-subtitle-from-video/Feature_538x436/feature-02-before.webp"
+        },
+        {
+          "path": "/features/items/1/imageAlt",
+          "value": "Target the Subtitle Band Without Cropping — same camera frame and matched target region."
+        },
+        {
+          "path": "/features/items/1/afterImage",
+          "value": "/uploads/landing-20261114/remove-subtitle-from-video/Feature_538x436/feature-02-after.webp"
+        },
+        {
+          "path": "/features/items/2/image",
+          "value": "/uploads/landing-20261114/remove-subtitle-from-video/Feature_538x436/feature-03-before.webp"
+        },
+        {
+          "path": "/features/items/2/imageAlt",
+          "value": "Plan for Consistent Frame-by-Frame Cleanup — same camera frame and matched target region."
+        },
+        {
+          "path": "/features/items/2/afterImage",
+          "value": "/uploads/landing-20261114/remove-subtitle-from-video/Feature_538x436/feature-03-after.webp"
+        },
+        {
+          "path": "/features/items/3/image",
+          "value": "/uploads/landing-20261114/remove-subtitle-from-video/Feature_538x436/feature-04-before.webp"
+        },
+        {
+          "path": "/features/items/3/imageAlt",
+          "value": "Keep Processing Rules and Availability Transparent — same camera frame and matched target region."
+        },
+        {
+          "path": "/features/items/3/afterImage",
+          "value": "/uploads/landing-20261114/remove-subtitle-from-video/Feature_538x436/feature-04-after.webp"
         }
       ],
-      "contentOwnerApproval": "https://github.com/teddy920810/ai-watermark-remover/pull/130"
+      "contentOwnerApproval": "User-authorized operations content package 2026-11-14; use supplied _CLEAN_COPY.txt without editorial changes. PR reference added when created."
     },
     {
       "file": "src/content/landing-pages/remove-text-from-image.json",
-      "semanticSha256": "ff442a1c25110b58ca262078ba840d2af8d2348f6f4fa2ce5c61c7db90556ebd",
+      "semanticSha256": "38bce01c3c03b9f927a5e6be50dc1ba27119db0715851b6e72aed7fa72305c67",
       "images": [
         {
           "path": "/heroSamples/0/image",
-          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-hero-01-before-2700c7b5172f007f.webp"
+          "value": "/uploads/landing-20261114/remove-text-from-image/Hero_1280x694/hero-01-before.webp"
         },
         {
           "path": "/heroSamples/0/afterImage",
-          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-hero-01-after-a635c077de284938.webp"
+          "value": "/uploads/landing-20261114/remove-text-from-image/Hero_1280x694/hero-01-after.webp"
         },
         {
           "path": "/heroSamples/0/imageAlt",
-          "value": "Illustrative café window scene with and without CITY STORIES lettering; not a tested product output."
+          "value": "Original photo caption with a visible sample mark → matching authorized cleanup view; Show whether reflections and window frames remain continuous."
         },
         {
           "path": "/heroSamples/1/image",
-          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-hero-02-before-fd4fa4f7b6de6e7f.webp"
+          "value": "/uploads/landing-20261114/remove-text-from-image/Hero_1280x694/hero-02-before.webp"
         },
         {
           "path": "/heroSamples/1/afterImage",
-          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-hero-02-after-6e6aeadc5ba16633.webp"
+          "value": "/uploads/landing-20261114/remove-text-from-image/Hero_1280x694/hero-02-after.webp"
         },
         {
           "path": "/heroSamples/1/imageAlt",
-          "value": "Illustrative vacation portrait with and without the added date 2026.08.15; not a tested product output."
+          "value": "Original camera date stamp with a visible sample mark → matching authorized cleanup view; Show preservation of sand grain and original frame."
         },
         {
           "path": "/heroSamples/2/image",
-          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-hero-03-before-8fcb751fca0f327a.webp"
+          "value": "/uploads/landing-20261114/remove-text-from-image/Hero_1280x694/hero-03-before.webp"
         },
         {
           "path": "/heroSamples/2/afterImage",
-          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-hero-03-after-4ffcc47c14779d2b.webp"
+          "value": "/uploads/landing-20261114/remove-text-from-image/Hero_1280x694/hero-03-after.webp"
         },
         {
           "path": "/heroSamples/2/imageAlt",
-          "value": "Illustrative skincare product scene with and without BOTANICAL LAB lettering; not a tested product output."
+          "value": "Original product label with a visible sample mark → matching authorized cleanup view; Show legible edges of the jar and a natural wall after removal."
+        },
+        {
+          "path": "/process/steps/0/image",
+          "value": "/uploads/landing-20261114/remove-text-from-image/Steps_Concept/step-01-concept.webp"
+        },
+        {
+          "path": "/process/steps/0/imageAlt",
+          "value": "Upload an Image with Unwanted Text"
+        },
+        {
+          "path": "/process/steps/1/image",
+          "value": "/uploads/landing-20261114/remove-text-from-image/Steps_Concept/step-02-concept.webp"
+        },
+        {
+          "path": "/process/steps/1/imageAlt",
+          "value": "Process the Text Area"
+        },
+        {
+          "path": "/process/steps/2/image",
+          "value": "/uploads/landing-20261114/remove-text-from-image/Steps_Concept/step-03-concept.webp"
+        },
+        {
+          "path": "/process/steps/2/imageAlt",
+          "value": "Compare and Download"
         },
         {
           "path": "/features/items/0/image",
-          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-feature-04-before-e08fc72daec9ad8e.webp"
-        },
-        {
-          "path": "/features/items/0/afterImage",
-          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-feature-04-after-95709d8ec7b5ce9b.webp"
+          "value": "/uploads/landing-20261114/remove-text-from-image/Feature_1076x872/feature-01-before.webp"
         },
         {
           "path": "/features/items/0/imageAlt",
-          "value": "Illustrative coastal travel poster with and without SUMMER ESCAPE lettering; not a tested product output."
+          "value": "Café storefront sign overlay over reflective glass; same framed photograph; detail crop of letters and window mullion."
+        },
+        {
+          "path": "/features/items/0/afterImage",
+          "value": "/uploads/landing-20261114/remove-text-from-image/Feature_1076x872/feature-01-after.webp"
         },
         {
           "path": "/features/items/1/image",
-          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-feature-05-before-4513846f077b7df2.webp"
-        },
-        {
-          "path": "/features/items/1/afterImage",
-          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-feature-05-after-69269989b0bae489.webp"
+          "value": "/uploads/landing-20261114/remove-text-from-image/Feature_1076x872/feature-02-before.webp"
         },
         {
           "path": "/features/items/1/imageAlt",
-          "value": "Illustrative fashion portrait with and without FALL EDITION lettering; not a tested product output."
+          "value": "Travel-photo timestamp on textured beach; local date area enlarged."
+        },
+        {
+          "path": "/features/items/1/afterImage",
+          "value": "/uploads/landing-20261114/remove-text-from-image/Feature_1076x872/feature-02-after.webp"
         },
         {
           "path": "/features/items/2/image",
-          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-feature-06-before-a85b7d7db460cc54.webp"
-        },
-        {
-          "path": "/features/items/2/afterImage",
-          "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/remove-text-from-image-feature-06-after-688e3444fba5289c.webp"
+          "value": "/uploads/landing-20261114/remove-text-from-image/Feature_1076x872/feature-03-before.webp"
         },
         {
           "path": "/features/items/2/imageAlt",
-          "value": "Illustrative neon city scene with and without TOKYO NIGHTS lettering; not a tested product output."
+          "value": "Lifestyle portrait with small caption near important subject; side crop-vs-full-frame comparison."
+        },
+        {
+          "path": "/features/items/2/afterImage",
+          "value": "/uploads/landing-20261114/remove-text-from-image/Feature_1076x872/feature-03-after.webp"
+        },
+        {
+          "path": "/features/items/3/image",
+          "value": "/uploads/landing-20261114/remove-text-from-image/Feature_1076x872/feature-04-before.webp"
+        },
+        {
+          "path": "/features/items/3/imageAlt",
+          "value": "Real laptop browser workspace with text cleanup preview, no fictional buttons or prices; actual UI screenshot required."
+        },
+        {
+          "path": "/features/items/3/afterImage",
+          "value": "/uploads/landing-20261114/remove-text-from-image/Feature_1076x872/feature-04-after.webp"
         }
       ],
-      "contentOwnerApproval": "https://github.com/teddy920810/ai-watermark-remover/pull/114#issuecomment-6566751391"
+      "contentOwnerApproval": "User-authorized operations content package 2026-11-14; use supplied _CLEAN_COPY.txt without editorial changes. PR reference added when created."
     },
     {
       "file": "src/content/landing-pages/shutterstock-watermark-remover.json",
-      "semanticSha256": "16953f0899eef4a2e80a5425c3398f17c3070169a4ec8f83c414501a16f016ee",
+      "semanticSha256": "60221cb8df156f97d19c6407b5aa102e84c6f6febb8d137e1551d421f7a45c3e",
       "images": [
         {
           "path": "/heroSamples/0/image",
-          "value": "/uploads/workflow-upload-step.png"
+          "value": "/uploads/landing-20261114/shutterstock-watermark-remover/Hero_640x347/hero-01-before.webp"
         },
         {
           "path": "/heroSamples/0/imageAlt",
-          "value": "Image entering the secure upload workflow"
+          "value": "Start with the Official Licensed Shutterstock Download — authorized source image before cleanup or illustrative mark."
+        },
+        {
+          "path": "/heroSamples/0/afterImage",
+          "value": "/uploads/landing-20261114/shutterstock-watermark-remover/Hero_640x347/hero-01-after.webp"
         },
         {
           "path": "/heroSamples/1/image",
-          "value": "/uploads/workflow-ai-detection-step.png"
+          "value": "/uploads/landing-20261114/shutterstock-watermark-remover/Hero_640x347/hero-02-before.webp"
         },
         {
           "path": "/heroSamples/1/imageAlt",
-          "value": "AI detecting a visible watermark area in an image"
+          "value": "Clean Your Own Temporary Review Label — authorized source image before cleanup or illustrative mark."
+        },
+        {
+          "path": "/heroSamples/1/afterImage",
+          "value": "/uploads/landing-20261114/shutterstock-watermark-remover/Hero_640x347/hero-02-after.webp"
         },
         {
           "path": "/heroSamples/2/image",
-          "value": "/uploads/workflow-download-step.png"
+          "value": "/uploads/landing-20261114/shutterstock-watermark-remover/Hero_640x347/hero-03-before.webp"
         },
         {
           "path": "/heroSamples/2/imageAlt",
-          "value": "Before and after image ready for secure download"
+          "value": "Review an Approved Client Proof Image — authorized source image before cleanup or illustrative mark."
+        },
+        {
+          "path": "/heroSamples/2/afterImage",
+          "value": "/uploads/landing-20261114/shutterstock-watermark-remover/Hero_640x347/hero-03-after.webp"
+        },
+        {
+          "path": "/features/items/0/image",
+          "value": "/uploads/landing-20261114/shutterstock-watermark-remover/Feature_538x436/feature-01-before.webp"
+        },
+        {
+          "path": "/features/items/0/imageAlt",
+          "value": "Understand Shutterstock Preview Watermarks and Licensing — same camera frame and matched target region."
+        },
+        {
+          "path": "/features/items/0/afterImage",
+          "value": "/uploads/landing-20261114/shutterstock-watermark-remover/Feature_538x436/feature-01-after.webp"
+        },
+        {
+          "path": "/features/items/1/image",
+          "value": "/uploads/landing-20261114/shutterstock-watermark-remover/Feature_538x436/feature-02-before.webp"
+        },
+        {
+          "path": "/features/items/1/imageAlt",
+          "value": "Prefer the Official Licensed, Watermark-Free Download — same camera frame and matched target region."
+        },
+        {
+          "path": "/features/items/1/afterImage",
+          "value": "/uploads/landing-20261114/shutterstock-watermark-remover/Feature_538x436/feature-02-after.webp"
+        },
+        {
+          "path": "/features/items/2/image",
+          "value": "/uploads/landing-20261114/shutterstock-watermark-remover/Feature_538x436/feature-03-before.webp"
+        },
+        {
+          "path": "/features/items/2/imageAlt",
+          "value": "Clean Temporary Marks on Files You Own or May Edit — same camera frame and matched target region."
+        },
+        {
+          "path": "/features/items/2/afterImage",
+          "value": "/uploads/landing-20261114/shutterstock-watermark-remover/Feature_538x436/feature-03-after.webp"
+        },
+        {
+          "path": "/features/items/3/image",
+          "value": "/uploads/landing-20261114/shutterstock-watermark-remover/Feature_538x436/feature-04-before.webp"
+        },
+        {
+          "path": "/features/items/3/imageAlt",
+          "value": "Online Image Review with Clear Limits — same camera frame and matched target region."
+        },
+        {
+          "path": "/features/items/3/afterImage",
+          "value": "/uploads/landing-20261114/shutterstock-watermark-remover/Feature_538x436/feature-04-after.webp"
         }
-      ]
+      ],
+      "contentOwnerApproval": "User-authorized operations content package 2026-11-14; use supplied _CLEAN_COPY.txt without editorial changes. PR reference added when created."
     },
     {
       "file": "src/content/landing-pages/sora-watermark-remover.json",
-      "semanticSha256": "106ee0a49acdcfda1ffea0544cd9f03e04ceee9e6b3ed27d7666b3be67e8ba13",
+      "semanticSha256": "a5d328ffd39e59c60fa8810a7b75f84e1fed79775a82e1eda200da5192995d0b",
       "images": [
         {
+          "path": "/process/steps/0/image",
+          "value": "/uploads/landing-20261114/sora-watermark-remover/Steps_Concept/step-01-concept.webp"
+        },
+        {
+          "path": "/process/steps/0/imageAlt",
+          "value": "Keep Your Original Sora Video"
+        },
+        {
+          "path": "/process/steps/1/image",
+          "value": "/uploads/landing-20261114/sora-watermark-remover/Steps_Concept/step-02-concept.webp"
+        },
+        {
+          "path": "/process/steps/1/imageAlt",
+          "value": "Check Availability Before Processing"
+        },
+        {
+          "path": "/process/steps/2/image",
+          "value": "/uploads/landing-20261114/sora-watermark-remover/Steps_Concept/step-03-concept.webp"
+        },
+        {
+          "path": "/process/steps/2/imageAlt",
+          "value": "Review the Entire Export Once Available"
+        },
+        {
           "path": "/features/items/0/image",
-          "value": "/uploads/landing-phase2-20261103/sora-watermark-remover/feature-04-before.webp"
+          "value": "/uploads/landing-20261114/sora-watermark-remover/Feature_1076x872/feature-01-before.webp"
         },
         {
           "path": "/features/items/0/imageAlt",
-          "value": "Illustrative Bioluminescent forest comparison; not a tested product output."
+          "value": "Cinematic market scene storyboard at three timestamps with logo markers in different positions; label illustrative."
         },
         {
           "path": "/features/items/0/afterImage",
-          "value": "/uploads/landing-phase2-20261103/sora-watermark-remover/feature-04-after.webp"
+          "value": "/uploads/landing-20261114/sora-watermark-remover/Feature_1076x872/feature-01-after.webp"
         },
         {
           "path": "/features/items/1/image",
-          "value": "/uploads/landing-phase2-20261103/sora-watermark-remover/feature-05-before.webp"
+          "value": "/uploads/landing-20261114/sora-watermark-remover/Feature_1076x872/feature-02-before.webp"
         },
         {
           "path": "/features/items/1/imageAlt",
-          "value": "Illustrative Desert hourglass comparison; not a tested product output."
+          "value": "Raincoat portrait with safe-area crop versus full-frame visual; demonstration only."
         },
         {
           "path": "/features/items/1/afterImage",
-          "value": "/uploads/landing-phase2-20261103/sora-watermark-remover/feature-05-after.webp"
+          "value": "/uploads/landing-20261114/sora-watermark-remover/Feature_1076x872/feature-02-after.webp"
         },
         {
           "path": "/features/items/2/image",
-          "value": "/uploads/landing-phase2-20261103/sora-watermark-remover/feature-06-before.webp"
+          "value": "/uploads/landing-20261114/sora-watermark-remover/Feature_1076x872/feature-03-before.webp"
         },
         {
           "path": "/features/items/2/imageAlt",
-          "value": "Illustrative Cloud sailing ship comparison; not a tested product output."
+          "value": "Night-city motion-contact sheet with 0s, 3s, 6s frames; visible test overlay; no fake UI."
         },
         {
           "path": "/features/items/2/afterImage",
-          "value": "/uploads/landing-phase2-20261103/sora-watermark-remover/feature-06-after.webp"
+          "value": "/uploads/landing-20261114/sora-watermark-remover/Feature_1076x872/feature-03-after.webp"
+        },
+        {
+          "path": "/features/items/3/image",
+          "value": "/uploads/landing-20261114/sora-watermark-remover/Feature_1076x872/feature-04-before.webp"
+        },
+        {
+          "path": "/features/items/3/imageAlt",
+          "value": "Illustrative laptop feature-status scene, clean screen with Coming Soon label, not a real workspace screenshot."
+        },
+        {
+          "path": "/features/items/3/afterImage",
+          "value": "/uploads/landing-20261114/sora-watermark-remover/Feature_1076x872/feature-04-after.webp"
         },
         {
           "path": "/heroSamples/0/image",
-          "value": "/uploads/landing-phase2-20261103/sora-watermark-remover/hero-01-before.webp"
+          "value": "/uploads/landing-20261114/sora-watermark-remover/Hero_1280x694/hero-01-before.webp"
         },
         {
           "path": "/heroSamples/0/imageAlt",
-          "value": "Illustrative Floating sky citadel comparison; not a tested product output."
+          "value": "Original cinematic portrait with a visible sample mark → matching authorized cleanup view; Explain how movement and reflections make a mark difficult; demonstration only."
         },
         {
           "path": "/heroSamples/0/afterImage",
-          "value": "/uploads/landing-phase2-20261103/sora-watermark-remover/hero-01-after.webp"
+          "value": "/uploads/landing-20261114/sora-watermark-remover/Hero_1280x694/hero-01-after.webp"
         },
         {
           "path": "/heroSamples/1/image",
-          "value": "/uploads/landing-phase2-20261103/sora-watermark-remover/hero-02-before.webp"
+          "value": "/uploads/landing-20261114/sora-watermark-remover/Hero_1280x694/hero-02-before.webp"
         },
         {
           "path": "/heroSamples/1/imageAlt",
-          "value": "Illustrative Celestial whale above city comparison; not a tested product output."
+          "value": "Original action sequence with a visible sample mark → matching authorized cleanup view; Explain why tracking through motion matters rather than comparing only one frame."
         },
         {
           "path": "/heroSamples/1/afterImage",
-          "value": "/uploads/landing-phase2-20261103/sora-watermark-remover/hero-02-after.webp"
+          "value": "/uploads/landing-20261114/sora-watermark-remover/Hero_1280x694/hero-02-after.webp"
         },
         {
           "path": "/heroSamples/2/image",
-          "value": "/uploads/landing-phase2-20261103/sora-watermark-remover/hero-03-before.webp"
+          "value": "/uploads/landing-20261114/sora-watermark-remover/Hero_1280x694/hero-03-before.webp"
         },
         {
           "path": "/heroSamples/2/imageAlt",
-          "value": "Illustrative Train across mountains comparison; not a tested product output."
+          "value": "Original animated storyboard with a visible sample mark → matching authorized cleanup view; Show the need to inspect linework, character outlines and cut transitions."
         },
         {
           "path": "/heroSamples/2/afterImage",
-          "value": "/uploads/landing-phase2-20261103/sora-watermark-remover/hero-03-after.webp"
+          "value": "/uploads/landing-20261114/sora-watermark-remover/Hero_1280x694/hero-03-after.webp"
         }
       ],
-      "contentOwnerApproval": "https://github.com/teddy920810/ai-watermark-remover/pull/130"
+      "contentOwnerApproval": "User-authorized operations content package 2026-11-14; use supplied _CLEAN_COPY.txt without editorial changes. PR reference added when created."
     },
     {
       "file": "src/content/landing-pages/tiktok-watermark-remover.json",
-      "semanticSha256": "2a738693cd5879af57b19807e1bd1de88993c6e236302ecf97e7de1bb38e4eb3",
+      "semanticSha256": "b98cedfdc091a2ebdc3daf863ddc8a998d63786e52b0a0bce75e28c6b0f1f8d4",
       "images": [
         {
+          "path": "/process/steps/0/image",
+          "value": "/uploads/landing-20261114/tiktok-watermark-remover/Steps_Concept/step-01-concept.webp"
+        },
+        {
+          "path": "/process/steps/0/imageAlt",
+          "value": "Find Your Original TikTok Clip"
+        },
+        {
+          "path": "/process/steps/1/image",
+          "value": "/uploads/landing-20261114/tiktok-watermark-remover/Steps_Concept/step-02-concept.webp"
+        },
+        {
+          "path": "/process/steps/1/imageAlt",
+          "value": "Confirm the Dedicated Video Tool Is Live"
+        },
+        {
+          "path": "/process/steps/2/image",
+          "value": "/uploads/landing-20261114/tiktok-watermark-remover/Steps_Concept/step-03-concept.webp"
+        },
+        {
+          "path": "/process/steps/2/imageAlt",
+          "value": "Review Every Watermark Position Once Available"
+        },
+        {
           "path": "/features/items/0/image",
-          "value": "/uploads/landing-phase2-20261103/tiktok-watermark-remover/feature-04-before.webp"
+          "value": "/uploads/landing-20261114/tiktok-watermark-remover/Feature_1076x872/feature-01-before.webp"
         },
         {
           "path": "/features/items/0/imageAlt",
-          "value": "Illustrative Waterfall travel vlog comparison; not a tested product output."
+          "value": "Laptop with local MP4 file thumbnail and TikTok-style pasted-link diagram crossed out as unsupported; informative not fake UI."
         },
         {
           "path": "/features/items/0/afterImage",
-          "value": "/uploads/landing-phase2-20261103/tiktok-watermark-remover/feature-04-after.webp"
+          "value": "/uploads/landing-20261114/tiktok-watermark-remover/Feature_1076x872/feature-01-after.webp"
         },
         {
           "path": "/features/items/1/image",
-          "value": "/uploads/landing-phase2-20261103/tiktok-watermark-remover/feature-05-before.webp"
+          "value": "/uploads/landing-20261114/tiktok-watermark-remover/Feature_1076x872/feature-02-before.webp"
         },
         {
           "path": "/features/items/1/imageAlt",
-          "value": "Illustrative Pet video comparison; not a tested product output."
+          "value": "Street dancer montage 0s/4s/8s showing sample overlay in two positions."
         },
         {
           "path": "/features/items/1/afterImage",
-          "value": "/uploads/landing-phase2-20261103/tiktok-watermark-remover/feature-05-after.webp"
+          "value": "/uploads/landing-20261114/tiktok-watermark-remover/Feature_1076x872/feature-02-after.webp"
         },
         {
           "path": "/features/items/2/image",
-          "value": "/uploads/landing-phase2-20261103/tiktok-watermark-remover/feature-06-before.webp"
+          "value": "/uploads/landing-20261114/tiktok-watermark-remover/Feature_1076x872/feature-03-before.webp"
         },
         {
           "path": "/features/items/2/imageAlt",
-          "value": "Illustrative Beauty tutorial comparison; not a tested product output."
+          "value": "Skateboard footage with 9:16 safe zones compared to aggressive cropped frame."
         },
         {
           "path": "/features/items/2/afterImage",
-          "value": "/uploads/landing-phase2-20261103/tiktok-watermark-remover/feature-06-after.webp"
+          "value": "/uploads/landing-20261114/tiktok-watermark-remover/Feature_1076x872/feature-03-after.webp"
+        },
+        {
+          "path": "/features/items/3/image",
+          "value": "/uploads/landing-20261114/tiktok-watermark-remover/Feature_1076x872/feature-04-before.webp"
+        },
+        {
+          "path": "/features/items/3/imageAlt",
+          "value": "Real site Coming Soon panel over creator workspace, no fabricated processing UI."
+        },
+        {
+          "path": "/features/items/3/afterImage",
+          "value": "/uploads/landing-20261114/tiktok-watermark-remover/Feature_1076x872/feature-04-after.webp"
         },
         {
           "path": "/heroSamples/0/image",
-          "value": "/uploads/landing-phase2-20261103/tiktok-watermark-remover/hero-01-before.webp"
+          "value": "/uploads/landing-20261114/tiktok-watermark-remover/Hero_1280x694/hero-01-before.webp"
         },
         {
           "path": "/heroSamples/0/imageAlt",
-          "value": "Illustrative Street dance clip comparison; not a tested product output."
+          "value": "Original dance clip with a visible sample mark → matching authorized cleanup view; Illustrate mark movement between corners without claiming an actual TikTok output."
         },
         {
           "path": "/heroSamples/0/afterImage",
-          "value": "/uploads/landing-phase2-20261103/tiktok-watermark-remover/hero-01-after.webp"
+          "value": "/uploads/landing-20261114/tiktok-watermark-remover/Hero_1280x694/hero-01-after.webp"
         },
         {
           "path": "/heroSamples/1/image",
-          "value": "/uploads/landing-phase2-20261103/tiktok-watermark-remover/hero-02-before.webp"
+          "value": "/uploads/landing-20261114/tiktok-watermark-remover/Hero_1280x694/hero-02-before.webp"
         },
         {
           "path": "/heroSamples/1/imageAlt",
-          "value": "Illustrative Skateboard trick comparison; not a tested product output."
+          "value": "Original skateboard clip with a visible sample mark → matching authorized cleanup view; Demonstrate tracking and motion-blur risk."
         },
         {
           "path": "/heroSamples/1/afterImage",
-          "value": "/uploads/landing-phase2-20261103/tiktok-watermark-remover/hero-02-after.webp"
+          "value": "/uploads/landing-20261114/tiktok-watermark-remover/Hero_1280x694/hero-02-after.webp"
         },
         {
           "path": "/heroSamples/2/image",
-          "value": "/uploads/landing-phase2-20261103/tiktok-watermark-remover/hero-03-before.webp"
+          "value": "/uploads/landing-20261114/tiktok-watermark-remover/Hero_1280x694/hero-03-before.webp"
         },
         {
           "path": "/heroSamples/2/imageAlt",
-          "value": "Illustrative Cooking tutorial comparison; not a tested product output."
+          "value": "Original cooking tutorial with a visible sample mark → matching authorized cleanup view; Show logo vs valuable subtitles and full 9:16 framing."
         },
         {
           "path": "/heroSamples/2/afterImage",
-          "value": "/uploads/landing-phase2-20261103/tiktok-watermark-remover/hero-03-after.webp"
+          "value": "/uploads/landing-20261114/tiktok-watermark-remover/Hero_1280x694/hero-03-after.webp"
         }
       ],
-      "contentOwnerApproval": "https://github.com/teddy920810/ai-watermark-remover/pull/130"
+      "contentOwnerApproval": "User-authorized operations content package 2026-11-14; use supplied _CLEAN_COPY.txt without editorial changes. PR reference added when created."
     },
     {
       "file": "src/content/landing-pages/veo-watermark-remover.json",
-      "semanticSha256": "c003f86d2102050c51789298d74273a54167388fb242a30d4c10b19df003f56f",
+      "semanticSha256": "cbe19ef8b1360a294a54d125d01b3072a218bb6245e42a32a3e006f80899b543",
       "images": [
         {
           "path": "/features/items/0/image",
-          "value": "/uploads/landing-phase2-20261103/veo-watermark-remover/feature-04-before.webp"
+          "value": "/uploads/landing-20261114/veo-watermark-remover/Feature_538x436/feature-01-before.webp"
         },
         {
           "path": "/features/items/0/imageAlt",
-          "value": "Illustrative Rainy historic city comparison; not a tested product output."
+          "value": "Surfing cliff still with a small example mark, include disclaimer illustrative."
         },
         {
           "path": "/features/items/0/afterImage",
-          "value": "/uploads/landing-phase2-20261103/veo-watermark-remover/feature-04-after.webp"
+          "value": "/uploads/landing-20261114/veo-watermark-remover/Feature_538x436/feature-01-after.webp"
         },
         {
           "path": "/features/items/1/image",
-          "value": "/uploads/landing-phase2-20261103/veo-watermark-remover/feature-05-before.webp"
+          "value": "/uploads/landing-20261114/veo-watermark-remover/Feature_538x436/feature-02-before.webp"
         },
         {
           "path": "/features/items/1/imageAlt",
-          "value": "Illustrative Surfer inside wave comparison; not a tested product output."
+          "value": "Night city portrait full-frame versus cropped boundaries; line overlays only, not fake outputs."
         },
         {
           "path": "/features/items/1/afterImage",
-          "value": "/uploads/landing-phase2-20261103/veo-watermark-remover/feature-05-after.webp"
+          "value": "/uploads/landing-20261114/veo-watermark-remover/Feature_538x436/feature-02-after.webp"
         },
         {
           "path": "/features/items/2/image",
-          "value": "/uploads/landing-phase2-20261103/veo-watermark-remover/feature-06-before.webp"
+          "value": "/uploads/landing-20261114/veo-watermark-remover/Feature_538x436/feature-03-before.webp"
         },
         {
           "path": "/features/items/2/imageAlt",
-          "value": "Illustrative Sunbeams and woodland stag comparison; not a tested product output."
+          "value": "Three timestamped coastal frames showing moving foam at watermark area."
         },
         {
           "path": "/features/items/2/afterImage",
-          "value": "/uploads/landing-phase2-20261103/veo-watermark-remover/feature-06-after.webp"
+          "value": "/uploads/landing-20261114/veo-watermark-remover/Feature_538x436/feature-03-after.webp"
+        },
+        {
+          "path": "/features/items/3/image",
+          "value": "/uploads/landing-20261114/veo-watermark-remover/Feature_538x436/feature-04-before.webp"
+        },
+        {
+          "path": "/features/items/3/imageAlt",
+          "value": "Actual or documentary screenshot of Coming Soon state; no hypothetical processing window."
+        },
+        {
+          "path": "/features/items/3/afterImage",
+          "value": "/uploads/landing-20261114/veo-watermark-remover/Feature_538x436/feature-04-after.webp"
         },
         {
           "path": "/heroSamples/0/image",
-          "value": "/uploads/landing-phase2-20261103/veo-watermark-remover/hero-01-before.webp"
+          "value": "/uploads/landing-20261114/veo-watermark-remover/Hero_640x347/hero-01-before.webp"
         },
         {
           "path": "/heroSamples/0/imageAlt",
-          "value": "Illustrative Stormy coastal surf comparison; not a tested product output."
+          "value": "Original coastal scene with a visible sample mark → matching authorized cleanup view; Check foam, water motion and frame-to-frame texture."
         },
         {
           "path": "/heroSamples/0/afterImage",
-          "value": "/uploads/landing-phase2-20261103/veo-watermark-remover/hero-01-after.webp"
+          "value": "/uploads/landing-20261114/veo-watermark-remover/Hero_640x347/hero-01-after.webp"
         },
         {
           "path": "/heroSamples/1/image",
-          "value": "/uploads/landing-phase2-20261103/veo-watermark-remover/hero-02-before.webp"
+          "value": "/uploads/landing-20261114/veo-watermark-remover/Hero_640x347/hero-02-before.webp"
         },
         {
           "path": "/heroSamples/1/imageAlt",
-          "value": "Illustrative Night city portrait comparison; not a tested product output."
+          "value": "Original city night with a visible sample mark → matching authorized cleanup view; Demonstrate difficult gradients and motion near mark."
         },
         {
           "path": "/heroSamples/1/afterImage",
-          "value": "/uploads/landing-phase2-20261103/veo-watermark-remover/hero-02-after.webp"
+          "value": "/uploads/landing-20261114/veo-watermark-remover/Hero_640x347/hero-02-after.webp"
         },
         {
           "path": "/heroSamples/2/image",
-          "value": "/uploads/landing-phase2-20261103/veo-watermark-remover/hero-03-before.webp"
+          "value": "/uploads/landing-20261114/veo-watermark-remover/Hero_640x347/hero-03-before.webp"
         },
         {
           "path": "/heroSamples/2/imageAlt",
-          "value": "Illustrative Alpine cloudscape comparison; not a tested product output."
+          "value": "Original nature documentary with a visible sample mark → matching authorized cleanup view; Illustrate temporal consistency and object edges across frames."
         },
         {
           "path": "/heroSamples/2/afterImage",
-          "value": "/uploads/landing-phase2-20261103/veo-watermark-remover/hero-03-after.webp"
+          "value": "/uploads/landing-20261114/veo-watermark-remover/Hero_640x347/hero-03-after.webp"
         }
       ],
-      "contentOwnerApproval": "https://github.com/teddy920810/ai-watermark-remover/pull/130"
+      "contentOwnerApproval": "User-authorized operations content package 2026-11-14; use supplied _CLEAN_COPY.txt without editorial changes. PR reference added when created."
     },
     {
       "file": "src/content/landing-pages/video-watermark-remover.json",
-      "semanticSha256": "e5732d3fa1cc678b9ed6508ad8b3001427a8e28ffebdc4237af5a1a0e66a0024",
+      "semanticSha256": "d47761b9cc68ae352a62b014524f62c6c65cfb54f819799dff11f4c227e7b5d3",
       "images": [
         {
           "path": "/features/items/0/image",
-          "value": "/uploads/remove-gemini-watermark-2.png"
+          "value": "/uploads/landing-20261114/video-watermark-remover/Feature_538x436/feature-01-before.webp"
         },
         {
           "path": "/features/items/0/imageAlt",
-          "value": "remove video watermark without replacing"
+          "value": "Remove Fixed Video Watermarks Without Reframing — same camera frame and matched target region."
+        },
+        {
+          "path": "/features/items/0/afterImage",
+          "value": "/uploads/landing-20261114/video-watermark-remover/Feature_538x436/feature-01-after.webp"
         },
         {
           "path": "/features/items/1/image",
-          "value": "/uploads/remove-logo-from-image-1.png"
+          "value": "/uploads/landing-20261114/video-watermark-remover/Feature_538x436/feature-02-before.webp"
         },
         {
           "path": "/features/items/1/imageAlt",
-          "value": "remove visible ai watermark from video"
+          "value": "Choose Automatic Detection or a Fixed Area — same camera frame and matched target region."
+        },
+        {
+          "path": "/features/items/1/afterImage",
+          "value": "/uploads/landing-20261114/video-watermark-remover/Feature_538x436/feature-02-after.webp"
         },
         {
           "path": "/features/items/2/image",
-          "value": "/uploads/remove-text-from-image-1.png"
+          "value": "/uploads/landing-20261114/video-watermark-remover/Feature_538x436/feature-03-before.webp"
         },
         {
           "path": "/features/items/2/imageAlt",
-          "value": "remove video watermark without cropping"
+          "value": "Inspect Detail and Motion After Cleanup — same camera frame and matched target region."
+        },
+        {
+          "path": "/features/items/2/afterImage",
+          "value": "/uploads/landing-20261114/video-watermark-remover/Feature_538x436/feature-03-after.webp"
+        },
+        {
+          "path": "/features/items/3/image",
+          "value": "/uploads/landing-20261114/video-watermark-remover/Feature_538x436/feature-04-before.webp"
+        },
+        {
+          "path": "/features/items/3/imageAlt",
+          "value": "Online MP4 Workflow with Clear Limits — same camera frame and matched target region."
+        },
+        {
+          "path": "/features/items/3/afterImage",
+          "value": "/uploads/landing-20261114/video-watermark-remover/Feature_538x436/feature-04-after.webp"
         },
         {
           "path": "/heroSamples/0/image",
-          "value": "/uploads/remove-gemini-watermark-2.png"
+          "value": "/uploads/landing-20261114/video-watermark-remover/Hero_640x347/hero-01-before.webp"
         },
         {
           "path": "/heroSamples/0/imageAlt",
-          "value": "remove video watermark without replacing"
+          "value": "Remove a Fixed Corner Watermark from Video — authorized source image before cleanup or illustrative mark."
+        },
+        {
+          "path": "/heroSamples/0/afterImage",
+          "value": "/uploads/landing-20261114/video-watermark-remover/Hero_640x347/hero-01-after.webp"
         },
         {
           "path": "/heroSamples/1/image",
-          "value": "/uploads/remove-logo-from-image-1.png"
+          "value": "/uploads/landing-20261114/video-watermark-remover/Hero_640x347/hero-02-before.webp"
         },
         {
           "path": "/heroSamples/1/imageAlt",
-          "value": "remove visible ai watermark from video"
+          "value": "Clean an Outdated Date Stamp from Your Clip — authorized source image before cleanup or illustrative mark."
+        },
+        {
+          "path": "/heroSamples/1/afterImage",
+          "value": "/uploads/landing-20261114/video-watermark-remover/Hero_640x347/hero-02-after.webp"
         },
         {
           "path": "/heroSamples/2/image",
-          "value": "/uploads/remove-text-from-image-1.png"
+          "value": "/uploads/landing-20261114/video-watermark-remover/Hero_640x347/hero-03-before.webp"
         },
         {
           "path": "/heroSamples/2/imageAlt",
-          "value": "remove video watermark without cropping"
+          "value": "Review Watermark Cleanup Over Moving Footage — authorized source image before cleanup or illustrative mark."
+        },
+        {
+          "path": "/heroSamples/2/afterImage",
+          "value": "/uploads/landing-20261114/video-watermark-remover/Hero_640x347/hero-03-after.webp"
         }
-      ]
+      ],
+      "contentOwnerApproval": "User-authorized operations content package 2026-11-14; use supplied _CLEAN_COPY.txt without editorial changes. PR reference added when created."
     },
     {
       "file": "src/content/settings/site.json",

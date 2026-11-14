@@ -38,6 +38,15 @@ components:
       - { name: eyebrow, label: 模块小标题, type: string, required: true }
       - { name: heading, label: 模块标题｜H2, type: string, required: true }
       - { name: intro, label: 模块简介, type: text, required: true }
+      - name: items
+        label: 本页指定卡片（可选）
+        type: object
+        list: true
+        description: 按顺序显示本页提供的标题、说明和链接；填写后优先于 Slugs 和自动推荐。
+        fields:
+          - { name: title, label: 卡片标题, type: string, required: true }
+          - { name: description, label: 卡片说明, type: text }
+          - { name: href, label: 链接, type: string, required: true }
       - name: slugs
         label: 内容网址标识 / Slugs（可选）
         type: string
@@ -1425,6 +1434,10 @@ content:
         type: text
         required: true
         description: H1 下方的一段简短说明文字。
+      - name: toolNote
+        label: 本页工具说明（可选）
+        type: text
+        description: 显示运营提供的工具状态或使用说明，不修改实际工具能力。
       - name: benefits
         label: 优点列表｜LI
         type: string

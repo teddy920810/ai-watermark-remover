@@ -214,22 +214,28 @@ test('background and object content hand files to their App editor and share rep
 });
 
 test('landing discovery modules point to published tools and real articles while FAQs stay independent', async ({ page, request }) => {
+  const gemini = JSON.parse(readFileSync(new URL('../../src/content/landing-pages/gemini-watermark-remover.json', import.meta.url), 'utf8'));
+  const synthIdQuestion = gemini.faq.items.find((item: { question: string }) => /SynthID/.test(item.question)).question;
   await page.goto('/gemini-watermark-remover');
-  await expect(page.locator('.tool-landing .faq-list')).toContainText('Does WatermarkGemini remove SynthID?');
+  await expect(page.locator('.tool-landing .faq-list')).toContainText(synthIdQuestion);
   const toolLinks = await page.locator('.tool-landing .tool-grid a').evaluateAll(links => links.map(link => link.getAttribute('href')));
   const guideLinks = await page.locator('.tool-landing .guides-list a').evaluateAll(links => links.map(link => link.getAttribute('href')));
   expect(toolLinks.length).toBeGreaterThan(0);
   expect(guideLinks.length).toBeGreaterThan(0);
   for (const href of toolLinks) {
-    expect(href).toMatch(/^\/(?:[a-z0-9-]+|#tool)$/);
-    expect((await request.get(href!)).status(), `${href} should be a published tool`).toBe(200);
+    const target = new URL(href!, 'https://www.watermarkgemini.com');
+    expect(target.origin).toBe('https://www.watermarkgemini.com');
+    expect(target.pathname + target.hash).toMatch(/^\/(?:[a-z0-9-]+|#tool)?$/);
+    expect((await request.get(target.pathname)).status(), `${href} should be a published tool`).toBe(200);
   }
   for (const href of guideLinks) {
-    expect(href).toMatch(/^\/blog\/[a-z0-9-]+$/);
-    expect((await request.get(href!)).status(), `${href} should be a published guide`).toBe(200);
+    const target = new URL(href!, 'https://www.watermarkgemini.com');
+    expect(target.origin).toBe('https://www.watermarkgemini.com');
+    expect(target.pathname).toMatch(/^\/blog\/[a-z0-9-]+$/);
+    expect((await request.get(target.pathname)).status(), `${href} should be a published guide`).toBe(200);
   }
   await page.goto('/remove-background');
-  await expect(page.locator('.tool-landing .faq-list')).not.toContainText('Does WatermarkGemini remove SynthID?');
+  await expect(page.locator('.tool-landing .faq-list')).not.toContainText(synthIdQuestion);
   await expect(page.locator('main h1')).toContainText(/background/i);
 });
 

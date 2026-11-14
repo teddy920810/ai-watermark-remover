@@ -2,15 +2,15 @@
   "draft": false,
   "slug": "remove-subtitle-from-video",
   "toolKind": "watermark-remover",
-  "title": "Remove Subtitle from Video Online | WatermarkGemini",
-  "description": "Use the remove subtitle from video page to prepare supported videos for future AI-assisted subtitle cleanup.",
-  "eyebrow": "REMOVE SUBTITLE FROM VIDEO",
-  "heading": "Remove Subtitle from Video",
-  "intro": "A dedicated page for a future workflow that cleans visible burned-in subtitles from videos you own or have permission to edit.",
+  "title": "Remove Subtitle from Video Online | Hardcoded Captions",
+  "description": "Learn how to remove subtitles from video, including the difference between hardcoded captions and subtitle tracks. Dedicated AI cleanup is coming soon.",
+  "eyebrow": "REMOVE SUBTITLE FROM VIDEO · COMING SOON",
+  "heading": "Remove Subtitles from Video – Hardcoded Caption Cleanup",
+  "intro": "Need to remove a subtitle that stays visible in every video frame? WatermarkGemini is preparing a dedicated workflow for burned-in captions in videos you own or may edit. The subtitle-cleanup processor is not live yet. If your captions can be turned off in the player, you may not need AI removal at all.",
   "benefits": [
-    "Video cleanup workflow planned",
-    "Preserve more of the frame",
-    "Built for authorized edits"
+    "Hardcoded Subtitle Focus",
+    "Keep Your Video Framing",
+    "Dedicated Workflow Coming Soon"
   ],
   "uploader": {
     "dropzone": {}
@@ -18,44 +18,84 @@
   "process": {
     "eyebrow": "HOW IT WORKS",
     "heading": "How to Remove Subtitles from Video",
-    "intro": "The initial workflow is ready for operations to refine before full processing launches.",
+    "intro": "A clear three-step workflow helps you choose the appropriate method and understand what to inspect before keeping an edited file.",
     "steps": [
       {
         "number": "01",
-        "title": "Upload Your Video",
-        "description": "Choose a supported video that you own or are authorized to edit."
+        "title": "Check Whether Subtitles Can Be Turned Off",
+        "description": "Open the player caption menu. If the text disappears, disable the caption track or re-export without it; no AI repair is needed."
       },
       {
         "number": "02",
-        "title": "Select the Subtitle Area",
-        "description": "Identify the burned-in subtitle region that should be cleaned across frames."
+        "title": "Identify Burned-In Caption Areas",
+        "description": "If captions stay in the picture, record their position, line count, and whether they overlap faces or moving backgrounds. The dedicated cleanup step is planned, not live."
       },
       {
         "number": "03",
-        "title": "Preview and Download",
-        "description": "Review the cleaned frames and download the approved result."
+        "title": "Verify the Clean Export When Available",
+        "description": "Once released, test a short part, inspect text transitions and flicker, confirm sound, and download only an authorized result. Keep the original clip."
       }
     ]
   },
   "faq": {
     "eyebrow": "FAQ",
     "heading": "Remove Subtitle from Video FAQs",
-    "intro": "Initial answers for the planned video subtitle-removal workflow.",
+    "intro": "Answers to the most common questions about use cases, formats, results, pricing, and safe editing.",
     "items": [
       {
         "enabled": true,
-        "question": "Can this page remove subtitle from video now?",
-        "answer": "This page provides workflow guidance. Dedicated subtitle removal is not currently supported; review the available video tool and its fixed-area selection limits."
+        "question": "How do I remove a subtitle from a video?",
+        "answer": "First turn off subtitles in your video player. If they disappear, remove or disable the separate caption track when exporting. If the text remains in every frame, it is hardcoded and needs source-project editing or a tested video-repair workflow."
       },
       {
         "enabled": true,
-        "question": "What kind of subtitles is the page intended for?",
-        "answer": "The planned workflow focuses on visible subtitles burned into the video frames rather than separate caption tracks."
+        "question": "Can I remove subtitles from a video online for free?",
+        "answer": "The dedicated WatermarkGemini subtitle remover is Coming Soon, so a free online processing allowance is not confirmed. For soft subtitles, removing the track or switching captions off may be free in your existing player or editor."
       },
       {
         "enabled": true,
-        "question": "What videos can I edit?",
-        "answer": "Only process videos you own or have permission to modify."
+        "question": "What are hardcoded or burned-in subtitles?",
+        "answer": "Hardcoded subtitles are rendered into the video pixels. They remain visible even if you disable captions in the player. Removing them may require rebuilding the covered parts of the frame."
+      },
+      {
+        "enabled": true,
+        "question": "What is the difference between soft and hard subtitles?",
+        "answer": "Soft subtitles are separate tracks or files that can usually be switched off, detached or omitted from an export. Hard subtitles are part of the image and require original-project access, cropping, or image-based cleanup."
+      },
+      {
+        "enabled": true,
+        "question": "Can I remove subtitles from an MP4 video?",
+        "answer": "An MP4 can contain either a separate subtitle track or burned-in captions. Inspect which type you have before choosing a method. The WatermarkGemini dedicated hardcoded-caption workflow is not available for processing yet."
+      },
+      {
+        "enabled": true,
+        "question": "Can I remove subtitles without cropping the video?",
+        "answer": "For a soft track, disabling it leaves the video picture unchanged. For burned-in captions, targeted repair may preserve the frame, but the area under the text must be estimated and could show artifacts."
+      },
+      {
+        "enabled": true,
+        "question": "Will subtitle removal damage faces or moving backgrounds?",
+        "answer": "It can. Captions placed over faces, hands, complex textures, or camera movement are harder to repair without blur or flicker. Always inspect the whole clip, not a single before-and-after frame."
+      },
+      {
+        "enabled": true,
+        "question": "Does subtitle removal work in different languages?",
+        "answer": "Once text is burned into the pixels, the challenge is visual restoration rather than just the language. Multilingual and two-line captions should be tested separately; no language support claim is verified for this Coming Soon editor."
+      },
+      {
+        "enabled": true,
+        "question": "Can I remove captions or karaoke text that change every frame?",
+        "answer": "Animated captions and karaoke highlights require more demanding frame-by-frame tracking and repairs. This capability has not been established for the current product; the original editing project remains the preferred option."
+      },
+      {
+        "enabled": true,
+        "question": "Can I use this tool to remove someone else’s subtitles?",
+        "answer": "Only edit video you created, licensed, or have explicit permission to modify. Captions may be part of licensed content or important accessibility information; preserve an accessible caption option where appropriate."
+      },
+      {
+        "enabled": true,
+        "question": "When will the subtitle remover be available?",
+        "answer": "The page currently says Coming Soon and does not give a confirmed launch date. The final feature list, accepted formats and any processing charges should be published when testing is complete."
       }
     ]
   },
@@ -63,32 +103,164 @@
     {
       "id": "preview-1",
       "label": "Upload preview",
-      "image": "/uploads/workflow-upload-step.png",
-      "imageAlt": "Image entering the secure upload workflow"
+      "image": "/uploads/landing-20261114/remove-subtitle-from-video/Hero_640x347/hero-01-before.webp",
+      "imageAlt": "Remove Burned-In Dialogue Subtitles — authorized source image before cleanup or illustrative mark.",
+      "afterImage": "/uploads/landing-20261114/remove-subtitle-from-video/Hero_640x347/hero-01-after.webp"
     },
     {
       "id": "preview-2",
       "label": "Processing preview",
-      "image": "/uploads/workflow-ai-detection-step.png",
-      "imageAlt": "AI detecting a visible watermark area in an image"
+      "image": "/uploads/landing-20261114/remove-subtitle-from-video/Hero_640x347/hero-02-before.webp",
+      "imageAlt": "Clean Two-Line Subtitles from Your Own Clip — authorized source image before cleanup or illustrative mark.",
+      "afterImage": "/uploads/landing-20261114/remove-subtitle-from-video/Hero_640x347/hero-02-after.webp"
     },
     {
       "id": "preview-3",
       "label": "Download preview",
-      "image": "/uploads/workflow-download-step.png",
-      "imageAlt": "Before and after image ready for secure download"
+      "image": "/uploads/landing-20261114/remove-subtitle-from-video/Hero_640x347/hero-03-before.webp",
+      "imageAlt": "Prepare an Old Captioned Video for Re-Editing — authorized source image before cleanup or illustrative mark.",
+      "afterImage": "/uploads/landing-20261114/remove-subtitle-from-video/Hero_640x347/hero-03-after.webp"
     }
   ],
   "relatedTools": {
     "enabled": true,
     "eyebrow": "Popular tools",
-    "heading": "All AI tools of WatermarkGemini",
-    "intro": "Start with the cleanup workflow that best matches your image."
+    "heading": "Explore Video and Caption Cleanup Tools",
+    "intro": "Choose a workflow that matches the file you own and the specific edit you need.",
+    "items": [
+      {
+        "title": "Background Remover",
+        "href": "https://www.watermarkgemini.com/remove-background",
+        "description": "Create transparent or color backgrounds for permitted photos."
+      },
+      {
+        "title": "Object Remover",
+        "href": "https://www.watermarkgemini.com/remove-object",
+        "description": "Select unwanted people, items, or clutter in your own photos."
+      },
+      {
+        "title": "Remove Text from Image",
+        "href": "https://www.watermarkgemini.com/remove-text-from-image",
+        "description": "Clean unwanted text overlays from images you can edit."
+      },
+      {
+        "title": "Remove Logo from Image",
+        "href": "https://www.watermarkgemini.com/remove-logo-from-image",
+        "description": "Review authorized logo cleanup on supported images."
+      },
+      {
+        "title": "ChatGPT Watermark Remover",
+        "href": "https://www.watermarkgemini.com/chatgpt-watermark-remover",
+        "description": "Explore visible image mark cleanup for supported files."
+      },
+      {
+        "title": "Gemini Watermark Remover",
+        "href": "https://www.watermarkgemini.com/gemini-watermark-remover",
+        "description": "Clean eligible visible Gemini sparkles without cropping."
+      },
+      {
+        "title": "Video Watermark Remover",
+        "href": "https://www.watermarkgemini.com/video-watermark-remover",
+        "description": "Inspect the video overlay workflow and processing limits."
+      },
+      {
+        "title": "PDF Watermark Remover",
+        "href": "https://www.watermarkgemini.com/pdf-watermark-remover",
+        "description": "Review PDF watermark handling and supported input requirements."
+      }
+    ]
   },
   "guides": {
     "enabled": true,
     "eyebrow": "Helpful guides",
-    "heading": "Learn More About Free AI Watermark Remover from Image",
-    "intro": "Practical guides for cleaner, more polished images."
+    "heading": "Helpful Guides for Subtitle Removal",
+    "intro": "Learn practical methods, understand file limitations, and check usage rights before editing.",
+    "items": [
+      {
+        "title": "How to Remove Hardcoded Subtitles from Video",
+        "href": "https://www.watermarkgemini.com/blog/remove-hardcoded-subtitles-from-video",
+        "description": "Distinguish video subtitle tracks from captions burned into pixels."
+      },
+      {
+        "title": "How to Remove Moving Watermark From Video",
+        "href": "https://www.watermarkgemini.com/blog/remove-moving-watermark-from-video",
+        "description": "Understand frame-to-frame flicker and the limits of moving-mark cleanup."
+      },
+      {
+        "title": "How to Remove CapCut Watermark from Videos",
+        "href": "https://www.watermarkgemini.com/blog/how-to-remove-capcut-watermark",
+        "description": "Learn when the original export is better than cleaning a baked-in mark."
+      },
+      {
+        "title": "How to Remove Filmora Watermark After Export",
+        "href": "https://www.watermarkgemini.com/blog/how-to-remove-filmora-watermark",
+        "description": "Check editor export options and rights before trying to repair watermarks."
+      },
+      {
+        "title": "How to Remove Bandicam Watermark",
+        "href": "https://www.watermarkgemini.com/blog/how-to-remove-bandicam-watermark",
+        "description": "Check original recording and export options for captured video."
+      },
+      {
+        "title": "Best AI Watermark Remover in 2026",
+        "href": "https://www.watermarkgemini.com/blog/best-ai-watermark-remover",
+        "description": "Compare online cleanup methods and their processing limitations."
+      }
+    ]
+  },
+  "toolNote": "Dedicated processing: Coming Soon. Video upload, pricing, and download support are not yet confirmed for this tool.",
+  "features": {
+    "eyebrow": "Why choose WatermarkGemini",
+    "heading": "What the Planned Subtitle Removal Workflow Will Address",
+    "intro": "Start by identifying subtitle type; only burned-in captions call for picture repair.",
+    "items": [
+      {
+        "enabled": true,
+        "eyebrow": "FEATURE 1",
+        "heading": "Understand Hardcoded vs. Soft Subtitles First",
+        "description": "Not every subtitle needs pixel removal. Soft subtitles are a selectable track or external caption file, so they can often be disabled in the player or removed when re-exporting. Hardcoded or burned-in captions are already part of the video image and may require AI-assisted repair. This planned page focuses on the second case and makes that distinction clear before asking users to upload anything.",
+        "image": "/uploads/landing-20261114/remove-subtitle-from-video/Feature_538x436/feature-01-before.webp",
+        "imageAlt": "Understand Hardcoded vs. Soft Subtitles First — same camera frame and matched target region.",
+        "imagePosition": "left",
+        "afterImage": "/uploads/landing-20261114/remove-subtitle-from-video/Feature_538x436/feature-01-after.webp"
+      },
+      {
+        "enabled": true,
+        "eyebrow": "FEATURE 2",
+        "heading": "Target the Subtitle Band Without Cropping",
+        "description": "The intended workflow will focus on a subtitle region instead of cutting away the bottom of the entire frame. This matters for interviews, tutorials, and vertical content where a crop can hide hands, products or action. The eventual product must be tested on lines in different positions, sizes and languages before claiming broad support. Until launch, retain the original project whenever possible.",
+        "image": "/uploads/landing-20261114/remove-subtitle-from-video/Feature_538x436/feature-02-before.webp",
+        "imageAlt": "Target the Subtitle Band Without Cropping — same camera frame and matched target region.",
+        "imagePosition": "right",
+        "afterImage": "/uploads/landing-20261114/remove-subtitle-from-video/Feature_538x436/feature-02-after.webp"
+      },
+      {
+        "enabled": true,
+        "eyebrow": "FEATURE 3",
+        "heading": "Plan for Consistent Frame-by-Frame Cleanup",
+        "description": "A single still can look clean even when an entire clip flickers. Burned-in subtitles change over time, while backgrounds and subjects move behind the text. A release-ready subtitle remover should be evaluated across scene cuts, moving faces, lower-thirds, dual-language captions and overlapping text. These are QA requirements, not proven abilities of the current Coming Soon page.",
+        "image": "/uploads/landing-20261114/remove-subtitle-from-video/Feature_538x436/feature-03-before.webp",
+        "imageAlt": "Plan for Consistent Frame-by-Frame Cleanup — same camera frame and matched target region.",
+        "imagePosition": "left",
+        "afterImage": "/uploads/landing-20261114/remove-subtitle-from-video/Feature_538x436/feature-03-after.webp"
+      },
+      {
+        "enabled": true,
+        "eyebrow": "FEATURE 4",
+        "heading": "Keep Processing Rules and Availability Transparent",
+        "description": "The dedicated subtitle processor is under development. Do not advertise free MP4 processing, supported languages, fixed output quality, or unlimited duration before the real editor has been tested. Once ready, state the accepted file types, limits, processing cost, sign-in rules, and deletion policy beside the uploader. For now, readers can use the page to understand which subtitle type they have and their safest editing options.",
+        "image": "/uploads/landing-20261114/remove-subtitle-from-video/Feature_538x436/feature-04-before.webp",
+        "imageAlt": "Keep Processing Rules and Availability Transparent — same camera frame and matched target region.",
+        "imagePosition": "right",
+        "afterImage": "/uploads/landing-20261114/remove-subtitle-from-video/Feature_538x436/feature-04-after.webp"
+      }
+    ]
+  },
+  "cta": {
+    "eyebrow": "Ready when you are",
+    "heading": "Explore the Upcoming Remove Subtitle from Video Workflow",
+    "description": "The dedicated processing feature is Coming Soon. Keep your source file and check this page for verified release details.",
+    "buttonLabel": "Coming Soon",
+    "buttonHref": "#tool"
   }
 }

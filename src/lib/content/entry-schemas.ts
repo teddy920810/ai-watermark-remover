@@ -66,6 +66,7 @@ export const landingEntrySchema = z.object({
     statusLabel: z.string().min(1).optional(),
     heading: z.string().min(1),
     intro: z.string().min(1),
+    toolNote: z.string().min(1).optional(),
     benefits: z.array(z.string().min(1)).min(1),
     heroActions: z.array(z.object({ label: z.string().min(1), href: z.string().min(1) })).min(1).max(2).optional(),
     uploader: uploaderCopyOverrideSchema.optional(),

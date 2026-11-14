@@ -80,6 +80,19 @@ describe('independent tool landing-page previews', () => {
 });
 
 describe('landing design schema', () => {
+  it('retains operator-supplied card copy and links instead of substituting shared titles', async () => {
+    const { landingDesignFields } = await import('./landing-design');
+    const section = {
+      eyebrow: 'Helpful guides', heading: 'Selected guides', intro: 'Read more',
+      items: [{ title: 'Operator guide title', description: 'Operator description', href: 'https://www.watermarkgemini.com/blog/best-ai-watermark-remover' }],
+    };
+    const parsed = z.object(landingDesignFields).parse({ relatedTools: section, guides: section });
+    expect(parsed.relatedTools).toMatchObject(section);
+    expect(parsed.guides).toMatchObject(section);
+    const cms = parse(readFileSync(new URL('../../../.pages.yml', import.meta.url), 'utf8'));
+    expect(cms.components['landing-related-content'].fields.find((field: { name: string }) => field.name === 'items')).toBeDefined();
+  });
+
   it('accepts legacy records and preserves optional page-specific content', async () => {
     const { landingDesignFields } = await import('./landing-design');
     const schema = z.object(landingDesignFields);

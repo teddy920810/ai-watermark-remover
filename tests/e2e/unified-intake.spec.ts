@@ -55,7 +55,8 @@ test('a tool without a status badge explains the compatible workspace and hands 
   const writes = await localOnly(page);
   await page.goto('/sora-watermark-remover');
   const footer = page.locator('.site-cta'); await footer.scrollIntoViewIfNeeded();
-  await expect(footer.getByRole('button', { name: 'Upload file', exact: true })).toBeEnabled();
+  const sora = JSON.parse(fs.readFileSync('src/content/landing-pages/sora-watermark-remover.json', 'utf8'));
+  await expect(footer.getByRole('button', { name: sora.cta.buttonLabel, exact: true })).toBeEnabled();
   await footer.locator('input[type=file]').setInputFiles({ name: 'from-footer.mp4', mimeType: 'video/mp4', buffer: video });
   await expect(page.getByText('from-footer.mp4', { exact: true })).toBeVisible();
   await expect(page.getByLabel('Choose operation')).toHaveValue('video-watermark');

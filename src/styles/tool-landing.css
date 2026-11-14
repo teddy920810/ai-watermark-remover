@@ -481,3 +481,4 @@
   .tool-landing .tool-grid > .tool-card { transition: none; }
 }
 @media(max-width:900px){.tool-landing .hero-workbench:has(.media-launcher) .hero-tool{order:-1}}
+.guide-description { display: block; margin-top: 0.35em; font-weight: 400; }

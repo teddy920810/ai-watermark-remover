@@ -1,82 +1,103 @@
 {
   "draft": false,
   "slug": "sora-watermark-remover",
-  "title": "Sora Watermark Remover for Sora 2 Videos",
-  "description": "Explore WatermarkGemini's upcoming Sora watermark remover. Learn about moving Sora 2 logos, video quality and what to check before a supported video workflow launches.",
-  "eyebrow": "SORA WATERMARK REMOVER",
-  "heading": "Sora Watermark Remover for Sora and Sora 2 Videos",
-  "intro": "Sora and Sora 2 videos can carry visible watermarks that move or overlap detailed scenes. WatermarkGemini is preparing a dedicated Sora video cleanup workflow. Video processing is not yet confirmed as available on this page; review the launch status before uploading a file or purchasing credits.\n\nThe comparison images on this page are illustrative examples, not tested product outputs.",
+  "title": "Sora Watermark Remover for Sora 2 Videos | WatermarkGemini",
+  "description": "Explore Sora watermark remover options for Sora 2 video. Learn about moving logos, source exports and video-quality checks; dedicated cleanup is coming soon.",
+  "eyebrow": "SORA WATERMARK REMOVER · Coming Soon",
+  "heading": "Sora Watermark Remover for Sora 2 Videos",
+  "intro": "Looking to remove a visible Sora or Sora 2 watermark from your own video? The mark can change position across a clip, so a single clean frame is not enough. WatermarkGemini is preparing a dedicated Sora video watermark remover. This page explains the intended workflow, common pitfalls and what to verify before processing becomes available.\n\nIllustrative scenarios only. The dedicated video workflow is Coming Soon; these are not tested WatermarkGemini outputs.",
   "benefits": [
-    "Sora and Sora 2 video focus",
-    "Moving watermark explained",
-    "Video tool"
+    "Sora and Sora 2 Video Focus",
+    "Moving Watermarks Need Timeline Review",
+    "Dedicated Tool Coming Soon"
   ],
   "process": {
     "eyebrow": "How it works",
-    "heading": "How to Remove Visible Watermarks from Sora Videos",
-    "intro": "Follow the three steps below. Always confirm the file type and actual processing status shown in the tool before you submit content.",
+    "heading": "How to Prepare for Sora Video Watermark Removal",
+    "intro": "Use the actual source file, check your rights and review the processing cost or availability before starting.",
     "steps": [
       {
         "number": "01",
-        "title": "Prepare a Sora Video You May Edit",
-        "description": "Save an original copy of your own Sora or Sora 2 video. Retain the original file and note where the visible watermark appears as the scene changes."
+        "title": "Keep Your Original Sora Video",
+        "description": "Save the source Sora or Sora 2 export you are authorized to modify. Watch the full clip and note all visible watermark positions and scene changes.",
+        "image": "/uploads/landing-20261114/sora-watermark-remover/Steps_Concept/step-01-concept.webp",
+        "imageAlt": "Keep Your Original Sora Video"
       },
       {
         "number": "02",
-        "title": "Check Video Tool Availability",
-        "description": "The shared uploader may list image or MP4 formats, but that alone does not confirm that Sora video removal is enabled. Do not purchase processing until the workflow is announced and verified."
+        "title": "Check Availability Before Processing",
+        "description": "The dedicated Sora 2 cleanup feature is not yet verified live. Check the workspace for a clearly supported video operation, output format and credit quote before attempting a task.",
+        "image": "/uploads/landing-20261114/sora-watermark-remover/Steps_Concept/step-02-concept.webp",
+        "imageAlt": "Check Availability Before Processing"
       },
       {
         "number": "03",
-        "title": "Review the Complete Video After Launch",
-        "description": "When the video workflow is active, inspect several frames and transitions, listen to the audio and check both the earlier and later watermark positions before using an exported clip."
+        "title": "Review the Entire Export Once Available",
+        "description": "When the supported workflow launches, inspect normal playback and paused frames for logo remnants, flicker, repeated texture, crop changes and audio sync before downloading.",
+        "image": "/uploads/landing-20261114/sora-watermark-remover/Steps_Concept/step-03-concept.webp",
+        "imageAlt": "Review the Entire Export Once Available"
       }
     ]
   },
   "faq": {
-    "eyebrow": "FAQ",
-    "heading": "Sora Watermark Remover FAQs",
-    "intro": "Clear answers about supported inputs, editing quality, limits and responsible use.",
+    "eyebrow": "Frequently asked questions",
+    "heading": "Frequently Asked Questions About Sora Watermark Remover",
+    "intro": "Answers about supported media, image/video quality, usage requirements and responsible editing.",
     "items": [
       {
         "enabled": true,
-        "question": "Can WatermarkGemini remove Sora video watermarks now?",
-        "answer": "The shared file uploader may show media-format limits, but the finished Sora video workflow has not been verified. Do not treat this page as an active Sora 2 MP4 remover yet."
+        "question": "How can I remove a Sora watermark from a video?",
+        "answer": "Start with a clean source export or editable project whenever you have it. If a watermark is baked into a video you own, use a tool that explicitly handles moving marks across frames, then inspect the complete exported clip. WatermarkGemini’s dedicated Sora video workflow is currently Coming Soon."
       },
       {
         "enabled": true,
-        "question": "How do I remove a visible Sora watermark from my own video?",
-        "answer": "For a supported editor, upload a video you created or have permission to edit, identify every position of the visible overlay, process the clip and check the full timeline before export. WatermarkGemini's dedicated Sora video-removal workflow is not yet confirmed live."
-      },
-      {
-        "enabled": true,
-        "question": "Does the planned tool cover Sora 2 watermarks?",
-        "answer": "Sora 2 is the intended search topic, including moving logo variants. Actual supported watermark styles, duration and output formats must be confirmed with real export tests at launch."
+        "question": "Does the Sora watermark remover support Sora 2?",
+        "answer": "Sora 2 is a target use case for this planned page, including visible marks that change position. The WatermarkGemini Sora-specific video processing and export formats have not been verified live, so the page must not claim active Sora 2 removal until tested."
       },
       {
         "enabled": true,
         "question": "Is there a free Sora watermark remover online?",
-        "answer": "Free trials and pricing vary among providers. On WatermarkGemini, review the launch state and any displayed credit charge; do not assume unlimited free Sora video processing before the feature is released."
+        "answer": "Some third-party services offer free previews or signup credits, but export limits vary. WatermarkGemini’s dedicated Sora processing is not confirmed available yet. Do not assume video tasks use the limited free-image allowance; review the actual video credit price after launch."
       },
       {
         "enabled": true,
-        "question": "Why is a moving Sora 2 watermark hard to clean?",
-        "answer": "The visible mark may change position as the clip plays. Removing only the first occurrence can leave later frames watermarked. A reliable workflow must inspect temporal consistency, moving subjects and several logo positions."
+        "question": "How do I remove a moving Sora 2 watermark?",
+        "answer": "A moving mark requires checking its path across the whole clip, not masking a single frame. Inspect motion, cuts and the detail behind the logo, then test a short section using a verified tracker or source-level edit. The planned WatermarkGemini workflow must pass this test before launch claims are used."
       },
       {
         "enabled": true,
-        "question": "Can a Sora watermark be removed without cropping?",
-        "answer": "Some video editors reconstruct the marked region instead of cropping, but results depend on the scene and the available tool. Dedicated WatermarkGemini video output has not been verified, so a result without cropping is not guaranteed."
+        "question": "Can a Sora video watermark be removed without cropping?",
+        "answer": "A frame-aware editor may attempt to reconstruct only the marked area, avoiding a crop, but results depend on the scene and method. WatermarkGemini has not verified a Sora-specific no-crop export yet. A clean original is preferable when available."
       },
       {
         "enabled": true,
-        "question": "Will video quality or audio change?",
-        "answer": "Video processing can re-encode footage and may affect small details, motion or audio. Inspect an entire output file, not just one frame. The upcoming WatermarkGemini Sora workflow has not yet published verified export specifications."
+        "question": "Will removing a Sora watermark lower the video quality?",
+        "answer": "Any encoded video cleanup can introduce compression, softness or flicker. Compare output resolution, frame rate, motion and sound with the original, especially in low light or detailed scenes. Claims of no quality loss require a measured product test, not a still comparison."
       },
       {
         "enabled": true,
-        "question": "Can I remove the watermark from someone else's Sora video?",
-        "answer": "Only modify content you own or have permission to edit. Removing visible attribution or a platform mark does not transfer copyright or remove the obligation to disclose AI-generated media where required."
+        "question": "Can I upload a Sora video link instead of a file?",
+        "answer": "The current WatermarkGemini page does not verify a Sora-link import feature. Keep your authorized source file and only use a link workflow if the published interface explicitly supports it. Do not infer URL support from other tools."
+      },
+      {
+        "enabled": true,
+        "question": "Can I remove a Sora watermark on iPhone or Android?",
+        "answer": "Online video editors can sometimes run on mobile, but WatermarkGemini has not published verified Sora processing compatibility for either platform. For now, review the supported browser, clip limits and actual availability rather than assuming the shared upload control can complete the job."
+      },
+      {
+        "enabled": true,
+        "question": "Does removing a visible Sora logo remove AI provenance?",
+        "answer": "No. A visible overlay and a separate AI provenance signal are different things. Cleaning an on-screen mark does not establish that hidden metadata, content credentials or AI-origin indicators have been removed. Keep legally required disclosures."
+      },
+      {
+        "enabled": true,
+        "question": "How long can a Sora video be for watermark removal?",
+        "answer": "The shared uploader currently lists a general MP4 limit, but that does not certify the dedicated Sora remover’s maximum length or tracking behavior. Confirm the actual supported duration, file size and output limits when the feature launches."
+      },
+      {
+        "enabled": true,
+        "question": "Can I edit someone else’s Sora video?",
+        "answer": "Only upload and modify media you own or have explicit authorization to edit. Watermark removal does not create copyright permissions or justify removing attribution. Obtain the clean original from the rights holder where necessary."
       }
     ]
   },
@@ -85,82 +106,161 @@
     "dropzone": {}
   },
   "features": {
-    "eyebrow": "AI Sora Watermark Remover",
-    "heading": "Sora Video Watermark Removal: What a Useful Tool Must Handle",
-    "intro": "Moving logos, busy backgrounds and video export quality make Sora cleanup different from a simple still-image edit. The following capabilities are the targets for the planned workflow, not currently verified live features.\n\nThe comparison images on this page are illustrative examples, not tested product outputs.",
+    "eyebrow": "Why choose WatermarkGemini",
+    "heading": "What to Check Before Using This Watermark Remover",
+    "intro": "A convincing preview is not enough for a video workflow. These four points explain the intended use, the visible-mark problem, the quality checks and which capabilities still need verification.",
     "items": [
       {
         "enabled": true,
         "eyebrow": "FEATURE 1",
-        "heading": "Target the Visible Watermark on Moving Frames",
-        "description": "A Sora 2 logo can shift location across a clip. A reliable video tool must identify the mark over time rather than repair only one still frame. After a compatible workflow is available, review several timestamps from your own file, including changes in background and logo position.\n\nIllustrative scene: Bioluminescent forest; not a tested product output.",
-        "image": "/uploads/landing-phase2-20261103/sora-watermark-remover/feature-04-before.webp",
-        "imageAlt": "Illustrative Bioluminescent forest comparison; not a tested product output.",
-        "imagePosition": "right",
-        "afterImage": "/uploads/landing-phase2-20261103/sora-watermark-remover/feature-04-after.webp"
+        "heading": "Plan for Sora 2 Watermarks That Change Position",
+        "description": "Unlike a fixed corner logo on a photo, a Sora video mark can shift across time. A reliable workflow must inspect the watermark path through the entire authorized clip, including cuts and camera motion. The dedicated WatermarkGemini Sora video processor is not confirmed available yet; this is the quality standard to test at launch.",
+        "image": "/uploads/landing-20261114/sora-watermark-remover/Feature_1076x872/feature-01-before.webp",
+        "imageAlt": "Cinematic market scene storyboard at three timestamps with logo markers in different positions; label illustrative.",
+        "imagePosition": "left",
+        "afterImage": "/uploads/landing-20261114/sora-watermark-remover/Feature_1076x872/feature-01-after.webp"
       },
       {
         "enabled": true,
         "eyebrow": "FEATURE 2",
-        "heading": "Preserve the Original Video Framing",
-        "description": "Cropping away a watermark can cut into the subject or change a vertical clip into an awkward format. The planned workflow should aim to edit a small marked region while keeping the original frame dimensions. Dedicated video export and a no-crop result have not been verified.\n\nIllustrative scene: Desert hourglass; not a tested product output.",
-        "image": "/uploads/landing-phase2-20261103/sora-watermark-remover/feature-05-before.webp",
-        "imageAlt": "Illustrative Desert hourglass comparison; not a tested product output.",
-        "imagePosition": "left",
-        "afterImage": "/uploads/landing-phase2-20261103/sora-watermark-remover/feature-05-after.webp"
+        "heading": "Keep the Original Video Framing Where Possible",
+        "description": "Cropping a watermark may cut a face, caption or carefully composed scene. A future frame-aware repair workflow should preserve the intended 16:9 or vertical frame when the background allows it. Today, choose a clean original export or a source-level edit before attempting a lossy crop.",
+        "image": "/uploads/landing-20261114/sora-watermark-remover/Feature_1076x872/feature-02-before.webp",
+        "imageAlt": "Raincoat portrait with safe-area crop versus full-frame visual; demonstration only.",
+        "imagePosition": "right",
+        "afterImage": "/uploads/landing-20261114/sora-watermark-remover/Feature_1076x872/feature-02-after.webp"
       },
       {
         "enabled": true,
         "eyebrow": "FEATURE 3",
-        "heading": "Check Video Detail, Motion and Audio",
-        "description": "Removing an overlay from footage is not complete when one preview still looks clean. Motion, textures and audio need checking across the entire clip. Review a complete output from a compatible workflow before relying on quality claims.\n\nIllustrative scene: Cloud sailing ship; not a tested product output.",
-        "image": "/uploads/landing-phase2-20261103/sora-watermark-remover/feature-06-before.webp",
-        "imageAlt": "Illustrative Cloud sailing ship comparison; not a tested product output.",
+        "heading": "Inspect Motion, Texture and Audio After Cleanup",
+        "description": "A clean still can hide blur, flicker and repeated patterns during playback. Before approving any Sora video watermark remover, test a short, difficult segment at the source frame rate and check audio, movement, compression and complex textures. WatermarkGemini will publish supported export details once the feature is verified.",
+        "image": "/uploads/landing-20261114/sora-watermark-remover/Feature_1076x872/feature-03-before.webp",
+        "imageAlt": "Night-city motion-contact sheet with 0s, 3s, 6s frames; visible test overlay; no fake UI.",
+        "imagePosition": "left",
+        "afterImage": "/uploads/landing-20261114/sora-watermark-remover/Feature_1076x872/feature-03-after.webp"
+      },
+      {
+        "enabled": true,
+        "eyebrow": "FEATURE 4",
+        "heading": "Understand Availability, Rights and Processing Costs",
+        "description": "The dedicated Sora video workflow on this page is marked Coming Soon. A shared uploader listing MP4 does not prove a Sora-specific tracking feature has launched. Check the current tool availability, permitted inputs and quoted credits before you submit a clip, and process only video you own or have permission to edit.",
+        "image": "/uploads/landing-20261114/sora-watermark-remover/Feature_1076x872/feature-04-before.webp",
+        "imageAlt": "Illustrative laptop feature-status scene, clean screen with Coming Soon label, not a real workspace screenshot.",
         "imagePosition": "right",
-        "afterImage": "/uploads/landing-phase2-20261103/sora-watermark-remover/feature-06-after.webp"
+        "afterImage": "/uploads/landing-20261114/sora-watermark-remover/Feature_1076x872/feature-04-after.webp"
       }
     ]
   },
   "heroSamples": [
     {
       "id": "preview-1",
-      "label": "Floating sky citadel · Illustrative",
-      "image": "/uploads/landing-phase2-20261103/sora-watermark-remover/hero-01-before.webp",
-      "imageAlt": "Illustrative Floating sky citadel comparison; not a tested product output.",
-      "afterImage": "/uploads/landing-phase2-20261103/sora-watermark-remover/hero-01-after.webp"
+      "label": "Cinematic Portrait",
+      "image": "/uploads/landing-20261114/sora-watermark-remover/Hero_1280x694/hero-01-before.webp",
+      "imageAlt": "Original cinematic portrait with a visible sample mark → matching authorized cleanup view; Explain how movement and reflections make a mark difficult; demonstration only.",
+      "afterImage": "/uploads/landing-20261114/sora-watermark-remover/Hero_1280x694/hero-01-after.webp"
     },
     {
       "id": "preview-2",
-      "label": "Celestial whale above city · Illustrative",
-      "image": "/uploads/landing-phase2-20261103/sora-watermark-remover/hero-02-before.webp",
-      "imageAlt": "Illustrative Celestial whale above city comparison; not a tested product output.",
-      "afterImage": "/uploads/landing-phase2-20261103/sora-watermark-remover/hero-02-after.webp"
+      "label": "Action Sequence",
+      "image": "/uploads/landing-20261114/sora-watermark-remover/Hero_1280x694/hero-02-before.webp",
+      "imageAlt": "Original action sequence with a visible sample mark → matching authorized cleanup view; Explain why tracking through motion matters rather than comparing only one frame.",
+      "afterImage": "/uploads/landing-20261114/sora-watermark-remover/Hero_1280x694/hero-02-after.webp"
     },
     {
       "id": "preview-3",
-      "label": "Train across mountains · Illustrative",
-      "image": "/uploads/landing-phase2-20261103/sora-watermark-remover/hero-03-before.webp",
-      "imageAlt": "Illustrative Train across mountains comparison; not a tested product output.",
-      "afterImage": "/uploads/landing-phase2-20261103/sora-watermark-remover/hero-03-after.webp"
+      "label": "Animated Storyboard",
+      "image": "/uploads/landing-20261114/sora-watermark-remover/Hero_1280x694/hero-03-before.webp",
+      "imageAlt": "Original animated storyboard with a visible sample mark → matching authorized cleanup view; Show the need to inspect linework, character outlines and cut transitions.",
+      "afterImage": "/uploads/landing-20261114/sora-watermark-remover/Hero_1280x694/hero-03-after.webp"
     }
   ],
   "relatedTools": {
     "enabled": true,
     "eyebrow": "Popular tools",
-    "heading": "All AI Tools of WatermarkGemini",
-    "intro": "Select the tool that matches the file and cleanup task you actually have."
+    "heading": "Explore More Image Cleanup Tools",
+    "intro": "Choose a tool for the type of file and visible mark you actually need to edit.",
+    "items": [
+      {
+        "title": "Background Remover",
+        "href": "https://www.watermarkgemini.com/remove-background",
+        "description": "Clean the background from authorized portraits and product photos."
+      },
+      {
+        "title": "Object Remover",
+        "href": "https://www.watermarkgemini.com/remove-object",
+        "description": "Remove distracting objects from approved images using the dedicated image editor."
+      },
+      {
+        "title": "Remove Text from Image",
+        "href": "https://www.watermarkgemini.com/remove-text-from-image",
+        "description": "Clean visible captions, dates and unwanted text on photos you may edit."
+      },
+      {
+        "title": "Remove Logo from Image",
+        "href": "https://www.watermarkgemini.com/remove-logo-from-image",
+        "description": "Review visible logos and old brand marks on authorized pictures."
+      },
+      {
+        "title": "ChatGPT Watermark Remover",
+        "href": "https://www.watermarkgemini.com/chatgpt-watermark-remover",
+        "description": "Learn about image-specific visible marks and their cleanup limits."
+      },
+      {
+        "title": "Gemini Watermark Remover",
+        "href": "https://www.watermarkgemini.com/gemini-watermark-remover",
+        "description": "Clean a supported visible Gemini sparkle on an authorized still image."
+      },
+      {
+        "title": "Remove Date Stamp",
+        "href": "https://www.watermarkgemini.com/",
+        "description": "Use the main image workflow for supported visible photo date stamps."
+      },
+      {
+        "title": "Remove Signature",
+        "href": "https://www.watermarkgemini.com/",
+        "description": "Review visible signatures on images only when you have permission."
+      }
+    ]
   },
   "guides": {
     "enabled": true,
     "eyebrow": "Helpful guides",
-    "heading": "Learn More About AI Watermark Remover from Image",
-    "intro": "Practical tutorials for improving the images and videos you are allowed to edit."
+    "heading": "Helpful Guides for Sora Watermark Remover",
+    "intro": "Practical background reading about authorized cleanup methods, file limitations and related editing tasks.",
+    "items": [
+      {
+        "title": "How to Remove Moving Watermark From Video Without Flicker",
+        "href": "https://www.watermarkgemini.com/blog/remove-moving-watermark-from-video"
+      },
+      {
+        "title": "How to Remove a TikTok Watermark from a Video You Own",
+        "href": "https://www.watermarkgemini.com/blog/how-to-remove-watermark-tiktok"
+      },
+      {
+        "title": "How to Remove CapCut Watermark from Videos",
+        "href": "https://www.watermarkgemini.com/blog/how-to-remove-capcut-watermark"
+      },
+      {
+        "title": "How to Remove Hardcoded Subtitles from Video",
+        "href": "https://www.watermarkgemini.com/blog/remove-hardcoded-subtitles-from-video"
+      },
+      {
+        "title": "How to Remove Filmora Watermark",
+        "href": "https://www.watermarkgemini.com/blog/how-to-remove-filmora-watermark"
+      },
+      {
+        "title": "Best AI Watermark Remover in 2026: 7 Tools Compared",
+        "href": "https://www.watermarkgemini.com/blog/best-ai-watermark-remover"
+      }
+    ]
   },
   "cta": {
     "eyebrow": "Ready when you are",
-    "heading": "Check the Sora Watermark Remover Availability",
-    "description": "Keep your original file and check this page for verified availability and supported export formats.",
-    "buttonLabel": "Upload your image",
-    "buttonHref": "/#tool"
-  }
+    "heading": "Review the Upcoming Sora Watermark Remover",
+    "description": "Keep the original media you own, review the visible mark and check this page for a verified dedicated video workflow. Supported formats, processing costs and download details will be confirmed when the feature is released.",
+    "buttonLabel": "Check Availability",
+    "buttonHref": "#tool"
+  },
+  "toolNote": "Dedicated feature coming soon; general upload format text must not imply support."
 }

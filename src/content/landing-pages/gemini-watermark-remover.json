@@ -3,45 +3,113 @@
     {
       "id": "water",
       "label": "Water portrait",
-      "image": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-hero-01-water-portrait-before-f6d51d6e3dfb908d.webp",
-      "afterImage": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-hero-01-water-portrait-after-3b5732c40d10a859.webp",
-      "imageAlt": "Illustrative water portrait with and without an added repeating Gemini mark; not a tested product output."
+      "image": "/uploads/landing-20261114/gemini-watermark-remover/Hero_640x347/hero-01-before.webp",
+      "afterImage": "/uploads/landing-20261114/gemini-watermark-remover/Hero_640x347/hero-01-after.webp",
+      "imageAlt": "Illustrative Gemini-style mark over a portrait in water"
     },
     {
       "id": "travel",
       "label": "Travel portrait",
-      "image": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-hero-02-santorini-travel-before-b34188f03be17e2a.webp",
-      "afterImage": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-hero-02-santorini-travel-after-31f2223eee037f6a.webp",
-      "imageAlt": "Illustrative santorini travel portrait with a dog, with and without an added repeating Gemini mark; not a tested product output."
+      "image": "/uploads/landing-20261114/gemini-watermark-remover/Hero_640x347/hero-02-before.webp",
+      "afterImage": "/uploads/landing-20261114/gemini-watermark-remover/Hero_640x347/hero-02-after.webp",
+      "imageAlt": "Illustrative Gemini-style mark over detailed AI artwork"
     },
     {
       "id": "serum",
       "label": "Product photo",
-      "image": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-hero-03-serum-product-before-d397e6da83740ca6.webp",
-      "afterImage": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-hero-03-serum-product-after-44c2fbd00eb9ebfd.webp",
-      "imageAlt": "Illustrative skincare serum product scene with and without an added repeating Gemini mark; not a tested product output."
+      "image": "/uploads/landing-20261114/gemini-watermark-remover/Hero_640x347/hero-03-before.webp",
+      "afterImage": "/uploads/landing-20261114/gemini-watermark-remover/Hero_640x347/hero-03-after.webp",
+      "imageAlt": "Illustrative Gemini-style mark over a serum product image"
     }
   ],
   "relatedTools": {
     "enabled": true,
     "eyebrow": "Popular tools",
     "heading": "Explore More Image Cleanup Tools",
-    "intro": "Choose the right tool for logos, text, backgrounds, objects, or other visible marks in images you're allowed to edit."
+    "intro": "Choose a tool for the kind of visible mark or image edit you need, and work only with files you own or have permission to modify.",
+    "items": [
+      {
+        "title": "Background Remover",
+        "description": "Remove the background from an approved image for a cleaner layout or design.",
+        "href": "/remove-background"
+      },
+      {
+        "title": "Object Remover",
+        "description": "Erase unwanted objects and visual clutter from images you are allowed to edit.",
+        "href": "/remove-object"
+      },
+      {
+        "title": "Remove Text from Image",
+        "description": "Clean captions, date labels, and unwanted text overlays from your photos.",
+        "href": "/remove-text-from-image"
+      },
+      {
+        "title": "Remove Logo from Image",
+        "description": "Remove visible logos and brand marks from authorized image files.",
+        "href": "/remove-logo-from-image"
+      },
+      {
+        "title": "ChatGPT Watermark Remover",
+        "description": "Review an approved image with a visible AI-related mark and compare the result.",
+        "href": "/chatgpt-watermark-remover"
+      },
+      {
+        "title": "Gemini Watermark Remover",
+        "description": "Clean the visible Gemini sparkle while keeping the original image crop.",
+        "href": "/gemini-watermark-remover"
+      },
+      {
+        "title": "Remove Date Stamp",
+        "description": "Clear date and timestamp overlays from photos you are permitted to edit.",
+        "href": "/#tool"
+      },
+      {
+        "title": "Remove Signature",
+        "description": "Review an authorized signature cleanup on a supported image before downloading.",
+        "href": "/#tool"
+      }
+    ]
   },
   "guides": {
     "enabled": true,
     "eyebrow": "Helpful guides",
-    "heading": "Helpful Guides for Gemini and Image Watermark Removal",
-    "intro": "Explore practical guides for editing existing images, managing Gemini's visible watermark setting, and solving common cleanup problems."
+    "heading": "Helpful Guides for Gemini and AI Image Watermarks",
+    "intro": "Learn when to change Gemini’s watermark setting, how to work with existing images, and how visible marks differ from AI-origin signals.",
+    "items": [
+      {
+        "title": "How to Turn Off Gemini Watermark (2026 Guide)",
+        "href": "https://www.watermarkgemini.com/blog/how-to-turn-off-gemini-watermark"
+      },
+      {
+        "title": "How to Tell if a Photo Is AI Generated: 7 Checks for 2026",
+        "href": "https://www.watermarkgemini.com/blog/how-to-tell-if-photo-is-ai-generated"
+      },
+      {
+        "title": "Best AI Watermark Remover in 2026: 7 Tools Compared",
+        "href": "https://www.watermarkgemini.com/blog/best-ai-watermark-remover"
+      },
+      {
+        "title": "Does ChatGPT Watermark Images? The Current Answer",
+        "href": "https://www.watermarkgemini.com/blog/does-chatgpt-watermark-images"
+      },
+      {
+        "title": "How to Remove Date Stamp from Photo: 6 Practical Methods",
+        "href": "https://www.watermarkgemini.com/blog/how-to-remove-date-stamp-from-photo"
+      },
+      {
+        "title": "How to Remove Samsung Watermark from Photos: 4 Easy Ways",
+        "href": "https://www.watermarkgemini.com/blog/how-to-remove-samsung-watermark-from-photos"
+      }
+    ]
   },
   "slug": "gemini-watermark-remover",
   "draft": false,
   "toolKind": "watermark-remover",
   "title": "Gemini Watermark Remover – Remove Gemini Watermark Online",
-  "description": "Remove Gemini watermark from images online with WatermarkGemini. Clean the visible Gemini sparkle without cropping, preview your result, and download your JPG.",
+  "description": "Remove Gemini watermarks from saved images online without cropping. Preview the edited area, review processing costs, and download your JPG with WatermarkGemini.",
   "eyebrow": "GEMINI WATERMARK REMOVER",
   "heading": "Gemini Watermark Remover – Remove Gemini Watermark from Images",
-  "intro": "Remove the visible Gemini watermark from an image you own or have permission to edit—without cropping away the corner. WatermarkGemini helps clean the Gemini sparkle while preserving the original composition. Upload your image, review the result, and download your edited JPG online. Illustrative comparisons show the same scene with and without added marks. They are not tested WatermarkGemini results or examples of Google Gemini’s actual watermark pattern.",
+  "intro": "Already saved a Gemini-generated image with a visible sparkle watermark? WatermarkGemini helps remove the visible mark without cropping away the corner. Upload an image you own or have permission to edit, review the processing cost, and compare the edited JPG before downloading. The current comparisons are illustrative, not tested product outputs or exact representations of Google’s watermark design; results depend on the original image.",
   "benefits": [
     "Remove the Visible Gemini Sparkle",
     "Keep the Original Crop",
@@ -50,142 +118,138 @@
   "process": {
     "eyebrow": "How it works",
     "heading": "How to Remove Gemini Watermark from an Image Online",
-    "intro": "Remove a visible Gemini watermark in three steps: upload a supported image, review the processing cost, then check and download your result.",
+    "intro": "Remove a visible Gemini watermark from an image you’ve already downloaded: choose the original file, review the processing cost after signing in, and check the returned image before saving it.",
     "steps": [
       {
         "number": "01",
         "title": "Upload Your Gemini Image",
-        "description": "Upload your original Gemini image in JPG, PNG, or WebP format (up to 10 MB). Keep the original file so you can compare it with the edited result."
+        "description": "Choose an original JPG, PNG, or WebP image up to 10 MB. An original Gemini export usually gives you a better starting point than a cropped or heavily compressed screenshot. Keep a separate copy so you can compare the result later."
       },
       {
         "number": "02",
         "title": "Remove the Visible Gemini Watermark",
-        "description": "Sign in with Google, review the cost displayed before processing, and start the cleanup. WatermarkGemini targets the visible Gemini mark and aims to blend the edited area with the surrounding image."
+        "description": "Sign in with Google to prepare the image, then check the displayed cost and any eligible free image uses before starting. WatermarkGemini processes the visible marked area; it does not remove invisible SynthID or other provenance information."
       },
       {
         "number": "03",
         "title": "Preview and Download Your Clean Image",
-        "description": "Compare the original and edited image, especially around the former watermark. If you're satisfied with the result, download the processed JPG."
+        "description": "Compare the returned image with the original, paying close attention to the former watermark area, nearby texture, and edges. If the cleanup meets your needs, download the JPG. Keep the original file in case you want to try a different approach."
       }
     ]
   },
   "features": {
     "eyebrow": "Why choose WatermarkGemini",
     "heading": "A Gemini Watermark Remover Built for Clean Image Results",
-    "intro": "The Gemini sparkle may be small, but cropping it out can remove part of your image, while covering it can leave a noticeable patch. WatermarkGemini focuses on visible watermark cleanup, full-frame results, a simpler online workflow, and clear processing terms. The images are illustrative scenes, not tested cleanup results; the workflow and privacy diagrams are not screenshots of the current product.",
+    "intro": "The visible Gemini sparkle is small, but simply cropping or blurring it can damage an otherwise useful image. WatermarkGemini focuses on preserving the full frame, making the cleaned area easier to inspect, and giving you a clear online workflow with transparent processing terms. The comparison scenes shown here are illustrative, not verified product outputs; actual results may vary.",
     "items": [
       {
         "enabled": true,
         "eyebrow": "FEATURE 1",
         "heading": "Remove Gemini Watermarks Without Cropping the Image",
-        "description": "A corner watermark shouldn't force you to cut away part of a portrait, product image, or carefully arranged illustration. WatermarkGemini cleans the visible marked area instead of cropping the image. This helps retain the full frame, original aspect ratio, and useful space near the edges for presentations, social posts, or future design work.",
-        "listItems": [],
-        "image": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-feature-01-full-frame-before-c36c792986f4af98.webp",
-        "afterImage": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-feature-01-full-frame-after-4899599429f7223e.webp",
-        "imageAlt": "Illustrative alpine landscape and hiker with and without an added repeating Gemini mark; not a tested product output.",
-        "imagePosition": "left"
+        "description": "When a Gemini sparkle sits near the edge of a portrait, product render, or illustration, cropping may remove useful details and change the aspect ratio. WatermarkGemini works on the visible marked area instead of cutting away the corner, helping you keep the original composition and the space around your subject. That matters when you’re preparing a slide, social post, or design draft that already has the framing you want.",
+        "image": "/uploads/landing-20261114/gemini-watermark-remover/Feature_538x436/feature-01-before.webp",
+        "imageAlt": "Illustrative no-crop comparison on a mountain landscape",
+        "imagePosition": "left",
+        "afterImage": "/uploads/landing-20261114/gemini-watermark-remover/Feature_538x436/feature-01-after.webp"
       },
       {
         "enabled": true,
         "eyebrow": "FEATURE 2",
-        "heading": "Clean Gemini Sparkle Watermarks Without Blurry Patches",
-        "description": "Blurring a Gemini logo can replace one distraction with another, especially when the mark overlaps water, fabric, shadows, or other textured backgrounds. WatermarkGemini aims to repair the visible watermark area using nearby colors and details. Preview the result and inspect the cleaned region before downloading; the final appearance can vary with image complexity.",
-        "listItems": [],
-        "image": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-feature-02-fine-texture-before-26d64285e1ad1897.webp",
-        "afterImage": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-feature-02-fine-texture-after-98f3b7fafbcd23b0.webp",
-        "imageAlt": "Illustrative portrait and embroidered fabric with and without an added repeating Gemini mark; not a tested product output.",
-        "imagePosition": "right"
+        "heading": "Clean the Gemini Sparkle Without Obvious Blur",
+        "description": "A blurred square can look more distracting than the original watermark, especially over fabric, water, foliage, or textured backgrounds. WatermarkGemini aims to blend the edited area with surrounding colors and details rather than relying on a large crop. Zoom in on the result to check for soft patches, repeated patterns, or a faint remaining mark. Background complexity affects the outcome, and no cleanup tool can promise a perfect restoration in every image.",
+        "image": "/uploads/landing-20261114/gemini-watermark-remover/Feature_538x436/feature-02-before.webp",
+        "imageAlt": "Illustrative textured fabric watermark comparison",
+        "imagePosition": "right",
+        "afterImage": "/uploads/landing-20261114/gemini-watermark-remover/Feature_538x436/feature-02-after.webp"
       },
       {
         "enabled": true,
         "eyebrow": "FEATURE 3",
-        "heading": "Remove Gemini Watermarks Online Without Manual Editing",
-        "description": "You don't need to open a complex editor or paint over individual pixels to remove a visible Gemini watermark. Upload a supported image, sign in to process it, compare the original and returned version, and download your edited JPG from your browser. It's a practical workflow for creators who want to keep the image they already generated. The accompanying browser workflow is an illustration, not a screenshot of the current interface.",
-        "listItems": [],
-        "image": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-feature-03-browser-workflow-before-2035d37b7cc40748.webp",
-        "afterImage": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-feature-03-browser-workflow-after-ae7bc9dee63c9714.webp",
-        "imageAlt": "Illustrative laptop browser workflow illustration with and without an added repeating Gemini mark; not a tested product output.",
-        "imagePosition": "left"
+        "heading": "Remove Gemini Watermarks Online Without Manual Retouching",
+        "description": "You don’t need to open a desktop image editor or paint over each pixel by hand. Select a supported image, sign in with Google, review the quoted processing cost, and run the cleanup through WatermarkGemini’s browser-based workspace. Then compare the original with the processed JPG and download only when the result looks right. Your file is uploaded for processing after the sign-in and preparation steps; this is not an entirely on-device tool.",
+        "image": "/uploads/landing-20261114/gemini-watermark-remover/Feature_538x436/feature-03-before.webp",
+        "imageAlt": "Illustrative laptop workflow showing original and edited states",
+        "imagePosition": "left",
+        "afterImage": "/uploads/landing-20261114/gemini-watermark-remover/Feature_538x436/feature-03-after.webp"
       },
       {
         "enabled": true,
         "eyebrow": "FEATURE 4",
-        "heading": "Private Processing and Clear Image Usage Costs",
-        "description": "Review the processing cost and eligible free image uses shown in the workspace before you begin. Uploaded files and results use private temporary storage and are generally scheduled to expire after about 24 hours; actual deletion may occur later. The accompanying privacy and free-use diagram is illustrative, not a screenshot or proof of a processing allowance.",
-        "listItems": [],
-        "image": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-feature-04-private-processing-before-e48149c6cfc455f8.webp",
-        "afterImage": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-feature-04-private-processing-after-37cba2e12d93172a.webp",
-        "imageAlt": "Illustrative laptop privacy and free-use diagram with and without an added repeating Gemini mark; not a tested product output.",
-        "imagePosition": "right"
+        "heading": "Free Image Uses, Clear Costs and Private Uploads",
+        "description": "Eligible standard image operations can use limited free image uses. The current allowance provides one use when you first sign in and another through daily check-in, with a maximum free-use balance of three. The workspace shows the processing cost before you start. Submitted files and results use private temporary storage and are generally scheduled to expire after about 24 hours, although actual deletion can occur later. Review the Privacy Policy before uploading sensitive material.",
+        "image": "/uploads/landing-20261114/gemini-watermark-remover/Feature_538x436/feature-04-before.webp",
+        "imageAlt": "Illustrative upload and private workflow concept",
+        "imagePosition": "right",
+        "afterImage": "/uploads/landing-20261114/gemini-watermark-remover/Feature_538x436/feature-04-after.webp"
       }
     ]
   },
   "cta": {
     "eyebrow": "Ready when you are",
     "heading": "Remove the Visible Gemini Watermark from Your Image",
-    "description": "Upload a supported Gemini image, review the processing cost, and preview the cleaned result before downloading.",
-    "buttonLabel": "Upload your image",
+    "description": "Choose a supported Gemini image, review the cost before processing, and check the edited result before downloading your JPG.",
+    "buttonLabel": "Open workspace",
     "buttonHref": "#tool"
   },
   "faq": {
     "eyebrow": "Gemini watermark FAQ",
     "heading": "FAQs About Removing Gemini Watermarks",
-    "intro": "Answers about removing visible Gemini watermarks online, free image uses, image quality, and Google's watermark settings.",
+    "intro": "Answers about removing the visible Gemini watermark from saved images, limited free image uses, image quality, Nano Banana, and Google’s watermark settings.",
     "items": [
       {
         "enabled": true,
         "question": "How do I remove a Gemini watermark from an image?",
-        "answer": "Upload a JPG, PNG, or WebP Gemini image up to 10 MB, sign in with Google, and review the processing cost. Start the cleanup, then compare the result with the original. If the marked area looks right, download your edited JPG. Keep a copy of your original image."
+        "answer": "Upload the original JPG, PNG, or WebP image to WatermarkGemini and sign in with Google. Review the cost before processing, start the cleanup, then compare the returned JPG with your original. Inspect the former watermark area at full size before downloading. This workflow is for visible marks on images you own or have permission to edit; it does not remove invisible provenance information."
       },
       {
         "enabled": true,
         "question": "Can I remove a Gemini watermark online?",
-        "answer": "Yes. WatermarkGemini is an online Gemini watermark remover for supported image files. You can upload, process, preview, and download through your browser without installing traditional editing software. Google sign-in is required before processing."
+        "answer": "Yes. WatermarkGemini provides a browser-based workflow for supported still images. You can select an image, sign in, review its processing cost, inspect the returned result, and download an edited JPG without installing a desktop photo editor. However, the selected file is uploaded to private processing storage when you prepare the task, so the service is not entirely local to your device."
       },
       {
         "enabled": true,
-        "question": "Is the Gemini watermark remover free?",
-        "answer": "Eligible standard image processing may use limited free image uses. Other processing may require credits. Review the cost, available balance and eligibility shown in the workspace before you start; the service is not unlimited free processing. Google sign-in is required."
+        "question": "Is Gemini Watermark Remover free to use?",
+        "answer": "Eligible standard image processing includes limited free uses: one on first sign-in and one added through daily check-in, up to a free-use balance of three. The workspace displays the cost and available allowance before you run a task. This is not unlimited free processing. The pricing page currently says new purchases are paused; check the latest on-screen availability rather than assuming a paid plan can be purchased."
       },
       {
         "enabled": true,
-        "question": "How do I turn off the watermark in Google Gemini?",
-        "answer": "In Gemini Apps on a computer, open Settings and choose Media Watermark, then turn visible watermarks off if the setting is available to your account. Google applies account and location restrictions. The setting controls newly created media in Gemini Apps; it does not remove visible marks from files you already downloaded or turn off SynthID and Content Credentials."
+        "question": "How do I turn off the visible watermark in Google Gemini?",
+        "answer": "For newly generated content in Gemini Apps, open Settings → Media watermark at gemini.google.com and switch off visible watermarks if your account is eligible. Availability can depend on location and plan. This setting applies to new Gemini Apps media, not images you already downloaded, and it does not disable SynthID or Content Credentials. See Google’s official help and our guide to turning off Gemini watermarks."
       },
       {
         "enabled": true,
-        "question": "What kind of Gemini watermark does this tool remove?",
-        "answer": "WatermarkGemini is designed for the visible Gemini sparkle on supported image files. It does not claim to remove invisible SynthID watermarks, C2PA Content Credentials, or other provenance signals. Use the before-and-after preview to assess how well the visible cleanup worked on your image."
+        "question": "Does this work on Nano Banana images and other Gemini marks?",
+        "answer": "Nano Banana belongs to Google’s Gemini image-generation family, but not every export has the same visible mark. WatermarkGemini is intended for supported visible image watermarks, and the result depends on the particular file, mark, and background. Try an authorized image and inspect the preview rather than assuming every variant will be removed. For more specific model information, see our Nano Banana Watermark Remover page."
       },
       {
         "enabled": true,
         "question": "Can I remove a Gemini watermark without cropping?",
-        "answer": "Yes. WatermarkGemini processes the visible mark rather than cutting off a corner of the image. This helps keep the original crop and aspect ratio intact. As with any cleanup, inspect the image after processing, especially when the watermark overlaps detailed backgrounds."
+        "answer": "Yes. WatermarkGemini processes the visible watermark area rather than removing part of the frame. This helps keep the image dimensions, composition, and edge details that would otherwise be lost to cropping. It is still a visual edit, so check the cleaned region for artifacts, especially over textured backgrounds or important subjects."
       },
       {
         "enabled": true,
-        "question": "Will removing the Gemini watermark affect image quality?",
-        "answer": "Results vary with watermark position and background complexity. WatermarkGemini aims to blend the cleaned area with nearby colors and details, but no tool can guarantee a pixel-identical result. The current output is JPG, so compression may also differ from your original. Check the preview before downloading."
+        "question": "Will removing a Gemini watermark reduce image quality?",
+        "answer": "Results depend on watermark size, location, and the details behind it. WatermarkGemini aims to make the cleaned region blend with its surroundings, but fine texture can change and the output JPG may have different compression from your source image. Compare both versions at 100% zoom and keep the original. No tool can guarantee identical pixels or a perfect result in every case."
       },
       {
         "enabled": true,
-        "question": "What image formats does Gemini Watermark Remover support?",
-        "answer": "The Gemini image tool accepts one JPG, PNG, or WebP image up to 10 MB at a time. The processed result is downloaded as JPG. Upload the original export when possible rather than a heavily compressed screenshot."
+        "question": "Which image formats are supported?",
+        "answer": "The Gemini image workflow accepts one JPG, PNG, or WebP image up to 10 MB at a time and currently returns a JPG. Start with the original Gemini export when possible. Screenshots, heavily compressed re-saves, or unusually placed marks can make cleanup harder to evaluate. The separate site-wide uploader also lists MP4, but video jobs use a different workspace and processing rules."
       },
       {
         "enabled": true,
-        "question": "Do I need to sign in to remove a Gemini watermark?",
-        "answer": "Yes. You can choose an image locally before signing in, but Google sign-in is required to prepare and process the file. Review the processing cost and available free uses after signing in before starting."
+        "question": "Do I need to sign in before removing a watermark?",
+        "answer": "Yes. You can select and preview a file locally first, but Google sign-in is required to prepare and process it. After sign-in, the workspace may upload the selected file to validate it and calculate the processing cost before you click the final processing action. Do not upload confidential material without reviewing the Privacy Policy and the processing-provider terms."
       },
       {
         "enabled": true,
-        "question": "Does WatermarkGemini remove SynthID?",
-        "answer": "No. WatermarkGemini targets the visible Gemini mark, not Google's invisible SynthID watermark. Removing the visible sparkle does not remove SynthID or Content Credentials, and it does not change the underlying origin of the file."
+        "question": "Does this tool remove Google’s invisible SynthID watermark?",
+        "answer": "No. WatermarkGemini targets visible image marks, such as the Gemini sparkle. SynthID is a separate invisible watermark used by Google, and Content Credentials are another provenance signal. Removing a visible corner logo does not remove those signals or change how the image was created. Keep appropriate AI-origin disclosures when sharing edited media."
       },
       {
         "enabled": true,
-        "question": "Why does my Gemini image still have a watermark?",
-        "answer": "If the image was generated before you turned off Media watermark, changing the setting will not edit that saved file. The option may also be restricted for some accounts or regions. For a file you already own or may edit, you can try cleaning the visible mark with WatermarkGemini. For future images, check Gemini's watermark setting first."
+        "question": "Why does my Gemini image still show a watermark after changing settings?",
+        "answer": "Turning off Media watermark in Gemini Apps affects newly created eligible content; it does not go back and rewrite files you already saved. The setting may also be unavailable for some accounts or locations, and it does not control every Google AI product. For an existing image, you can regenerate it with the setting off or review a permitted visible-mark cleanup with WatermarkGemini. Neither approach removes SynthID."
       }
     ]
   }

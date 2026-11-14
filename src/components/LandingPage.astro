@@ -29,7 +29,14 @@ const [homepage] = await getCollection('homepage');
 const publicPages = publicLandingEntries(await getCollection('landingPages'));
 const publishedPaths = new Set(availableRelatedToolEntries(publicPages).map(({ data }) => '/' + data.slug));
 const defaultTools = (homepage?.data.removalTools.cards ?? []).filter(item => item.href === '/#tool' || publishedPaths.has(item.href));
-const relatedTools = page.relatedTools?.slugs
+const relatedTools = page.relatedTools?.items
+  ? page.relatedTools.items.map(item => {
+      const pathname = new URL(item.href, Astro.site).pathname;
+      const card = defaultTools.find(card => new URL(card.href, Astro.site).pathname === pathname && (pathname !== '/' || card.title === item.title));
+      const tool = publicPages.find(({ data }) => '/' + data.slug === pathname);
+      return { title: item.title, copy: item.description ?? '', href: item.href, image: card?.image ?? tool?.data.heroSamples?.[0]?.image ?? site.processVisuals[0].image, alt: card?.alt ?? item.title };
+    })
+  : page.relatedTools?.slugs
   ? availableRelatedToolEntries(publicPages, page.relatedTools.slugs).map(tool => {
       const slug = tool.data.slug;
       const card = defaultTools.find(item => item.href === '/' + slug);
@@ -37,12 +44,14 @@ const relatedTools = page.relatedTools?.slugs
     })
   : defaultTools;
 const blogPosts = sortBlogEntries(await getCollection('blog'));
-const guides = page.guides?.slugs
+const guides = page.guides?.items
+  ? page.guides.items
+  : (page.guides?.slugs
   ? page.guides.slugs.flatMap(slug => {
       const post = blogPosts.find(({ data }) => data.slug === slug);
       return post ? [post] : [];
     }).slice(0, 6)
-  : blogPosts.slice(0, 6);
+  : blogPosts.slice(0, 6)).map(({ data }) => ({ title: data.title, href: `/blog/${data.slug}`, description: undefined }));
 const guideColumns = [guides.slice(0, 3), guides.slice(3, 6)].filter(column => column.length);
 const headingParts = page.heading.split(' – ');
 const cta = { ...site.cta, ...page.cta, buttonHref: page.cta?.buttonHref ?? '#tool' };
@@ -63,7 +72,7 @@ const faqSchema = visibleFaqItems.length > 0 ? {
 } : undefined;
 ---
 
-<SiteLayout title={page.title} description={page.description} schema={faqSchema} cta={cta}>
+<SiteLayout title={page.title} description={page.description} schema={faqSchema} cta={cta} ctaButtonLabel={page.relatedTools?.items && page.cta ? cta.buttonLabel : undefined}>
   <div class="tool-landing">
   <section class="hero landing-hero section-shell" id="upload">
     <div class="hero-inner">
@@ -86,6 +95,7 @@ const faqSchema = visibleFaqItems.length > 0 ? {
         </div>}
         <div id="tool" class="hero-tool">
         <MediaLauncher source={page.slug} recommendation={recommendation} client:load />
+        {page.toolNote && <p class="tool-note">{page.toolNote}</p>}
       </div>
       </div>
     </div>
@@ -125,7 +135,7 @@ const faqSchema = visibleFaqItems.length > 0 ? {
 
   {page.guides?.enabled !== false && guideColumns.length > 0 && <section class="guides section-shell home-guides" id="guides" aria-labelledby="guides-heading">
     <div class="section-heading row-heading"><span class="eyebrow">{page.guides?.eyebrow ?? 'Helpful guides'}</span><h2 id="guides-heading">{page.guides?.heading ?? 'Learn More About Free AI Watermark Remover from Image'}</h2><p>{page.guides?.intro ?? 'Practical guides for cleaner, more polished images.'}</p></div>
-    <div class="guides-list-grid">{guideColumns.map(column => <ul class="guides-list">{column.map(({ data: post }) => <li><a href={`/blog/${post.slug}`}><Dot size={20} aria-hidden="true" /><span>{post.title}</span><ArrowRight size={18} aria-hidden="true" /></a></li>)}</ul>)}</div>
+    <div class="guides-list-grid">{guideColumns.map(column => <ul class="guides-list">{column.map(post => <li><a href={post.href}><Dot size={20} aria-hidden="true" /><span>{post.title}{post.description && <small class="guide-description">{post.description}</small>}</span><ArrowRight size={18} aria-hidden="true" /></a></li>)}</ul>)}</div>
   </section>}
 
   {visibleFaqItems.length > 0 && <section class="faq section-shell faq-section">
