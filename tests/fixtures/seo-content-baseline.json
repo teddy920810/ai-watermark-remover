@@ -742,7 +742,7 @@
           "value": "/uploads/landing-20261114/facebook-watermark-remover/Feature_538x436/feature-04-after.webp"
         }
       ],
-      "contentOwnerApproval": "User-authorized operations content package 2026-11-14; use supplied _CLEAN_COPY.txt without editorial changes. PR reference added when created."
+      "contentOwnerApproval": "https://github.com/teddy920810/ai-watermark-remover/pull/151"
     },
     {
       "file": "src/content/landing-pages/gemini-watermark-remover.json",
@@ -833,7 +833,7 @@
           "value": "/uploads/landing-20261114/gemini-watermark-remover/Feature_538x436/feature-04-after.webp"
         }
       ],
-      "contentOwnerApproval": "User-authorized operations content package 2026-11-14; use supplied _CLEAN_COPY.txt without editorial changes. PR reference added when created."
+      "contentOwnerApproval": "https://github.com/teddy920810/ai-watermark-remover/pull/151"
     },
     {
       "file": "src/content/landing-pages/grok-watermark-remover.json",
@@ -924,7 +924,7 @@
           "value": "/uploads/landing-20261114/grok-watermark-remover/Features_538x436/feature-04-after.webp"
         }
       ],
-      "contentOwnerApproval": "User-authorized operations content package 2026-11-14; use supplied _CLEAN_COPY.txt without editorial changes. PR reference added when created."
+      "contentOwnerApproval": "https://github.com/teddy920810/ai-watermark-remover/pull/151"
     },
     {
       "file": "src/content/landing-pages/instagram-watermark-remover.json",
@@ -1070,7 +1070,7 @@
           "value": "/uploads/landing-20261114/kling-watermark-remover/Feature_1076x872/feature-04-after.webp"
         }
       ],
-      "contentOwnerApproval": "User-authorized operations content package 2026-11-14; use supplied _CLEAN_COPY.txt without editorial changes. PR reference added when created."
+      "contentOwnerApproval": "https://github.com/teddy920810/ai-watermark-remover/pull/151"
     },
     {
       "file": "src/content/landing-pages/notebooklm-watermark-remover.json",
@@ -1185,7 +1185,7 @@
           "value": "/uploads/landing-20261114/notebooklm-watermark-remover/Feature_1076x872/feature-04-after.webp"
         }
       ],
-      "contentOwnerApproval": "User-authorized operations content package 2026-11-14; use supplied _CLEAN_COPY.txt without editorial changes. PR reference added when created."
+      "contentOwnerApproval": "https://github.com/teddy920810/ai-watermark-remover/pull/151"
     },
     {
       "file": "src/content/landing-pages/pdf-watermark-remover.json",
@@ -1300,7 +1300,7 @@
           "value": "/uploads/landing-20261114/pdf-watermark-remover/Hero_1280x694/hero-03-after.webp"
         }
       ],
-      "contentOwnerApproval": "User-authorized operations content package 2026-11-14; use supplied _CLEAN_COPY.txt without editorial changes. PR reference added when created."
+      "contentOwnerApproval": "https://github.com/teddy920810/ai-watermark-remover/pull/151"
     },
     {
       "file": "src/content/landing-pages/remove-background.json",
@@ -1493,7 +1493,7 @@
           "value": "/uploads/landing-20261114/remove-logo-from-image/Hero_1280x694/hero-03-after.webp"
         }
       ],
-      "contentOwnerApproval": "User-authorized operations content package 2026-11-14; use supplied _CLEAN_COPY.txt without editorial changes. PR reference added when created."
+      "contentOwnerApproval": "https://github.com/teddy920810/ai-watermark-remover/pull/151"
     },
     {
       "file": "src/content/landing-pages/remove-subtitle-from-video.json",
@@ -1584,7 +1584,7 @@
           "value": "/uploads/landing-20261114/remove-subtitle-from-video/Feature_538x436/feature-04-after.webp"
         }
       ],
-      "contentOwnerApproval": "User-authorized operations content package 2026-11-14; use supplied _CLEAN_COPY.txt without editorial changes. PR reference added when created."
+      "contentOwnerApproval": "https://github.com/teddy920810/ai-watermark-remover/pull/151"
     },
     {
       "file": "src/content/landing-pages/remove-text-from-image.json",
@@ -1699,7 +1699,7 @@
           "value": "/uploads/landing-20261114/remove-text-from-image/Feature_1076x872/feature-04-after.webp"
         }
       ],
-      "contentOwnerApproval": "User-authorized operations content package 2026-11-14; use supplied _CLEAN_COPY.txt without editorial changes. PR reference added when created."
+      "contentOwnerApproval": "https://github.com/teddy920810/ai-watermark-remover/pull/151"
     },
     {
       "file": "src/content/landing-pages/shutterstock-watermark-remover.json",
@@ -1790,7 +1790,7 @@
           "value": "/uploads/landing-20261114/shutterstock-watermark-remover/Feature_538x436/feature-04-after.webp"
         }
       ],
-      "contentOwnerApproval": "User-authorized operations content package 2026-11-14; use supplied _CLEAN_COPY.txt without editorial changes. PR reference added when created."
+      "contentOwnerApproval": "https://github.com/teddy920810/ai-watermark-remover/pull/151"
     },
     {
       "file": "src/content/landing-pages/sora-watermark-remover.json",
@@ -1905,7 +1905,7 @@
           "value": "/uploads/landing-20261114/sora-watermark-remover/Hero_1280x694/hero-03-after.webp"
         }
       ],
-      "contentOwnerApproval": "User-authorized operations content package 2026-11-14; use supplied _CLEAN_COPY.txt without editorial changes. PR reference added when created."
+      "contentOwnerApproval": "https://github.com/teddy920810/ai-watermark-remover/pull/151"
     },
     {
       "file": "src/content/landing-pages/tiktok-watermark-remover.json",
@@ -2020,7 +2020,7 @@
           "value": "/uploads/landing-20261114/tiktok-watermark-remover/Hero_1280x694/hero-03-after.webp"
         }
       ],
-      "contentOwnerApproval": "User-authorized operations content package 2026-11-14; use supplied _CLEAN_COPY.txt without editorial changes. PR reference added when created."
+      "contentOwnerApproval": "https://github.com/teddy920810/ai-watermark-remover/pull/151"
     },
     {
       "file": "src/content/landing-pages/veo-watermark-remover.json",
@@ -2111,7 +2111,7 @@
           "value": "/uploads/landing-20261114/veo-watermark-remover/Hero_640x347/hero-03-after.webp"
         }
       ],
-      "contentOwnerApproval": "User-authorized operations content package 2026-11-14; use supplied _CLEAN_COPY.txt without editorial changes. PR reference added when created."
+      "contentOwnerApproval": "https://github.com/teddy920810/ai-watermark-remover/pull/151"
     },
     {
       "file": "src/content/landing-pages/video-watermark-remover.json",
@@ -2202,7 +2202,7 @@
           "value": "/uploads/landing-20261114/video-watermark-remover/Hero_640x347/hero-03-after.webp"
         }
       ],
-      "contentOwnerApproval": "User-authorized operations content package 2026-11-14; use supplied _CLEAN_COPY.txt without editorial changes. PR reference added when created."
+      "contentOwnerApproval": "https://github.com/teddy920810/ai-watermark-remover/pull/151"
     },
     {
       "file": "src/content/settings/site.json",
