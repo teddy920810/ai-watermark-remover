@@ -655,7 +655,7 @@
     },
     {
       "file": "src/content/landing-pages/facebook-watermark-remover.json",
-      "semanticSha256": "e45faf6c208f306d51de5e6949f93a3825be05b391f0a637010ba98e6b0acc8d",
+      "semanticSha256": "6cfc088a578df712ff02aefd799a9eb622821ea0b84b97207781bde30887371b",
       "images": [
         {
           "path": "/process/steps/0/imageAlt",
@@ -770,7 +770,7 @@
     },
     {
       "file": "src/content/landing-pages/gemini-watermark-remover.json",
-      "semanticSha256": "c72b27da5148544c886a6ce5da460226ae6cbebbabcdebe6375e7ecbdf2d7186",
+      "semanticSha256": "cc49a823409e8133dd70bd27862748042fd7a80c1392f3947dd2b77406045f31",
       "images": [
         {
           "path": "/heroSamples/0/image",
@@ -1545,7 +1545,7 @@
     },
     {
       "file": "src/content/landing-pages/remove-subtitle-from-video.json",
-      "semanticSha256": "63b3be6173075088f9dd741d21327b73eaf22123152a6ac00a4925c0ea2d3f40",
+      "semanticSha256": "9bfacd826b1202d637de54d6fa1a0f0ebab18e1490c260391ac0e01b9b728806",
       "images": [
         {
           "path": "/process/steps/0/imageAlt",
@@ -1775,7 +1775,7 @@
     },
     {
       "file": "src/content/landing-pages/shutterstock-watermark-remover.json",
-      "semanticSha256": "e540e6e307f775de3b59056e4310b6c1445c216cde39ca1f36ea82bb72e4be70",
+      "semanticSha256": "21af20c4be57fe48b0a36d4e12ea0e15c86f57df790ef620893d2d3c21f1f383",
       "images": [
         {
           "path": "/process/steps/0/imageAlt",
@@ -2211,7 +2211,7 @@
     },
     {
       "file": "src/content/landing-pages/video-watermark-remover.json",
-      "semanticSha256": "ab4094d893672b8d8397b1884e1b2dbf2812feb27364ec730da0ed80a9e9f5d0",
+      "semanticSha256": "99beef3d66966cf15a3ba767dcef6271c3d03b257fec7e359b1af200cbc021d2",
       "images": [
         {
           "path": "/process/steps/0/imageAlt",

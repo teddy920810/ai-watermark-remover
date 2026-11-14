@@ -6,7 +6,7 @@
   "description": "Remove visible watermarks from videos online. Upload an eligible MP4, review fixed-area or automatic selection, and preview the video result before downloading.",
   "eyebrow": "AI VIDEO WATERMARK REMOVER",
   "heading": "Video Watermark Remover – Remove Watermarks from Video Online",
-  "intro": "Remove a visible logo, timestamp, or text watermark from a video you own or are authorized to edit. Upload an eligible MP4, choose automatic detection or a fixed-area selection, review the processing cost, and inspect the result before downloading. Keep your full frame instead of cropping when possible.",
+  "intro": "Remove a visible logo, timestamp, or text watermark from a video you own or are authorized to edit. Upload an eligible MP4, choose automatic detection or a fixed-area selection, review the processing cost, and inspect the result before downloading. Keep your full frame instead of cropping when possible.\n\nShow actual WatermarkGemini output only after a recorded test; otherwise label example imagery as illustrative, not a product result.",
   "benefits": [
     "Automatic or Fixed-Area Selection",
     "Keep the Full Video Frame",

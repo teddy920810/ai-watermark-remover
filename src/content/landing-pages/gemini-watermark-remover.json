@@ -194,7 +194,7 @@
     "eyebrow": "Ready when you are",
     "heading": "Remove the Visible Gemini Watermark from Your Image",
     "description": "Choose a supported Gemini image, review the cost before processing, and check the edited result before downloading your JPG.",
-    "buttonLabel": "Open workspace",
+    "buttonLabel": "Upload file",
     "buttonHref": "#tool"
   },
   "faq": {

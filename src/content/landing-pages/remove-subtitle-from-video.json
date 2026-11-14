@@ -6,7 +6,7 @@
   "description": "Learn how to remove subtitles from video, including the difference between hardcoded captions and subtitle tracks. Dedicated AI cleanup is coming soon.",
   "eyebrow": "REMOVE SUBTITLE FROM VIDEO · COMING SOON",
   "heading": "Remove Subtitles from Video – Hardcoded Caption Cleanup",
-  "intro": "Need to remove a subtitle that stays visible in every video frame? WatermarkGemini is preparing a dedicated workflow for burned-in captions in videos you own or may edit. The subtitle-cleanup processor is not live yet. If your captions can be turned off in the player, you may not need AI removal at all.",
+  "intro": "Need to remove a subtitle that stays visible in every video frame? WatermarkGemini is preparing a dedicated workflow for burned-in captions in videos you own or may edit. The subtitle-cleanup processor is not live yet. If your captions can be turned off in the player, you may not need AI removal at all.\n\nConcept illustrations for a planned workflow; not tested output. The dedicated tool is Coming Soon.",
   "benefits": [
     "Hardcoded Subtitle Focus",
     "Keep Your Video Framing",
