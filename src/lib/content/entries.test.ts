@@ -128,7 +128,7 @@ describe('publicNavigation', () => {
     const added = new Set(['/nano-banana-watermark-remover', '/remove-emoji-from-photo', '/remove-person-from-photo', '/remove-logo-from-video', '/remove-text-from-video', '/remove-object-from-video']);
     expect(result.map(item => item.children ? { ...item, children: item.children.filter(link => !added.has(link.href)) } : item)).toEqual(settings.header.navigation);
     expect(result.find(item => item.label === 'Watermark Removers')?.children).toContainEqual({
-      label: 'Nano Banana Watermark Remover – Keep the Full Picture', href: '/nano-banana-watermark-remover',
+      label: 'Nano Banana Watermark Remover Online', href: '/nano-banana-watermark-remover',
     });
     const links = result.flatMap(item => item.children ?? []);
     expect(links).toHaveLength(26);
