@@ -1,7 +1,16 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { htmlIssues, markdownIssues, parseEntry, safeLink } from './validation';
+import { entryImages, htmlIssues, markdownIssues, parseEntry, safeLink } from './validation';
 describe('Agent content syntax and executable examples', () => {
+  it('validates and collects landing social images like other public image references', () => {
+    const landing = JSON.parse(readFileSync('docs/examples/content-api/landing.json', 'utf8'));
+    for (const shareImage of ['https://[', 'https://example.com/share.png', '/uploads/../private.png']) {
+      expect(() => parseEntry('landing', { ...landing, data: { ...landing.data, shareImage } }, landing.data.slug)).toThrow();
+    }
+    const shareImage = '/uploads/page-share.webp';
+    const entry = parseEntry('landing', { ...landing, data: { ...landing.data, shareImage } }, landing.data.slug);
+    expect(entryImages(entry).paths).toContain(shareImage);
+  });
   it.each(['blog', 'landing'] as const)('accepts the complete %s documentation example and retains its content', kind => {
     const input = JSON.parse(readFileSync(`docs/examples/content-api/${kind}.json`, 'utf8'));
     const parsed = parseEntry(kind, input, input.data.slug);
