@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState, type DragEvent } from 'react';
-import { ArrowRight, CloudUpload, Info } from 'lucide-react';
+import { ArrowRight, CloudUpload, Info, Link2 } from 'lucide-react';
 import { cleanExpiredMediaDrafts, saveMediaDraft, workspacePath, type MediaKind } from '../../lib/client/media-drafts';
 import { formatLauncherLimit, identifyLauncherMedia, launcherLimit } from '../../lib/client/media-identification';
 import type { MediaRecommendation } from '../../lib/client/media-recommendation';
 import type { Capability } from '../workspace/workspace-api';
-import { toolWorkspaceForSource } from '../../lib/contracts/route-policy.mjs';
+import { linkToolWorkspaceForSource, toolWorkspaceForSource } from '../../lib/contracts/route-policy.mjs';
 import './launcher.css';
 
 // Public guide metadata only. App admission, balances and prices remain authoritative and uncached here.
@@ -27,6 +27,7 @@ interface Props {
   onFileSelected?(file: File, kind: MediaKind): Promise<void>;
 }
 export default function MediaLauncher({ source = 'landing', recommendation, compact = false, buttonClassName = 'cta-button', onFileSelected }: Props) {
+  const linkWorkspace = !onFileSelected ? linkToolWorkspaceForSource(source) : null;
   const input = useRef<HTMLInputElement>(null);
   const selecting = useRef(false);
   const mounted = useRef(false);
@@ -46,6 +47,7 @@ export default function MediaLauncher({ source = 'landing', recommendation, comp
   useEffect(() => {
     mounted.current = true;
     setHydrated(true);
+    if (linkWorkspace) return () => { mounted.current = false; };
     void cleanExpiredMediaDrafts().catch(() => {});
     let active = true;
     capabilityRequest.current = requestPublicCapabilities().then(values => {
@@ -53,7 +55,7 @@ export default function MediaLauncher({ source = 'landing', recommendation, comp
       return values;
     }).catch(() => { if (active) setCapabilityError(true); return []; });
     return () => { mounted.current = false; active = false; };
-  }, []);
+  }, [linkWorkspace]);
   async function select(file?: File) {
     if (!file || pending || selecting.current) return;
     selecting.current = true; setPending(true); setError('');
@@ -71,6 +73,14 @@ export default function MediaLauncher({ source = 'landing', recommendation, comp
     finally { selecting.current = false; }
   }
   function drop(event: DragEvent<HTMLDivElement>) { event.preventDefault(); event.stopPropagation(); setDragging(false); void select(event.dataTransfer.files[0]); }
+  if (linkWorkspace) return <div className={`media-launcher${compact ? ' media-launcher-compact' : ''}`} data-link-tool-launcher="tiktok">
+    {compact ? <a className={buttonClassName} href={linkWorkspace}>Open TikTok tool <ArrowRight size={18} aria-hidden="true" /></a> : <div className="launcher-drop">
+      <Link2 className="launcher-upload-icon" size={38} strokeWidth={1.7} aria-hidden="true" />
+      <a className="button button-primary" href={linkWorkspace}>Open TikTok tool <ArrowRight size={18} aria-hidden="true" /></a>
+      <p className="launcher-drop-copy"><strong>Save from a TikTok video link</strong></p>
+      <p className="launcher-local-note">Paste the original video link in the workspace to preview and save an MP4. This link tool does not edit uploaded files.</p>
+    </div>}
+  </div>;
   const picker = <input ref={input} className="sr-only" data-testid={compact ? 'compact-launcher-file' : 'media-launcher-file'} type="file" disabled={!hydrated || pending} aria-label="Choose an image or MP4 video" accept="image/jpeg,image/png,image/webp,video/mp4" onChange={event => { void select(event.target.files?.[0]); event.target.value = ''; }} />;
   const action = <button className={compact ? buttonClassName : 'button button-primary'} type="button" onClick={() => input.current?.click()} disabled={pending || !hydrated}><CloudUpload size={compact ? 18 : 22} aria-hidden="true" />{!hydrated ? 'Preparing upload…' : pending ? 'Opening your workspace…' : 'Upload file'}</button>;
   return <div className={`media-launcher${compact ? ' media-launcher-compact' : ''}`} data-media-launcher="auto">

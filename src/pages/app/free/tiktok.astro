@@ -1,0 +1,12 @@
+---
+import TikTokDownloader from '../../../components/workspace/TikTokDownloader';
+import site from '../../../content/settings/site.json';
+import '../../../styles/design-system.css';
+import '../../../styles/tiktok.css';
+export const prerender = false;
+Astro.response.headers.set('Cache-Control', 'no-store');
+Astro.response.headers.set('Referrer-Policy', 'no-referrer');
+Astro.response.headers.set('Content-Security-Policy', "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https://*.tiktokcdn.com; media-src https://d.rapidcdn.app; connect-src 'self'; font-src 'self' data: https://fonts.gstatic.com");
+const appAsset = (path: string) => process.env.BUILD_TARGET === 'app' ? `/_app-assets/public${path}` : path;
+---
+<!doctype html><html lang="en"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width" /><meta name="robots" content="noindex, nofollow" /><meta name="referrer" content="no-referrer" /><link rel="icon" href={appAsset(site.favicon)} /><title>TikTok Watermark Remover for Saved Videos | {site.name}</title></head><body><div class="tiktok-page"><header class="tiktok-site-header"><a class="brand" href="/"><img class="brand-logo" src={appAsset(site.logo)} alt="" /><span>{site.name}</span></a><span class="tiktok-tool-label">Free TikTok tool</span><a class="button button-ghost tiktok-back" href="/app">Back to workspace</a></header><TikTokDownloader client:only="react"><main class="tiktok-tool" slot="fallback"><h1>Opening TikTok tool</h1><p>The link input will appear when the tool is ready.</p><noscript>JavaScript is required to resolve a TikTok link.</noscript></main></TikTokDownloader></div></body></html>

@@ -23,3 +23,7 @@ CMS owns public titles, descriptions, steps, FAQs, images, ordering, links and t
 Public marketing images use [ImageDisplay](./IMAGE_DISPLAY.md): one image is static; a genuine independent Before/After pair may show the shared comparison. On 2026-11-01 the user revoked all 53 P5 replacement mappings: original image references, alt and the homepage example note are restored against 574ad43. The [manifest](./CONTENT_MEDIA_MIGRATION.json) records operator/SEO pending asset review. Engineering owns display mechanics and cannot change content without explicit authorization. No Before source was invented and no bitmap was edited; baked controls remain original pixels, while the already missing original asset keeps normal fallback.
 
 Local verification covers every published primary entry, footer selection, incompatible/unavailable recommendations, App pick/drop, accepted-task replacement races, separate credit balances and unchanged operation-level output/recovery tests. Browser fixtures simulate sessions and Providers; authenticated production validation is a separate gate tied to the deployed version and authorized budget, as recorded in the release evidence.
+
+## TikTok 链接入口
+
+`/tiktok-watermark-remover` 的 hero 和页尾通过路由合同的显式链接入口进入 `/app/free/tiktok`，不创建文件草稿或触发上传/报价。其他来源及 App 内再次选择文件继续使用原单/双媒体输入合同。生产和本地使用相同链接入口；这不表示原 TikTok 文案描述的文件编辑已上线。App 现有菜单同时提供该工具入口。解析、限流、下载和发布合同见 [TikTok 链接工具](FREE_TIKTOK.md)。

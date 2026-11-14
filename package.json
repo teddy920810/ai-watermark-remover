@@ -57,6 +57,7 @@
     "@lucide/astro": "^1.33.0",
     "@tailwindcss/vite": "^4.3.3",
     "@vercel/oidc": "3.8.5",
+    "acorn": "8.18.0",
     "astro": "^7.3.2",
     "better-auth": "1.7.7",
     "google-auth-library": "11.3.1",

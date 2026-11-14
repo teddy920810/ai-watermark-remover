@@ -1,6 +1,10 @@
 /** Public product facts only. Prices remain in server price books; enabled status is runtime-owned. */
 export const IMAGE_MAX_BYTES = 10 * 1024 * 1024;
 export const VIDEO_MAX_BYTES = 100 * 1024 * 1024;
+/** Link resolvers never participate in paid processing. */
+export const resolverOperationCatalog = {
+  'tiktok-video-resolve': { executor: 'server-resolver', requiresAuthentication: false, charge: 0, maxInputBytes: 2048, maxUrlLength: 1024, maxResponseBytes: 1_048_576, timeoutMs: 20_000, minIntervalMs: 2000, maxDailyResolves: 500 },
+} as const;
 const imageTypes = ['image/jpeg', 'image/png', 'image/webp'];
 /** Local operations have no allowance, quote, outbox, R2 or Provider execution. */
 export const localOperationCatalog = {

@@ -17,11 +17,18 @@ async function localOnly(page: Page) {
   });
   return writes;
 }
-test('every published tool and the homepage use one automatic file entry and the same footer picker', async ({ page }) => {
+test('published tools use their registered input, with matching hero and footer entries', async ({ page }) => {
   test.setTimeout(180_000); const writes = await localOnly(page);
   for (const route of ['/', ...pages.map(page => `/${page.slug}`)]) {
     await page.goto(route);
     const entry = page.locator('#tool');
+    if (route === '/tiktok-watermark-remover') {
+      await expect(entry.getByRole('link', { name: 'Open TikTok tool' })).toHaveAttribute('href', '/app/free/tiktok');
+      await expect(entry.locator('input[type=file]')).toHaveCount(0);
+      await expect(page.locator('.site-cta').getByRole('link', { name: 'Open TikTok tool' })).toHaveAttribute('href', '/app/free/tiktok');
+      await expect(page.locator('.site-cta input[type=file]')).toHaveCount(0);
+      continue;
+    }
     await expect(entry.getByRole('button', { name: 'Upload file', exact: true })).toBeEnabled();
     await expect(entry.locator('input[type=file]')).toHaveAttribute('accept', 'image/jpeg,image/png,image/webp,video/mp4');
     await expect(entry.locator('.launcher-modes,.background-tool-card,.object-tool-card')).toHaveCount(0);

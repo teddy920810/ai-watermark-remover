@@ -16,7 +16,7 @@ export function AppShell({ kind, logo, siteName, account, sidebar, children, ope
       <a className="brand" href="/"><img className="brand-logo" src={logo} alt="" /><span>{siteName}</span></a>
       <nav className="workspace-mode-nav" aria-label="Media workspace"><a href="/app/image" aria-current={kind === 'image' ? 'page' : undefined}><ImageIcon size={18} />Image</a><a href="/app/video" aria-current={kind === 'video' ? 'page' : undefined}><Video size={18} />Video</a></nav>
       <div className="workspace-header-actions">{account}<button className="workspace-menu-button" aria-label="Open menu" aria-expanded={menuOpen} type="button" onClick={() => setMenuOpen(value => !value)}>{menuOpen ? <X size={20} /> : <Menu size={20} />}</button></div>
-      {menuOpen && <nav className="workspace-menu"><a href="/">Back to website</a><a href="/pricing">Pricing</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a></nav>}
+      {menuOpen && <nav className="workspace-menu"><a href="/">Back to website</a><a href="/app/free/tiktok">TikTok watermark remover</a><a href="/pricing">Pricing</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a></nav>}
     </header>
     <div className="workspace-layout">
       <aside className="workspace-recent">{sidebar}</aside>
