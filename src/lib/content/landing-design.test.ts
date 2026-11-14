@@ -140,6 +140,19 @@ describe('landing design schema', () => {
     expect(schema.parse({ relatedTools: { ...section, slugs: ordered } }).relatedTools?.slugs).toEqual(ordered);
     expect(schema.safeParse({ guides: { ...section, slugs: ['/blog/invalid-path'] } }).success).toBe(false);
   });
+
+  it('clearing custom cards restores slug selection or automatic recommendations', async () => {
+    const { landingDesignFields } = await import('./landing-design');
+    const section = { eyebrow: 'Explore', heading: 'More content', intro: 'Choose a page' };
+    const parsed = z.object(landingDesignFields).parse({
+      relatedTools: { ...section, items: [], slugs: ['remove-background'] },
+      guides: { ...section, items: [], slugs: [] },
+    });
+    expect(parsed.relatedTools?.items).toBeUndefined();
+    expect(parsed.relatedTools?.slugs).toEqual(['remove-background']);
+    expect(parsed.guides?.items).toBeUndefined();
+    expect(parsed.guides?.slugs).toBeUndefined();
+  });
 });
 
 describe('available related tool entries', () => {

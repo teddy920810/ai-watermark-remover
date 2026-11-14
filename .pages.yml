@@ -42,7 +42,7 @@ components:
         label: 本页指定卡片（可选）
         type: object
         list: true
-        description: 按顺序显示本页提供的标题、说明和链接；填写后优先于 Slugs 和自动推荐。
+        description: 按顺序显示本页提供的标题、说明和链接；填写后优先于 Slugs 和自动推荐，清空后恢复 Slugs 或自动推荐。
         fields:
           - { name: title, label: 卡片标题, type: string, required: true }
           - { name: description, label: 卡片说明, type: text }
