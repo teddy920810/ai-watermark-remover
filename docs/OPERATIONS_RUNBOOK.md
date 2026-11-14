@@ -16,6 +16,12 @@ Google Cloud OAuth Web Client 必须包含正式回调 `https://www.watermarkgem
 
 Git 页面应保持仓库连接到 `main`；域名页面以 `www.watermarkgemini.com` 为正式站点，根域名以 308 重定向到 `www`。正常情况下 Vercel 自动管理 HTTPS 证书。代码、CI、部署绑定与线上验收分开结清，Ready不代表已通过真实功能验收。
 
+## AdSense 网站连接
+
+公共页面的 `src/layouts/SiteLayout.astro` 在 `<head>` 原样加载用户提供的异步 AdSense 脚本，发布商为 `ca-pub-5361898162179630`；不把该脚本加入私有 App 工作区或 OAuth 弹窗，也不新增广告位或修改后台自动广告设置。脚本属性和放置位置遵循 [Google 官方接入合同](https://support.google.com/adsense/answer/9274516)。更换发布商须先核对账号与站点归属，再更新脚本和专项测试。
+
+发布后核对正式域名的首页、工具落地页和 Blog HTML 中只有一个正确脚本，并在真实浏览器确认 Google 脚本请求及执行。随后在对应 AdSense 账号完成网站连接验证和审核；加载成功不代表网站已获批、广告已有展示或收款验证通过。实际展示广告前，由内容负责人审核广告相关隐私披露，并完成适用地区的同意管理配置。本次不修改既有法律正文；`ads.txt` 以后台提供的实际记录为准，未获得记录时不编造。
+
 ## Cloudflare R2
 
 使用 `docs/r2-cors.example.json` 作为允许来源基线。`PUT` 用于浏览器直传，`GET`/`HEAD` 用于读取透明结果并在浏览器合成彩色 PNG；缺少 `GET` 时预览仍可能显示，但 Canvas 下载会被 CORS 拦截。遇到 `ERR_CONNECTION_CLOSED` 还应检查网络、R2 endpoint、预签名 URL 和 Bucket 凭据。
