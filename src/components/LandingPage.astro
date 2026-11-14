@@ -72,7 +72,7 @@ const faqSchema = visibleFaqItems.length > 0 ? {
 } : undefined;
 ---
 
-<SiteLayout title={page.title} description={page.description} schema={faqSchema} cta={cta} ctaButtonLabel={page.relatedTools?.items && page.cta ? cta.buttonLabel : undefined}>
+<SiteLayout title={page.title} description={page.description} image={page.shareImage} schema={faqSchema} cta={cta} ctaButtonLabel={page.relatedTools?.items && page.cta ? cta.buttonLabel : undefined}>
   <div class="tool-landing">
   <section class="hero landing-hero section-shell" id="upload">
     <div class="hero-inner">
@@ -94,7 +94,7 @@ const faqSchema = visibleFaqItems.length > 0 ? {
           <div class="hero-samples" aria-label="Choose an example preview">{samples.map((sample, index) => <button class="hero-sample" type="button" data-landing-sample aria-pressed={index === 0} aria-label={`Preview ${sample.label}`}><ResponsiveImage src={sample.image} alt="" sizes="72px" /></button>)}</div>
         </div>}
         <div id="tool" class="hero-tool">
-        <MediaLauncher source={page.slug} recommendation={recommendation} client:load />
+        <MediaLauncher source={page.slug} recommendation={recommendation} buttonLabel={page.uploadButtonLabel} client:load />
         {page.toolNote && <p class="tool-note">{page.toolNote}</p>}
       </div>
       </div>

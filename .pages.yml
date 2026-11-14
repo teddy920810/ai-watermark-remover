@@ -1438,6 +1438,14 @@ content:
         label: 本页工具说明（可选）
         type: text
         description: 显示运营提供的工具状态或使用说明，不修改实际工具能力。
+      - name: uploadButtonLabel
+        label: 本页上传按钮文案（可选）
+        type: string
+        description: 只替换本页工具入口的空闲上传按钮文字；留空沿用 Upload file，不改变处理流程。
+      - name: shareImage
+        label: 本页社交分享图（可选）
+        type: image
+        description: 用于 Open Graph 与 Twitter 分享；留空沿用站点分享图。
       - name: benefits
         label: 优点列表｜LI
         type: string

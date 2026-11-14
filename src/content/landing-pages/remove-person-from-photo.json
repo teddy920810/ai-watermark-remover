@@ -1,0 +1,261 @@
+{
+  "draft": false,
+  "slug": "remove-person-from-photo",
+  "toolKind": "object-remover",
+  "title": "Remove Person from Photo Online with AI | WatermarkGemini",
+  "description": "Remove a person from a photo online with AI. Brush or lasso unwanted people, rebuild the background, compare the result and download your cleaned photo.",
+  "eyebrow": "AI PERSON REMOVER FROM PHOTO",
+  "heading": "Remove Person from Photo Online with AI",
+  "intro": "Love the photo, but not the stranger walking through the background? WatermarkGemini helps you remove an unwanted person from a photo you own while keeping the subject and framing. Mark the person with Brush or Lasso, including their shadow and anything they are carrying, then let AI create a plausible replacement background. Review the edited area before downloading. It works best for smaller background figures; people covering other faces or fine details are harder to reconstruct.\n\nIllustrative use cases only, not actual tested product results; replace with rights-cleared real outputs when tested. For full-motion examples, show matching video frames, not a claim of perfect clip-wide recovery.",
+  "benefits": [
+    "Remove photobombers without cropping the shot",
+    "Brush or lasso the exact person to erase",
+    "Rebuild background details and preview the PNG"
+  ],
+  "toolNote": "Images: JPG, PNG or WebP · up to 10 MB. Video: MP4 · up to 100 MB · 24 fps · up to 9 min. Review the cost before processing. File is only uploaded after sign-in and confirmation.",
+  "process": {
+    "eyebrow": "How it works",
+    "heading": "How to Remove a Person from a Photo in 3 Steps",
+    "intro": "Make a copy of your original picture and select only the person you want to erase. The AI reconstructs plausible scene detail; it does not recover pixels that the camera never recorded.",
+    "steps": [
+      {
+        "number": "01",
+        "title": "Upload Your Photo",
+        "description": "Open the photo object-removal workspace and choose a JPG, JPEG, PNG, WebP or JFIF image up to 10 MB. Keep an untouched original and confirm you have permission to edit the photo.",
+        "image": "/uploads/landing-new-20261114/remove-person-from-photo/hero-01-before.webp",
+        "imageAlt": "Illustrative before-and-after comparison for tourist at a landmark, with the same composition and only the selected distracting overlay changed."
+      },
+      {
+        "number": "02",
+        "title": "Brush or Lasso the Person and Shadow",
+        "description": "Paint over the full figure, hair, arms, shoes, bags and shadow with the blue brush, or outline them with Lasso. Keep the main subject outside the selection. Use Eraser and Undo to correct the mask before processing.",
+        "image": "/uploads/landing-new-20261114/remove-person-from-photo/feature-02.webp",
+        "imageAlt": "Illustrative remove person from photo use case 2: use brush and lasso to keep the right people, showing one matched scene without cropping or missing subjects."
+      },
+      {
+        "number": "03",
+        "title": "Remove the Person and Download Your Photo",
+        "description": "Review the quoted use or credit allowance, run object removal, then inspect the rebuilt background for repeated tiles, broken edges or leftover silhouettes. Compare with the original and download the finished PNG.",
+        "image": "/uploads/landing-new-20261114/remove-person-from-photo/hero-01-after.webp",
+        "imageAlt": "Illustrative before-and-after comparison for tourist at a landmark, with the same composition and only the selected distracting overlay changed."
+      }
+    ]
+  },
+  "heroSamples": [
+    {
+      "id": "preview-1",
+      "label": "Tourist at a landmark",
+      "image": "/uploads/landing-new-20261114/remove-person-from-photo/hero-01-before.webp",
+      "afterImage": "/uploads/landing-new-20261114/remove-person-from-photo/hero-01-after.webp",
+      "imageAlt": "Illustrative before-and-after comparison for tourist at a landmark, with the same composition and only the selected distracting overlay changed."
+    },
+    {
+      "id": "preview-2",
+      "label": "Photobomber in a group photo",
+      "image": "/uploads/landing-new-20261114/remove-person-from-photo/hero-02-before.webp",
+      "afterImage": "/uploads/landing-new-20261114/remove-person-from-photo/hero-02-after.webp",
+      "imageAlt": "Illustrative before-and-after comparison for photobomber in a group photo, with the same composition and only the selected distracting overlay changed."
+    },
+    {
+      "id": "preview-3",
+      "label": "Beach or outdoor portrait",
+      "image": "/uploads/landing-new-20261114/remove-person-from-photo/hero-03-before.webp",
+      "afterImage": "/uploads/landing-new-20261114/remove-person-from-photo/hero-03-after.webp",
+      "imageAlt": "Illustrative before-and-after comparison for beach or outdoor portrait, with the same composition and only the selected distracting overlay changed."
+    }
+  ],
+  "features": {
+    "eyebrow": "Why choose WatermarkGemini",
+    "heading": "Remove Unwanted People Without Losing the Photo",
+    "intro": "Travel memories, portraits and product lifestyle shoots often need a precise local fix—not a new crop or a completely regenerated image.",
+    "items": [
+      {
+        "enabled": true,
+        "eyebrow": "FEATURE 1",
+        "heading": "Erase Photobombers and Strangers from Travel Photos",
+        "description": "A passerby at the edge of a vacation photo can pull attention away from the moment. Mark that person instead of cropping out the landmark, horizon or other people you want to keep. The model estimates the scene behind the selection using nearby context, so it works best over grass, sand, walls, sky and other repeatable backgrounds. Inspect the rebuilt scenery before sharing.",
+        "image": "/uploads/landing-new-20261114/remove-person-from-photo/feature-01.webp",
+        "imageAlt": "Illustrative remove person from photo use case 1: erase photobombers and strangers from travel photos, showing one matched scene without cropping or missing subjects.",
+        "imagePosition": "left"
+      },
+      {
+        "enabled": true,
+        "eyebrow": "FEATURE 2",
+        "heading": "Use Brush and Lasso to Keep the Right People",
+        "description": "You decide who should go. Use Brush for hair, limbs and irregular silhouettes, or Lasso for a larger figure; Eraser and Undo help refine selection boundaries. Cover the subject completely, including belongings and shadows, but avoid painting over the person you want to keep. This is especially important for wedding photos, friends standing together and crowded event pictures.",
+        "image": "/uploads/landing-new-20261114/remove-person-from-photo/feature-02.webp",
+        "imageAlt": "Illustrative remove person from photo use case 2: use brush and lasso to keep the right people, showing one matched scene without cropping or missing subjects.",
+        "imagePosition": "right"
+      },
+      {
+        "enabled": true,
+        "eyebrow": "FEATURE 3",
+        "heading": "Rebuild the Background Instead of Leaving a Hole",
+        "description": "Deleting a person is not a transparent cutout. The tool attempts to continue visible texture, color, structure and light across the selected area. A small figure against a wall often gives AI stronger context than someone blocking a face, sign or complex building. No service can guarantee the exact original background; review straight lines, shadows, skin and repeated patterns at full size.",
+        "image": "/uploads/landing-new-20261114/remove-person-from-photo/feature-03.webp",
+        "imageAlt": "Illustrative remove person from photo use case 3: rebuild the background instead of leaving a hole, showing one matched scene without cropping or missing subjects.",
+        "imagePosition": "left"
+      },
+      {
+        "enabled": true,
+        "eyebrow": "FEATURE 4",
+        "heading": "Online Photo Cleanup with Clear Usage and Privacy",
+        "description": "The photo object-removal workflow supports JPG/JPEG, PNG, WebP and JFIF up to 10 MB and returns a PNG. WatermarkGemini offers eligible shared free image uses; check the live allowance and any required credits before processing. Uploaded files, masks and results are stored privately and scheduled to expire after about 24 hours. Keep a local copy of the original for later comparisons.",
+        "image": "/uploads/landing-new-20261114/remove-person-from-photo/feature-04.webp",
+        "imageAlt": "Illustrative remove person from photo use case 4: online photo cleanup with clear usage and privacy, showing one matched scene without cropping or missing subjects.",
+        "imagePosition": "right"
+      }
+    ]
+  },
+  "relatedTools": {
+    "enabled": true,
+    "eyebrow": "Popular tools",
+    "heading": "Explore More Image and Video Cleanup Tools",
+    "intro": "Choose the cleanup workflow that matches the file and the mark you want to edit. Each tool has its own file requirements and processing limits.",
+    "items": [
+      {
+        "title": "Background Remover",
+        "description": "Remove a photo background with a focused online workflow.",
+        "href": "https://www.watermarkgemini.com/remove-background"
+      },
+      {
+        "title": "Object Remover",
+        "description": "Erase people, clutter and other objects from an authorized photo.",
+        "href": "https://www.watermarkgemini.com/remove-object"
+      },
+      {
+        "title": "Remove Text from Image",
+        "description": "Clean unwanted captions, visible labels and text overlays.",
+        "href": "https://www.watermarkgemini.com/remove-text-from-image"
+      },
+      {
+        "title": "Remove Logo from Image",
+        "description": "Clean logos and brand marks from images you can edit.",
+        "href": "https://www.watermarkgemini.com/remove-logo-from-image"
+      },
+      {
+        "title": "ChatGPT Watermark Remover",
+        "description": "Review visible ChatGPT-style marks in approved images.",
+        "href": "https://www.watermarkgemini.com/chatgpt-watermark-remover"
+      },
+      {
+        "title": "Gemini Watermark Remover",
+        "description": "Clean a visible Gemini sparkle while keeping the image crop.",
+        "href": "https://www.watermarkgemini.com/gemini-watermark-remover"
+      },
+      {
+        "title": "Remove Date Stamp",
+        "description": "Clear visible dates and timestamps from approved images.",
+        "href": "https://www.watermarkgemini.com/"
+      },
+      {
+        "title": "Remove Signature",
+        "description": "Review removal of a visible signature in an authorized image.",
+        "href": "https://www.watermarkgemini.com/"
+      }
+    ]
+  },
+  "guides": {
+    "enabled": true,
+    "eyebrow": "Helpful guides",
+    "heading": "Helpful Guides for Remove Person from Photo and Better Edits",
+    "intro": "Before removing visible material, check the source file, permissions and editing method so the result stays useful and accurate.",
+    "items": [
+      {
+        "title": "How to Remove a Date Stamp from a Photo",
+        "href": "https://www.watermarkgemini.com/blog/how-to-remove-date-stamp-from-photo"
+      },
+      {
+        "title": "How to Remove Samsung Watermark from Photos",
+        "href": "https://www.watermarkgemini.com/blog/how-to-remove-samsung-watermark-from-photos"
+      },
+      {
+        "title": "How to Remove Metadata from an Image Safely",
+        "href": "https://www.watermarkgemini.com/blog/how-to-remove-metadata-from-image"
+      },
+      {
+        "title": "How to Tell if a Photo Is AI Generated",
+        "href": "https://www.watermarkgemini.com/blog/how-to-tell-if-photo-is-ai-generated"
+      },
+      {
+        "title": "Best AI Watermark Remover in 2026: 7 Tools Compared",
+        "href": "https://www.watermarkgemini.com/blog/best-ai-watermark-remover"
+      },
+      {
+        "title": "Does ChatGPT Watermark Images?",
+        "href": "https://www.watermarkgemini.com/blog/does-chatgpt-watermark-images"
+      }
+    ]
+  },
+  "faq": {
+    "eyebrow": "Frequently asked questions",
+    "heading": "Remove Person from Photo FAQs",
+    "intro": "Answers about free online AI person removal, masking, group photos, background accuracy, upload limits and privacy.",
+    "items": [
+      {
+        "enabled": true,
+        "question": "How do I remove a person from a photo?",
+        "answer": "Upload an authorized photo to WatermarkGemini’s object-removal workspace, use Brush or Lasso to cover the person including their shadow, then run removal. Compare the result and download a PNG only when the filled background looks acceptable."
+      },
+      {
+        "enabled": true,
+        "question": "Can I remove a person from a photo online for free?",
+        "answer": "Eligible standard image operations can use the shared free-use balance: one use on first sign-in, daily check-in rewards, and a balance cap as shown in the account. If free uses are exhausted, check the workspace for available credits; purchase checkout may not yet be open."
+      },
+      {
+        "enabled": true,
+        "question": "How can I remove someone from a picture without Photoshop?",
+        "answer": "Use the browser-based object remover rather than a desktop layered editor. Select the person with Brush/Lasso, inspect the mask, process the image and download. If the person overlaps essential features, a desktop retoucher may offer finer control."
+      },
+      {
+        "enabled": true,
+        "question": "Can AI remove several people from the same photo?",
+        "answer": "The image tool lets you select unwanted areas, but very large or overlapping masks are harder to rebuild. For crowded scenes, focus on a manageable selection, review the result and consider separate carefully checked passes rather than one enormous area."
+      },
+      {
+        "enabled": true,
+        "question": "Can I remove someone from a group photo without changing everyone else?",
+        "answer": "A tight mask helps preserve the other people. If arms overlap, faces touch, or the removed person hides someone else, AI must invent missing detail. Do not claim that the original hidden face or clothing has been recovered."
+      },
+      {
+        "enabled": true,
+        "question": "How do I remove a photobomber from a vacation photo?",
+        "answer": "Mask the entire background photobomber, their bag and shadow while keeping the landmark and your main subject outside the selection. A small figure against sand, paving or sky is typically easier than someone covering intricate architecture."
+      },
+      {
+        "enabled": true,
+        "question": "Will removing a person blur the background?",
+        "answer": "The model generates a plausible local fill, not a blur layer, but it may still soften or repeat textures where the person was. Examine walls, railings and fine edges at full size before accepting the photo."
+      },
+      {
+        "enabled": true,
+        "question": "Can I remove an ex from a photo?",
+        "answer": "You can edit a photo you own or have the rights to modify, provided you do not use the altered result to mislead others in a context that requires authenticity. Select only the relevant figure and keep the original for reference."
+      },
+      {
+        "enabled": true,
+        "question": "Which photo formats and size does the remover accept?",
+        "answer": "The current photo object workflow accepts JPG, JPEG, PNG, WebP and JFIF images up to 10 MB. It is a single-image editor and returns a PNG."
+      },
+      {
+        "enabled": true,
+        "question": "Can AI reveal what was behind the removed person?",
+        "answer": "No. If the camera never captured the background because a person blocked it, AI can only synthesize a plausible replacement. It cannot recover the actual hidden face, sign, event or object."
+      },
+      {
+        "enabled": true,
+        "question": "Are uploaded photos private?",
+        "answer": "WatermarkGemini says image inputs, masks and outputs are held in private temporary storage, generally scheduled to expire after about 24 hours. Deletion can complete later; avoid uploading confidential material or images you do not have permission to process."
+      }
+    ]
+  },
+  "cta": {
+    "eyebrow": "Ready when you are",
+    "heading": "Remove the Distraction, Keep the Moment",
+    "description": "Upload a photo you may edit, select the unwanted person with Brush or Lasso, and compare the rebuilt background before saving a cleaned PNG.",
+    "buttonLabel": "Remove a Person from Your Photo",
+    "buttonHref": "#tool"
+  },
+  "uploadButtonLabel": "Upload Your Photo",
+  "shareImage": "/uploads/landing-new-20261114/remove-person-from-photo/hero-01-before.webp"
+}

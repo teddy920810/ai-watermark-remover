@@ -105,7 +105,7 @@ export default function MediaLauncher({ source = 'landing', recommendation, comp
     </div>}
   </div>;
   const picker = <input ref={input} className="sr-only" data-testid={compact ? 'compact-launcher-file' : 'media-launcher-file'} type="file" disabled={!hydrated || pending} aria-label="Choose an image or MP4 video" accept="image/jpeg,image/png,image/webp,video/mp4" onChange={event => { void select(event.target.files?.[0]); event.target.value = ''; }} />;
-  const action = <button className={compact ? buttonClassName : 'button button-primary'} type="button" onClick={() => input.current?.click()} disabled={pending || !hydrated}><CloudUpload size={compact ? 18 : 22} aria-hidden="true" />{!hydrated ? 'Preparing upload…' : pending ? 'Opening your workspace…' : compact ? buttonLabel ?? 'Upload file' : 'Upload file'}</button>;
+  const action = <button className={compact ? buttonClassName : 'button button-primary'} type="button" onClick={() => input.current?.click()} disabled={pending || !hydrated}><CloudUpload size={compact ? 18 : 22} aria-hidden="true" />{!hydrated ? 'Preparing upload…' : pending ? 'Opening your workspace…' : buttonLabel ?? 'Upload file'}</button>;
   return <div className={`media-launcher${compact ? ' media-launcher-compact' : ''}`} data-media-launcher="auto">
     {compact ? <>{action}{picker}</> : <div className={`launcher-drop ${dragging ? 'is-dragging' : ''}`} onDragOver={event => { event.preventDefault(); setDragging(true); }} onDragLeave={() => setDragging(false)} onDrop={drop}>
       <CloudUpload className="launcher-upload-icon" size={38} strokeWidth={1.7} aria-hidden="true" />{action}

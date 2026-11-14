@@ -31,7 +31,8 @@ test('published tools use their registered input, with matching hero and footer 
       await expect(page.locator('.site-cta input[type=file]')).toHaveCount(0);
       continue;
     }
-    await expect(entry.getByRole('button', { name: 'Upload file', exact: true })).toBeEnabled();
+    const copy = route === '/' ? undefined : JSON.parse(fs.readFileSync(`src/content/landing-pages${route}.json`, 'utf8'));
+    await expect(entry.getByRole('button', { name: copy?.uploadButtonLabel ?? 'Upload file', exact: true })).toBeEnabled();
     await expect(entry.locator('input[type=file]')).toHaveAttribute('accept', 'image/jpeg,image/png,image/webp,video/mp4');
     await expect(entry.locator('.launcher-modes,.background-tool-card,.object-tool-card')).toHaveCount(0);
     await expect(page.locator('.site-cta input[type=file]')).toHaveCount(1);

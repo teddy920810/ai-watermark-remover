@@ -1,0 +1,261 @@
+{
+  "draft": false,
+  "slug": "remove-text-from-video",
+  "toolKind": "video-watermark-remover",
+  "title": "Remove Text from Video Online with AI | WatermarkGemini",
+  "description": "Remove text from video online using AI-assisted cleanup. Test fixed captions, old prices and timestamps in authorized MP4s; review cost and quality before export.",
+  "eyebrow": "AI VIDEO TEXT REMOVER",
+  "heading": "Remove Text from Video Online with AI",
+  "intro": "A saved video can become hard to reuse when an old price, a burned-in caption, a timestamp, or a campaign message is baked into the frames. WatermarkGemini lets you test AI-assisted cleanup for visible text that stays in one fixed screen area. Keep your original framing, review the credit cost, and check the repaired video before downloading. If the text is still an editable layer or a separate subtitle track, remove that layer first instead of reconstructing pixels.\n\nIllustrative use cases only, not actual tested product results; replace with rights-cleared real outputs when tested. For full-motion examples, show matching video frames, not a claim of perfect clip-wide recovery.",
+  "benefits": [
+    "Clean fixed text overlays without an obvious crop",
+    "Refresh old promo text, lower thirds and timestamps",
+    "Review video credits and results before download"
+  ],
+  "toolNote": "Images: JPG, PNG or WebP · up to 10 MB. Video: MP4 · up to 100 MB · 24 fps · up to 9 min. Review the cost before processing. File is only uploaded after sign-in and confirmation.",
+  "process": {
+    "eyebrow": "How it works",
+    "heading": "How to Remove Text from Video Online in 3 Steps",
+    "intro": "First confirm the words are actually baked into the pixels. A selectable subtitle track should be hidden or deleted in the source editor, not sent through AI inpainting.",
+    "steps": [
+      {
+        "number": "01",
+        "title": "Upload an MP4 with Embedded Text",
+        "description": "Choose an authorized MP4 at 24 fps, up to 9 minutes and 100 MB. Open the saved file in a second player: if the text can be disabled as a subtitle track, edit the track instead.",
+        "image": "/uploads/landing-new-20261114/remove-text-from-video/hero-01-before.webp",
+        "imageAlt": "Illustrative before-and-after comparison for outdated sale label, with the same composition and only the selected distracting overlay changed."
+      },
+      {
+        "number": "02",
+        "title": "Mark the Fixed Text Area and Confirm Credits",
+        "description": "Sign in with Google. Try automatic visible-mark detection or place a small fixed box over a text region that does not move around the frame. Check the processing cost and administrator-allocated video balance before starting.",
+        "image": "/uploads/landing-new-20261114/remove-text-from-video/feature-04.webp",
+        "imageAlt": "Illustrative remove text from video use case 4: online text cleanup with clear limits, showing one matched scene without cropping or missing subjects."
+      },
+      {
+        "number": "03",
+        "title": "Compare the Cleaned Video and Download",
+        "description": "Watch the processed MP4, not just a still frame. Check for leftover outlines, changed background details, repaired text area flicker, preserved product information and intact audio before using the export.",
+        "image": "/uploads/landing-new-20261114/remove-text-from-video/hero-01-after.webp",
+        "imageAlt": "Illustrative before-and-after comparison for outdated sale label, with the same composition and only the selected distracting overlay changed."
+      }
+    ]
+  },
+  "heroSamples": [
+    {
+      "id": "preview-1",
+      "label": "Outdated sale label",
+      "image": "/uploads/landing-new-20261114/remove-text-from-video/hero-01-before.webp",
+      "afterImage": "/uploads/landing-new-20261114/remove-text-from-video/hero-01-after.webp",
+      "imageAlt": "Illustrative before-and-after comparison for outdated sale label, with the same composition and only the selected distracting overlay changed."
+    },
+    {
+      "id": "preview-2",
+      "label": "Burned-in lower third",
+      "image": "/uploads/landing-new-20261114/remove-text-from-video/hero-02-before.webp",
+      "afterImage": "/uploads/landing-new-20261114/remove-text-from-video/hero-02-after.webp",
+      "imageAlt": "Illustrative before-and-after comparison for burned-in lower third, with the same composition and only the selected distracting overlay changed."
+    },
+    {
+      "id": "preview-3",
+      "label": "Camera date stamp",
+      "image": "/uploads/landing-new-20261114/remove-text-from-video/hero-03-before.webp",
+      "afterImage": "/uploads/landing-new-20261114/remove-text-from-video/hero-03-after.webp",
+      "imageAlt": "Illustrative before-and-after comparison for camera date stamp, with the same composition and only the selected distracting overlay changed."
+    }
+  ],
+  "features": {
+    "eyebrow": "Why choose WatermarkGemini",
+    "heading": "A Video Text Remover Designed for Reusable Footage",
+    "intro": "From old ad copy to captions burned into finished videos, the priority is removing what is no longer useful while keeping the original content and context readable.",
+    "items": [
+      {
+        "enabled": true,
+        "eyebrow": "FEATURE 1",
+        "heading": "Remove Old Prices and Campaign Text from Product Videos",
+        "description": "A once-useful “20% OFF” overlay can become misleading after a promotion ends. For your own product footage, a fixed-region video cleanup can help clear an outdated price or temporary label so the scene can be edited again. Never remove mandatory safety disclosures, ingredient information or required product claims. Inspect the repaired area carefully when packaging, hands or reflections pass behind the words.",
+        "image": "/uploads/landing-new-20261114/remove-text-from-video/feature-01.webp",
+        "imageAlt": "Illustrative remove text from video use case 1: remove old prices and campaign text from product videos, showing one matched scene without cropping or missing subjects.",
+        "imagePosition": "left"
+      },
+      {
+        "enabled": true,
+        "eyebrow": "FEATURE 2",
+        "heading": "Clean Burned-In Subtitles and Lower Thirds",
+        "description": "Hardcoded subtitles are part of the rendered picture, unlike SRT files or switchable caption tracks. When captions stay within a stable lower-third band, a fixed selection may remove their visible pixels. This can help prepare an authorized interview or tutorial for new language captions. Results are less reliable when animated subtitles cross faces, text changes position, or captions overlap moving subjects.",
+        "image": "/uploads/landing-new-20261114/remove-text-from-video/feature-02.webp",
+        "imageAlt": "Illustrative remove text from video use case 2: clean burned-in subtitles and lower thirds, showing one matched scene without cropping or missing subjects.",
+        "imagePosition": "right"
+      },
+      {
+        "enabled": true,
+        "eyebrow": "FEATURE 3",
+        "heading": "Keep the Full Frame Instead of Blurring or Cropping",
+        "description": "Cropping out a lower-third label can cut off gestures, product details or subtitles you plan to add later. A targeted repair preserves more of the 9:16 or 16:9 composition. AI fills an estimated background where lettering once appeared; it does not retrieve exact original footage. Compare hard edges and fine texture at real playback speed, especially in social clips.",
+        "image": "/uploads/landing-new-20261114/remove-text-from-video/feature-03.webp",
+        "imageAlt": "Illustrative remove text from video use case 3: keep the full frame instead of blurring or cropping, showing one matched scene without cropping or missing subjects.",
+        "imagePosition": "left"
+      },
+      {
+        "enabled": true,
+        "eyebrow": "FEATURE 4",
+        "heading": "Online Text Cleanup with Clear Limits",
+        "description": "Choose a local MP4, use the video workspace, sign in and review its quoted cost. Current input requires MP4 at 24 fps, up to 9 minutes and 100 MB; no video trial is promised from free image uses. You can try fixed-area or automatic watermark detection, not a guaranteed dedicated OCR/subtitle-tracking mode. Uploaded media and returned files use temporary private storage scheduled to expire after about 24 hours.",
+        "image": "/uploads/landing-new-20261114/remove-text-from-video/feature-04.webp",
+        "imageAlt": "Illustrative remove text from video use case 4: online text cleanup with clear limits, showing one matched scene without cropping or missing subjects.",
+        "imagePosition": "right"
+      }
+    ]
+  },
+  "relatedTools": {
+    "enabled": true,
+    "eyebrow": "Popular tools",
+    "heading": "Explore More Image and Video Cleanup Tools",
+    "intro": "Choose the cleanup workflow that matches the file and the mark you want to edit. Each tool has its own file requirements and processing limits.",
+    "items": [
+      {
+        "title": "Background Remover",
+        "description": "Remove a photo background with a focused online workflow.",
+        "href": "https://www.watermarkgemini.com/remove-background"
+      },
+      {
+        "title": "Object Remover",
+        "description": "Erase people, clutter and other objects from an authorized photo.",
+        "href": "https://www.watermarkgemini.com/remove-object"
+      },
+      {
+        "title": "Remove Text from Image",
+        "description": "Clean unwanted captions, visible labels and text overlays.",
+        "href": "https://www.watermarkgemini.com/remove-text-from-image"
+      },
+      {
+        "title": "Remove Logo from Image",
+        "description": "Clean logos and brand marks from images you can edit.",
+        "href": "https://www.watermarkgemini.com/remove-logo-from-image"
+      },
+      {
+        "title": "ChatGPT Watermark Remover",
+        "description": "Review visible ChatGPT-style marks in approved images.",
+        "href": "https://www.watermarkgemini.com/chatgpt-watermark-remover"
+      },
+      {
+        "title": "Gemini Watermark Remover",
+        "description": "Clean a visible Gemini sparkle while keeping the image crop.",
+        "href": "https://www.watermarkgemini.com/gemini-watermark-remover"
+      },
+      {
+        "title": "Remove Date Stamp",
+        "description": "Clear visible dates and timestamps from approved images.",
+        "href": "https://www.watermarkgemini.com/"
+      },
+      {
+        "title": "Remove Signature",
+        "description": "Review removal of a visible signature in an authorized image.",
+        "href": "https://www.watermarkgemini.com/"
+      }
+    ]
+  },
+  "guides": {
+    "enabled": true,
+    "eyebrow": "Helpful guides",
+    "heading": "Helpful Guides for Remove Text from Video and Better Edits",
+    "intro": "Before removing visible material, check the source file, permissions and editing method so the result stays useful and accurate.",
+    "items": [
+      {
+        "title": "How to Remove Text from a Product Video",
+        "href": "https://www.watermarkgemini.com/blog/remove-text-from-product-video"
+      },
+      {
+        "title": "How to Remove Hardcoded Subtitles from Video",
+        "href": "https://www.watermarkgemini.com/blog/remove-hardcoded-subtitles-from-video"
+      },
+      {
+        "title": "How to Remove a Timestamp from Video",
+        "href": "https://www.watermarkgemini.com/blog/how-to-remove-timestamp-from-video"
+      },
+      {
+        "title": "How to Remove Moving Watermark From Video Without Flicker",
+        "href": "https://www.watermarkgemini.com/blog/remove-moving-watermark-from-video"
+      },
+      {
+        "title": "Best AI Watermark Remover in 2026: 7 Tools Compared",
+        "href": "https://www.watermarkgemini.com/blog/best-ai-watermark-remover"
+      },
+      {
+        "title": "How to Remove Instagram Watermark from Reels and Videos",
+        "href": "https://www.watermarkgemini.com/blog/how-to-remove-instagram-watermark"
+      }
+    ]
+  },
+  "faq": {
+    "eyebrow": "Frequently asked questions",
+    "heading": "Remove Text from Video FAQs",
+    "intro": "Understand the difference between burned-in and removable subtitle tracks, free-use rules, fixed text limits and export quality.",
+    "items": [
+      {
+        "enabled": true,
+        "question": "How do I remove text from a video?",
+        "answer": "Check whether the text is an editable project layer, a separate subtitle track, or pixels baked into the file. Delete editable layers first. For a compatible authorized MP4 with fixed embedded text, choose WatermarkGemini’s video workspace, mark the region, review the credits and process a test."
+      },
+      {
+        "enabled": true,
+        "question": "Can I remove text from video online for free?",
+        "answer": "The online tool offers a browser workflow, but video processing is not covered by WatermarkGemini’s free image uses. Video jobs require processing credits allocated by an administrator. Review the exact quote and balance before running the task."
+      },
+      {
+        "enabled": true,
+        "question": "Can AI remove text from a video without blur?",
+        "answer": "AI-assisted reconstruction attempts to rebuild the background rather than cover letters with a blur bar. It can still leave smudges or flicker, particularly on patterns, faces, hands or moving products. Compare multiple frames before downloading."
+      },
+      {
+        "enabled": true,
+        "question": "What is the difference between burned-in subtitles and soft subtitles?",
+        "answer": "Burned-in subtitles are visible pixels in the video and cannot be turned off in a player. Soft subtitles exist as a separate track or file, often SRT or embedded captions. Disable or edit the soft track directly; an AI text remover is unnecessary for that case."
+      },
+      {
+        "enabled": true,
+        "question": "Can I remove subtitles from an MP4 video?",
+        "answer": "If subtitle text is permanently embedded and stays in a stable screen band, you may test the fixed-area video cleanup. The site’s separate subtitle-removal page has been marked as planned, so do not assume full automatic caption tracking is supported."
+      },
+      {
+        "enabled": true,
+        "question": "Can it erase moving or animated text?",
+        "answer": "The current fixed-area control remains at the same coordinates throughout the clip; it does not follow moving text. Scrolling titles, karaoke captions or text attached to moving subjects are better handled in the original project or a motion-tracking editor."
+      },
+      {
+        "enabled": true,
+        "question": "How do I remove a timestamp from video?",
+        "answer": "If the timestamp was added by a camera or editor as a fixed burned-in corner label, make a backup and test a narrow fixed-area selection. If it is only a player display, disable that display without touching video pixels."
+      },
+      {
+        "enabled": true,
+        "question": "Which video files does the text remover support?",
+        "answer": "The existing video workspace accepts one MP4 at 24 fps, up to 9 minutes and 100 MB, after compatibility checks. MOV, AVI, URLs and batch processing are not currently part of this route."
+      },
+      {
+        "enabled": true,
+        "question": "Can I remove an old price from a product video?",
+        "answer": "For footage you own, remove an editable price layer and re-export whenever possible. If the price is burned in, a small fixed box over a simple background may work. Keep all required packaging labels, disclaimers and other essential information."
+      },
+      {
+        "enabled": true,
+        "question": "Will the edited video keep its original sound?",
+        "answer": "The processed file is returned as MP4. Open the download in another player and verify soundtrack, dialogue, synchronization and duration before publishing; quality should be checked on the final export, not inferred from the preview."
+      },
+      {
+        "enabled": true,
+        "question": "What if text removal damages a face or product detail?",
+        "answer": "Stop using that fixed selection. Reduce the box if the words are small, return to the source project, replace the shot or choose an editor with temporal masking. AI cannot reconstruct an exact hidden face, logo or fine product lettering."
+      }
+    ]
+  },
+  "cta": {
+    "eyebrow": "Ready when you are",
+    "heading": "Remove Unwanted Text from Your Own Video",
+    "description": "Check whether the text is baked in, upload a compatible MP4, review credits and test a fixed area before you publish your next clean version.",
+    "buttonLabel": "Try Video Text Cleanup",
+    "buttonHref": "#tool"
+  },
+  "uploadButtonLabel": "Upload Video with Text",
+  "shareImage": "/uploads/landing-new-20261114/remove-text-from-video/hero-01-before.webp"
+}
