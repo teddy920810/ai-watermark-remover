@@ -23,17 +23,20 @@
       {
         "number": "01",
         "title": "Find the Original Facebook Video",
-        "description": "Start with a video you created or have explicit permission to edit. Use the original export when available, rather than downloading someone else’s post."
+        "description": "Start with a video you created or have explicit permission to edit. Use the original export when available, rather than downloading someone else’s post.",
+        "imageAlt": "Find the Original Facebook Video — actual product interface or explicitly labeled planned workflow."
       },
       {
         "number": "02",
         "title": "Check Which Mark Needs Cleanup",
-        "description": "Determine whether the mark is a fixed logo, username label, or platform overlay. The dedicated removal step is planned and is not live yet."
+        "description": "Determine whether the mark is a fixed logo, username label, or platform overlay. The dedicated removal step is planned and is not live yet.",
+        "imageAlt": "Check Which Mark Needs Cleanup — actual product interface or explicitly labeled planned workflow."
       },
       {
         "number": "03",
         "title": "Review an Authorized Clean Export",
-        "description": "When processing is released, verify several frames, attribution, and audio before download. For now, return to your source project for the clean version."
+        "description": "When processing is released, verify several frames, attribution, and audio before download. For now, return to your source project for the clean version.",
+        "imageAlt": "Review an Authorized Clean Export — actual product interface or explicitly labeled planned workflow."
       }
     ]
   },
@@ -102,24 +105,27 @@
   "heroSamples": [
     {
       "id": "preview-1",
-      "label": "Upload preview",
+      "label": "Own Facebook Reel",
       "image": "/uploads/landing-20261114/facebook-watermark-remover/Hero_640x347/hero-01-before.webp",
       "imageAlt": "Clean a Reels Overlay from Your Own Clip — authorized source image before cleanup or illustrative mark.",
-      "afterImage": "/uploads/landing-20261114/facebook-watermark-remover/Hero_640x347/hero-01-after.webp"
+      "afterImage": "/uploads/landing-20261114/facebook-watermark-remover/Hero_640x347/hero-01-after.webp",
+      "afterImageAlt": "Clean a Reels Overlay from Your Own Clip — actual verified output, or clearly labeled planned/illustrative comparison."
     },
     {
       "id": "preview-2",
-      "label": "Processing preview",
+      "label": "Archived Brand Promo",
       "image": "/uploads/landing-20261114/facebook-watermark-remover/Hero_640x347/hero-02-before.webp",
       "imageAlt": "Prepare an Old Brand Video for a New Campaign — authorized source image before cleanup or illustrative mark.",
-      "afterImage": "/uploads/landing-20261114/facebook-watermark-remover/Hero_640x347/hero-02-after.webp"
+      "afterImage": "/uploads/landing-20261114/facebook-watermark-remover/Hero_640x347/hero-02-after.webp",
+      "afterImageAlt": "Prepare an Old Brand Video for a New Campaign — actual verified output, or clearly labeled planned/illustrative comparison."
     },
     {
       "id": "preview-3",
-      "label": "Download preview",
+      "label": "Creator Credit Overlay",
       "image": "/uploads/landing-20261114/facebook-watermark-remover/Hero_640x347/hero-03-before.webp",
       "imageAlt": "Review Username and Attribution Areas Carefully — authorized source image before cleanup or illustrative mark.",
-      "afterImage": "/uploads/landing-20261114/facebook-watermark-remover/Hero_640x347/hero-03-after.webp"
+      "afterImage": "/uploads/landing-20261114/facebook-watermark-remover/Hero_640x347/hero-03-after.webp",
+      "afterImageAlt": "Review Username and Attribution Areas Carefully — actual verified output, or clearly labeled planned/illustrative comparison."
     }
   ],
   "relatedTools": {

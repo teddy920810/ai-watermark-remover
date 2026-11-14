@@ -20,17 +20,20 @@
       {
         "number": "01",
         "title": "Confirm Rights and Obtain the Clean Asset",
-        "description": "For a Shutterstock preview, license the image and download the official unwatermarked file. Only use editing tools when you have clear permission to modify an existing source."
+        "description": "For a Shutterstock preview, license the image and download the official unwatermarked file. Only use editing tools when you have clear permission to modify an existing source.",
+        "imageAlt": "Confirm Rights and Obtain the Clean Asset — actual product interface or explicitly labeled planned workflow."
       },
       {
         "number": "02",
         "title": "Select Only an Authorized Review Mark",
-        "description": "If your own licensed file contains a temporary review overlay you are authorized to remove, upload a supported image, sign in and inspect the credit quote."
+        "description": "If your own licensed file contains a temporary review overlay you are authorized to remove, upload a supported image, sign in and inspect the credit quote.",
+        "imageAlt": "Select Only an Authorized Review Mark — actual product interface or explicitly labeled planned workflow."
       },
       {
         "number": "03",
         "title": "Check the Edited Image and License Terms",
-        "description": "Review any repaired area and compression differences, keep the original and relevant license records, and use the result only within the granted rights."
+        "description": "Review any repaired area and compression differences, keep the original and relevant license records, and use the result only within the granted rights.",
+        "imageAlt": "Check the Edited Image and License Terms — actual product interface or explicitly labeled planned workflow."
       }
     ]
   },
@@ -99,24 +102,27 @@
   "heroSamples": [
     {
       "id": "preview-1",
-      "label": "Upload preview",
+      "label": "Licensed Asset Layout",
       "image": "/uploads/landing-20261114/shutterstock-watermark-remover/Hero_640x347/hero-01-before.webp",
       "imageAlt": "Start with the Official Licensed Shutterstock Download — authorized source image before cleanup or illustrative mark.",
-      "afterImage": "/uploads/landing-20261114/shutterstock-watermark-remover/Hero_640x347/hero-01-after.webp"
+      "afterImage": "/uploads/landing-20261114/shutterstock-watermark-remover/Hero_640x347/hero-01-after.webp",
+      "afterImageAlt": "Start with the Official Licensed Shutterstock Download — actual verified output, or clearly labeled planned/illustrative comparison."
     },
     {
       "id": "preview-2",
-      "label": "Processing preview",
+      "label": "Internal Review Overlay",
       "image": "/uploads/landing-20261114/shutterstock-watermark-remover/Hero_640x347/hero-02-before.webp",
       "imageAlt": "Clean Your Own Temporary Review Label — authorized source image before cleanup or illustrative mark.",
-      "afterImage": "/uploads/landing-20261114/shutterstock-watermark-remover/Hero_640x347/hero-02-after.webp"
+      "afterImage": "/uploads/landing-20261114/shutterstock-watermark-remover/Hero_640x347/hero-02-after.webp",
+      "afterImageAlt": "Clean Your Own Temporary Review Label — actual verified output, or clearly labeled planned/illustrative comparison."
     },
     {
       "id": "preview-3",
-      "label": "Download preview",
+      "label": "Approved Client Proof",
       "image": "/uploads/landing-20261114/shutterstock-watermark-remover/Hero_640x347/hero-03-before.webp",
       "imageAlt": "Review an Approved Client Proof Image — authorized source image before cleanup or illustrative mark.",
-      "afterImage": "/uploads/landing-20261114/shutterstock-watermark-remover/Hero_640x347/hero-03-after.webp"
+      "afterImage": "/uploads/landing-20261114/shutterstock-watermark-remover/Hero_640x347/hero-03-after.webp",
+      "afterImageAlt": "Review an Approved Client Proof Image — actual verified output, or clearly labeled planned/illustrative comparison."
     }
   ],
   "relatedTools": {

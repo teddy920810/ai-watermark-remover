@@ -5,21 +5,24 @@
       "label": "Water portrait",
       "image": "/uploads/landing-20261114/gemini-watermark-remover/Hero_640x347/hero-01-before.webp",
       "afterImage": "/uploads/landing-20261114/gemini-watermark-remover/Hero_640x347/hero-01-after.webp",
-      "imageAlt": "Illustrative Gemini-style mark over a portrait in water"
+      "imageAlt": "Illustrative Gemini-style mark over a portrait in water",
+      "afterImageAlt": "Illustrative matching portrait without the added visible mark"
     },
     {
       "id": "travel",
       "label": "Travel portrait",
       "image": "/uploads/landing-20261114/gemini-watermark-remover/Hero_640x347/hero-02-before.webp",
       "afterImage": "/uploads/landing-20261114/gemini-watermark-remover/Hero_640x347/hero-02-after.webp",
-      "imageAlt": "Illustrative Gemini-style mark over detailed AI artwork"
+      "imageAlt": "Illustrative Gemini-style mark over detailed AI artwork",
+      "afterImageAlt": "Illustrative matching artwork with the added mark removed"
     },
     {
       "id": "serum",
       "label": "Product photo",
       "image": "/uploads/landing-20261114/gemini-watermark-remover/Hero_640x347/hero-03-before.webp",
       "afterImage": "/uploads/landing-20261114/gemini-watermark-remover/Hero_640x347/hero-03-after.webp",
-      "imageAlt": "Illustrative Gemini-style mark over a serum product image"
+      "imageAlt": "Illustrative Gemini-style mark over a serum product image",
+      "afterImageAlt": "Illustrative matching product image without the mark"
     }
   ],
   "relatedTools": {
@@ -123,17 +126,20 @@
       {
         "number": "01",
         "title": "Upload Your Gemini Image",
-        "description": "Choose an original JPG, PNG, or WebP image up to 10 MB. An original Gemini export usually gives you a better starting point than a cropped or heavily compressed screenshot. Keep a separate copy so you can compare the result later."
+        "description": "Choose an original JPG, PNG, or WebP image up to 10 MB. An original Gemini export usually gives you a better starting point than a cropped or heavily compressed screenshot. Keep a separate copy so you can compare the result later.",
+        "imageAlt": "Illustration of an image entering an upload workflow"
       },
       {
         "number": "02",
         "title": "Remove the Visible Gemini Watermark",
-        "description": "Sign in with Google to prepare the image, then check the displayed cost and any eligible free image uses before starting. WatermarkGemini processes the visible marked area; it does not remove invisible SynthID or other provenance information."
+        "description": "Sign in with Google to prepare the image, then check the displayed cost and any eligible free image uses before starting. WatermarkGemini processes the visible marked area; it does not remove invisible SynthID or other provenance information.",
+        "imageAlt": "Illustration of visible watermark processing"
       },
       {
         "number": "03",
         "title": "Preview and Download Your Clean Image",
-        "description": "Compare the returned image with the original, paying close attention to the former watermark area, nearby texture, and edges. If the cleanup meets your needs, download the JPG. Keep the original file in case you want to try a different approach."
+        "description": "Compare the returned image with the original, paying close attention to the former watermark area, nearby texture, and edges. If the cleanup meets your needs, download the JPG. Keep the original file in case you want to try a different approach.",
+        "imageAlt": "Illustration of before-and-after download"
       }
     ]
   },

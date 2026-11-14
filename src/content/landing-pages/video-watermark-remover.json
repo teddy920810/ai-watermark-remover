@@ -20,17 +20,20 @@
       {
         "number": "01",
         "title": "Upload Your Eligible MP4",
-        "description": "Choose an MP4 video you created or are licensed to edit. The current page lists 24 fps, up to 9 minutes and 100 MB; check compatibility in the workspace."
+        "description": "Choose an MP4 video you created or are licensed to edit. The current page lists 24 fps, up to 9 minutes and 100 MB; check compatibility in the workspace.",
+        "imageAlt": "Upload Your Eligible MP4 — actual product interface or explicitly labeled planned workflow."
       },
       {
         "number": "02",
         "title": "Choose the Mark and Review Credits",
-        "description": "Use the available automatic detection or fixed-area selection. Sign in, inspect the displayed cost, and confirm only when the selected area matches the mark."
+        "description": "Use the available automatic detection or fixed-area selection. Sign in, inspect the displayed cost, and confirm only when the selected area matches the mark.",
+        "imageAlt": "Choose the Mark and Review Credits — actual product interface or explicitly labeled planned workflow."
       },
       {
         "number": "03",
         "title": "Preview Motion and Download",
-        "description": "Check the output at normal speed and frame by frame for flicker, missing details, audio changes, and unexpected blurring before downloading your MP4."
+        "description": "Check the output at normal speed and frame by frame for flicker, missing details, audio changes, and unexpected blurring before downloading your MP4.",
+        "imageAlt": "Preview Motion and Download — actual product interface or explicitly labeled planned workflow."
       }
     ]
   },
@@ -152,24 +155,27 @@
   "heroSamples": [
     {
       "id": "preview-1",
-      "label": "Example 1",
+      "label": "Static Corner Logo",
       "image": "/uploads/landing-20261114/video-watermark-remover/Hero_640x347/hero-01-before.webp",
       "imageAlt": "Remove a Fixed Corner Watermark from Video — authorized source image before cleanup or illustrative mark.",
-      "afterImage": "/uploads/landing-20261114/video-watermark-remover/Hero_640x347/hero-01-after.webp"
+      "afterImage": "/uploads/landing-20261114/video-watermark-remover/Hero_640x347/hero-01-after.webp",
+      "afterImageAlt": "Remove a Fixed Corner Watermark from Video — actual verified output, or clearly labeled planned/illustrative comparison."
     },
     {
       "id": "preview-2",
-      "label": "Example 2",
+      "label": "Date & Text Overlay",
       "image": "/uploads/landing-20261114/video-watermark-remover/Hero_640x347/hero-02-before.webp",
       "imageAlt": "Clean an Outdated Date Stamp from Your Clip — authorized source image before cleanup or illustrative mark.",
-      "afterImage": "/uploads/landing-20261114/video-watermark-remover/Hero_640x347/hero-02-after.webp"
+      "afterImage": "/uploads/landing-20261114/video-watermark-remover/Hero_640x347/hero-02-after.webp",
+      "afterImageAlt": "Clean an Outdated Date Stamp from Your Clip — actual verified output, or clearly labeled planned/illustrative comparison."
     },
     {
       "id": "preview-3",
-      "label": "Example 3",
+      "label": "Complex Video Background",
       "image": "/uploads/landing-20261114/video-watermark-remover/Hero_640x347/hero-03-before.webp",
       "imageAlt": "Review Watermark Cleanup Over Moving Footage — authorized source image before cleanup or illustrative mark.",
-      "afterImage": "/uploads/landing-20261114/video-watermark-remover/Hero_640x347/hero-03-after.webp"
+      "afterImage": "/uploads/landing-20261114/video-watermark-remover/Hero_640x347/hero-03-after.webp",
+      "afterImageAlt": "Review Watermark Cleanup Over Moving Footage — actual verified output, or clearly labeled planned/illustrative comparison."
     }
   ],
   "relatedTools": {

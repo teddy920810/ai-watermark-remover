@@ -80,6 +80,11 @@ describe('independent tool landing-page previews', () => {
 });
 
 describe('landing design schema', () => {
+  it('preserves independently supplied Before and After image descriptions', async () => {
+    const { landingDesignFields } = await import('./landing-design');
+    const sample = { id: 'operator-pair', label: 'Example', image: '/uploads/before.webp', afterImage: '/uploads/after.webp', imageAlt: 'Original operator description', afterImageAlt: 'Edited operator description' };
+    expect(z.object(landingDesignFields).parse({ heroSamples: [sample] }).heroSamples?.[0]).toEqual(sample);
+  });
   it('retains operator-supplied card copy and links instead of substituting shared titles', async () => {
     const { landingDesignFields } = await import('./landing-design');
     const section = {

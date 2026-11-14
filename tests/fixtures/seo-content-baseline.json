@@ -655,8 +655,20 @@
     },
     {
       "file": "src/content/landing-pages/facebook-watermark-remover.json",
-      "semanticSha256": "15a3ea23584c0e43eee0d7b11b6e2a6609e420f2730388c0f13a3a24050a2b6f",
+      "semanticSha256": "e45faf6c208f306d51de5e6949f93a3825be05b391f0a637010ba98e6b0acc8d",
       "images": [
+        {
+          "path": "/process/steps/0/imageAlt",
+          "value": "Find the Original Facebook Video — actual product interface or explicitly labeled planned workflow."
+        },
+        {
+          "path": "/process/steps/1/imageAlt",
+          "value": "Check Which Mark Needs Cleanup — actual product interface or explicitly labeled planned workflow."
+        },
+        {
+          "path": "/process/steps/2/imageAlt",
+          "value": "Review an Authorized Clean Export — actual product interface or explicitly labeled planned workflow."
+        },
         {
           "path": "/heroSamples/0/image",
           "value": "/uploads/landing-20261114/facebook-watermark-remover/Hero_640x347/hero-01-before.webp"
@@ -668,6 +680,10 @@
         {
           "path": "/heroSamples/0/afterImage",
           "value": "/uploads/landing-20261114/facebook-watermark-remover/Hero_640x347/hero-01-after.webp"
+        },
+        {
+          "path": "/heroSamples/0/afterImageAlt",
+          "value": "Clean a Reels Overlay from Your Own Clip — actual verified output, or clearly labeled planned/illustrative comparison."
         },
         {
           "path": "/heroSamples/1/image",
@@ -682,6 +698,10 @@
           "value": "/uploads/landing-20261114/facebook-watermark-remover/Hero_640x347/hero-02-after.webp"
         },
         {
+          "path": "/heroSamples/1/afterImageAlt",
+          "value": "Prepare an Old Brand Video for a New Campaign — actual verified output, or clearly labeled planned/illustrative comparison."
+        },
+        {
           "path": "/heroSamples/2/image",
           "value": "/uploads/landing-20261114/facebook-watermark-remover/Hero_640x347/hero-03-before.webp"
         },
@@ -692,6 +712,10 @@
         {
           "path": "/heroSamples/2/afterImage",
           "value": "/uploads/landing-20261114/facebook-watermark-remover/Hero_640x347/hero-03-after.webp"
+        },
+        {
+          "path": "/heroSamples/2/afterImageAlt",
+          "value": "Review Username and Attribution Areas Carefully — actual verified output, or clearly labeled planned/illustrative comparison."
         },
         {
           "path": "/features/items/0/image",
@@ -746,7 +770,7 @@
     },
     {
       "file": "src/content/landing-pages/gemini-watermark-remover.json",
-      "semanticSha256": "90e7188f1944a692694c578f25616b9ff08977539750449cb76481c4d37d9fbb",
+      "semanticSha256": "c72b27da5148544c886a6ce5da460226ae6cbebbabcdebe6375e7ecbdf2d7186",
       "images": [
         {
           "path": "/heroSamples/0/image",
@@ -761,6 +785,10 @@
           "value": "Illustrative Gemini-style mark over a portrait in water"
         },
         {
+          "path": "/heroSamples/0/afterImageAlt",
+          "value": "Illustrative matching portrait without the added visible mark"
+        },
+        {
           "path": "/heroSamples/1/image",
           "value": "/uploads/landing-20261114/gemini-watermark-remover/Hero_640x347/hero-02-before.webp"
         },
@@ -773,6 +801,10 @@
           "value": "Illustrative Gemini-style mark over detailed AI artwork"
         },
         {
+          "path": "/heroSamples/1/afterImageAlt",
+          "value": "Illustrative matching artwork with the added mark removed"
+        },
+        {
           "path": "/heroSamples/2/image",
           "value": "/uploads/landing-20261114/gemini-watermark-remover/Hero_640x347/hero-03-before.webp"
         },
@@ -783,6 +815,22 @@
         {
           "path": "/heroSamples/2/imageAlt",
           "value": "Illustrative Gemini-style mark over a serum product image"
+        },
+        {
+          "path": "/heroSamples/2/afterImageAlt",
+          "value": "Illustrative matching product image without the mark"
+        },
+        {
+          "path": "/process/steps/0/imageAlt",
+          "value": "Illustration of an image entering an upload workflow"
+        },
+        {
+          "path": "/process/steps/1/imageAlt",
+          "value": "Illustration of visible watermark processing"
+        },
+        {
+          "path": "/process/steps/2/imageAlt",
+          "value": "Illustration of before-and-after download"
         },
         {
           "path": "/features/items/0/image",
@@ -1497,8 +1545,20 @@
     },
     {
       "file": "src/content/landing-pages/remove-subtitle-from-video.json",
-      "semanticSha256": "4133d7d4329c208a7e3feec4f0e478be504cbcb9113e6c72296738a568aadea3",
+      "semanticSha256": "63b3be6173075088f9dd741d21327b73eaf22123152a6ac00a4925c0ea2d3f40",
       "images": [
+        {
+          "path": "/process/steps/0/imageAlt",
+          "value": "Check Whether Subtitles Can Be Turned Off — actual product interface or explicitly labeled planned workflow."
+        },
+        {
+          "path": "/process/steps/1/imageAlt",
+          "value": "Identify Burned-In Caption Areas — actual product interface or explicitly labeled planned workflow."
+        },
+        {
+          "path": "/process/steps/2/imageAlt",
+          "value": "Verify the Clean Export When Available — actual product interface or explicitly labeled planned workflow."
+        },
         {
           "path": "/heroSamples/0/image",
           "value": "/uploads/landing-20261114/remove-subtitle-from-video/Hero_640x347/hero-01-before.webp"
@@ -1510,6 +1570,10 @@
         {
           "path": "/heroSamples/0/afterImage",
           "value": "/uploads/landing-20261114/remove-subtitle-from-video/Hero_640x347/hero-01-after.webp"
+        },
+        {
+          "path": "/heroSamples/0/afterImageAlt",
+          "value": "Remove Burned-In Dialogue Subtitles — actual verified output, or clearly labeled planned/illustrative comparison."
         },
         {
           "path": "/heroSamples/1/image",
@@ -1524,6 +1588,10 @@
           "value": "/uploads/landing-20261114/remove-subtitle-from-video/Hero_640x347/hero-02-after.webp"
         },
         {
+          "path": "/heroSamples/1/afterImageAlt",
+          "value": "Clean Two-Line Subtitles from Your Own Clip — actual verified output, or clearly labeled planned/illustrative comparison."
+        },
+        {
           "path": "/heroSamples/2/image",
           "value": "/uploads/landing-20261114/remove-subtitle-from-video/Hero_640x347/hero-03-before.webp"
         },
@@ -1534,6 +1602,10 @@
         {
           "path": "/heroSamples/2/afterImage",
           "value": "/uploads/landing-20261114/remove-subtitle-from-video/Hero_640x347/hero-03-after.webp"
+        },
+        {
+          "path": "/heroSamples/2/afterImageAlt",
+          "value": "Prepare an Old Captioned Video for Re-Editing — actual verified output, or clearly labeled planned/illustrative comparison."
         },
         {
           "path": "/features/items/0/image",
@@ -1703,8 +1775,20 @@
     },
     {
       "file": "src/content/landing-pages/shutterstock-watermark-remover.json",
-      "semanticSha256": "60221cb8df156f97d19c6407b5aa102e84c6f6febb8d137e1551d421f7a45c3e",
+      "semanticSha256": "e540e6e307f775de3b59056e4310b6c1445c216cde39ca1f36ea82bb72e4be70",
       "images": [
+        {
+          "path": "/process/steps/0/imageAlt",
+          "value": "Confirm Rights and Obtain the Clean Asset — actual product interface or explicitly labeled planned workflow."
+        },
+        {
+          "path": "/process/steps/1/imageAlt",
+          "value": "Select Only an Authorized Review Mark — actual product interface or explicitly labeled planned workflow."
+        },
+        {
+          "path": "/process/steps/2/imageAlt",
+          "value": "Check the Edited Image and License Terms — actual product interface or explicitly labeled planned workflow."
+        },
         {
           "path": "/heroSamples/0/image",
           "value": "/uploads/landing-20261114/shutterstock-watermark-remover/Hero_640x347/hero-01-before.webp"
@@ -1716,6 +1800,10 @@
         {
           "path": "/heroSamples/0/afterImage",
           "value": "/uploads/landing-20261114/shutterstock-watermark-remover/Hero_640x347/hero-01-after.webp"
+        },
+        {
+          "path": "/heroSamples/0/afterImageAlt",
+          "value": "Start with the Official Licensed Shutterstock Download — actual verified output, or clearly labeled planned/illustrative comparison."
         },
         {
           "path": "/heroSamples/1/image",
@@ -1730,6 +1818,10 @@
           "value": "/uploads/landing-20261114/shutterstock-watermark-remover/Hero_640x347/hero-02-after.webp"
         },
         {
+          "path": "/heroSamples/1/afterImageAlt",
+          "value": "Clean Your Own Temporary Review Label — actual verified output, or clearly labeled planned/illustrative comparison."
+        },
+        {
           "path": "/heroSamples/2/image",
           "value": "/uploads/landing-20261114/shutterstock-watermark-remover/Hero_640x347/hero-03-before.webp"
         },
@@ -1740,6 +1832,10 @@
         {
           "path": "/heroSamples/2/afterImage",
           "value": "/uploads/landing-20261114/shutterstock-watermark-remover/Hero_640x347/hero-03-after.webp"
+        },
+        {
+          "path": "/heroSamples/2/afterImageAlt",
+          "value": "Review an Approved Client Proof Image — actual verified output, or clearly labeled planned/illustrative comparison."
         },
         {
           "path": "/features/items/0/image",
@@ -2115,8 +2211,20 @@
     },
     {
       "file": "src/content/landing-pages/video-watermark-remover.json",
-      "semanticSha256": "d47761b9cc68ae352a62b014524f62c6c65cfb54f819799dff11f4c227e7b5d3",
+      "semanticSha256": "ab4094d893672b8d8397b1884e1b2dbf2812feb27364ec730da0ed80a9e9f5d0",
       "images": [
+        {
+          "path": "/process/steps/0/imageAlt",
+          "value": "Upload Your Eligible MP4 — actual product interface or explicitly labeled planned workflow."
+        },
+        {
+          "path": "/process/steps/1/imageAlt",
+          "value": "Choose the Mark and Review Credits — actual product interface or explicitly labeled planned workflow."
+        },
+        {
+          "path": "/process/steps/2/imageAlt",
+          "value": "Preview Motion and Download — actual product interface or explicitly labeled planned workflow."
+        },
         {
           "path": "/features/items/0/image",
           "value": "/uploads/landing-20261114/video-watermark-remover/Feature_538x436/feature-01-before.webp"
@@ -2178,6 +2286,10 @@
           "value": "/uploads/landing-20261114/video-watermark-remover/Hero_640x347/hero-01-after.webp"
         },
         {
+          "path": "/heroSamples/0/afterImageAlt",
+          "value": "Remove a Fixed Corner Watermark from Video — actual verified output, or clearly labeled planned/illustrative comparison."
+        },
+        {
           "path": "/heroSamples/1/image",
           "value": "/uploads/landing-20261114/video-watermark-remover/Hero_640x347/hero-02-before.webp"
         },
@@ -2190,6 +2302,10 @@
           "value": "/uploads/landing-20261114/video-watermark-remover/Hero_640x347/hero-02-after.webp"
         },
         {
+          "path": "/heroSamples/1/afterImageAlt",
+          "value": "Clean an Outdated Date Stamp from Your Clip — actual verified output, or clearly labeled planned/illustrative comparison."
+        },
+        {
           "path": "/heroSamples/2/image",
           "value": "/uploads/landing-20261114/video-watermark-remover/Hero_640x347/hero-03-before.webp"
         },
@@ -2200,6 +2316,10 @@
         {
           "path": "/heroSamples/2/afterImage",
           "value": "/uploads/landing-20261114/video-watermark-remover/Hero_640x347/hero-03-after.webp"
+        },
+        {
+          "path": "/heroSamples/2/afterImageAlt",
+          "value": "Review Watermark Cleanup Over Moving Footage — actual verified output, or clearly labeled planned/illustrative comparison."
         }
       ],
       "contentOwnerApproval": "https://github.com/teddy920810/ai-watermark-remover/pull/151"

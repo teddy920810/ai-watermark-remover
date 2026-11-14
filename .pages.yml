@@ -1476,6 +1476,7 @@ content:
             options:
               media: images
           - { name: imageAlt, label: 图片替代文字｜IMG ALT, type: string, required: true }
+          - { name: afterImageAlt, label: 图片2替代文字｜After IMG ALT（可选）, type: string }
       - name: heroActions
         label: Hero 按钮（可选）
         type: object
@@ -1593,6 +1594,7 @@ content:
                 label: 独立配图替代文字｜IMG ALT（可选）
                 type: string
                 description: 仅在选择独立步骤配图时填写。
+              - { name: afterImageAlt, label: 图片2替代文字｜After IMG ALT（可选）, type: string }
       - name: features
         label: 功能亮点 / Features（可选）
         type: object
@@ -1656,6 +1658,7 @@ content:
                 label: 图片替代文字｜IMG ALT
                 type: string
                 required: true
+              - { name: afterImageAlt, label: 图片2替代文字｜After IMG ALT（可选）, type: string }
               - name: imagePosition
                 label: 图片位置
                 type: select

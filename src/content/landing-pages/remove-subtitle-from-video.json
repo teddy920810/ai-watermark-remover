@@ -23,17 +23,20 @@
       {
         "number": "01",
         "title": "Check Whether Subtitles Can Be Turned Off",
-        "description": "Open the player caption menu. If the text disappears, disable the caption track or re-export without it; no AI repair is needed."
+        "description": "Open the player caption menu. If the text disappears, disable the caption track or re-export without it; no AI repair is needed.",
+        "imageAlt": "Check Whether Subtitles Can Be Turned Off — actual product interface or explicitly labeled planned workflow."
       },
       {
         "number": "02",
         "title": "Identify Burned-In Caption Areas",
-        "description": "If captions stay in the picture, record their position, line count, and whether they overlap faces or moving backgrounds. The dedicated cleanup step is planned, not live."
+        "description": "If captions stay in the picture, record their position, line count, and whether they overlap faces or moving backgrounds. The dedicated cleanup step is planned, not live.",
+        "imageAlt": "Identify Burned-In Caption Areas — actual product interface or explicitly labeled planned workflow."
       },
       {
         "number": "03",
         "title": "Verify the Clean Export When Available",
-        "description": "Once released, test a short part, inspect text transitions and flicker, confirm sound, and download only an authorized result. Keep the original clip."
+        "description": "Once released, test a short part, inspect text transitions and flicker, confirm sound, and download only an authorized result. Keep the original clip.",
+        "imageAlt": "Verify the Clean Export When Available — actual product interface or explicitly labeled planned workflow."
       }
     ]
   },
@@ -102,24 +105,27 @@
   "heroSamples": [
     {
       "id": "preview-1",
-      "label": "Upload preview",
+      "label": "Bottom Dialogue Captions",
       "image": "/uploads/landing-20261114/remove-subtitle-from-video/Hero_640x347/hero-01-before.webp",
       "imageAlt": "Remove Burned-In Dialogue Subtitles — authorized source image before cleanup or illustrative mark.",
-      "afterImage": "/uploads/landing-20261114/remove-subtitle-from-video/Hero_640x347/hero-01-after.webp"
+      "afterImage": "/uploads/landing-20261114/remove-subtitle-from-video/Hero_640x347/hero-01-after.webp",
+      "afterImageAlt": "Remove Burned-In Dialogue Subtitles — actual verified output, or clearly labeled planned/illustrative comparison."
     },
     {
       "id": "preview-2",
-      "label": "Processing preview",
+      "label": "Two-Line Translation",
       "image": "/uploads/landing-20261114/remove-subtitle-from-video/Hero_640x347/hero-02-before.webp",
       "imageAlt": "Clean Two-Line Subtitles from Your Own Clip — authorized source image before cleanup or illustrative mark.",
-      "afterImage": "/uploads/landing-20261114/remove-subtitle-from-video/Hero_640x347/hero-02-after.webp"
+      "afterImage": "/uploads/landing-20261114/remove-subtitle-from-video/Hero_640x347/hero-02-after.webp",
+      "afterImageAlt": "Clean Two-Line Subtitles from Your Own Clip — actual verified output, or clearly labeled planned/illustrative comparison."
     },
     {
       "id": "preview-3",
-      "label": "Download preview",
+      "label": "Social Video Text",
       "image": "/uploads/landing-20261114/remove-subtitle-from-video/Hero_640x347/hero-03-before.webp",
       "imageAlt": "Prepare an Old Captioned Video for Re-Editing — authorized source image before cleanup or illustrative mark.",
-      "afterImage": "/uploads/landing-20261114/remove-subtitle-from-video/Hero_640x347/hero-03-after.webp"
+      "afterImage": "/uploads/landing-20261114/remove-subtitle-from-video/Hero_640x347/hero-03-after.webp",
+      "afterImageAlt": "Prepare an Old Captioned Video for Re-Editing — actual verified output, or clearly labeled planned/illustrative comparison."
     }
   ],
   "relatedTools": {

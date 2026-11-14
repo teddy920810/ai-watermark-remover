@@ -3,6 +3,7 @@ import { z } from 'zod';
 export const imagePairFields = {
   image: z.string().trim().min(1).optional(),
   afterImage: z.preprocess(value => typeof value === 'string' && !value.trim() ? undefined : value, z.string().trim().min(1).optional()),
+  afterImageAlt: z.string().min(1).optional(),
 };
 export function validateImagePair(value: { image?: string; afterImage?: string }, context: z.RefinementCtx) {
   if (value.afterImage && (!value.image || value.afterImage === value.image)) {

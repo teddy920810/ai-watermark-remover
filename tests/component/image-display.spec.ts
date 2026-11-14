@@ -10,6 +10,14 @@ test('preserves the configured alt verbatim for both image sources', async ({ pa
   await expect(images.nth(1)).toHaveAttribute('alt', alt!);
 });
 
+test('preserves independent operator descriptions for Before and After', async ({ page }) => {
+  await page.goto('/');
+  const images = page.locator('#distinct-alt img');
+  await expect(images).toHaveCount(2);
+  await expect(images.nth(0)).toHaveAttribute('alt', 'Operator Before description');
+  await expect(images.nth(1)).toHaveAttribute('alt', 'Operator After description');
+});
+
 test('a cold Before remains loadable after its After has already loaded offscreen', async ({ page }) => {
   let afterLoaded = false;
   await page.route('**/*warm-after=1', async route => {

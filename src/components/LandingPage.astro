@@ -20,10 +20,10 @@ if (!siteEntry) throw new Error('Site settings CMS content is missing.');
 const site = siteEntry.data;
 const recommendation = pageRecommendation(page);
 const fallbackSamples = visibleItems(page.features?.items ?? []).slice(0, 3).map((item, index) => ({
-  id: `preview-${index + 1}`, label: item.heading, image: item.image, afterImage: item.afterImage, imageAlt: item.imageAlt, comparison: item.comparison,
+  id: `preview-${index + 1}`, label: item.heading, image: item.image, afterImage: item.afterImage, afterImageAlt: item.afterImageAlt, imageAlt: item.imageAlt, comparison: item.comparison,
 }));
 const samples = (page.heroSamples ?? (fallbackSamples.length ? fallbackSamples : site.processVisuals.map((visual, index) => ({
-  id: `preview-${index + 1}`, label: `Workflow step ${index + 1}`, ...visual, afterImage: undefined, comparison: undefined,
+  id: `preview-${index + 1}`, label: `Workflow step ${index + 1}`, ...visual, afterImage: undefined, afterImageAlt: undefined, comparison: undefined,
 })))).map(sample => { const pair = resolveImagePair(sample); return { ...sample, image: pair.image ?? sample.image, afterImage: pair.afterImage }; });
 const [homepage] = await getCollection('homepage');
 const publicPages = publicLandingEntries(await getCollection('landingPages'));
@@ -89,7 +89,7 @@ const faqSchema = visibleFaqItems.length > 0 ? {
       <div class="hero-workbench">
         {samples.length > 0 && <div class="hero-preview" aria-label="Example previews">
           {samples.map((sample, index) => <div data-landing-preview hidden={index !== 0}>
-            <div class="landing-sample-image"><ImageDisplay fit="cover" image={sample.image} afterImage={sample.afterImage} alt={sample.imageAlt} eager={index === 0} /></div>
+            <div class="landing-sample-image"><ImageDisplay fit="cover" image={sample.image} afterImage={sample.afterImage} afterImageAlt={sample.afterImageAlt} alt={sample.imageAlt} eager={index === 0} /></div>
           </div>)}
           <div class="hero-samples" aria-label="Choose an example preview">{samples.map((sample, index) => <button class="hero-sample" type="button" data-landing-sample aria-pressed={index === 0} aria-label={`Preview ${sample.label}`}><ResponsiveImage src={sample.image} alt="" sizes="72px" /></button>)}</div>
         </div>}
@@ -106,7 +106,7 @@ const faqSchema = visibleFaqItems.length > 0 ? {
     <div class="steps step-grid">
       {page.process.steps.map((step, index) => {
         const visual = site.processVisuals[index];
-        return <article class="step-card"><div class="process-step-media"><ImageDisplay fit="cover" image={step.image ?? visual.image} afterImage={step.afterImage} alt={step.imageAlt ?? visual.imageAlt} sizes="(max-width: 900px) calc(100vw - 40px), 400px" /></div><div class="process-step-copy"><span class="step-number">{step.number}</span><h3>{step.title}</h3><p>{step.description}</p></div></article>;
+        return <article class="step-card"><div class="process-step-media"><ImageDisplay fit="cover" image={step.image ?? visual.image} afterImage={step.afterImage} afterImageAlt={step.afterImageAlt} alt={step.imageAlt ?? visual.imageAlt} sizes="(max-width: 900px) calc(100vw - 40px), 400px" /></div><div class="process-step-copy"><span class="step-number">{step.number}</span><h3>{step.title}</h3><p>{step.description}</p></div></article>;
       })}
     </div>
   </section>
@@ -116,7 +116,7 @@ const faqSchema = visibleFaqItems.length > 0 ? {
       <div class="section-heading"><span class="eyebrow">{features.eyebrow}</span><h2 id="features-heading">{features.heading}</h2><p>{features.intro}</p></div>
       <div class="feature-list">
         {featureItems.map(item => <article class:list={{ 'feature-row': true, 'feature-item': true, 'is-image-left': item.imagePosition === 'left', reverse: item.imagePosition === 'right' }}>
-          <div class="feature-media"><ImageDisplay fit="cover" image={item.image} afterImage={item.afterImage} alt={item.imageAlt} sizes="(max-width: 900px) calc(100vw - 40px), 540px" /></div>
+          <div class="feature-media"><ImageDisplay fit="cover" image={item.image} afterImage={item.afterImage} afterImageAlt={item.afterImageAlt} alt={item.imageAlt} sizes="(max-width: 900px) calc(100vw - 40px), 540px" /></div>
           <div class="feature-copy"><span class="eyebrow">{item.eyebrow}</span><h3>{item.heading}</h3><p>{item.copy.description}</p>{item.copy.listItems.length > 0 && <ul class="feature-list-items">{item.copy.listItems.map((listItem) => <li>{listItem}</li>)}</ul>}</div>
         </article>)}
       </div>

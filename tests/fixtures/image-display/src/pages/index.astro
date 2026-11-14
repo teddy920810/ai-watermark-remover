@@ -12,6 +12,7 @@ const second = '/uploads/home-blueprint/features/hero-sample-02-sunset.png';
   <section id="both-failed"><ImageDisplay image="/__missing-before.png" afterImage="/__missing-after.png" alt="Both fail" eager /></section>
   <section id="unaligned"><ImageDisplay image={first} afterImage="/uploads/home-blueprint/features/feature-01-cream-branded-base.png" alt="Different ratios" eager /></section>
   <section id="pair"><ImageDisplay image={first} afterImage={second} alt="Pair mechanics" /></section>
+  <section id="distinct-alt"><ImageDisplay image={first} afterImage={second} alt="Operator Before description" afterImageAlt="Operator After description" /></section>
   <section id="cover"><ImageDisplay image={first} afterImage={second} alt="Framed pair mechanics" fit="cover" eager /></section>
   <section id="after-first"><ImageDisplay image={`${first}?cold-before=1`} afterImage={`${second}?warm-after=1`} alt="After loads first" /></section>
   <button type="button">Switch sample</button>

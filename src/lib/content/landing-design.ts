@@ -15,6 +15,7 @@ const landingHeroSampleSchema = z.object({
   label: z.string().min(1),
   image: z.string().min(1),
   afterImage: imagePairFields.afterImage,
+  afterImageAlt: imagePairFields.afterImageAlt,
   imageAlt: z.string().min(1),
   comparison: landingComparisonSchema.optional(),
 }).superRefine(validateImagePair);
