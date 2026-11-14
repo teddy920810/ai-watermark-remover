@@ -15,6 +15,7 @@ const landingHeroSampleSchema = z.object({
   label: z.string().min(1),
   image: z.string().min(1),
   afterImage: imagePairFields.afterImage,
+  afterImageAlt: imagePairFields.afterImageAlt,
   imageAlt: z.string().min(1),
   comparison: landingComparisonSchema.optional(),
 }).superRefine(validateImagePair);
@@ -24,6 +25,14 @@ const relatedContentSchema = z.object({
   eyebrow: z.string().min(1),
   heading: z.string().min(1),
   intro: z.string().min(1),
+  items: z.preprocess(
+    value => Array.isArray(value) && value.length === 0 ? undefined : value,
+    z.array(z.object({
+      title: z.string().min(1),
+      description: z.string().min(1).optional(),
+      href: z.string().min(1),
+    })).min(1).optional(),
+  ),
   slugs: z.preprocess(
     value => Array.isArray(value) && value.length === 0 ? undefined : value,
     z.array(z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)).min(1).optional(),

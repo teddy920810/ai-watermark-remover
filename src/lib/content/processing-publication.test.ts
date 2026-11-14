@@ -9,11 +9,12 @@ describe('published processing scope', () => {
   it('publishes video requirements and administrator allowance without promising free processing', () => {
     expect(video.statusLabel ?? '').not.toMatch(/coming soon/i);
     expect(video.title).not.toMatch(/free/i);
-    expect(`${video.intro} ${video.process.intro}`).toMatch(/24\s?fps/i);
-    expect(`${video.intro} ${video.process.intro}`).toMatch(/100\s?MB/i);
-    expect(`${video.intro} ${video.process.intro}`).toMatch(/9\s?min/i);
+    const requirements = [video.toolNote, ...video.process.steps.map((step: { description: string }) => step.description)].join(' ');
+    expect(requirements).toMatch(/24\s?fps/i);
+    expect(requirements).toMatch(/100\s?MB/i);
+    expect(requirements).toMatch(/9\s?min/i);
     expect(JSON.stringify(video.faq)).toMatch(/administrator/i);
-    expect(JSON.stringify(video.faq)).toMatch(/moving-watermark tracking is not supported/i);
+    expect(JSON.stringify(video.faq)).toMatch(/requires reliable tracking, which has not been confirmed/i);
     expect(video.uploader.dropzone.dropLabel).not.toMatch(/coming soon/i);
     expect(video.uploader.dropzone.fileInputLabel).toMatch(/MP4 video/i);
   });

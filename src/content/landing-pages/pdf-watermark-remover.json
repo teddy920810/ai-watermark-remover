@@ -1,162 +1,262 @@
 {
   "draft": false,
   "slug": "pdf-watermark-remover",
-  "title": "PDF Watermark Remover | PDF Support Status & Options",
-  "description": "Looking for a PDF watermark remover? Check WatermarkGemini's current file support, learn the difference between layered and scanned PDF marks, and review image cleanup options.",
+  "title": "PDF Watermark Remover: Check Your Watermark Type and Options | WatermarkGemini",
+  "description": "Need a PDF watermark remover? Learn the difference between layered and scanned PDF stamps. Direct PDF upload/export is not available in the current WatermarkGemini workflow.",
   "eyebrow": "PDF WATERMARK REMOVER",
-  "heading": "PDF Watermark Remover: What You Can Edit Today",
-  "intro": "Need to remove a DRAFT stamp, diagonal text or a logo from a PDF you own? The method depends on whether the mark is a separate PDF object or part of a scanned page. WatermarkGemini's current uploader lists images and MP4, not PDF; direct PDF upload and PDF download are therefore not confirmed on this page. Do not submit a PDF until a PDF-enabled workflow is visible. For this page, use only a single page you manually export as JPG, PNG or WebP from a document you own or may edit; this is image cleanup, not native PDF editing.\n\nThe comparison images on this page are illustrative examples, not tested product outputs.",
+  "heading": "PDF Watermark Remover: Check Your Watermark Type and Options",
+  "intro": "A DRAFT stamp, diagonal CONFIDENTIAL text or logo can be a separate PDF object—or pixels baked into a scan. Those cases need different solutions. WatermarkGemini currently offers image cleanup on an individually exported page, not direct PDF upload and PDF download. Check your document type and permissions before choosing a method.\n\nIllustrative document-page examples, not native PDF-editing results. Actual current tool output is JPG for individually exported images.",
   "benefits": [
-    "Check PDF support before processing",
-    "Learn layered vs scanned watermarks",
-    "Use permitted image-page cleanup"
+    "Layered vs Scanned Watermarks",
+    "Keep Important Document Text",
+    "PDF Upload Not Yet Supported"
   ],
   "process": {
     "eyebrow": "How it works",
-    "heading": "How to Remove Watermark from PDF",
-    "intro": "Follow the three steps below. Always confirm the file type and actual processing status shown in the tool before you submit content.",
+    "heading": "How to Remove Watermarks from a PDF Safely",
+    "intro": "Use the actual source file, check your rights and review the processing cost or availability before starting.",
     "steps": [
       {
         "number": "01",
-        "title": "Check Whether the PDF Is Editable",
-        "description": "Open the original PDF and verify you have permission to modify it. If the watermark is a separate object in the authoring application, remove that layer there rather than rasterizing the pages."
+        "title": "Inspect the Original PDF and Your Editing Rights",
+        "description": "Check whether the watermark is an editable object or part of a scan. If it is a separate layer, remove it in the authoring application where you have permission.",
+        "image": "/uploads/landing-20261114/pdf-watermark-remover/Steps_Concept/step-01-concept.webp",
+        "imageAlt": "Inspect the Original PDF and Your Editing Rights"
       },
       {
         "number": "02",
-        "title": "Use Only a Supported File Format",
-        "description": "The current WatermarkGemini uploader does not list PDF. If you own the document, you may export a single page to a supported JPG, PNG or WebP image and try image cleanup; that is not equivalent to editing the original PDF."
+        "title": "Export One Page Only if Image Cleanup Fits",
+        "description": "The current WatermarkGemini workflow accepts a supported page image, not a PDF. Export one permitted page as JPG, PNG or WebP if preserving selectable text and links is not required.",
+        "image": "/uploads/landing-20261114/pdf-watermark-remover/Steps_Concept/step-02-concept.webp",
+        "imageAlt": "Export One Page Only if Image Cleanup Fits"
       },
       {
         "number": "03",
-        "title": "Review Text, Layout and Output Format",
-        "description": "Compare small text, diagrams and page edges after editing. The current image workflow exports JPG, not a cleaned multi-page PDF. Use a verified PDF editor when selectable text, links and page structure must be preserved."
+        "title": "Review Text and Keep the Original PDF",
+        "description": "After any image cleanup, inspect fine type, tables and diagrams. The returned file is JPG, not a cleaned editable or multi-page PDF.",
+        "image": "/uploads/landing-20261114/pdf-watermark-remover/Steps_Concept/step-03-concept.webp",
+        "imageAlt": "Review Text and Keep the Original PDF"
       }
     ]
   },
   "faq": {
-    "eyebrow": "FAQ",
-    "heading": "PDF Watermark Remover FAQs",
-    "intro": "Clear answers about supported inputs, editing quality, limits and responsible use.",
+    "eyebrow": "Frequently asked questions",
+    "heading": "Frequently Asked Questions About PDF Watermark Remover",
+    "intro": "Answers about supported media, image/video quality, usage requirements and responsible editing.",
     "items": [
       {
         "enabled": true,
-        "question": "Can I upload a PDF directly to WatermarkGemini today?",
-        "answer": "The current uploader on this page does not list PDF among supported formats. Its image workflow lists JPG, PNG and WebP, while the shared uploader may also show MP4. Direct PDF upload and cleaned PDF export are not supported by this image-page workflow."
+        "question": "How do I remove a watermark from a PDF?",
+        "answer": "First determine whether the mark is an editable watermark object or part of a scanned image. For a PDF you own, remove a separate watermark using a capable PDF editor or the source project. WatermarkGemini does not currently perform native PDF removal; it can only help with an individually exported page image."
       },
       {
         "enabled": true,
-        "question": "How do I remove a watermark from a PDF I own?",
-        "answer": "First determine how the watermark was added. If it is a separate annotation or layer, remove it in the original editor and save a new PDF. If it is flattened into a scan, image restoration may be needed and can affect underlying text."
+        "question": "Can I remove a PDF watermark online for free?",
+        "answer": "Free and paid PDF editors use different methods and limits. WatermarkGemini currently does not provide a verified direct PDF upload/export feature. Eligible image-page tasks may use limited free image uses after sign-in, but that is not the same as free PDF watermark removal."
       },
       {
         "enabled": true,
-        "question": "Is there a free PDF watermark remover online?",
-        "answer": "Some online PDF tools provide limited free document editing. WatermarkGemini has not confirmed a direct PDF workflow on this page, and its image processing may display a credit cost. Check the supported file type before uploading."
+        "question": "Can WatermarkGemini open a PDF directly?",
+        "answer": "No. The current uploader lists JPG, PNG, WebP and a general MP4 control; it does not list PDF as a supported native input. Do not upload a PDF expecting a cleaned PDF file back."
       },
       {
         "enabled": true,
-        "question": "How can I remove a DRAFT watermark from a PDF?",
-        "answer": "If DRAFT is a selectable watermark object, deleting that object is generally preferable to covering it. If the lettering is baked into a scan, carefully restoring the page image may be possible, but the result should be checked for missing characters."
+        "question": "How do I remove a DRAFT watermark from a PDF?",
+        "answer": "If the DRAFT mark is a separate object in a document you are authorized to revise, use the PDF editor’s watermark-removal feature. If it is baked into a scan, any image-based cleanup can change pixels behind the mark. Retain the approved source record and document status."
+      },
+      {
+        "enabled": true,
+        "question": "Why is a PDF watermark difficult to remove from scanned pages?",
+        "answer": "A scanned PDF stores the watermark and page content together as a raster image. There may be no underlying editable layer to delete, so cleanup must estimate the pixels beneath the mark. Letters and charts crossed by the stamp can be distorted."
       },
       {
         "enabled": true,
         "question": "Will removing a PDF watermark preserve editable text?",
-        "answer": "Removing a separate watermark object may preserve text and hyperlinks. Converting the page to an image does not; it can remove selectable text and alter document accessibility. The current WatermarkGemini image workflow does not promise structural PDF preservation."
+        "answer": "Deleting a separate PDF watermark object in an appropriate editor can preserve document text and links. Exporting a page to an image and inpainting it cannot: the result is flattened pixels. WatermarkGemini currently follows the latter single-image path only."
       },
       {
         "enabled": true,
-        "question": "Can I remove a watermark from a scanned PDF?",
-        "answer": "You can potentially work on an exported page image if you have rights to edit it, but small type, thin lines and embedded diagrams are difficult to reconstruct. Inspect every affected region; this does not produce a native cleaned PDF."
+        "question": "Can I remove watermarks from multiple PDF pages at once?",
+        "answer": "Not in WatermarkGemini’s current image workflow. Multi-page processing, original formatting and PDF output are not supported here. Use an authorized native PDF tool if you need a complete document workflow."
       },
       {
         "enabled": true,
-        "question": "Does WatermarkGemini process a multi-page PDF?",
-        "answer": "No verified direct multi-page PDF workflow is currently shown in the uploader. This image-page workflow does not process all pages together or download an edited PDF."
+        "question": "Can AI remove a logo or diagonal watermark from a PDF scan?",
+        "answer": "An image editor may clean a visible overlay from a permitted page image, but fine text, signatures and line art can be affected. Check the complete page at print size before treating the result as usable, and do not represent it as a native PDF edit."
       },
       {
         "enabled": true,
-        "question": "Is it legal to remove a watermark from a PDF?",
-        "answer": "Only change documents you own or are authorized to edit, such as a draft you created. Removing publisher marks, license warnings or third-party ownership notices can breach legal or contractual obligations."
+        "question": "What is the difference between a watermark and a stamp in a PDF?",
+        "answer": "PDF applications may store a watermark as a dedicated page element, an annotation or part of a flattened background. The correct editing method depends on how the document was created. Inspect the structure or ask the original author before rasterizing."
+      },
+      {
+        "enabled": true,
+        "question": "Can I use Adobe Acrobat to remove a watermark?",
+        "answer": "Adobe’s documented desktop workflow uses Edit a PDF, then Watermark > Remove for supported watermark objects. That is a separate Adobe feature, not part of WatermarkGemini. Always verify document permissions before modifying an official or contractual file."
+      },
+      {
+        "enabled": true,
+        "question": "Is it safe to upload confidential PDFs?",
+        "answer": "Do not submit confidential files to a service that does not support the required document workflow. WatermarkGemini’s current page is for supported media and images, with temporary private storage after submission. Review your organization’s document-handling rules and the privacy policy first."
       }
     ]
   },
   "features": {
-    "eyebrow": "BUILT FOR REAL PDF PROBLEMS",
-    "heading": "PDF Watermark Removal: Know the File Type Before You Edit",
-    "intro": "PDF watermarks are different from pixel overlays in photos. Review the use cases and current limits before choosing a workflow.\n\nThe comparison images on this page are illustrative examples, not tested product outputs.",
+    "eyebrow": "Why choose WatermarkGemini",
+    "heading": "PDF Watermark Removal: Choose the Right Method",
+    "intro": "An editable watermark layer and a stamp flattened into a scanned page call for different treatment. The current image workflow is only for exported pages, not native PDF editing.",
     "items": [
       {
         "enabled": true,
         "eyebrow": "FEATURE 1",
-        "heading": "Distinguish Repeated DRAFT Stamps from Page Content",
-        "description": "A repeated DRAFT or CONFIDENTIAL mark may be a separate annotation, a background layer or part of a flattened page scan. If it is separate, deleting the original object can preserve text and links; if flattened, cleaning the page image may affect nearby letters. WatermarkGemini has not yet verified direct multi-page PDF editing.\n\nIllustrative scene: Invoice summary; not a tested product output.",
-        "image": "/uploads/landing-phase2-20261103/pdf-watermark-remover/feature-04-before.webp",
-        "imageAlt": "Illustrative Invoice summary comparison; not a tested product output.",
-        "imagePosition": "right",
-        "afterImage": "/uploads/landing-phase2-20261103/pdf-watermark-remover/feature-04-after.webp"
+        "heading": "Identify Whether a PDF Watermark Is an Editable Layer",
+        "description": "Many PDF watermarks are separate objects added by the software that created the file. If you can open and edit that source, deleting the watermark object is more precise than repainting pixels. WatermarkGemini does not currently edit native PDF page objects, so this is guidance rather than an active PDF cleanup feature.",
+        "image": "/uploads/landing-20261114/pdf-watermark-remover/Feature_1076x872/feature-01-before.webp",
+        "imageAlt": "Fictional contract page with layered DRAFT overlay as an illustrative diagram; keep text readable.",
+        "imagePosition": "left",
+        "afterImage": "/uploads/landing-20261114/pdf-watermark-remover/Feature_1076x872/feature-01-after.webp"
       },
       {
         "enabled": true,
         "eyebrow": "FEATURE 2",
-        "heading": "Protect Readable Text, Tables and Page Layout",
-        "description": "A watermark cleaner is useful only when you can still read the document afterward. Before editing, identify whether the PDF includes selectable text, tables or links. Exporting pages to JPG may flatten these elements; the current image workflow does not preserve an editable PDF.\n\nIllustrative scene: Legal agreement; not a tested product output.",
-        "image": "/uploads/landing-phase2-20261103/pdf-watermark-remover/feature-05-before.webp",
-        "imageAlt": "Illustrative Legal agreement comparison; not a tested product output.",
-        "imagePosition": "left",
-        "afterImage": "/uploads/landing-phase2-20261103/pdf-watermark-remover/feature-05-after.webp"
+        "heading": "Handle DRAFT and CONFIDENTIAL Stamps Responsibly",
+        "description": "Removing a visible review stamp may change the meaning of a business document. Before editing, confirm you have permission and that removing the status label does not misrepresent approval or confidentiality. On a permitted flattened page image, cleanup can affect nearby text, signatures and tables.",
+        "image": "/uploads/landing-20261114/pdf-watermark-remover/Feature_1076x872/feature-02-before.webp",
+        "imageAlt": "Quarterly report with translucent status stamp; emphasize preserved typography and footnotes.",
+        "imagePosition": "right",
+        "afterImage": "/uploads/landing-20261114/pdf-watermark-remover/Feature_1076x872/feature-02-after.webp"
       },
       {
         "enabled": true,
         "eyebrow": "FEATURE 3",
-        "heading": "Handle a Scanned Page as an Image When Appropriate",
-        "description": "For a single document page you have permission to change, an image export may be processed in the current supported image workflow. This can help with a visible stamp, but text-heavy scanned pages are sensitive to reconstruction artifacts. Review the image carefully and keep your original PDF intact.\n\nIllustrative scene: Research report; not a tested product output.",
-        "image": "/uploads/landing-phase2-20261103/pdf-watermark-remover/feature-06-before.webp",
-        "imageAlt": "Illustrative Research report comparison; not a tested product output.",
+        "heading": "Protect Text, Links and Multi-Page Layout",
+        "description": "Converting a PDF page to JPG turns selectable text and hyperlinks into pixels. A repaired image cannot preserve form fields, OCR layers or native multi-page structure. If those matter, use an authorized PDF editor or the original source file instead of rasterizing and rebuilding each page.",
+        "image": "/uploads/landing-20261114/pdf-watermark-remover/Feature_1076x872/feature-03-before.webp",
+        "imageAlt": "Diagram of PDF selectable text and image scan in split view; label educational schematic.",
+        "imagePosition": "left",
+        "afterImage": "/uploads/landing-20261114/pdf-watermark-remover/Feature_1076x872/feature-03-after.webp"
+      },
+      {
+        "enabled": true,
+        "eyebrow": "FEATURE 4",
+        "heading": "Use Image Cleanup Only for Exported Pages Today",
+        "description": "If you own the source, export a single page as a JPG, PNG or WebP image of up to 10 MB and review an image cleanup result. WatermarkGemini does not yet accept PDF for native removal or return edited PDFs. Processing requires Google sign-in and a visible quote; keep the original document.",
+        "image": "/uploads/landing-20261114/pdf-watermark-remover/Feature_1076x872/feature-04-before.webp",
+        "imageAlt": "Real current upload UI with exported PNG page; clearly no PDF option in screenshot.",
         "imagePosition": "right",
-        "afterImage": "/uploads/landing-phase2-20261103/pdf-watermark-remover/feature-06-after.webp"
+        "afterImage": "/uploads/landing-20261114/pdf-watermark-remover/Feature_1076x872/feature-04-after.webp"
       }
     ]
   },
   "heroSamples": [
     {
       "id": "preview-1",
-      "label": "NDA contract · Illustrative",
-      "image": "/uploads/landing-phase2-20261103/pdf-watermark-remover/hero-01-before.webp",
-      "imageAlt": "Illustrative NDA contract comparison; not a tested product output.",
-      "afterImage": "/uploads/landing-phase2-20261103/pdf-watermark-remover/hero-01-after.webp"
+      "label": "Draft Contract",
+      "image": "/uploads/landing-20261114/pdf-watermark-remover/Hero_1280x694/hero-01-before.webp",
+      "imageAlt": "Original draft contract with a visible sample mark → matching authorized cleanup view; Show a layered-document case; do not claim direct PDF processing.",
+      "afterImage": "/uploads/landing-20261114/pdf-watermark-remover/Hero_1280x694/hero-01-after.webp"
     },
     {
       "id": "preview-2",
-      "label": "Annual finance report · Illustrative",
-      "image": "/uploads/landing-phase2-20261103/pdf-watermark-remover/hero-02-before.webp",
-      "imageAlt": "Illustrative Annual finance report comparison; not a tested product output.",
-      "afterImage": "/uploads/landing-phase2-20261103/pdf-watermark-remover/hero-02-after.webp"
+      "label": "Confidential Report",
+      "image": "/uploads/landing-20261114/pdf-watermark-remover/Hero_1280x694/hero-02-before.webp",
+      "imageAlt": "Original confidential report with a visible sample mark → matching authorized cleanup view; Highlight why flattening and inpainting can damage text.",
+      "afterImage": "/uploads/landing-20261114/pdf-watermark-remover/Hero_1280x694/hero-02-after.webp"
     },
     {
       "id": "preview-3",
-      "label": "Client proposal · Illustrative",
-      "image": "/uploads/landing-phase2-20261103/pdf-watermark-remover/hero-03-before.webp",
-      "imageAlt": "Illustrative Client proposal comparison; not a tested product output.",
-      "afterImage": "/uploads/landing-phase2-20261103/pdf-watermark-remover/hero-03-after.webp"
+      "label": "Scanned Invoice",
+      "image": "/uploads/landing-20261114/pdf-watermark-remover/Hero_1280x694/hero-03-before.webp",
+      "imageAlt": "Original scanned invoice with a visible sample mark → matching authorized cleanup view; Show pixel-based cleanup, not editable PDF layer removal.",
+      "afterImage": "/uploads/landing-20261114/pdf-watermark-remover/Hero_1280x694/hero-03-after.webp"
     }
   ],
   "relatedTools": {
     "enabled": true,
     "eyebrow": "Popular tools",
-    "heading": "All AI Tools of WatermarkGemini",
-    "intro": "Select the tool that matches the file and cleanup task you actually have."
+    "heading": "Explore More Image Cleanup Tools",
+    "intro": "Choose a tool for the type of file and visible mark you actually need to edit.",
+    "items": [
+      {
+        "title": "Background Remover",
+        "href": "https://www.watermarkgemini.com/remove-background",
+        "description": "Clean the background from authorized portraits and product photos."
+      },
+      {
+        "title": "Object Remover",
+        "href": "https://www.watermarkgemini.com/remove-object",
+        "description": "Remove distracting objects from approved images using the dedicated image editor."
+      },
+      {
+        "title": "Remove Text from Image",
+        "href": "https://www.watermarkgemini.com/remove-text-from-image",
+        "description": "Clean visible captions, dates and unwanted text on photos you may edit."
+      },
+      {
+        "title": "Remove Logo from Image",
+        "href": "https://www.watermarkgemini.com/remove-logo-from-image",
+        "description": "Review visible logos and old brand marks on authorized pictures."
+      },
+      {
+        "title": "ChatGPT Watermark Remover",
+        "href": "https://www.watermarkgemini.com/chatgpt-watermark-remover",
+        "description": "Learn about image-specific visible marks and their cleanup limits."
+      },
+      {
+        "title": "Gemini Watermark Remover",
+        "href": "https://www.watermarkgemini.com/gemini-watermark-remover",
+        "description": "Clean a supported visible Gemini sparkle on an authorized still image."
+      },
+      {
+        "title": "Remove Date Stamp",
+        "href": "https://www.watermarkgemini.com/",
+        "description": "Use the main image workflow for supported visible photo date stamps."
+      },
+      {
+        "title": "Remove Signature",
+        "href": "https://www.watermarkgemini.com/",
+        "description": "Review visible signatures on images only when you have permission."
+      }
+    ]
   },
   "guides": {
     "enabled": true,
     "eyebrow": "Helpful guides",
-    "heading": "Learn More About AI Watermark Remover from Image",
-    "intro": "Practical tutorials for improving the images and videos you are allowed to edit."
+    "heading": "Helpful Guides for PDF Watermark Remover",
+    "intro": "Practical background reading about authorized cleanup methods, file limitations and related editing tasks.",
+    "items": [
+      {
+        "title": "How to Turn Off Gemini Watermark",
+        "href": "https://www.watermarkgemini.com/blog/how-to-turn-off-gemini-watermark"
+      },
+      {
+        "title": "Best AI Watermark Remover in 2026: 7 Tools Compared",
+        "href": "https://www.watermarkgemini.com/blog/best-ai-watermark-remover"
+      },
+      {
+        "title": "How to Remove an iStock Watermark from an Image",
+        "href": "https://www.watermarkgemini.com/blog/how-to-remove-istock-watermark"
+      },
+      {
+        "title": "How to Remove Moving Watermark From Video Without Flicker",
+        "href": "https://www.watermarkgemini.com/blog/remove-moving-watermark-from-video"
+      },
+      {
+        "title": "How to Remove Hardcoded Subtitles from Video",
+        "href": "https://www.watermarkgemini.com/blog/remove-hardcoded-subtitles-from-video"
+      },
+      {
+        "title": "How to Remove CapCut Watermark from Videos",
+        "href": "https://www.watermarkgemini.com/blog/how-to-remove-capcut-watermark"
+      }
+    ]
   },
   "cta": {
     "eyebrow": "Ready when you are",
-    "heading": "Check PDF File Support Before You Start",
-    "description": "The current uploader does not list native PDF input. Keep the original document and use only the file types the tool actually supports.",
-    "buttonLabel": "Upload your image",
-    "buttonHref": "/#tool"
-  }
+    "heading": "Check the Right PDF Watermark Removal Method",
+    "description": "Check whether the watermark is a removable PDF object or part of a scanned page. For a single authorized page image, use the current still-image workflow; direct PDF editing is not available here.",
+    "buttonLabel": "Open Workspace",
+    "buttonHref": "#tool"
+  },
+  "toolNote": "Choose supported file. Sign in and review the processing cost before starting."
 }

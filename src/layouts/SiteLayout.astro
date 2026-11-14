@@ -19,6 +19,7 @@ interface Props {
   schema?: Record<string, unknown> | Array<Record<string, unknown>>;
   noindex?: boolean;
   cta?: SiteSettings['cta'];
+  ctaButtonLabel?: string;
 }
 
 const [siteEntry] = await getCollection('siteSettings');
@@ -36,6 +37,7 @@ const {
   schema,
   noindex = false,
   cta = site.cta,
+  ctaButtonLabel,
 } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const siteLogo = resolvePublicImageSource(site.logo);
@@ -120,7 +122,7 @@ const schemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [defaultS
     <main><slot /></main>
     <section class="site-cta" aria-labelledby="site-cta-heading">
       <div><span class="eyebrow">{cta.eyebrow}</span><h2 id="site-cta-heading">{cta.heading}</h2><p>{cta.description}</p></div>
-      <MediaLauncher compact source={Astro.url.pathname} recommendation={intakeRecommendation} client:visible />
+      <MediaLauncher compact source={Astro.url.pathname} recommendation={intakeRecommendation} buttonLabel={ctaButtonLabel} client:visible />
     </section>
     <footer class="site-footer">
       <div class="footer-main"><div class="footer-brand"><a class="brand" href="/"><img class="brand-logo" src={siteLogo} alt="" data-image-fallback={siteLogo === site.logo ? undefined : 'true'} /><span>{site.name}</span></a><p>{site.footer.tagline}</p></div>

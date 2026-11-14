@@ -27,7 +27,7 @@ export function contentImages(data) {
     if (!value || typeof value !== 'object') return;
     for (const [key, child] of Object.entries(value)) {
       const current = prefix + '/' + key;
-      if (typeof child === 'string' && /^(image|afterImage|imageAlt|alt|coverImage|coverAlt)$/.test(key)) images.push({ path: current, value: child });
+      if (typeof child === 'string' && /^(image|afterImage|imageAlt|afterImageAlt|alt|coverImage|coverAlt)$/.test(key)) images.push({ path: current, value: child });
       else walk(child, current);
     }
   }

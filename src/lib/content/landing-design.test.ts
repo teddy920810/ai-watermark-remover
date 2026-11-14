@@ -80,6 +80,24 @@ describe('independent tool landing-page previews', () => {
 });
 
 describe('landing design schema', () => {
+  it('preserves independently supplied Before and After image descriptions', async () => {
+    const { landingDesignFields } = await import('./landing-design');
+    const sample = { id: 'operator-pair', label: 'Example', image: '/uploads/before.webp', afterImage: '/uploads/after.webp', imageAlt: 'Original operator description', afterImageAlt: 'Edited operator description' };
+    expect(z.object(landingDesignFields).parse({ heroSamples: [sample] }).heroSamples?.[0]).toEqual(sample);
+  });
+  it('retains operator-supplied card copy and links instead of substituting shared titles', async () => {
+    const { landingDesignFields } = await import('./landing-design');
+    const section = {
+      eyebrow: 'Helpful guides', heading: 'Selected guides', intro: 'Read more',
+      items: [{ title: 'Operator guide title', description: 'Operator description', href: 'https://www.watermarkgemini.com/blog/best-ai-watermark-remover' }],
+    };
+    const parsed = z.object(landingDesignFields).parse({ relatedTools: section, guides: section });
+    expect(parsed.relatedTools).toMatchObject(section);
+    expect(parsed.guides).toMatchObject(section);
+    const cms = parse(readFileSync(new URL('../../../.pages.yml', import.meta.url), 'utf8'));
+    expect(cms.components['landing-related-content'].fields.find((field: { name: string }) => field.name === 'items')).toBeDefined();
+  });
+
   it('accepts legacy records and preserves optional page-specific content', async () => {
     const { landingDesignFields } = await import('./landing-design');
     const schema = z.object(landingDesignFields);
@@ -121,6 +139,19 @@ describe('landing design schema', () => {
     const ordered = ['remove-object', 'remove-background'];
     expect(schema.parse({ relatedTools: { ...section, slugs: ordered } }).relatedTools?.slugs).toEqual(ordered);
     expect(schema.safeParse({ guides: { ...section, slugs: ['/blog/invalid-path'] } }).success).toBe(false);
+  });
+
+  it('clearing custom cards restores slug selection or automatic recommendations', async () => {
+    const { landingDesignFields } = await import('./landing-design');
+    const section = { eyebrow: 'Explore', heading: 'More content', intro: 'Choose a page' };
+    const parsed = z.object(landingDesignFields).parse({
+      relatedTools: { ...section, items: [], slugs: ['remove-background'] },
+      guides: { ...section, items: [], slugs: [] },
+    });
+    expect(parsed.relatedTools?.items).toBeUndefined();
+    expect(parsed.relatedTools?.slugs).toEqual(['remove-background']);
+    expect(parsed.guides?.items).toBeUndefined();
+    expect(parsed.guides?.slugs).toBeUndefined();
   });
 });
 
