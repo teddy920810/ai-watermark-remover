@@ -61,9 +61,16 @@ test('reset cancels a pending result so it cannot reappear', async ({ page }) =>
   await expect(page.locator('video')).toHaveCount(0);
 });
 
-test('normal navigation and existing tool page lead to the URL workspace without upload UI', async ({ page }) => {
+test('landing input navigates and resolves once, while reload does not repeat the launch', async ({ page }) => {
   // Three cold page loads plus workspace hydration, rather than a single-page check.
   test.setTimeout(60_000);
+  let resolves = 0;
+  await page.route('**/api/tools/tiktok/resolve', route => {
+    resolves++;
+    expect(route.request().postDataJSON()).toEqual({ operation: 'tiktok-video-resolve', url });
+    return route.fulfill({ json: { operation: 'tiktok-video-resolve', title: 'From landing', cover: null, videos: [{ url: video }] } });
+  });
+  await page.route('https://d.rapidcdn.app/**', route => route.fulfill({ path: 'tests/fixtures/workspace-24fps.mp4', contentType: 'video/mp4', headers: { 'Content-Disposition': 'attachment; filename="landing.mp4"' } }));
   await page.goto('/');
   const menu = page.getByRole('button', { name: 'Open navigation', exact: true });
   if (await menu.isVisible()) await menu.click();
@@ -71,10 +78,46 @@ test('normal navigation and existing tool page lead to the URL workspace without
   await page.getByRole('link', { name: 'TikTok Watermark Remover', exact: true }).click();
   await expect(page).toHaveURL(/\/tiktok-watermark-remover$/);
   await expect(page.locator('main').getByRole('button', { name: 'Upload file', exact: true })).toHaveCount(0);
-  await page.locator('main').getByRole('link', { name: 'Open TikTok tool' }).first().click();
+  const entry = page.locator('#tool');
+  await expect(entry.getByRole('button', { name: 'Save Video', exact: true })).toBeDisabled();
+  await entry.getByLabel('TikTok URL', { exact: true }).fill(url);
+  await entry.getByRole('button', { name: 'Save Video', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Video preview' })).toBeVisible({ timeout: 15_000 });
   await expect(page).toHaveURL(/\/app\/free\/tiktok$/);
-  await expect(page.getByRole('heading', { name: 'TikTok Watermark Remover for Saved Videos', exact: true })).toBeVisible({ timeout: 15_000 });
+  await expect(page.getByLabel('TikTok URL', { exact: true })).toHaveValue(url);
+  const download = page.waitForEvent('download');
+  await page.getByRole('link', { name: 'Download video MP4 file' }).click();
+  expect((await download).suggestedFilename()).toBe('landing.mp4');
+  expect(resolves).toBe(1);
+  await page.reload();
+  await expect(page.getByLabel('TikTok URL', { exact: true })).toHaveValue('');
   await expect(page.getByRole('button', { name: 'Save Video', exact: true })).toBeDisabled();
+  expect(resolves).toBe(1);
+});
+
+test('mobile footer launches automatically and keeps a failed link for explicit retry', async ({ page }) => {
+  test.setTimeout(60_000);
+  let resolves = 0;
+  await page.route('**/api/tools/tiktok/resolve', route => {
+    resolves++;
+    return resolves === 1 ? route.fulfill({ status: 502, json: { error: 'Video unavailable. Try again.' } })
+      : route.fulfill({ json: { operation: 'tiktok-video-resolve', title: '', cover: null, videos: [{ url: video }] } });
+  });
+  await page.route('https://d.rapidcdn.app/**', route => route.abort());
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/tiktok-watermark-remover');
+  const footer = page.locator('.site-cta');
+  await footer.scrollIntoViewIfNeeded();
+  await footer.getByLabel('TikTok URL', { exact: true }).fill(url);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+  await footer.getByRole('button', { name: 'Save Video', exact: true }).click();
+  await expect(page.getByLabel('TikTok URL', { exact: true })).toHaveValue(url, { timeout: 15_000 });
+  await expect(page.getByRole('alert')).toContainText('unavailable');
+  await expect(page).toHaveURL(/\/app\/free\/tiktok$/);
+  expect(resolves).toBe(1);
+  await page.getByRole('button', { name: 'Save Video', exact: true }).click();
+  await expect(page.getByRole('link', { name: 'Download video MP4 file' })).toBeVisible();
+  expect(resolves).toBe(2);
 });
 
 test('workspace menu exposes TikTok without adding a paid processing operation', async ({ page }) => {
