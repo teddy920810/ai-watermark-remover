@@ -121,16 +121,18 @@ describe('publicNavigation', () => {
     expect(publicNavigation([link], [])).toEqual([link]);
   });
 
-  it('adds the published Nano Banana tool, preserves the 20 existing tools and excludes drafts', () => {
+  it('adds published tools while preserving the 20 manually configured tools and excluding drafts', () => {
     const settings = JSON.parse(readFileSync('src/content/settings/site.json', 'utf8'));
     const entries = readdirSync('src/content/landing-pages').filter(file => file.endsWith('.json')).map(file => ({ data: JSON.parse(readFileSync(`src/content/landing-pages/${file}`, 'utf8')) }));
     const result = publicNavigation(settings.header.navigation, entries);
-    expect(result.map(item => item.children ? { ...item, children: item.children.filter(link => link.href !== '/nano-banana-watermark-remover') } : item)).toEqual(settings.header.navigation);
+    const added = new Set(['/nano-banana-watermark-remover', '/remove-emoji-from-photo', '/remove-person-from-photo', '/remove-logo-from-video', '/remove-text-from-video', '/remove-object-from-video']);
+    expect(result.map(item => item.children ? { ...item, children: item.children.filter(link => !added.has(link.href)) } : item)).toEqual(settings.header.navigation);
     expect(result.find(item => item.label === 'Watermark Removers')?.children).toContainEqual({
       label: 'Nano Banana Watermark Remover – Keep the Full Picture', href: '/nano-banana-watermark-remover',
     });
     const links = result.flatMap(item => item.children ?? []);
-    expect(links).toHaveLength(21);
+    expect(links).toHaveLength(26);
+    for (const href of added) expect(links.filter(link => link.href === href)).toHaveLength(1);
     expect(links.filter(link => link.href === '/nano-banana-watermark-remover')).toHaveLength(1);
     expect(links.filter(link => link.badge === 'Coming Soon')).toHaveLength(0);
     for (const entry of entries.filter(entry => entry.data.draft)) expect(links.some(link => link.href === `/${entry.data.slug}`)).toBe(false);

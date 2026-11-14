@@ -1,0 +1,261 @@
+{
+  "draft": false,
+  "slug": "remove-emoji-from-photo",
+  "toolKind": "object-remover",
+  "title": "Remove Emoji from Photo Online with AI | WatermarkGemini",
+  "description": "Remove emoji from photo online with AI-assisted inpainting. Erase stickers and reaction icons from your own images, rebuild the surrounding background and preview.",
+  "eyebrow": "AI EMOJI REMOVER FROM PHOTO",
+  "heading": "Remove Emoji from Photo Online with AI",
+  "intro": "Want a cleaner copy of a photo covered with an emoji, sticker, heart or reaction icon? WatermarkGemini lets you mark decorative overlays in a photo you own and rebuild the selected area using nearby visual detail. Brush over the whole emoji, including its white border or shadow, then review the edited PNG. AI can generate a plausible background—it cannot reveal a real face, private message or other original detail that an opaque sticker covered.\n\nIllustrative use cases only, not actual tested product results; replace with rights-cleared real outputs when tested. For full-motion examples, show matching video frames, not a claim of perfect clip-wide recovery.",
+  "benefits": [
+    "Erase added emojis, hearts and sticker overlays",
+    "Keep the photo crop while cleaning the selected area",
+    "See the rebuilt background before downloading"
+  ],
+  "toolNote": "Images: JPG, PNG or WebP · up to 10 MB. Video: MP4 · up to 100 MB · 24 fps · up to 9 min. Review the cost before processing. File is only uploaded after sign-in and confirmation.",
+  "process": {
+    "eyebrow": "How it works",
+    "heading": "How to Remove an Emoji from a Photo in 3 Steps",
+    "intro": "An emoji added after the photo was taken is part of the saved pixels. Mark the visible overlay carefully and let AI estimate a replacement—not uncover the original scene.",
+    "steps": [
+      {
+        "number": "01",
+        "title": "Upload the Photo with an Emoji",
+        "description": "Choose a photo you may edit in JPG/JPEG, PNG, WebP or JFIF, up to 10 MB. Check whether your phone or editing app has an original unstickered copy first; that gives the most accurate result.",
+        "image": "/uploads/landing-new-20261114/remove-emoji-from-photo/hero-01-before.webp",
+        "imageAlt": "Illustrative before-and-after comparison for emoji on a travel photo, with the same composition and only the selected distracting overlay changed."
+      },
+      {
+        "number": "02",
+        "title": "Brush Over the Emoji and Its Edges",
+        "description": "Use the blue Brush or Lasso to cover the complete sticker, including outlines, glow and shadow. Use Eraser or Undo to avoid masking faces, pet fur, lettering or other details you want to keep.",
+        "image": "/uploads/landing-new-20261114/remove-emoji-from-photo/feature-02.webp",
+        "imageAlt": "Illustrative remove emoji from photo use case 2: capture the sticker border, glow and shadow, showing one matched scene without cropping or missing subjects."
+      },
+      {
+        "number": "03",
+        "title": "Generate, Compare and Download",
+        "description": "Start the photo object-removal process with the available free use or cost displayed. Zoom into the repaired area to check pattern continuity and leftover sticker rims, then download the PNG if the scene looks suitable.",
+        "image": "/uploads/landing-new-20261114/remove-emoji-from-photo/hero-01-after.webp",
+        "imageAlt": "Illustrative before-and-after comparison for emoji on a travel photo, with the same composition and only the selected distracting overlay changed."
+      }
+    ]
+  },
+  "heroSamples": [
+    {
+      "id": "preview-1",
+      "label": "Emoji on a travel photo",
+      "image": "/uploads/landing-new-20261114/remove-emoji-from-photo/hero-01-before.webp",
+      "afterImage": "/uploads/landing-new-20261114/remove-emoji-from-photo/hero-01-after.webp",
+      "imageAlt": "Illustrative before-and-after comparison for emoji on a travel photo, with the same composition and only the selected distracting overlay changed."
+    },
+    {
+      "id": "preview-2",
+      "label": "Heart sticker on a product flat lay",
+      "image": "/uploads/landing-new-20261114/remove-emoji-from-photo/hero-02-before.webp",
+      "afterImage": "/uploads/landing-new-20261114/remove-emoji-from-photo/hero-02-after.webp",
+      "imageAlt": "Illustrative before-and-after comparison for heart sticker on a product flat lay, with the same composition and only the selected distracting overlay changed."
+    },
+    {
+      "id": "preview-3",
+      "label": "Social-story reaction overlay",
+      "image": "/uploads/landing-new-20261114/remove-emoji-from-photo/hero-03-before.webp",
+      "afterImage": "/uploads/landing-new-20261114/remove-emoji-from-photo/hero-03-after.webp",
+      "imageAlt": "Illustrative before-and-after comparison for social-story reaction overlay, with the same composition and only the selected distracting overlay changed."
+    }
+  ],
+  "features": {
+    "eyebrow": "Why choose WatermarkGemini",
+    "heading": "Remove Stickers and Emojis Without Rebuilding the Whole Photo",
+    "intro": "Small stickers are often easy to find but surprisingly hard to erase cleanly. Selection accuracy and the background behind the emoji matter more than a promise of one-click magic.",
+    "items": [
+      {
+        "enabled": true,
+        "eyebrow": "FEATURE 1",
+        "heading": "Clean Decorative Emojis, Hearts and Reactions",
+        "description": "Delete visible decorative overlays you added to your own saved photo: smileys, heart stickers, stars or small reaction badges. Brush selection allows you to target the icon itself instead of cropping away an important part of the scene. For a sticker on sky, a wall, cloth or a simple tabletop, nearby patterns can give AI useful clues. Avoid claims that removing the sticker reveals hidden personal information.",
+        "image": "/uploads/landing-new-20261114/remove-emoji-from-photo/feature-01.webp",
+        "imageAlt": "Illustrative remove emoji from photo use case 1: clean decorative emojis, hearts and reactions, showing one matched scene without cropping or missing subjects.",
+        "imagePosition": "left"
+      },
+      {
+        "enabled": true,
+        "eyebrow": "FEATURE 2",
+        "heading": "Capture the Sticker Border, Glow and Shadow",
+        "description": "Many photo emojis have a white outline, soft halo or drop shadow. If the selection covers only the colored center, the outer edge can remain as a ghost image. Use Brush or Lasso to cover the full outline with a narrow margin, then check the mask before processing. The Eraser and Undo controls let you correct any accidental overlap with the main subject.",
+        "image": "/uploads/landing-new-20261114/remove-emoji-from-photo/feature-02.webp",
+        "imageAlt": "Illustrative remove emoji from photo use case 2: capture the sticker border, glow and shadow, showing one matched scene without cropping or missing subjects.",
+        "imagePosition": "right"
+      },
+      {
+        "enabled": true,
+        "eyebrow": "FEATURE 3",
+        "heading": "Reconstruct a Plausible Background, Not Hidden Pixels",
+        "description": "AI inpainting predicts how nearby grass, wall texture, fabric or sky might continue behind the removed sticker. It does not reverse the edit or recover information that is no longer present in the photo. A sticker across someone’s face, a license plate or detailed text is therefore not a way to recover the original identity or content. For exact recovery, find the unstickered original.",
+        "image": "/uploads/landing-new-20261114/remove-emoji-from-photo/feature-03.webp",
+        "imageAlt": "Illustrative remove emoji from photo use case 3: reconstruct a plausible background, not hidden pixels, showing one matched scene without cropping or missing subjects.",
+        "imagePosition": "left"
+      },
+      {
+        "enabled": true,
+        "eyebrow": "FEATURE 4",
+        "heading": "Browser-Based Photo Cleanup with Review and Privacy",
+        "description": "Use the existing image object-removal editor with JPG/JPEG, PNG, WebP or JFIF up to 10 MB; download the edited result as PNG. Eligible standard-image free uses share the same account balance. The website says uploaded photos and results use private temporary storage and are scheduled for deletion after roughly 24 hours. Check the result for repeated patterns or unnatural edges before sharing.",
+        "image": "/uploads/landing-new-20261114/remove-emoji-from-photo/feature-04.webp",
+        "imageAlt": "Illustrative remove emoji from photo use case 4: browser-based photo cleanup with review and privacy, showing one matched scene without cropping or missing subjects.",
+        "imagePosition": "right"
+      }
+    ]
+  },
+  "relatedTools": {
+    "enabled": true,
+    "eyebrow": "Popular tools",
+    "heading": "Explore More Image and Video Cleanup Tools",
+    "intro": "Choose the cleanup workflow that matches the file and the mark you want to edit. Each tool has its own file requirements and processing limits.",
+    "items": [
+      {
+        "title": "Background Remover",
+        "description": "Remove a photo background with a focused online workflow.",
+        "href": "https://www.watermarkgemini.com/remove-background"
+      },
+      {
+        "title": "Object Remover",
+        "description": "Erase people, clutter and other objects from an authorized photo.",
+        "href": "https://www.watermarkgemini.com/remove-object"
+      },
+      {
+        "title": "Remove Text from Image",
+        "description": "Clean unwanted captions, visible labels and text overlays.",
+        "href": "https://www.watermarkgemini.com/remove-text-from-image"
+      },
+      {
+        "title": "Remove Logo from Image",
+        "description": "Clean logos and brand marks from images you can edit.",
+        "href": "https://www.watermarkgemini.com/remove-logo-from-image"
+      },
+      {
+        "title": "ChatGPT Watermark Remover",
+        "description": "Review visible ChatGPT-style marks in approved images.",
+        "href": "https://www.watermarkgemini.com/chatgpt-watermark-remover"
+      },
+      {
+        "title": "Gemini Watermark Remover",
+        "description": "Clean a visible Gemini sparkle while keeping the image crop.",
+        "href": "https://www.watermarkgemini.com/gemini-watermark-remover"
+      },
+      {
+        "title": "Remove Date Stamp",
+        "description": "Clear visible dates and timestamps from approved images.",
+        "href": "https://www.watermarkgemini.com/"
+      },
+      {
+        "title": "Remove Signature",
+        "description": "Review removal of a visible signature in an authorized image.",
+        "href": "https://www.watermarkgemini.com/"
+      }
+    ]
+  },
+  "guides": {
+    "enabled": true,
+    "eyebrow": "Helpful guides",
+    "heading": "Helpful Guides for Remove Emoji from Photo and Better Edits",
+    "intro": "Before removing visible material, check the source file, permissions and editing method so the result stays useful and accurate.",
+    "items": [
+      {
+        "title": "How to Remove a Date Stamp from a Photo",
+        "href": "https://www.watermarkgemini.com/blog/how-to-remove-date-stamp-from-photo"
+      },
+      {
+        "title": "How to Remove Metadata from an Image Safely",
+        "href": "https://www.watermarkgemini.com/blog/how-to-remove-metadata-from-image"
+      },
+      {
+        "title": "How to Remove Samsung Watermark from Photos",
+        "href": "https://www.watermarkgemini.com/blog/how-to-remove-samsung-watermark-from-photos"
+      },
+      {
+        "title": "Best AI Watermark Remover in 2026: 7 Tools Compared",
+        "href": "https://www.watermarkgemini.com/blog/best-ai-watermark-remover"
+      },
+      {
+        "title": "How to Tell if a Photo Is AI Generated",
+        "href": "https://www.watermarkgemini.com/blog/how-to-tell-if-photo-is-ai-generated"
+      },
+      {
+        "title": "Does ChatGPT Watermark Images?",
+        "href": "https://www.watermarkgemini.com/blog/does-chatgpt-watermark-images"
+      }
+    ]
+  },
+  "faq": {
+    "eyebrow": "Frequently asked questions",
+    "heading": "Remove Emoji from Photo FAQs",
+    "intro": "Real answers to common emoji remover questions—including hidden-face limits, leftover outlines, costs and image formats.",
+    "items": [
+      {
+        "enabled": true,
+        "question": "How do I remove an emoji from a photo?",
+        "answer": "Upload an image you may edit, mark the complete emoji—including its sticker border and shadow—with the Brush or Lasso, then run photo object removal. Compare the reconstructed area before downloading the PNG."
+      },
+      {
+        "enabled": true,
+        "question": "Can I remove emoji from photo online for free?",
+        "answer": "Eligible standard image jobs can use WatermarkGemini’s shared free-use allowance, subject to sign-in and the available balance. The site lists an initial use and daily check-in rewards with a capped balance. Check the workspace for the current allowance before starting."
+      },
+      {
+        "enabled": true,
+        "question": "Can AI remove an emoji covering someone’s face?",
+        "answer": "It can paint a synthetic replacement, but it cannot recover the true face underneath an opaque emoji. If the sticker was used to protect someone’s identity or privacy, do not present an AI-generated face as an authentic reconstruction."
+      },
+      {
+        "enabled": true,
+        "question": "Can I see what is behind an emoji in a photo?",
+        "answer": "No. Once an opaque emoji is flattened into a saved image, the original covered pixels are missing. Inpainting uses nearby context to invent a plausible continuation; it is not an x-ray, unblur filter or hidden-information recovery tool."
+      },
+      {
+        "enabled": true,
+        "question": "Can I remove stickers, hearts and reaction icons too?",
+        "answer": "Yes, the same selection workflow can target decorative sticker overlays, hearts, star icons and other small added marks. Complex backgrounds or stickers touching a subject may require careful selection and may not fill naturally."
+      },
+      {
+        "enabled": true,
+        "question": "How do I remove an emoji from an Instagram or Snapchat picture?",
+        "answer": "Edit only a photo you own or have permission to modify. First check whether the original story or gallery file without stickers is available. If not, download your own flattened image, paint the decorative overlay and examine the replacement."
+      },
+      {
+        "enabled": true,
+        "question": "Why is a white ring left after emoji removal?",
+        "answer": "The selection probably missed the sticker’s bright border, antialiasing or shadow. Undo or refine the mask to include a thin margin around the entire icon; do not widen it over a face or another important subject."
+      },
+      {
+        "enabled": true,
+        "question": "Does the emoji remover work on screenshots?",
+        "answer": "It can be tested on supported screenshot images, particularly when the sticker sits over a flat background. AI reconstruction may alter text, icons or interface details; keep original screenshots when their exact information matters."
+      },
+      {
+        "enabled": true,
+        "question": "Can I remove multiple emojis from one picture?",
+        "answer": "You can mark multiple unwanted image regions, but several large stickers may leave too little context for natural reconstruction. Consider small, separately reviewed edits instead of masking a huge area at once."
+      },
+      {
+        "enabled": true,
+        "question": "What files can I use and what is the output format?",
+        "answer": "The photo object workflow supports JPG/JPEG, PNG, WebP and JFIF files up to 10 MB, with one image at a time. The current output is PNG."
+      },
+      {
+        "enabled": true,
+        "question": "Are my uploaded photos kept private?",
+        "answer": "Uploaded images and generated files use private temporary storage and are scheduled to expire after about 24 hours, with actual deletion potentially later. Do not upload confidential images or photos that you are not authorized to process."
+      }
+    ]
+  },
+  "cta": {
+    "eyebrow": "Ready when you are",
+    "heading": "Remove Added Emojis from a Photo You Own",
+    "description": "Check for the original photo first. If the sticker is baked in, select the visible emoji and review the AI-generated background before saving the edited image.",
+    "buttonLabel": "Try Emoji Cleanup Online",
+    "buttonHref": "#tool"
+  },
+  "uploadButtonLabel": "Upload Your Photo",
+  "shareImage": "/uploads/landing-new-20261114/remove-emoji-from-photo/hero-01-before.webp"
+}

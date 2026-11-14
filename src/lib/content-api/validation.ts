@@ -82,7 +82,7 @@ export function parseEntry(kind: ContentKind, value: unknown, targetSlug: string
     for (const [key, child] of Object.entries(value)) {
       // Marketing metadata and FAQ text also enter JSON-LD script elements.
       if (typeof child === 'string' && /<(?:\/?script\b|!--)/i.test(child)) issues.push('Script delimiters and HTML comments are not allowed in content fields.');
-      if (typeof child === 'string' && ['image', 'afterImage', 'coverImage', 'beforeImage'].includes(key) && !safeLink(child, true)) issues.push(`Invalid public image field: ${key}.`);
+      if (typeof child === 'string' && ['image', 'afterImage', 'coverImage', 'beforeImage', 'shareImage'].includes(key) && !safeLink(child, true)) issues.push(`Invalid public image field: ${key}.`);
       if (typeof child === 'string' && /href$/i.test(key) && !safeLink(child)) issues.push(`Invalid link field: ${key}.`);
       const old = previous && typeof previous === 'object' ? (previous as Record<string, unknown>)[key] : undefined;
       if (key === 'comparison' && child && JSON.stringify(child) !== JSON.stringify(old)) issues.push('Legacy comparison presets are read-only. Supply image and afterImage instead.');
@@ -103,7 +103,7 @@ export function entryImages(entry: ContentEntry): { paths: string[]; pairs: [str
     const record = value as Record<string, unknown>;
     if (typeof record.image === 'string' && typeof record.afterImage === 'string') pairs.push([record.image, record.afterImage]);
     for (const [key, child] of Object.entries(record)) {
-      if (typeof child === 'string' && ['image', 'afterImage', 'coverImage', 'beforeImage'].includes(key)) paths.push(child);
+      if (typeof child === 'string' && ['image', 'afterImage', 'coverImage', 'beforeImage', 'shareImage'].includes(key)) paths.push(child);
       else if (child && typeof child === 'object') walk(child);
     }
   }

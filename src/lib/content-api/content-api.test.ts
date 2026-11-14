@@ -35,6 +35,22 @@ function harness() {
   return { repository, call };
 }
 describe('content-only Agent API', () => {
+  it('blocks a missing landing share image and permits it once its public asset exists', async () => {
+    const { call, repository } = harness();
+    let change = await (await call('/changes', 'POST', { title: 'Social image asset validation' })).json();
+    const data = JSON.parse(readFileSync('src/content/landing-pages/remove-emoji-from-photo.json', 'utf8'));
+    data.slug = 'social-image-validation'; data.shareImage = '/uploads/social-image-validation.png';
+    delete data.heroSamples; delete data.features;
+    for (const step of data.process.steps) delete step.image;
+    const saved = await call(`/changes/${change.id}/entries/landing/${data.slug}`, 'PUT', { data, body: '' }, change.revision, 'save-share-image-123');
+    expect(saved.status).toBe(200); change = await saved.json();
+    const missing = await (await call(`/changes/${change.id}/validate`, 'POST', {}, change.revision, 'validate-share-missing')).json();
+    expect(missing.publishable).toBe(false);
+    expect(missing.issues.join()).toContain('missing or placeholder image /uploads/social-image-validation.png');
+    repository.refs.get(`codex/content-${change.id}`)!.files.set('public/uploads/social-image-validation.png', await sharp({ create: { width: 40, height: 30, channels: 3, background: '#3388aa' } }).png().toBuffer());
+    const present = await (await call(`/changes/${change.id}/validate`, 'POST', {}, change.revision, 'validate-share-present')).json();
+    expect(present.publishable).toBe(true);
+  });
   it('rejects absent and wrong tokens before consulting durable content; fails closed without configuration', async () => {
     const { call, repository } = harness();
     expect((await call('/schema', 'GET', undefined, undefined, undefined, null)).status).toBe(401);
