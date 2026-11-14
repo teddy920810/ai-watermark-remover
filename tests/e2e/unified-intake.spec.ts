@@ -23,9 +23,11 @@ test('published tools use their registered input, with matching hero and footer 
     await page.goto(route);
     const entry = page.locator('#tool');
     if (route === '/tiktok-watermark-remover') {
-      await expect(entry.getByRole('link', { name: 'Open TikTok tool' })).toHaveAttribute('href', '/app/free/tiktok');
+      await expect(entry.getByLabel('TikTok URL', { exact: true })).toBeVisible();
+      await expect(entry.getByRole('button', { name: 'Save Video', exact: true })).toBeDisabled();
       await expect(entry.locator('input[type=file]')).toHaveCount(0);
-      await expect(page.locator('.site-cta').getByRole('link', { name: 'Open TikTok tool' })).toHaveAttribute('href', '/app/free/tiktok');
+      await expect(page.locator('.site-cta').getByLabel('TikTok URL', { exact: true })).toBeVisible();
+      await expect(page.locator('.site-cta').getByRole('button', { name: 'Save Video', exact: true })).toBeDisabled();
       await expect(page.locator('.site-cta input[type=file]')).toHaveCount(0);
       continue;
     }

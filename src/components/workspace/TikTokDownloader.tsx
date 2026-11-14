@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Download, ExternalLink, Link2, LoaderCircle, Video, X } from 'lucide-react';
 import type { TikTokResult } from '../../lib/tiktok/resolver';
 import { resolverOperationCatalog } from '../../lib/contracts/operation-catalog';
+import { consumeTikTokLaunch } from '../../lib/client/tiktok-handoff';
 
 const policy = resolverOperationCatalog['tiktok-video-resolve'];
 
@@ -13,22 +14,30 @@ export default function TikTokDownloader() {
   const [previewFailed, setPreviewFailed] = useState(false);
   const current = useRef<AbortController | null>(null);
   const input = useRef<HTMLInputElement>(null);
-  useEffect(() => () => current.current?.abort(), []);
+  useEffect(() => {
+    let active = true;
+    // Development effect replay must not consume and abort the only launch.
+    queueMicrotask(() => {
+      if (!active) return;
+      const initial = consumeTikTokLaunch(window.location, window.history);
+      if (initial) { setUrl(initial); void resolve(initial); }
+    });
+    return () => { active = false; current.current?.abort(); };
+  }, []);
 
   function clear(next = '') {
     current.current?.abort(); current.current = null;
     setBusy(false); setResult(null); setError(''); setPreviewFailed(false); setUrl(next);
   }
-  async function submit(event: { preventDefault(): void }) {
-    event.preventDefault();
-    if (current.current || !url.trim()) return;
+  async function resolve(link: string) {
+    if (current.current || !link.trim()) return;
     const controller = new AbortController(); current.current = controller;
     setBusy(true); setError(''); setResult(null); setPreviewFailed(false);
     const timeout = setTimeout(() => controller.abort(), policy.timeoutMs + 3000);
     try {
       const response = await fetch('/api/tools/tiktok/resolve', {
         method: 'POST', signal: controller.signal, headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ operation: 'tiktok-video-resolve', url: url.trim() }),
+        body: JSON.stringify({ operation: 'tiktok-video-resolve', url: link.trim() }),
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'We could not resolve this video. Please try again.');
@@ -46,7 +55,7 @@ export default function TikTokDownloader() {
     <div className={`tiktok-layout${result ? ' has-result' : ''}`}>
       <header className="tiktok-heading"><span className="eyebrow"><Link2 size={14} aria-hidden="true" />Free video tool</span><h1>TikTok Watermark Remover for Saved Videos</h1><p>Paste a video link, preview it, and save an available MP4.</p></header>
       <div className="tiktok-content">
-        <form onSubmit={submit} className="tiktok-form">
+        <form onSubmit={event => { event.preventDefault(); void resolve(url); }} className="tiktok-form">
           <label htmlFor="tiktok-url">TikTok URL</label>
           <div className="tiktok-input-row">
             <div className="tiktok-url-field"><input ref={input} id="tiktok-url" type="url" inputMode="url" autoComplete="off" spellCheck={false} placeholder="https://www.tiktok.com/@user/video/…" value={url} maxLength={policy.maxUrlLength} onChange={event => clear(event.target.value)} aria-describedby="tiktok-help" aria-invalid={!!error} required />{url && <button className="tiktok-clear" type="button" aria-label="Clear TikTok URL" title="Clear TikTok URL" onClick={() => { clear(); input.current?.focus(); }}><X size={18} aria-hidden="true" /></button>}</div>

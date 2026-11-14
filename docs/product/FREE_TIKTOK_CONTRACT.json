@@ -5,6 +5,7 @@
   "provider": "tikmate.io form adapter; fixed endpoints; static data decode",
   "input": { "formats": ["https://www.tiktok.com/@user/video/ID"], "maxBytes": 2048, "shortLinks": false },
   "states": ["initial", "resolving", "ready", "failed", "reset"],
+  "landingLaunch": { "action": "Save Video", "transport": "one-use URL fragment; removed before resolve", "autoResolve": true, "reloadAutoResolve": false, "failure": "preserve input for explicit retry", "layout": "input above button; matching widths", "delivery": "authorized production release; exact deployment and live acceptance required" },
   "artifact": { "format": "temporary external MP4 URL", "requiredSemantics": ["browser saves a decodable MP4", "no media bytes through our server", "resource count matches returned URLs", "preview failure preserves download"] },
   "credits": { "previewDelta": 0, "downloadDelta": 0, "refreshSignedUrlDelta": 0, "failurePolicy": "no charge", "successCharge": { "amount": 0, "unit": "none", "exactlyOnce": true } },
   "functionalSmoke": { "requiresAuthentication": false, "usesRepositoryFixture": false, "consumesProviderCredit": false, "redactsSensitiveValues": true, "scope": "user-authorized single-sample acceptance; manual production canary" },

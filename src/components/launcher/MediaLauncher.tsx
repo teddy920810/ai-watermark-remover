@@ -1,10 +1,12 @@
-import { useEffect, useRef, useState, type DragEvent } from 'react';
-import { ArrowRight, CloudUpload, Info, Link2 } from 'lucide-react';
+import { useEffect, useId, useRef, useState, type DragEvent, type FormEvent } from 'react';
+import { ArrowRight, CloudUpload, Download, Info, Link2, X } from 'lucide-react';
 import { cleanExpiredMediaDrafts, saveMediaDraft, workspacePath, type MediaKind } from '../../lib/client/media-drafts';
 import { formatLauncherLimit, identifyLauncherMedia, launcherLimit } from '../../lib/client/media-identification';
 import type { MediaRecommendation } from '../../lib/client/media-recommendation';
 import type { Capability } from '../workspace/workspace-api';
 import { linkToolWorkspaceForSource, toolWorkspaceForSource } from '../../lib/contracts/route-policy.mjs';
+import { tikTokLaunchHash } from '../../lib/client/tiktok-handoff';
+import { resolverOperationCatalog } from '../../lib/contracts/operation-catalog';
 import './launcher.css';
 
 // Public guide metadata only. App admission, balances and prices remain authoritative and uncached here.
@@ -28,6 +30,9 @@ interface Props {
 }
 export default function MediaLauncher({ source = 'landing', recommendation, compact = false, buttonClassName = 'cta-button', onFileSelected }: Props) {
   const linkWorkspace = !onFileSelected ? linkToolWorkspaceForSource(source) : null;
+  const linkId = useId();
+  const linkInput = useRef<HTMLInputElement>(null);
+  const [link, setLink] = useState('');
   const input = useRef<HTMLInputElement>(null);
   const selecting = useRef(false);
   const mounted = useRef(false);
@@ -73,12 +78,30 @@ export default function MediaLauncher({ source = 'landing', recommendation, comp
     finally { selecting.current = false; }
   }
   function drop(event: DragEvent<HTMLDivElement>) { event.preventDefault(); event.stopPropagation(); setDragging(false); void select(event.dataTransfer.files[0]); }
-  if (linkWorkspace) return <div className={`media-launcher${compact ? ' media-launcher-compact' : ''}`} data-link-tool-launcher="tiktok">
-    {compact ? <a className={buttonClassName} href={linkWorkspace}>Open TikTok tool <ArrowRight size={18} aria-hidden="true" /></a> : <div className="launcher-drop">
+  function launchLink(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!linkWorkspace || !link.trim()) return;
+    try {
+      const hash = tikTokLaunchHash(link);
+      setError('');
+      window.location.assign(linkWorkspace + hash);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : 'Please try again.');
+    }
+  }
+  const linkForm = linkWorkspace && <form className="launcher-link-form" onSubmit={launchLink}>
+    <label htmlFor={linkId}>TikTok URL</label>
+    <div className="launcher-link-row">
+      <div className="launcher-link-field"><input ref={linkInput} id={linkId} type="url" inputMode="url" autoComplete="off" spellCheck={false} placeholder="https://www.tiktok.com/@user/video/…" maxLength={resolverOperationCatalog['tiktok-video-resolve'].maxUrlLength} value={link} disabled={!hydrated} required aria-describedby={`${linkId}-help`} onChange={event => { setLink(event.target.value); setError(''); }} />{link && <button className="launcher-link-clear" type="button" aria-label="Clear TikTok URL" onClick={() => { setLink(''); setError(''); linkInput.current?.focus(); }}><X size={17} aria-hidden="true" /></button>}</div>
+      <button className={compact ? buttonClassName : 'button button-primary'} type="submit" disabled={!hydrated || !link.trim()}><Download size={18} aria-hidden="true" />Save Video</button>
+    </div>
+    <p id={`${linkId}-help`} className="launcher-link-help">Paste a full TikTok video link to preview and save an MP4.</p>
+    {error && <p className="launcher-link-error" role="alert">{error}</p>}
+  </form>;
+  if (linkWorkspace) return <div className={`media-launcher media-launcher-link${compact ? ' media-launcher-compact' : ''}`} data-link-tool-launcher="tiktok">
+    {compact ? linkForm : <div className="launcher-drop">
       <Link2 className="launcher-upload-icon" size={38} strokeWidth={1.7} aria-hidden="true" />
-      <a className="button button-primary" href={linkWorkspace}>Open TikTok tool <ArrowRight size={18} aria-hidden="true" /></a>
-      <p className="launcher-drop-copy"><strong>Save from a TikTok video link</strong></p>
-      <p className="launcher-local-note">Paste the original video link in the workspace to preview and save an MP4. This link tool does not edit uploaded files.</p>
+      {linkForm}
     </div>}
   </div>;
   const picker = <input ref={input} className="sr-only" data-testid={compact ? 'compact-launcher-file' : 'media-launcher-file'} type="file" disabled={!hydrated || pending} aria-label="Choose an image or MP4 video" accept="image/jpeg,image/png,image/webp,video/mp4" onChange={event => { void select(event.target.files?.[0]); event.target.value = ''; }} />;

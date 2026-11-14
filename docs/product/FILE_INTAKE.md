@@ -26,4 +26,4 @@ Local verification covers every published primary entry, footer selection, incom
 
 ## TikTok 链接入口
 
-`/tiktok-watermark-remover` 的 hero 和页尾通过路由合同的显式链接入口进入 `/app/free/tiktok`，不创建文件草稿或触发上传/报价。其他来源及 App 内再次选择文件继续使用原单/双媒体输入合同。生产和本地使用相同链接入口；这不表示原 TikTok 文案描述的文件编辑已上线。App 现有菜单同时提供该工具入口。解析、限流、下载和发布合同见 [TikTok 链接工具](FREE_TIKTOK.md)。
+`/tiktok-watermark-remover` 的 hero 和页尾通过路由合同的显式链接入口进入 `/app/free/tiktok`，不创建文件草稿或触发上传/报价。入口为链接输入框和 `Save Video`，提交后跳转并自动解析一次；临时片段在工作区读取后立即清除，刷新不重发。其他来源及 App 内再次选择文件继续使用原单/双媒体输入合同。这不表示原 TikTok 文案描述的文件编辑已上线。App 现有菜单同时提供该工具入口。解析、限流、下载和发布边界见 [TikTok 链接工具](FREE_TIKTOK.md)。
