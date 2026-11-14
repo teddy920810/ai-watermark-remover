@@ -27,7 +27,7 @@ async function anonymousLauncher(page: Page) {
   return writes;
 }
 
-type ConfiguredImage = { image?: string; afterImage?: string; imageAlt: string; comparison?: { image?: string; beforeImage?: string } };
+type ConfiguredImage = { image?: string; afterImage?: string; imageAlt: string; afterImageAlt?: string; comparison?: { image?: string; beforeImage?: string } };
 
 async function expectConfiguredImage(display: Locator, item: ConfiguredImage) {
   const legacyAfter = item.comparison?.image || item.image;
@@ -45,7 +45,7 @@ async function expectConfiguredImage(display: Locator, item: ConfiguredImage) {
     expect(afterSource).not.toBe(beforeSource);
     const after = display.locator('[data-image-side="after"] img');
     await expect(after).toHaveAttribute('src', afterSource);
-    await expect(after).toHaveAttribute('alt', item.imageAlt);
+    await expect(after).toHaveAttribute('alt', item.afterImageAlt ?? item.imageAlt);
     await expect(display).toHaveAttribute('data-pair', 'true');
     await expect(display).toHaveAttribute('data-ready', 'true');
     await expect(after).toBeVisible();
