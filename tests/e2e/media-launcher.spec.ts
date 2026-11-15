@@ -1,4 +1,4 @@
-import { reloadWorkspace, waitForWorkspace } from '../helpers/workspace';
+import { reloadWorkspace, selectWorkspaceOperation, waitForWorkspace } from '../helpers/workspace';
 import { expect, test, type Page, type Route } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import sharp from 'sharp';
@@ -126,8 +126,8 @@ for (const viewport of [{ name: 'desktop', width: 1440, height: 900 }, { name: '
       await expect(open).toHaveAttribute('href', '/app/video');
       await open.click();
       await expect(page).toHaveURL(/\/app\/video$/); await waitForWorkspace(page);
-      await expect(page.getByLabel('Choose operation')).toHaveValue('video-watermark');
-      await expect(page.getByRole('heading', { name: 'Remove video watermarks' })).toBeVisible();
+      await expect(page.locator('[data-workspace-navigation] a[aria-current="page"][data-operation]')).toHaveAttribute('data-operation', 'video-watermark');
+      await expect(page.getByRole('heading', { name: 'Video Watermark Remover' })).toBeVisible();
       expect(writes).toEqual([]);
     });
 
@@ -140,7 +140,7 @@ for (const viewport of [{ name: 'desktop', width: 1440, height: 900 }, { name: '
       const recovery = page.getByRole('alert').getByRole('link', { name: 'Open workspace' });
       await expect(recovery).toHaveAttribute('href', '/app/video');
       await recovery.click();
-      await expect(page.getByLabel('Choose operation')).toHaveValue('video-watermark');
+      await expect(page.locator('[data-workspace-navigation] a[aria-current="page"][data-operation]')).toHaveAttribute('data-operation', 'video-watermark');
       expect(writes).toEqual([]);
     });
 
@@ -152,20 +152,26 @@ for (const viewport of [{ name: 'desktop', width: 1440, height: 900 }, { name: '
       const name = kind === 'image' ? 'video-page-image.png' : 'video-page-clip.mp4';
       await picker.setInputFiles({ name, mimeType: kind === 'image' ? 'image/png' : 'video/mp4', buffer: kind === 'image' ? await photo() : videoBytes });
       await expect(page).toHaveURL(new RegExp(`/app/${kind}$`)); await waitForWorkspace(page);
-      await expect(page.getByLabel('Choose operation')).toHaveValue(kind === 'image' ? 'image-watermark' : 'video-watermark');
+      await expect(page.locator('[data-workspace-navigation] a[aria-current="page"][data-operation]')).toHaveAttribute('data-operation', kind === 'image' ? 'image-watermark' : 'video-watermark');
       await expect(page.getByText(name, { exact: true })).toBeVisible();
       if (kind === 'image') await expect(page.locator('.app-entry-notice')).toContainText(/image|compatible/i);
       else await expect(page.locator('video')).toHaveAttribute('src', /^blob:/);
       expect(writes).toEqual([]);
     });
 
-    test('the homepage retains its image entry and no video allowance notice', async ({ page }) => {
+    test('the homepage opens all tools and still reaches image intake without a video allowance notice', async ({ page }) => {
+      // This journey now opens the overview before lazy-loading the image editor.
+      // Allow the local dev server's two cold module graphs to finish compiling.
+      test.setTimeout(60_000);
       const writes = await anonymous(page);
       await page.goto('/');
       const open = page.locator('#tool').getByRole('link', { name: 'Open workspace' });
       await expect(open).toHaveAttribute('href', '/app');
       await open.click();
-      await expect(page.getByLabel('Choose operation')).toHaveValue('image-watermark');
+      await waitForWorkspace(page);
+      await expect(page.getByRole('heading', { name: 'Less watermark. More possibility.' })).toBeVisible();
+      await selectWorkspaceOperation(page, 'image-watermark');
+      await expect(page.locator('[data-workspace-navigation] a[aria-current="page"][data-operation]')).toHaveAttribute('data-operation', 'image-watermark');
       await expect(page.getByText(/Video processing uses administrator-allocated/)).toHaveCount(0);
       await page.getByLabel('Upload file to workspace').setInputFiles({ name: 'homepage-image.png', mimeType: 'image/png', buffer: await photo() });
       await expect(page).toHaveURL(/\/app\/image$/); await waitForWorkspace(page);

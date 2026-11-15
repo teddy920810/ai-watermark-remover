@@ -161,7 +161,7 @@ test('public navigation folding leaves image and video workspace headers on one 
       await expect(header.getByRole('button', { name: 'Sign in with Google', exact: true })).toBeEnabled();
       const box = (await header.boundingBox())!;
       const brand = (await header.locator('.brand').boundingBox())!;
-      const navigation = (await header.getByRole('navigation', { name: 'Media workspace' }).boundingBox())!;
+      const navigation = (await header.locator('.unified-header-label').boundingBox())!;
       const actions = (await header.locator('.workspace-header-actions').boundingBox())!;
       expect(box.height, `${kind} header height at ${width}px`).toBeLessThanOrEqual(80);
       expect(navigation.width, `${kind} media navigation at ${width}px`).toBeLessThan(box.width / 2);

@@ -2,6 +2,7 @@ import { Component, lazy, Suspense, useCallback, useEffect, useRef, useState, ty
 import { authClient } from '../auth/auth-client';
 import { claimMediaDraft, clearMediaDrafts, readMediaDraft, type MediaDraft, type MediaKind } from '../../lib/client/media-drafts';
 import { identityHasChanged, resolveAppEntry } from './app-entry';
+import { WorkspaceOverview } from './WorkspaceOverview';
 import { WorkspaceLoading } from './WorkspaceLoading';
 import { PaidHandoffEntry } from './PaidHandoffEntry';
 
@@ -68,6 +69,7 @@ function AppWorkspaceContent({ kind, logo, siteName }: Props) {
     void open(); return () => { active = false; };
   }, [kind, owner, isPending]);
   if (!entry || !isPending && changedOwner) return <WorkspaceLoading />;
+  if (kind === 'auto' && !entry.requested && !entry.hasJob && (['recent', 'tools'].includes(new URLSearchParams(window.location.search).get('view') ?? '') || !entry.draft)) return <WorkspaceOverview logo={logo} siteName={siteName} recent={new URLSearchParams(window.location.search).get('view') === 'recent'} />;
   const selection = resolveAppEntry({ kind: entry.kind, requested: entry.requested, hasJob: entry.hasJob, source: entry.draft?.source, recommendation: entry.draft?.recommendation });
   return <>
     {(error || selection.notice) && <p className="app-entry-notice" role="status">{error || selection.notice}</p>}

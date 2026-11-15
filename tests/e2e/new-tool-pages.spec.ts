@@ -66,7 +66,7 @@ test('all five new pages hand local files to the existing recommended operation 
     const input = page.locator('#tool input[type=file]'); await expect(input).toBeEnabled();
     await input.setInputFiles({ name: photo ? 'original-photo.png' : 'original-video.mp4', mimeType: photo ? 'image/png' : 'video/mp4', buffer: photo ? png : video });
     await waitForWorkspace(page);
-    await expect(page.getByLabel('Choose operation')).toHaveValue(photo ? 'object-removal' : 'video-watermark');
+    await expect(page.locator('[data-workspace-navigation] a[aria-current="page"][data-operation]')).toHaveAttribute('data-operation', photo ? 'object-removal' : 'video-watermark');
     await expect(page.getByText(photo ? 'original-photo.png' : 'original-video.mp4', { exact: true })).toBeVisible();
   }
   expect(writes).toEqual([]);

@@ -27,3 +27,8 @@ hero 与页尾入口提供链接输入框和 `Save Video`。用户明确提交�
 2026-11-14 用户明确确认已取得用于本站公开接入的 Tikmate 授权，并授权提交上线。公开条款本身不视为接入授权；本记录不扩大到其他 Provider、用途或站点。发布前运行数据库迁移、`release:verify` 和两个必需 CI；发布后核对 Site/App 精确部署和现有授权单样本的真实解析、预览、下载与清除，点击下载不等于文件完整性验收。发布状态以实际交付记录为准。多样本稳定性、短链接、URL 有效期、跨网络、真实 Safari/手机兼容性后补；不据单样本扩大兼容承诺。没有依赖 R2、OAuth 的新操作，不将这些无关门禁计为通过。
 
 参考协议：<https://tikmate.io/>、<https://tikmate.io/pages/terms-of-service.php>；MIT 参考仓库许可不替代上游服务接入许可。Acorn 仅解析语法：<https://github.com/acornjs/acorn/tree/master/acorn#interface>。
+
+
+## 统一工作台（本地迭代）
+
+入口仍为 `/app/free/tiktok`，使用与图片、视频、Gemini 相同的 `WorkspaceShell` 一级导航和账户区，标题为 `TikTok Video Downloader`。登录是可选入口，解析、预览和下载继续允许访客使用。原解析 API、准入限制、Referrer-Policy 与 CSP 不变；头部使用本地图标，不增加外部头像域名。部署状态和生产验收与本地实现分开记录。

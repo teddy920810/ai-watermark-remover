@@ -1,3 +1,4 @@
+import { selectWorkspaceOperation } from '../helpers/workspace';
 import { openWorkspace, reloadWorkspace, waitForWorkspace } from '../helpers/workspace';
 import { expect, test, type Page, type Route } from '@playwright/test';
 import sharp from 'sharp';
@@ -142,7 +143,7 @@ for (const scenario of [
   await page.route('**/api/v1/jobs/job-image/download', route => { downloads += 1; return json(route, { url: `${downloadOrigin}/image.jpg`, expiresAt: quoteExpiration() }); });
   await openWorkspace(page, '/app/image');
   await page.getByLabel('Upload file to workspace').setInputFiles({ name: 'product.png', mimeType: 'image/png', buffer: image });
-  if (scenario.operation === 'image-watermark-pro') await page.getByLabel('Choose operation').selectOption('image-watermark-pro');
+  if (scenario.operation === 'image-watermark-pro') await selectWorkspaceOperation(page, 'image-watermark-pro');
   const process = page.getByRole('button', { name: `Remove watermarks · ${scenario.cost}`, exact: true });
   await expect(process).toBeEnabled();
   if (scenario.unit === 'credits') {
@@ -270,7 +271,8 @@ for (const unified of [false, true]) test(unified ? 'unified Credits refinement 
     expect(submissions).toBe(1); expect(balance.credits).toBe(900);
   } else {
     await expect(page.getByText('Your reserved credits were returned.')).toBeVisible();
-    await page.locator('.workspace-recent button').filter({ hasText: 'Ready to review' }).click();
+    await page.goto('/app?view=recent');
+    await page.locator('.unified-task-list a').filter({ hasText: 'Ready to review' }).click();
   }
   await expect(page.getByRole('button', { name: 'Download JPG', exact: true })).toBeVisible();
 });
@@ -374,7 +376,7 @@ test('a late cost response cannot overwrite the selected cleanup mode or submit 
   await page.route('**/api/v1/jobs/mode-job', route => json(route, { id: 'mode-job', status: 'UNKNOWN', operation: 'image-watermark-pro', input: artifact, charge: { status: 'reserved', amount: 3, unit: 'processingCredits' }, createdAt: new Date().toISOString() }));
   await openWorkspace(page, '/app/image'); await page.getByLabel('Upload file to workspace').setInputFiles({ name: 'mode.jpg', mimeType: 'image/jpeg', buffer: image });
   await expect.poll(() => operations).toEqual(['image-watermark']);
-  await page.getByLabel('Choose operation').selectOption('image-watermark-pro');
+  await selectWorkspaceOperation(page, 'image-watermark-pro');
   const process = page.getByRole('button', { name: 'Remove watermarks · 3 processing credits', exact: true });
   await expect(process).toBeEnabled(); expect(submissions).toHaveLength(0);
   releaseFirst?.(); await expect.poll(() => oldResponseDelivered).toBe(true);

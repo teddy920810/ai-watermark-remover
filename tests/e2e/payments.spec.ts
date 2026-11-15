@@ -1,3 +1,4 @@
+import { selectWorkspaceOperation } from '../helpers/workspace';
 import { openWorkspace } from '../helpers/workspace';
 import { expect, test, type Page } from '@playwright/test';
 import sharp from 'sharp';
@@ -160,7 +161,7 @@ test('PRO processing stays unavailable with only purchased image credits', async
   const image = await imageUseWorkspace(page);
   await openWorkspace(page, '/app/image');
   await page.getByLabel('Upload file to workspace').setInputFiles({ name: 'image-use.jpg', mimeType: 'image/jpeg', buffer: image });
-  await page.getByLabel('Choose operation').selectOption('image-watermark-pro');
+  await selectWorkspaceOperation(page, 'image-watermark-pro');
   await expect(page.getByRole('button', { name: 'Remove watermarks · 3 processing credits', exact: true })).toBeDisabled();
   await expect(page.getByRole('alert')).toContainText('Ask an administrator');
   await expect(page.locator('.workspace-controls')).toContainText('Purchased image credits do not apply.');

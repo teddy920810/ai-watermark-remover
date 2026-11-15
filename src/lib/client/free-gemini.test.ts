@@ -3,10 +3,10 @@ import { localOperationCatalog, durableOperationIds } from '../contracts/operati
 import { paidHandoffReason, handoffIsUsable } from './free-gemini';
 
 describe('free Gemini operation boundary', () => {
-  it('offers both authenticated local operations without joining a paid allowance or server queue', () => {
+  it('offers both anonymous local operations without joining a paid allowance or server queue', () => {
     expect(Object.keys(localOperationCatalog)).toEqual(['gemini-image-free', 'gemini-video-free']);
     for (const operation of Object.values(localOperationCatalog)) {
-      expect(operation).toMatchObject({ executor: 'browser', requiresAuthentication: true, charge: 0 });
+      expect(operation).toMatchObject({ executor: 'browser', requiresAuthentication: false, charge: 0 });
     }
     expect(durableOperationIds).not.toContain('gemini-video-free');
   });

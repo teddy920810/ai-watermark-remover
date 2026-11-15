@@ -8,6 +8,8 @@ import { paidHandoffPath, paidHandoffReason, type LocalMediaInfo, type PaidCapab
 import { localOperationCatalog } from '../../lib/contracts/operation-catalog';
 import { runGemini } from '../../lib/client/gemini-engine';
 import { createGeminiEvents } from '../../lib/client/gemini-events';
+import { WorkspaceShell } from './WorkspaceShell';
+import { WorkspaceAccount } from './WorkspaceAccount';
 import { GeminiVideoCompare } from './GeminiVideoCompare';
 
 interface Media { file: File; url: string; info: LocalMediaInfo }
@@ -58,14 +60,14 @@ export default function FreeGeminiWorkspace({ logo, siteName }: { logo: string; 
     return () => { active = false; };
   }, [isPending]);
   async function chooseFile(file?: File) {
-    if (!file || locked.current || handoffBusy || isPending) return;
+    if (!file || locked.current || handoffBusy) return;
     locked.current = true; const epoch = ++generation.current; const selectedOwner = currentOwner.current;
     controller.current = new AbortController(); setPhase('checking'); setStage('Checking your file'); setError(''); setNotice('');
     try {
       const identified = await identifyLauncherMedia(file, { image: localOperationCatalog['gemini-image-free'].capability.maxBytes, video: localOperationCatalog['gemini-video-free'].capability.maxBytes });
       if (!identified.ok) throw new Error(identified.message);
       const checked = await runGemini(identified.file, 'inspect', controller.current.signal);
-      if (!alive.current || epoch !== generation.current || selectedOwner !== currentOwner.current) return;
+      if (!alive.current || epoch !== generation.current || Boolean(selectedOwner && selectedOwner !== currentOwner.current)) return;
       for (const url of urls.current) URL.revokeObjectURL(url); urls.current = [];
       if (result) emit('reuse', checked.info.kind);
       setMedia({ file: identified.file, info: checked.info, url: localUrl(identified.file) }); setResult(null); setFailed(false); paidWindow.current = null;
@@ -84,28 +86,25 @@ export default function FreeGeminiWorkspace({ logo, siteName }: { logo: string; 
     } catch (cause) { popup.close(); setError(cause instanceof Error ? cause.message : 'Sign-in could not start.'); }
   }
   async function process() {
-    if (!media || locked.current || handoffBusy || isPending) return;
-    if (!session?.user) { await signIn(); return; }
-    locked.current = true; const epoch = ++generation.current; const processingOwner = session.user.id;
+    if (!media || locked.current || handoffBusy) return;
+    locked.current = true; const epoch = ++generation.current;
     run.current = null;
     setFailed(false);
     controller.current = new AbortController(); setError(''); setNotice(''); setPhase('processing'); setStage('Starting local processing'); setProgress(undefined);
     try {
-      const verified = await authClient.getSession();
-      if (epoch !== generation.current) return;
-      if (verified.data?.user.id !== processingOwner) throw new Error('Sign in with the same account before starting processing. Your file is still here.');
       run.current = { id: crypto.randomUUID(), kind: media.info.kind, started: performance.now() };
       emit('start', media.info.kind, run.current.id);
       const next = await runGemini(media.file, 'process', controller.current.signal, (label, value) => { if (alive.current && epoch === generation.current) { setStage(label); setProgress(value); } });
       if (!next.blob) throw new Error('No downloadable result was produced. Your original is unchanged.');
       // Normal session expiry keeps an authenticated run; explicit sign-out/account change cancels its epoch.
-      if (alive.current && epoch === generation.current && owner.current === processingOwner) { resultRun.current = run.current.id; emit('result', next.info.kind, run.current.id, performance.now() - run.current.started); setResult({ blob: next.blob, url: localUrl(next.blob), info: next.info, bestEffort: next.bestEffort }); setMobileView('result'); }
+      if (alive.current && epoch === generation.current) { resultRun.current = run.current.id; emit('result', next.info.kind, run.current.id, performance.now() - run.current.started); setResult({ blob: next.blob, url: localUrl(next.blob), info: next.info, bestEffort: next.bestEffort }); setMobileView('result'); }
     } catch (cause) { if (alive.current && epoch === generation.current) { const message = cause instanceof Error ? cause.message : 'Processing failed. Your original is unchanged.'; setError(message); if (run.current) { setFailed(true); resultRun.current = run.current.id; emit(/No supported|置信度/.test(message) ? 'not_detected' : 'failed', run.current.kind, run.current.id, performance.now() - run.current.started); } } }
     finally { if (alive.current && epoch === generation.current) { locked.current = false; setPhase('idle'); } }
   }
   function cancel() { generation.current++; controller.current?.abort(); if (run.current && phase === 'processing') emit('cancelled', run.current.kind, run.current.id, performance.now() - run.current.started); run.current = null; locked.current = false; setPhase('idle'); setNotice('Cancelled. Your original file is still available.'); }
   async function handoff() {
-    if (!media || (!result && !failed) || !session?.user || handoffBusy || reason) return;
+    if (!media || (!result && !failed) || handoffBusy || reason) return;
+    if (!session?.user) { await signIn(); return; }
     emit('paid_entry', media.info.kind, resultRun.current);
     if (paidWindow.current && !paidWindow.current.closed) { paidWindow.current.focus(); return; }
     const nextWindow = window.open('about:blank', `gemini-paid-${crypto.randomUUID()}`);
@@ -126,21 +125,21 @@ export default function FreeGeminiWorkspace({ logo, siteName }: { logo: string; 
   const reason = media ? paidHandoffReason(media.file, media.info, capability) : null;
   useEffect(() => { if ((result || failed) && media && !reason) emit('paid_shown', media.info.kind, resultRun.current); }, [result, failed, media, reason, emit]);
   const info = result?.info ?? media?.info;
-  return <div className="free-gemini" data-free-gemini>
-    <header className="gemini-header"><a className="brand" href="/"><img className="brand-logo" src={logo} alt="" /><span>{siteName}</span></a><span className="gemini-tool-label">Free Gemini tool</span><div className="gemini-account">{session?.user ? <><span className="gemini-avatar" aria-label="Signed-in account">{session.user.name?.slice(0, 1) || 'G'}</span><button type="button" onClick={() => void signOut()}>Sign out</button></> : <button type="button" disabled={isPending} onClick={() => void signIn()}>Sign in with Google</button>}</div></header>
+  return <WorkspaceShell logo={logo} siteName={siteName} active="gemini" account={<WorkspaceAccount user={session?.user ?? null} pending={isPending} signIn={signIn} signOut={signOut} />}><div className="free-gemini" data-free-gemini>
+
     <main className="gemini-main" onDragOver={event => { if (event.dataTransfer.types.includes('Files')) event.preventDefault(); }} onDrop={event => { event.preventDefault(); if (!busy) void chooseFile(event.dataTransfer.files[0]); }}>
-      <input ref={input} className="sr-only" type="file" accept="image/jpeg,image/png,image/webp,video/mp4" aria-label="Choose a Gemini image or video" disabled={busy || handoffBusy || isPending} onChange={event => { void chooseFile(event.target.files?.[0]); event.target.value = ''; }} />
-      <div className="gemini-heading"><div><h1>{result ? `Your ${kind} is ready` : 'Free Gemini watermark remover'}</h1><p>{info ? `${info.width} × ${info.height} · ${kind === 'video' ? 'MP4' : result ? 'PNG' : media?.file.type.split('/')[1].toUpperCase()}${result?.info.hasAudio ? ' · Audio preserved' : ''}` : 'Remove visible Gemini watermarks from images and videos.'}</p></div><div className="gemini-actions">{result ? <a className="button button-primary" href={result.url} onClick={() => emit('download_started', kind, resultRun.current)} download={`gemini-cleaned-${kind}.${kind === 'video' ? 'mp4' : 'png'}`}><Download size={21} />Download {kind === 'video' ? 'MP4' : 'PNG'} — Free</a> : media && !busy ? <button className="button button-primary" type="button" disabled={isPending} onClick={() => void process()}>{session?.user ? 'Remove watermark — Free' : 'Sign in to process for free'}</button> : null}{media && <button className="gemini-text-button" type="button" disabled={busy || handoffBusy || isPending} onClick={() => input.current?.click()}>{result ? 'Process another file' : 'Choose another file'}</button>}</div></div>
+      <input ref={input} className="sr-only" type="file" accept="image/jpeg,image/png,image/webp,video/mp4" aria-label="Choose a Gemini image or video" disabled={busy || handoffBusy} onChange={event => { void chooseFile(event.target.files?.[0]); event.target.value = ''; }} />
+      <div className="gemini-heading"><div><h1>{result ? `Your ${kind} is ready` : 'Gemini Watermark Remover'}</h1><p>{info ? `${info.width} × ${info.height} · ${kind === 'video' ? 'MP4' : result ? 'PNG' : media?.file.type.split('/')[1].toUpperCase()}${result?.info.hasAudio ? ' · Audio preserved' : ''}` : 'Remove visible Gemini watermarks from images and videos.'}</p></div><div className="gemini-actions">{result ? <a className="button button-primary" href={result.url} onClick={() => emit('download_started', kind, resultRun.current)} download={`gemini-cleaned-${kind}.${kind === 'video' ? 'mp4' : 'png'}`}><Download size={21} />Download {kind === 'video' ? 'MP4' : 'PNG'} — Free</a> : media && !busy ? <button className="button button-primary" type="button" onClick={() => void process()}>Remove watermark — Free</button> : null}{media && <button className="gemini-text-button" type="button" disabled={busy || handoffBusy} onClick={() => input.current?.click()}>{result ? 'Process another file' : 'Choose another file'}</button>}</div></div>
       {error && <p className="gemini-error" role="alert">{error}</p>}{notice && <p className="gemini-notice" role="status">{notice}</p>}
       {busy && <div className="gemini-progress" role="status" aria-live="polite"><LoaderCircle className="gemini-spinner" size={20} /><span>{stage}</span>{typeof progress === 'number' && <progress aria-label="Local processing progress" max={1} value={progress} />}<button type="button" onClick={cancel}><X size={16} />Cancel</button><small>Keep this page open. Your file stays on this device.</small></div>}
-      {!media ? <div className="gemini-intake"><CloudUpload size={40} strokeWidth={1.6} /><h2>Choose a Gemini image or video</h2><p>JPG, PNG, WebP up to 10 MB · MP4 up to 100 MB</p><button className="button button-primary" type="button" disabled={busy} onClick={() => input.current?.click()}>Choose file</button><small>Free, unlimited uses after sign-in. Processed on your device.</small></div> : <>
+      {!media ? <div className="gemini-intake"><CloudUpload size={40} strokeWidth={1.6} /><h2>Choose a Gemini image or video</h2><p>JPG, PNG, WebP up to 10 MB · MP4 up to 100 MB</p><button className="button button-primary" type="button" disabled={busy} onClick={() => input.current?.click()}>Choose file</button><small>Free for everyone. No sign-in required. Processed on your device.</small></div> : <>
         {result && <div className="gemini-mobile-tabs" aria-label="Preview view">{['original', 'result'].map(view => <button key={view} type="button" aria-pressed={mobileView === view} onClick={() => setMobileView(view)}>{view === 'original' ? 'Original' : 'Result'}</button>)}</div>}
         {kind === 'video' && result ? <GeminiVideoCompare key={result.url} original={media.url} result={result.url} mobileView={mobileView} /> : <div className={`gemini-comparison ${result ? `mobile-${mobileView}` : 'gemini-single'}`}><figure className="gemini-original"><figcaption>Original</figcaption>{kind === 'video' ? <video src={media.url} controls preload="metadata" playsInline /> : <img src={media.url} alt="Original image" />}</figure>{result && <figure className="gemini-result"><figcaption>Result</figcaption><img src={result.url} alt="Gemini watermark removal result" /></figure>}</div>}
         {result?.bestEffort && <p className="gemini-note">Some marks may remain. Compare the result before downloading.</p>}
         <div className="gemini-assurances"><span><Monitor size={18} />Processed on your device</span><span><CheckCircle2 size={18} />Free · No credits used</span>{result?.info.hasAudio && <span><CheckCircle2 size={18} />Audio preserved</span>}</div>
-        {(result || failed) && <div className="gemini-paid">{reason ? <p>{reason} {result ? 'Your free download is still available.' : 'Your original file is unchanged.'}</p> : <><p>{result ? 'Still see a watermark?' : 'Need another option?'} <button type="button" onClick={() => void handoff()} disabled={handoffBusy || !session?.user}>Try paid AI removal <ArrowUpRight size={14} /></button></p><small>Uploads your original to the cloud. Review the cost before processing.</small></>}</div>}
+        {(result || failed) && <div className="gemini-paid">{reason ? <p>{reason} {result ? 'Your free download is still available.' : 'Your original file is unchanged.'}</p> : <><p>{result ? 'Still see a watermark?' : 'Need another option?'} <button type="button" onClick={() => void handoff()} disabled={handoffBusy}>Try paid AI removal <ArrowUpRight size={14} /></button></p><small>Sign in to upload your original to the cloud. Review the cost before processing.</small></>}</div>}
       </>}
       <p className="gemini-scope">Gemini visible watermarks only. Results depend on the source file. Video is re-encoded.</p>
     </main>
-  </div>;
+  </div></WorkspaceShell>;
 }

@@ -56,7 +56,7 @@ describe('SiteLayout Google Analytics integration', () => {
     const brandSources = [layoutSource, workspaceSource, popupSource].join('\n');
     expect(brandSources).not.toContain('brand-mark');
     expect(layoutSource.match(/<img class="brand-logo"/g)).toHaveLength(2);
-    expect(readFileSync(new URL('../components/workspace/AppShell.tsx', import.meta.url), 'utf8')).toContain('<img className="brand-logo" src={logo}');
+    expect(readFileSync(new URL('../components/workspace/WorkspaceShell.tsx', import.meta.url), 'utf8')).toContain('<img className="brand-logo" src={logo}');
     expect(popupSource).toContain('<img class="brand-logo"');
   });
 

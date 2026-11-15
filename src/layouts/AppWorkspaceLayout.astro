@@ -4,6 +4,7 @@ import site from '../content/settings/site.json';
 import type { MediaKind } from '../lib/client/media-drafts';
 import '../styles/design-system.css';
 import '../styles/workspace.css';
+import '../styles/unified-workspace.css';
 interface Props { kind?: MediaKind | 'auto' }
 const { kind = 'auto' } = Astro.props;
 const appAsset = (path: string) => process.env.BUILD_TARGET === 'app' ? `/_app-assets/public${path}` : path;

@@ -88,7 +88,7 @@ test('background uses the common durable quote, retains transparent/color PNG do
     await page.screenshot({ path: `output/playwright/refactor-p6-background-controls-${label}.png`, animations: 'disabled', style: 'astro-dev-toolbar{visibility:hidden!important}' });
   }
   await reloadWorkspace(page);
-  await expect(page.getByLabel('Choose operation')).toHaveValue('background-removal');
+  await expect(page.locator('[data-workspace-navigation] a[aria-current="page"][data-operation]')).toHaveAttribute('data-operation', 'background-removal');
   await expect(page.getByRole('button', { name: 'Download PNG', exact: true })).toBeVisible();
   expect(state.submissions).toBe(1); expect(state.oldRequests).toBe(0);
 });
@@ -109,7 +109,7 @@ test(`${label} UNKNOWN retains the same task without a replacement file or a fre
   const state = await fixture(page, true, 100, operation); state.unknown = true;
   await page.getByRole('button', { name: `${label} · 10 image credits`, exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Checking the processing confirmation', exact: true })).toBeVisible();
-  await expect(page.getByLabel('Choose operation')).toBeDisabled();
+  await expect(page.locator('[data-workspace-navigation] a[aria-current="page"][data-operation]')).toBeDisabled();
   await expect(page.getByRole('button', { name: 'Upload file', exact: true })).toBeDisabled();
   await reloadWorkspace(page);
   await expect(page.getByRole('heading', { name: 'Checking the processing confirmation', exact: true })).toBeVisible();
@@ -125,7 +125,7 @@ test(`${label} sign-in retains the original file and still waits for its explici
   state.signedIn = true;
   await page.evaluate(() => window.postMessage({ type: 'clearmark-auth-complete' }, window.location.origin));
   await expect(page.getByRole('button', { name: `${label} · 10 image credits`, exact: true })).toBeEnabled();
-  await expect(page.getByLabel('Choose operation')).toHaveValue(operation);
+  await expect(page.locator('[data-workspace-navigation] a[aria-current="page"][data-operation]')).toHaveAttribute('data-operation', operation);
   expect(state.submissions).toBe(0);
   await page.getByRole('button', { name: `${label} · 10 image credits`, exact: true }).click();
   await expect(page.getByRole('button', { name: 'Download PNG', exact: true })).toBeVisible();
@@ -161,7 +161,7 @@ test('background automatically refreshes an expired preview link without creatin
 test('object uses the durable coordinator with independent tools, opaque binary selections, latest quote and PNG download', async ({ page }, testInfo) => {
   test.setTimeout(60_000);
   const state = await fixture(page, true, 100, 'object-removal', false);
-  await expect(page.getByRole('heading', { name: 'Remove object', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Object Remover', exact: true })).toBeVisible();
   await expect(page.getByLabel('Object removal mask canvas')).toHaveJSProperty('width', 80);
   await expect(page.getByLabel('Object removal mask canvas')).toHaveJSProperty('height', 60);
   expect((await page.getByLabel('Object removal mask canvas').boundingBox())!.width).toBeGreaterThan(250);
@@ -197,7 +197,7 @@ test('object uses the durable coordinator with independent tools, opaque binary 
   const event = page.waitForEvent('download'); await page.getByRole('button', { name: 'Download PNG', exact: true }).click();
   const target=testInfo.outputPath('object-result.png'); await (await event).saveAs(target);
   expect(readFileSync(target)).toEqual(output); expect(await sharp(readFileSync(target)).metadata()).toMatchObject({format:'png',width:80,height:60});
-  await reloadWorkspace(page); await expect(page.getByLabel('Choose operation')).toHaveValue('object-removal');
+  await reloadWorkspace(page); await expect(page.locator('[data-workspace-navigation] a[aria-current="page"][data-operation]')).toHaveAttribute('data-operation', 'object-removal');
   await expect(page.getByRole('button', { name: 'Download PNG', exact: true })).toBeVisible();
   expect(state.submissions).toBe(1); expect(state.purchasedImageCredits).toBe(90); expect(state.oldRequests).toBe(0);
 });
