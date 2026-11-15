@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Download, ExternalLink, Link2, LoaderCircle, Video, X } from 'lucide-react';
+import { Download, ExternalLink, LoaderCircle, Video, X } from 'lucide-react';
 import type { TikTokResult } from '../../lib/tiktok/resolver';
 import { resolverOperationCatalog } from '../../lib/contracts/operation-catalog';
 import { consumeTikTokLaunch } from '../../lib/client/tiktok-handoff';
@@ -53,7 +53,7 @@ export default function TikTokDownloader() {
 
   return <main className="tiktok-tool">
     <div className={`tiktok-layout${result ? ' has-result' : ''}`}>
-      <header className="tiktok-heading"><span className="eyebrow"><Link2 size={14} aria-hidden="true" />Free · No Sign-in Required</span><h1>TikTok Video Downloader</h1><p>Paste a video link, preview it, and save an available MP4.</p></header>
+      <header className="tiktok-heading"><h1>TikTok Video Downloader</h1><p>Paste a video link, preview it, and save an available MP4.</p></header>
       <div className="tiktok-content">
         <form onSubmit={event => { event.preventDefault(); void resolve(url); }} className="tiktok-form">
           <label htmlFor="tiktok-url">TikTok URL</label>

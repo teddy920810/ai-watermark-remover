@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test';
 const url = 'https://www.tiktok.com/@tester/video/7705574984709688596';
 const video = 'https://d.rapidcdn.app/v2?token=TEST&dl=1';
 test('link input, actual resource count, download and reset work without paid APIs', async ({ page }) => {
+  await page.route('https://fonts.googleapis.com/**', route => route.fulfill({ contentType: 'text/css', body: '' }));
   const forbidden: string[] = [];
   page.on('request', request => { if (/\/api\/v1\//.test(request.url()) || /\/api\/auth\//.test(request.url()) && !request.url().endsWith('/api/auth/get-session')) forbidden.push(request.url()); });
   await page.route('**/api/tools/tiktok/resolve', async route => {

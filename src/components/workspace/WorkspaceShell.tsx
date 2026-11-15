@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from 'react';
-import { ArrowRight, ChevronRight, Gift, History, Image, LayoutGrid, Link, Menu, ScanLine, ShieldCheck, Sparkles, Video, WandSparkles, Eraser, X } from 'lucide-react';
+import { ArrowRight, Gift, History, Image, LayoutGrid, Link, Menu, ScanLine, Sparkles, Video, WandSparkles, Eraser, X } from 'lucide-react';
 import { authClient } from '../auth/auth-client';
 import { creditPolicy } from '../../lib/credits/credit-policy';
 import type { ProductOperation } from '../../lib/contracts/operation-catalog';
@@ -23,11 +23,10 @@ export function WorkspaceShell({ logo, siteName, active, children, account, lock
   }, [open]);
   const reward = creditPolicy.rewards.first;
   function signIn() { window.dispatchEvent(new Event('workspace:sign-in')); }
-  const label = active === 'home' ? 'All Tools' : active === 'recent' ? 'Recent Tasks' : workspaceTools.find(tool => tool.id === active)?.short;
   return <div className="unified-workspace" data-app-shell data-operation={active}>
     <header className="unified-header workspace-header">
       <button className="unified-menu-toggle" type="button" aria-label="Open tool navigation" aria-expanded={open} aria-controls="workspace-tools" onClick={() => setOpen(value => !value)}>{open ? <X size={21} /> : <Menu size={21} />}</button>
-      <a className="brand" href="/app?view=tools"><img className="brand-logo" src={logo} alt="" /><span>{siteName}</span></a><span className="unified-header-label">Workspace</span>
+      <a className="brand" href="/app?view=tools"><img className="brand-logo" src={logo} alt="" /><span>{siteName}</span></a>
       <div className="workspace-header-actions">{!session?.user && <span className="unified-header-gift"><Gift size={16} />{reward} Free Credits on Sign-up</span>}{account ?? <WorkspaceAccount />}</div>
     </header>
     {open && <button type="button" className="unified-nav-scrim" aria-label="Close tool navigation" onClick={() => setOpen(false)} />}
@@ -44,8 +43,8 @@ export function WorkspaceShell({ logo, siteName, active, children, account, lock
         })}</div>)}
         <a className="unified-recent-link" href="/app?view=recent" aria-current={active === 'recent' ? 'page' : undefined} aria-disabled={locked || undefined} onClick={event => { if (locked) event.preventDefault(); else setOpen(false); }}><History size={19} />Recent Tasks</a>
       </nav>
-      <div className="unified-sidebar-bottom">{!session?.user ? <div className="unified-signup"><Gift size={22} /><h3>A little boost to get started</h3><p>Sign up for <strong>{reward} Free Credits</strong> to try paid tools.</p><button type="button" onClick={signIn}>Get Free Credits <ArrowRight size={16} /></button><small>Free tools always stay free.</small></div> : <a className="unified-credits-link" href="/app/credits">Credits &amp; Orders <ArrowRight size={16} /></a>}<a className="unified-site-link" href="/">Back to Website</a><p className="unified-trust"><ShieldCheck size={15} />Your files. Your control.</p></div>
+      <div className="unified-sidebar-bottom">{!session?.user ? <div className="unified-signup"><Gift size={22} /><h3>A little boost to get started</h3><p>Sign up for <strong>{reward} Free Credits</strong> to try paid tools.</p><button type="button" onClick={signIn}>Get Free Credits <ArrowRight size={16} /></button></div> : <a className="unified-credits-link" href="/app/credits">Credits &amp; Orders <ArrowRight size={16} /></a>}</div>
     </aside>
-    <div className="unified-content"><div className="unified-breadcrumb"><a href="/app?view=tools">Workspace</a><ChevronRight size={14} /><span>{label}</span></div>{children}</div>
+    <div className="unified-content">{children}</div>
   </div>;
 }

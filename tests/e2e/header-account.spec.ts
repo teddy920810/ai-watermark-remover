@@ -151,6 +151,8 @@ test('mobile account controls stay usable above an open navigation menu', async 
 });
 
 test('public navigation folding leaves image and video workspace headers on one row', async ({ page }) => {
+  test.setTimeout(60_000);
+  await page.route('https://fonts.googleapis.com/**', route => route.fulfill({ contentType: 'text/css', body: '' }));
   await page.route('**/api/auth/get-session', route => route.fulfill({ json: null }));
   await page.route('**/api/v1/capabilities', route => route.fulfill({ json: { operations: [] } }));
   for (const width of [1280, 1024]) {
@@ -161,13 +163,11 @@ test('public navigation folding leaves image and video workspace headers on one 
       await expect(header.getByRole('button', { name: 'Sign in with Google', exact: true })).toBeEnabled();
       const box = (await header.boundingBox())!;
       const brand = (await header.locator('.brand').boundingBox())!;
-      const navigation = (await header.locator('.unified-header-label').boundingBox())!;
       const actions = (await header.locator('.workspace-header-actions').boundingBox())!;
+      await expect(header.getByText('Workspace', { exact: true })).toHaveCount(0);
       expect(box.height, `${kind} header height at ${width}px`).toBeLessThanOrEqual(80);
-      expect(navigation.width, `${kind} media navigation at ${width}px`).toBeLessThan(box.width / 2);
-      expect(brand.x + brand.width).toBeLessThanOrEqual(navigation.x);
-      expect(navigation.x + navigation.width).toBeLessThanOrEqual(actions.x);
-      expect(Math.abs(brand.y + brand.height / 2 - navigation.y - navigation.height / 2)).toBeLessThanOrEqual(2);
+      expect(brand.x + brand.width).toBeLessThanOrEqual(actions.x);
+      expect(Math.abs(brand.y + brand.height / 2 - actions.y - actions.height / 2)).toBeLessThanOrEqual(2);
     }
   }
 });
