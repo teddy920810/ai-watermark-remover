@@ -3,25 +3,15 @@
   "draft": false,
   "templateVersion": 1,
   "toolKind": "watermark-remover",
-  "title": "Nano Banana Watermark Remover – Clean Visible Marks Online",
-  "description": "Remove visible watermarks from Nano Banana images online. Upload a JPG, PNG or WebP, review the processing cost, and preview your edited JPG before downloading.",
+  "title": "Nano Banana Watermark Remover Online | WatermarkGemini",
+  "description": "Remove visible Nano Banana watermarks online from saved Gemini images, including Nano Banana Pro and 2. Keep your full image and preview the edited JPG.",
   "eyebrow": "NANO BANANA WATERMARK REMOVER",
-  "heading": "Nano Banana Watermark Remover – Keep the Full Picture",
-  "intro": "Clean a visible corner mark from a Nano Banana image you own or have permission to edit. Keep your composition, review the processing cost, and compare the returned image before downloading. The AI-generated scenes shown here illustrate image uses; they are not tested cleanup results.",
+  "heading": "Nano Banana Watermark Remover Online",
+  "intro": "Have a Nano Banana image you like, but the visible Gemini sparkle competes with your layout? Use WatermarkGemini to clean a visible mark from a saved image you own or can edit, without trimming the corner off your composition. Upload a JPG, PNG or WebP, review the processing cost after sign-in, and inspect the returned JPG before using it. This is an independent image-cleanup tool—not Google's Nano Banana model. It edits visible marks only, not invisible SynthID or image provenance data.\n\nIllustrative use cases only, not actual tested product results; replace with rights-cleared real outputs when tested. For full-motion examples, show matching video frames, not a claim of perfect clip-wide recovery.",
   "benefits": [
-    "Clean visible corner marks",
-    "Keep your original framing",
-    "Preview before downloading"
-  ],
-  "heroActions": [
-    {
-      "label": "Upload your image",
-      "href": "#tool"
-    },
-    {
-      "label": "How it works",
-      "href": "#how-it-works"
-    }
+    "Remove visible Nano Banana sparkle marks without cropping",
+    "Keep layouts for product visuals, slides and social posts",
+    "Review image quality, file limits and credits before download"
   ],
   "heroSamples": [
     {
@@ -46,174 +36,218 @@
   "process": {
     "eyebrow": "How it works",
     "heading": "How to Remove a Nano Banana Watermark Online",
-    "intro": "Start with the original exported image, keep a backup, and use the preview to judge the edited area. Workflow graphics below are illustrations of the steps.",
+    "intro": "Use the original saved image whenever possible. The workflow is for a visible mark in a file you may edit; it does not connect to Gemini, regenerate an image or erase its AI-origin signals.",
     "steps": [
       {
         "number": "01",
-        "title": "Choose your original image",
-        "description": "Upload one JPG, PNG or WebP image up to 10 MB. Use the original download rather than a screenshot when possible, so the tool has more detail to work with."
+        "title": "Upload Your Nano Banana Image",
+        "description": "Choose one original JPG, PNG or WebP image up to 10 MB. If you created it in Gemini using Nano Banana, Nano Banana Pro or Nano Banana 2, use the downloaded export rather than a screenshot or compressed chat preview. Keep an unedited backup."
       },
       {
         "number": "02",
-        "title": "Review the cost and process",
-        "description": "Sign in with Google to prepare your image. Check the displayed processing cost and available balance, then start the watermark removal. Selecting a file alone does not start processing."
+        "title": "Review the Watermark Cleanup and Credits",
+        "description": "Sign in with Google to WatermarkGemini, not with your Gemini password. Check the operation, processing cost, free-use eligibility and available balance shown in the workspace. Start image watermark removal only after you confirm the quote; selecting a file alone does not use a removal allowance."
       },
       {
         "number": "03",
-        "title": "Inspect and download your JPG",
-        "description": "Compare the returned image with the original. Look closely at the former mark and nearby edges, shadows and textures. Download the edited JPG if the result works for your project."
+        "title": "Compare the Result and Download JPG",
+        "description": "Preview the cleaned corner against the source at full size. Check hair, text, glass, product contours and fine patterns for soft or invented pixels. Download the returned JPG if it is good enough for your use; keep the original for provenance and revisions."
       }
     ]
   },
   "features": {
     "eyebrow": "Made for images you already have",
-    "heading": "A Practical Cleanup Step for Nano Banana Images",
-    "intro": "Use WatermarkGemini when a visible mark distracts from a saved image. These original AI-generated illustrations show common creative scenes, not before-and-after comparisons or outputs from the removal tool.",
+    "heading": "Remove the Visible Nano Banana Mark, Keep Your Creative Layout",
+    "intro": "Creators usually want to reuse the exact image they already approved—not crop it, redraw it or lose control of the file. These four benefits explain what visible cleanup can help with, where it can fail and what it costs.",
     "items": [
       {
         "enabled": true,
-        "eyebrow": "Full-frame composition",
-        "heading": "Keep the space around your subject",
-        "description": "Cropping a marked corner can cut into a product arrangement or remove space you need for a layout. Visible watermark cleanup works on the marked area instead of trimming away the frame. Review the result before using it in a presentation, social post or design.",
-        "listItems": [
-          "Keep a copy of the original export",
-          "Check the subject and nearby edges after processing"
-        ],
+        "eyebrow": "FEATURE 1",
+        "heading": "Clean Nano Banana Watermarks Without Cropping",
+        "description": "A sparkle near the edge can interfere with a product arrangement, slide title or social-media safe area. Cropping may remove valuable whitespace, cut off a border or change the aspect ratio. WatermarkGemini targets a visible marked region of an authorized image rather than cutting away the picture. Compare the full frame before and after, especially if text or a subject touches the corner.",
         "image": "/uploads/nano-banana-20261107/still-life.webp",
         "imageAlt": "AI-generated illustrative product arrangement with a yellow vase, banana and linen, showing space around the subject; not a tested cleanup result.",
         "imagePosition": "left"
       },
       {
         "enabled": true,
-        "eyebrow": "One saved image at a time",
-        "heading": "Edit an existing image without generating it again",
-        "description": "A new generation can change the lighting, framing or details you liked. If you already have the composition you want, try cleaning its visible mark and compare the result with the saved original. This page accepts image files; it does not generate Nano Banana images or connect to your Gemini account.",
-        "listItems": [
-          "JPG, PNG and WebP inputs up to 10 MB",
-          "Download the processed image as JPG"
-        ],
+        "eyebrow": "FEATURE 2",
+        "heading": "Keep Fine Details in Nano Banana Pro and 2 Images",
+        "description": "Nano Banana Pro and Nano Banana 2 can produce detailed text, textures and visual compositions. That makes an obvious blur patch more frustrating. The removal workflow aims to blend the visibly marked area with nearby colors and detail, but fine typography, hair, patterned cloth, reflections and shadows can still change. Inspect 100% zoom and do not claim pixel-perfect restoration.",
         "image": "/uploads/nano-banana-20261107/landscape.webp",
         "imageAlt": "AI-generated illustrative alpine lake and timber cabin with mountains and wildflowers, representing a saved travel composition; not a tested cleanup result.",
         "imagePosition": "right"
       },
       {
         "enabled": true,
-        "eyebrow": "A closer look",
-        "heading": "Check texture before you use the result",
-        "description": "Marks over flat backgrounds are different from marks over fabric, glass, foliage or fine lettering. Cleanup may soften or change nearby detail, and JPG compression can also affect the image. Inspect the edited region at full size rather than judging only a small preview. Results depend on the source image.",
-        "listItems": [
-          "Look for smearing, repeated patterns or uneven shadows",
-          "Keep the original if the edited detail is unsuitable"
-        ],
+        "eyebrow": "FEATURE 3",
+        "heading": "Clean Existing Gemini Images Without Generating Again",
+        "description": "When a client has approved a precise image, making another Nano Banana prompt may shift identity, layout, lighting or written content. A targeted edit of the saved image can be a practical alternative, whether it was created using Nano Banana, Nano Banana Pro or Nano Banana 2. The tool does not generate images, change your prompt, access your Google image library or automatically identify which model created a file.",
         "image": "/uploads/nano-banana-20261107/texture.webp",
         "imageAlt": "AI-generated illustrative detail of woven linen, ribbed glass and leaf shadows, showing textures to inspect after editing; not a tested cleanup result.",
         "imagePosition": "left"
-      }
-    ]
-  },
-  "scope": {
-    "eyebrow": "Before you start",
-    "heading": "Visible Marks, Clear Limits",
-    "intro": "WatermarkGemini is an independent editing service. It is not affiliated with Google, Gemini or Nano Banana.",
-    "items": [
-      {
-        "heading": "Visible cleanup, not SynthID removal",
-        "description": "This tool targets visible marks in an image. It does not claim to remove invisible SynthID watermarks, C2PA Content Credentials or other provenance signals, and it cannot certify an image as non-AI."
       },
       {
-        "heading": "Use images you may edit",
-        "description": "Only upload content you own or have permission to modify. Removing a visible mark does not change the image's origin, grant usage rights or replace any disclosure your use requires."
-      },
-      {
-        "heading": "Check the workspace cost",
-        "description": "Eligible standard processing may use limited free image uses. Other processing may require credits. The workspace shows the applicable cost and balance before you start; processing is not unlimited or automatically free."
+        "eyebrow": "FEATURE 4",
+        "heading": "Know What Is Removed, What Stays and What It Costs",
+        "description": "This service works with visible image marks. It does not claim to remove invisible Google SynthID, C2PA Content Credentials or a required AI-origin disclosure. JPG, PNG and WebP inputs up to 10 MB are supported, with JPG output. Google sign-in is required before processing; eligible standard images may use limited free uses, while other modes require available credits. Uploaded files and results use private temporary storage and are generally scheduled for deletion after about 24 hours; deletion can occur later.",
+        "enabled": true,
+        "image": "/uploads/nano-banana-20261114/feature-04.webp",
+        "imageAlt": "Illustrative nano banana watermark remover use case 4: know what is removed, what stays and what it costs, showing one matched scene without cropping or missing subjects.",
+        "imagePosition": "right"
       }
     ]
   },
   "relatedTools": {
     "enabled": true,
     "eyebrow": "Related image tools",
-    "heading": "Choose the Cleanup Your Image Needs",
-    "intro": "Explore tools for visible Gemini marks, image text and unwanted objects.",
-    "slugs": [
-      "gemini-watermark-remover",
-      "remove-text-from-image",
-      "remove-object"
+    "heading": "Explore More Image and Video Cleanup Tools",
+    "intro": "Choose the cleanup workflow that matches the file and the mark you want to edit. Each tool has its own file requirements and processing limits.",
+    "items": [
+      {
+        "title": "Background Remover",
+        "description": "Remove an image background with a dedicated workflow.",
+        "href": "https://www.watermarkgemini.com/remove-background"
+      },
+      {
+        "title": "Object Remover",
+        "description": "Erase unwanted objects and clutter from approved images.",
+        "href": "https://www.watermarkgemini.com/remove-object"
+      },
+      {
+        "title": "Remove Text from Image",
+        "description": "Clean captions and text overlays on your own images.",
+        "href": "https://www.watermarkgemini.com/remove-text-from-image"
+      },
+      {
+        "title": "Remove Logo from Image",
+        "description": "Clean visible marks on images you may edit.",
+        "href": "https://www.watermarkgemini.com/remove-logo-from-image"
+      },
+      {
+        "title": "ChatGPT Watermark Remover",
+        "description": "Review visible ChatGPT-style labels in approved images.",
+        "href": "https://www.watermarkgemini.com/chatgpt-watermark-remover"
+      },
+      {
+        "title": "Gemini Watermark Remover",
+        "description": "Clean an authorized Gemini sparkle from a saved picture.",
+        "href": "https://www.watermarkgemini.com/gemini-watermark-remover"
+      },
+      {
+        "title": "Remove Date Stamp",
+        "description": "Remove visible dates from photos you can edit.",
+        "href": "https://www.watermarkgemini.com/"
+      },
+      {
+        "title": "Remove Signature",
+        "description": "Review signature removal on images you may edit.",
+        "href": "https://www.watermarkgemini.com/"
+      }
     ]
   },
   "guides": {
     "enabled": true,
     "eyebrow": "Useful reading",
-    "heading": "Understand Watermarks and AI Image Origins",
-    "intro": "Learn about Gemini's watermark settings, responsible editing and the limits of identifying AI-generated photos.",
-    "slugs": [
-      "how-to-turn-off-gemini-watermark",
-      "how-to-remove-watermarks-responsibly",
-      "how-to-tell-if-photo-is-ai-generated"
+    "heading": "Helpful Guides for Nano Banana Watermark Remover and Better Edits",
+    "intro": "Before removing visible material, check the source file, permissions and editing method so the result stays useful and accurate.",
+    "items": [
+      {
+        "title": "How to Turn Off Gemini Watermark (2026 Guide)",
+        "href": "https://www.watermarkgemini.com/blog/how-to-turn-off-gemini-watermark"
+      },
+      {
+        "title": "Google SynthID Detector: Official Portal, How to Use & Accuracy",
+        "href": "https://www.watermarkgemini.com/blog/google-synthid-detector"
+      },
+      {
+        "title": "How to Tell if a Photo Is AI Generated: 7 Checks",
+        "href": "https://www.watermarkgemini.com/blog/how-to-tell-if-photo-is-ai-generated"
+      },
+      {
+        "title": "How to Remove Watermarks Responsibly",
+        "href": "https://www.watermarkgemini.com/blog/how-to-remove-watermarks-responsibly"
+      },
+      {
+        "title": "Best AI Watermark Remover in 2026: 7 Tools Compared",
+        "href": "https://www.watermarkgemini.com/blog/best-ai-watermark-remover"
+      },
+      {
+        "title": "Does ChatGPT Watermark Images? Visible Marks and Provenance",
+        "href": "https://www.watermarkgemini.com/blog/does-chatgpt-watermark-images"
+      }
     ]
   },
   "faq": {
     "eyebrow": "Nano Banana watermark FAQ",
-    "heading": "Questions About Nano Banana Watermark Removal",
-    "intro": "What this tool edits, how the workflow works, and what to check before using your image.",
+    "heading": "Nano Banana Watermark Remover FAQs",
+    "intro": "Answers about Nano Banana Pro, Nano Banana 2, visible Gemini marks, free uses, image quality and what editing does not change.",
     "items": [
       {
         "enabled": true,
-        "question": "How do I remove a visible Nano Banana watermark?",
-        "answer": "Choose your saved JPG, PNG or WebP image, sign in with Google and review the cost in the workspace. Start processing, compare the returned image with the original, then download the edited JPG if the marked area looks suitable. Keep your original file."
+        "question": "How do I remove a Nano Banana watermark from an image?",
+        "answer": "Save the original image you are allowed to edit. Upload one JPG, PNG or WebP up to 10 MB to WatermarkGemini, sign in with Google, review the displayed removal cost and start processing. Compare the former sparkle area with the original, then download the edited JPG only if the detail looks acceptable."
       },
       {
         "enabled": true,
-        "question": "Is Nano Banana watermark removal the same as Gemini watermark removal?",
-        "answer": "Nano Banana is part of Google's Gemini image model family. This page uses WatermarkGemini's image watermark workflow to clean visible marks on saved images; it is not a separate Nano Banana model or an official Google service. Whether your image has a visible mark depends on where and how it was created."
+        "question": "Does Nano Banana Pro Watermark Remover work on Nano Banana Pro images?",
+        "answer": "The tool targets a visible mark in an uploaded image; it does not require you to select a Nano Banana model version. Nano Banana Pro is Google’s Gemini 3 Pro Image model, and whether its export shows a visible sparkle depends on the Google product, account and settings. Try an authorized original file and check the actual output; universal compatibility has not been independently verified."
       },
       {
         "enabled": true,
-        "question": "Does this tool remove SynthID or make an image undetectable as AI?",
-        "answer": "No. WatermarkGemini targets visible marks and does not claim to remove Google's invisible SynthID watermark or other provenance signals. A visually clean corner does not establish that an image is human-made or change how it was created."
+        "question": "Can I remove a watermark from Nano Banana 2 images?",
+        "answer": "You can test cleanup of a visible mark on a saved Nano Banana 2 image. Nano Banana 2 refers to Google’s Gemini 3.1 Flash Image model. This service works on saved images rather than accessing the model itself, so results depend on the actual visible mark, resolution, compression and background. It does not claim to remove SynthID."
       },
       {
         "enabled": true,
-        "question": "Can I turn off visible watermarks in Gemini instead?",
-        "answer": "Google documents a Media watermark option under Settings in Gemini Apps on a computer, subject to account and location restrictions. If available, it controls visible marks on newly generated media. It does not edit images you already saved or switch off SynthID and Content Credentials. Check Google's current help for availability."
+        "question": "Is a Nano Banana watermark the same as a Gemini watermark?",
+        "answer": "Nano Banana names models in the Gemini image family; the small visible Gemini sparkle is a Google AI attribution mark on some exports. Not every file has the same visible mark, and account or product settings can change whether it appears. A visible image mark is separate from invisible SynthID and Content Credentials."
       },
       {
         "enabled": true,
-        "question": "Is the Nano Banana watermark remover free?",
-        "answer": "Eligible standard image processing may use limited free image uses. Other processing may require credits. Sign in and review the applicable cost, balance and eligibility shown in the workspace before starting. The service does not offer unlimited free removal."
+        "question": "Is there a free Nano Banana watermark remover online?",
+        "answer": "Eligible standard WatermarkGemini image cleanup can use a limited free-use balance: one free use on first sign-in and daily check-in rewards, subject to the account cap. Other processing may need credits; purchases may not currently be available. Check the exact allowance and cost on the processing button. It is not an unlimited, no-signup local-only remover."
       },
       {
         "enabled": true,
-        "question": "Which file formats and sizes are supported?",
-        "answer": "Upload one JPG, PNG or WebP image up to 10 MB at a time. The watermark removal result is JPG. A PNG input does not mean the output will retain transparency. This page is for images, not PDF files, video or batch processing."
+        "question": "Can Nano Banana itself remove watermarks?",
+        "answer": "Nano Banana is an image-generation and editing model that can make visual changes when prompted, but editing a covered area is not guaranteed to recover its exact underlying pixels. WatermarkGemini is a separate service for visible marks on saved images. In either case, edit only content you may modify, and do not mistake removal of a visible mark for removal of provenance or licensing obligations."
       },
       {
         "enabled": true,
-        "question": "Can I remove the watermark without cropping?",
-        "answer": "The tool processes the visible marked area rather than cutting away a corner. It aims to keep the full composition, but cleanup can change nearby details. Compare the result with the original, especially where the mark crosses fine textures, faces or text."
+        "question": "Can I turn off the Nano Banana watermark in Gemini instead?",
+        "answer": "If the Media Watermark setting is available in Gemini Apps, open Settings > Media Watermark and turn off visible watermarks before making a new image. Google applies account and regional restrictions, and the setting is specific to Gemini Apps. It does not erase an old export or disable SynthID / Content Credentials. For an existing image, use an authorized cleanup workflow or regenerate if appropriate."
       },
       {
         "enabled": true,
-        "question": "Do I need a Google account or my Gemini password?",
-        "answer": "You can select and preview a file locally before signing in. Google sign-in to WatermarkGemini is required to prepare and process it. Upload the image you already downloaded; you do not need to give this service your Gemini password or connect your Gemini image history."
+        "question": "Does removing the Nano Banana watermark remove SynthID?",
+        "answer": "No. WatermarkGemini is for visible image marks. It does not claim to remove invisible SynthID watermarks, signed Content Credentials (C2PA), or other signals about how an image was made. You must still meet any disclosure or usage obligations that apply to your content."
       },
       {
         "enabled": true,
-        "question": "Will the edited image be identical to the original apart from the watermark?",
-        "answer": "No pixel-identical result is guaranteed. Reconstructing a marked area may alter texture, edges or color, and the JPG result may have different compression from the source. Inspect the output at full size before including it in a final project."
+        "question": "Will cleanup keep the full image and original quality?",
+        "answer": "The tool aims to retain the full composition without a crop. However, reconstruction near a sparkle can change nearby color, edges, texture and fine text. Current image-watermark output is JPG, which may change compression and transparency from PNG or WebP inputs. Inspect the final file at 100% and keep the source."
       },
       {
         "enabled": true,
-        "question": "Are the pictures on this page real removal results?",
-        "answer": "No. The still life, landscape and texture images are original AI-generated illustrations of creative image uses. They were not generated with Nano Banana and do not demonstrate tested WatermarkGemini processing results. Judge cleanup quality using your own returned image."
+        "question": "What image formats, limits and downloads are supported?",
+        "answer": "Select one JPG, PNG or WebP image up to 10 MB. The current watermark workflow returns JPG. This page does not provide a dedicated video watermark remover, PDF processor or batch/ZIP download. If your mark is in a video, use the separately documented video workflow and its credit requirements."
+      },
+      {
+        "enabled": true,
+        "question": "Do I need a Gemini account, and is my uploaded image private?",
+        "answer": "You may choose and preview an image locally before signing in, but WatermarkGemini requires Google sign-in to prepare and process it. The service does not ask for your Gemini image-generation password or your Google image history. Files and results use private temporary storage with scheduled deletion after about 24 hours, though deletion may occur later. Avoid uploading material you cannot authorize."
       }
     ]
   },
   "cta": {
     "eyebrow": "Start with your saved image",
-    "heading": "Clean the Visible Mark, Keep the Composition",
-    "description": "Choose an image you may edit, review the processing cost, and inspect your result before downloading.",
-    "buttonLabel": "Upload your image",
+    "heading": "Remove the Visible Nano Banana Watermark from Your Image",
+    "description": "Keep the original full-frame image, check your account’s processing allowance and compare the cleaned area before you download. For images you own or can edit, start with the saved JPG, PNG or WebP—not a screenshot.",
+    "buttonLabel": "Try Nano Banana Watermark Cleanup",
     "buttonHref": "#tool"
-  }
+  },
+  "uploadButtonLabel": "Upload Your Nano Banana Image",
+  "toolNote": "Images: JPG, PNG or WebP · up to 10 MB. Video: MP4 · up to 100 MB · 24 fps · up to 9 min. Review the cost before processing. File is only uploaded after sign-in and confirmation.",
+  "shareImage": "/uploads/nano-banana-20261107/still-life.webp"
 }
