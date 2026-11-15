@@ -3,14 +3,14 @@ const url = 'https://www.tiktok.com/@tester/video/7705574984709688596';
 const video = 'https://d.rapidcdn.app/v2?token=TEST&dl=1';
 test('link input, actual resource count, download and reset work without paid APIs', async ({ page }) => {
   const forbidden: string[] = [];
-  page.on('request', request => { if (/\/api\/(v1|auth)\//.test(request.url())) forbidden.push(request.url()); });
+  page.on('request', request => { if (/\/api\/v1\//.test(request.url()) || /\/api\/auth\//.test(request.url()) && !request.url().endsWith('/api/auth/get-session')) forbidden.push(request.url()); });
   await page.route('**/api/tools/tiktok/resolve', async route => {
     expect(route.request().postDataJSON()).toEqual({ operation: 'tiktok-video-resolve', url });
     await route.fulfill({ json: { operation: 'tiktok-video-resolve', title: 'Test video', cover: null, videos: [{ url: video }] } });
   });
   await page.route('https://d.rapidcdn.app/**', route => route.fulfill({ path: 'tests/fixtures/workspace-24fps.mp4', contentType: 'video/mp4', headers: { 'Content-Disposition': 'attachment; filename="sample.mp4"' } }));
   await page.goto('/app/free/tiktok');
-  await expect(page.getByRole('heading', { name: 'TikTok Watermark Remover for Saved Videos' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'TikTok Video Downloader' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Save Video', exact: true })).toBeDisabled();
   await page.getByLabel('TikTok URL', { exact: true }).fill(url);
   await page.getByRole('button', { name: 'Save Video', exact: true }).click();
@@ -124,8 +124,7 @@ test('workspace menu exposes TikTok without adding a paid processing operation',
   await page.route('**/api/auth/get-session', route => route.fulfill({ json: null }));
   await page.route('**/api/v1/**', route => route.fulfill({ json: { operations: [], jobs: [] } }));
   await page.goto('/app/video');
-  await page.getByRole('button', { name: 'Open menu', exact: true }).click();
-  await page.getByRole('link', { name: 'TikTok watermark remover', exact: true }).click();
+  await page.getByRole('navigation', { name: 'Workspace tools' }).getByRole('link', { name: 'TikTok Video', exact: true }).click();
   await expect(page).toHaveURL(/\/app\/free\/tiktok$/);
   await expect(page.getByLabel('TikTok URL', { exact: true })).toBeVisible();
 });

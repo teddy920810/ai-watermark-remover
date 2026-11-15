@@ -44,11 +44,11 @@ test('a background recommendation keeps its image and an incompatible video open
   await page.goto('/remove-background');
   const input = page.locator('#tool input[type=file]'); await expect(input).toBeEnabled();
   await input.setInputFiles({ name: 'original.png', mimeType: 'image/png', buffer: await sharp({ create: { width: 80, height: 60, channels: 3, background: '#aabbaa' } }).png().toBuffer() });
-  await expect(page.getByLabel('Choose operation')).toHaveValue('background-removal');
+  await expect(page.locator('[data-workspace-navigation] a[aria-current="page"][data-operation]')).toHaveAttribute('data-operation', 'background-removal');
   await expect(page.getByText('original.png', { exact: true })).toBeVisible();
   await page.goto('/remove-background'); await expect(input).toBeEnabled();
   await input.setInputFiles({ name: 'original.mp4', mimeType: 'video/mp4', buffer: video });
-  await expect(page.getByLabel('Choose operation')).toHaveValue('video-watermark');
+  await expect(page.locator('[data-workspace-navigation] a[aria-current="page"][data-operation]')).toHaveAttribute('data-operation', 'video-watermark');
   await expect(page.locator('.app-entry-notice')).toContainText(/video|compatible/i);
   await expect(page.getByText('original.mp4', { exact: true })).toBeVisible(); expect(writes).toEqual([]);
 });
@@ -60,7 +60,7 @@ test('a tool without a status badge explains the compatible workspace and hands 
   await expect(footer.getByRole('button', { name: sora.cta.buttonLabel, exact: true })).toBeEnabled();
   await footer.locator('input[type=file]').setInputFiles({ name: 'from-footer.mp4', mimeType: 'video/mp4', buffer: video });
   await expect(page.getByText('from-footer.mp4', { exact: true })).toBeVisible();
-  await expect(page.getByLabel('Choose operation')).toHaveValue('video-watermark');
+  await expect(page.locator('[data-workspace-navigation] a[aria-current="page"][data-operation]')).toHaveAttribute('data-operation', 'video-watermark');
   await expect(page.locator('.app-entry-notice')).toContainText(/video.*compatible workspace/i);
   await expect(page.locator('.app-entry-notice')).not.toContainText(/not available|not open|unavailable/i);
   expect(writes).toEqual([]);
@@ -70,7 +70,7 @@ test('choosing another file in App automatically switches media while keeping th
   await openWorkspace(page, '/app/image');
   const input = page.getByLabel('Upload file to workspace', { exact: true }); await expect(input).toBeEnabled();
   await input.setInputFiles({ name: 'replacement.mp4', mimeType: 'video/mp4', buffer: video });
-  await expect(page.getByLabel('Choose operation')).toHaveValue('video-watermark');
+  await expect(page.locator('[data-workspace-navigation] a[aria-current="page"][data-operation]')).toHaveAttribute('data-operation', 'video-watermark');
   await expect(page.getByText('replacement.mp4', { exact: true })).toBeVisible();
   await expect(page.locator('video')).toHaveAttribute('src', /^blob:/);
   expect(writes).toEqual([]);
@@ -81,7 +81,7 @@ test('a pending object replacement blocks confirmation and an invalid file prese
   await page.evaluate(()=>{const original=Blob.prototype.arrayBuffer;const target=window as typeof window & {releasePicker?():void;pickerWaiting?:boolean};Blob.prototype.arrayBuffer=function(){if(this.size!==256)return original.call(this);target.pickerWaiting=true;return new Promise<ArrayBuffer>(resolve=>{target.releasePicker=()=>{void original.call(this).then(resolve);};});};});
   await page.getByLabel('Upload file to workspace',{exact:true}).setInputFiles({name:'invalid-replacement.mp4',mimeType:'video/mp4',buffer:Buffer.alloc(256)});
   await expect.poll(()=>page.evaluate(()=>(window as typeof window & {pickerWaiting?:boolean}).pickerWaiting)).toBe(true);
-  await expect(page.getByRole('button',{name:'Opening your file',exact:true})).toBeDisabled();await expect(page.getByLabel('Choose operation')).toBeDisabled();expect(state.submissions).toBe(0);
+  await expect(page.getByRole('button',{name:'Opening your file',exact:true})).toBeDisabled();await expect(page.locator('[data-workspace-navigation] a[aria-current="page"][data-operation]')).toBeDisabled();expect(state.submissions).toBe(0);
   await page.evaluate(()=>(window as typeof window & {releasePicker?():void}).releasePicker?.());
   await expect(page.getByRole('alert')).toContainText('not a supported');await expect(page).toHaveURL(/\/app\?operation=object-removal$/); await waitForWorkspace(page);
   await expect(page.getByText('background-source.png',{exact:true})).toBeVisible();await expect(page.getByRole('button',{name:'Remove object · 10 image credits',exact:true})).toBeEnabled();
@@ -97,7 +97,7 @@ test('dropping a file in App uses the same media detection as the file picker', 
     return data;
   }, video.toString('base64'));
   await page.locator('.workspace-main').dispatchEvent('drop', { dataTransfer: transfer });
-  await expect(page.getByLabel('Choose operation')).toHaveValue('video-watermark');
+  await expect(page.locator('[data-workspace-navigation] a[aria-current="page"][data-operation]')).toHaveAttribute('data-operation', 'video-watermark');
   await expect(page.getByText('dropped-in-app.mp4', { exact: true })).toBeVisible();
   expect(writes).toEqual([]);
 });
@@ -107,7 +107,7 @@ test('the homepage scenario action uses the common picker and keeps its recommen
   const action = page.locator('[data-scenario-panel]:visible'); await action.scrollIntoViewIfNeeded();
   await expect(action.getByRole('button', { name: 'Upload file', exact: true })).toBeEnabled();
   await action.locator('input[type=file]').setInputFiles({ name: 'scenario-image.png', mimeType: 'image/png', buffer: await sharp({ create: { width: 80, height: 60, channels: 3, background: '#aabbcc' } }).png().toBuffer() });
-  await expect(page.getByLabel('Choose operation')).toHaveValue('image-watermark');
+  await expect(page.locator('[data-workspace-navigation] a[aria-current="page"][data-operation]')).toHaveAttribute('data-operation', 'image-watermark');
   await expect(page.getByText('scenario-image.png', { exact: true })).toBeVisible();
   expect(writes).toEqual([]);
 });

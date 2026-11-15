@@ -1,3 +1,4 @@
+import { waitForWorkspace } from '../helpers/workspace';
 import { expect, test, type BrowserContext, type Page } from '@playwright/test';
 import { readFile, readFileSync } from 'node:fs';
 import { promisify } from 'node:util';
@@ -32,8 +33,8 @@ async function setup(context: BrowserContext, signedIn = true, pending = false) 
   return state;
 }
 async function imageResult(page: Page) {
-  await page.goto('/app/free/gemini');
-  await expect(page.getByRole('heading', { name: 'Free Gemini watermark remover' })).toBeVisible();
+  await page.goto('/app/free/gemini'); await waitForWorkspace(page);
+  await expect(page.getByRole('heading', { name: 'Gemini Watermark Remover' })).toBeVisible();
   const input = await geminiImage();
   await page.getByLabel('Choose a Gemini image or video').setInputFiles({ name: 'gemini-source.png', mimeType: 'image/png', buffer: input });
   await expect(page.getByRole('button', { name: 'Remove watermark — Free' })).toBeVisible({ timeout: 20000 });
@@ -72,6 +73,7 @@ test('zero-balance image processing downloads real PNGs without media uploads or
   await expect(page.getByRole('alert')).toBeVisible();
   await expect(page.getByRole('link', { name: 'Download PNG — Free' })).toBeVisible();
   await context.route('**/api/auth/sign-out', route => { state.signedIn = false; return route.fulfill({ json: { success: true } }); });
+  await page.getByRole('button', { name: 'Account menu', exact: true }).click();
   await page.getByRole('button', { name: 'Sign out', exact: true }).click();
   await expect(page.getByAltText('Original image')).toHaveCount(0);
   await expect(page.getByRole('link', { name: 'Download PNG — Free' })).toHaveCount(0);
@@ -79,7 +81,7 @@ test('zero-balance image processing downloads real PNGs without media uploads or
 });
 
 test('unmarked image is not reported as successful and cancellation preserves the original', async ({ page, context }) => {
-  await setup(context); await page.goto('/app/free/gemini');
+  await setup(context); await page.goto('/app/free/gemini'); await waitForWorkspace(page);
   await page.getByLabel('Choose a Gemini image or video').setInputFiles({ name: 'no-mark.png', mimeType: 'image/png', buffer: await geminiImage(false) });
   await page.getByRole('button', { name: 'Remove watermark — Free' }).click();
   await page.getByRole('button', { name: 'Cancel', exact: true }).click();
@@ -94,10 +96,10 @@ test('sign-in keeps the local file and requires another explicit click to proces
   const state = await setup(context, false);
   await context.route('**/api/auth/sign-in/social', route => { state.signedIn = true; return route.fulfill({ json: { url: `${origin}/fixture/gemini-sign-in`, redirect: false } }); });
   await context.route('**/fixture/gemini-sign-in', route => route.fulfill({ contentType: 'text/html', body: `<script>opener.postMessage({type:'clearmark-auth-complete'},${JSON.stringify(origin)});close()</script>` }));
-  await page.goto('/app/free/gemini');
+  await page.goto('/app/free/gemini'); await waitForWorkspace(page);
   await expect(page.getByRole('button', { name: 'Sign in with Google' })).toBeEnabled();
   await page.getByLabel('Choose a Gemini image or video').setInputFiles({ name: 'gemini.png', mimeType: 'image/png', buffer: await geminiImage() });
-  await page.getByRole('button', { name: 'Sign in to process for free' }).click();
+  await page.getByRole('button', { name: 'Sign in with Google', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Remove watermark — Free' })).toBeVisible();
   await expect(page.getByAltText('Original image')).toBeVisible();
   await expect(page.getByRole('link', { name: 'Download PNG — Free' })).toHaveCount(0);
@@ -105,7 +107,7 @@ test('sign-in keeps the local file and requires another explicit click to proces
 });
 
 test('session expiry during local processing keeps the completed free download', async ({ page, context }) => {
-  const state = await setup(context); await page.goto('/app/free/gemini');
+  const state = await setup(context); await page.goto('/app/free/gemini'); await waitForWorkspace(page);
   await expect(page.getByLabel('Choose a Gemini image or video')).toBeEnabled();
   await page.getByLabel('Choose a Gemini image or video').setInputFiles({ name: 'expiry.png', mimeType: 'image/png', buffer: await geminiImage() });
   await page.getByRole('button', { name: 'Remove watermark — Free' }).click();
@@ -129,8 +131,8 @@ test('the public Gemini entry restores its original file after session loading',
 });
 
 for (const failure of ['expired', 'another-account']) test(`handoff rejects ${failure} files before upload`, async ({ page, context }) => {
-  const state = await setup(context); await page.goto('/app/free/gemini');
-  await expect(page.getByRole('heading', { name: 'Free Gemini watermark remover' })).toBeVisible();
+  const state = await setup(context); await page.goto('/app/free/gemini'); await waitForWorkspace(page);
+  await expect(page.getByRole('heading', { name: 'Gemini Watermark Remover' })).toBeVisible();
   const id = await page.evaluate(async failure => {
     const path = '/src/lib/client/media-drafts.ts'; const { savePaidHandoff } = await import(path);
     const draft = await savePaidHandoff(new File([new Uint8Array([1, 2, 3])], 'owned.png', { type: 'image/png' }), 'image', failure === 'another-account' ? 'other-owner' : 'free-gemini-owner');
@@ -149,10 +151,10 @@ for (const failure of ['expired', 'another-account']) test(`handoff rejects ${fa
 test('paid handoff preserves the free result, uploads the original and never starts a paid task automatically', async ({ page, context }) => {
   const state = await setup(context); const original = await imageResult(page);
   const popup = context.waitForEvent('page'); await page.getByRole('button', { name: 'Try paid AI removal' }).click(); const paid = await popup;
-  await expect(paid.getByRole('heading', { name: 'Remove image watermarks' })).toBeVisible({ timeout: 30000 });
+  await expect(paid.getByRole('heading', { name: 'Image Watermark Remover' })).toBeVisible({ timeout: 30000 });
   await expect.poll(() => state.quotes).toBeGreaterThan(0); expect(state.put).toEqual(original); expect(state.submissions).toBe(0);
   await paid.reload();
-  await expect(paid.getByRole('heading', { name: 'Remove image watermarks' })).toBeVisible({ timeout: 30000 });
+  await expect(paid.getByRole('heading', { name: 'Image Watermark Remover' })).toBeVisible({ timeout: 30000 });
   expect(state.uploads).toBe(1); expect(state.submissions).toBe(0);
   await expect(page.getByRole('link', { name: 'Download PNG — Free' })).toBeVisible();
   await page.getByRole('button', { name: 'Try paid AI removal' }).click(); expect(context.pages()).toHaveLength(2); expect(state.submissions).toBe(0);
@@ -167,8 +169,8 @@ test('a pending paid task blocks handoff without replacing it or uploading anoth
 });
 
 test('video uses the real local engine, retains audio and downloads a playable MP4', async ({ page, context }) => {
-  test.setTimeout(120000); const state = await setup(context); await page.goto('/app/free/gemini');
-  await expect(page.getByRole('heading', { name: 'Free Gemini watermark remover' })).toBeVisible();
+  test.setTimeout(120000); const state = await setup(context, false); await page.goto('/app/free/gemini'); await waitForWorkspace(page);
+  await expect(page.getByRole('heading', { name: 'Gemini Watermark Remover' })).toBeVisible();
   const audioFixture = readFileSync(new URL('../fixtures/workspace-24fps.mp4', import.meta.url)).toString('base64');
   const encoded = await page.evaluate(async audioFixture => { const path = '/tests/helpers/gemini-video-fixture.ts'; return (await import(path)).createGeminiVideo(audioFixture); }, audioFixture);
   await page.getByLabel('Choose a Gemini image or video').setInputFiles({ name: 'gemini-video.mp4', mimeType: 'video/mp4', buffer: Buffer.from(encoded, 'base64') });
@@ -200,7 +202,7 @@ test('video uses the real local engine, retains audio and downloads a playable M
 });
 
 test('30fps video is admitted locally and an unmarked clip does not become a fake successful download', async ({ page, context }) => {
-  test.setTimeout(120000); const state = await setup(context); await page.goto('/app/free/gemini');
+  test.setTimeout(120000); const state = await setup(context); await page.goto('/app/free/gemini'); await waitForWorkspace(page);
   await expect(page.getByLabel('Choose a Gemini image or video')).toBeEnabled();
   const fixture = readFileSync(new URL('../fixtures/workspace-24fps.mp4', import.meta.url)).toString('base64');
   const encoded = await page.evaluate(async fixture => { const path = '/tests/helpers/gemini-video-fixture.ts'; return (await import(path)).createGeminiVideo(fixture, 30, false); }, fixture);

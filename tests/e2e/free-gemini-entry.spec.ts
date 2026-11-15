@@ -21,7 +21,7 @@ for (const placement of ['hero', 'footer'] as const) for (const kind of ['image'
     await page.waitForURL(/\/app\/free\/gemini$/, { waitUntil: 'domcontentloaded', timeout: 30000 });
     const preview = kind === 'image' ? page.getByAltText('Original image') : page.locator('.gemini-original video');
     await expect(preview).toBeVisible({ timeout: 20000 });
-    await expect(page.getByRole('button', { name: 'Sign in to process for free', exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Remove watermark — Free', exact: true })).toBeVisible();
     const source = await preview.getAttribute('src');
     expect(source).toMatch(/^blob:/);
     const digest = await page.evaluate(async url => {

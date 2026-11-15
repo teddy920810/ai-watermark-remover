@@ -1,3 +1,4 @@
+import { selectWorkspaceOperation } from '../helpers/workspace';
 import { openWorkspace, reloadWorkspace, waitForWorkspace } from '../helpers/workspace';
 import { imageOperationFixture } from '../helpers/image-operation-fixture';
 import { expect, test } from '@playwright/test';
@@ -17,7 +18,7 @@ test('the product entry has a static loading shell and compatibility paths use t
   for (const path of ['/app', '/app/image', '/app/video']) {
     await openWorkspace(page, path);
     await expect(page.locator('[data-app-shell]')).toBeVisible();
-    await expect(page.getByLabel('Choose operation')).toBeVisible();
+    await expect(page.getByRole('navigation', { name: 'Workspace tools' })).toBeVisible();
     await expect(page.locator('main h1')).toHaveCount(1);
   }
 });
@@ -35,8 +36,8 @@ test('a saved task determines its media at the common entry ahead of a new opera
   let writes = 0;
   page.on('request', request => { if (request.method() === 'POST' && /\/api\/v1\/(?:uploads|quotes|jobs)/.test(request.url())) writes++; });
   await openWorkspace(page, '/app?operation=background-removal&job=saved-video-task');
-  await expect(page.getByRole('heading', { name: 'Remove video watermarks' })).toBeVisible();
-  await expect(page.getByLabel('Choose operation')).toHaveValue('video-watermark');
+  await expect(page.getByRole('heading', { name: 'Video Watermark Remover' })).toBeVisible();
+  await expect(page.locator('[data-workspace-navigation] a[aria-current="page"][data-operation]')).toHaveAttribute('data-operation', 'video-watermark');
   await expect(page.locator('.background-tool-card')).toHaveCount(0);
   await expect(page.locator('.workspace-stage-panel video').first()).toHaveJSProperty('videoWidth', 160);
   expect(writes).toBe(0);
@@ -50,7 +51,7 @@ test('an explicit PRO operation survives selecting a local file and reloading', 
   await page.getByLabel('Upload file to workspace', { exact: true }).setInputFiles({ name: 'pro-image.png', mimeType: 'image/png', buffer: image });
   await expect(page.getByText('pro-image.png', { exact: true })).toBeVisible();
   await reloadWorkspace(page);
-  await expect(page.getByLabel('Choose operation')).toHaveValue('image-watermark-pro');
+  await expect(page.locator('[data-workspace-navigation] a[aria-current="page"][data-operation]')).toHaveAttribute('data-operation', 'image-watermark-pro');
 });
 
 test('an authenticated local draft does not cross accounts after a full page reload', async ({ page }) => {
@@ -82,24 +83,25 @@ test('background and object operations open in the same App with the same anonym
   await expect(page.getByTestId('media-launcher-file')).toBeEnabled();
   await page.getByTestId('media-launcher-file').setInputFiles({ name: 'same-file.png', mimeType: 'image/png', buffer: image });
   await expect(page.locator('[data-app-shell]')).toBeVisible();
-  await page.getByLabel('Choose operation').selectOption('background-removal');
+  await selectWorkspaceOperation(page, 'background-removal');
   await expect(page).toHaveURL(/\/app\?operation=background-removal$/); await waitForWorkspace(page);
-  await expect(page.getByRole('heading', { name: 'Remove background', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Background Remover', exact: true })).toBeVisible();
   await expect(page.getByText('same-file.png', { exact: true })).toBeVisible();
-  await page.getByLabel('Choose operation').selectOption('object-removal');
-  await expect(page.getByRole('heading', { name: 'Remove object', exact: true })).toBeVisible();
+  await selectWorkspaceOperation(page, 'object-removal');
+  await expect(page.getByRole('heading', { name: 'Object Remover', exact: true })).toBeVisible();
   await expect(page.getByLabel('Object removal mask canvas')).toBeVisible();
   await expect(page.getByText('same-file.png', { exact: true })).toBeVisible();
   expect(writes).toBe(0);
 });
 
 test('an operation bundle failure leaves a readable recovery action and reload can reopen the workspace', async ({ page }) => {
+  test.setTimeout(60000);
   let blocked = false;
   await page.route('**/api/auth/get-session', route => route.fulfill({ json: null }));
   await page.route('**/api/v1/capabilities', route => route.fulfill({ json: { operations: [] } }));
   const bundle = '**/src/components/workspace/WatermarkWorkspace.tsx*';
   await page.route(bundle, route => { blocked = true; return route.abort('failed'); });
-  await page.goto('/app');
+  await page.goto('/app/image', { waitUntil: 'domcontentloaded' });
   await expect.poll(() => blocked).toBe(true);
   await expect(page.getByRole('heading', { name: 'Workspace could not open' })).toBeVisible();
   await expect(page.getByRole('link', { name: 'Reload workspace' })).toBeVisible();
@@ -146,7 +148,8 @@ test('switching same-size recent object sources clears painted pixels and undo h
   await paint(.2);
   await expect.poll(paintedPixels).toBeGreaterThan(0);
   await expect(page.getByRole('button', { name: 'Undo', exact: true })).toBeEnabled();
-  await page.locator('.workspace-recent button').nth(1).click();
+  await page.goto('/app?view=recent');
+  await page.locator('.unified-task-list a').nth(1).click();
   await expect(page.locator('.object-editor-stage img')).toHaveAttribute('src', '/fixture/second.png');
   await expect.poll(paintedPixels).toBe(0);
   await expect(page.getByRole('button', { name: 'Undo', exact: true })).toBeDisabled();

@@ -33,7 +33,8 @@ test('image editor keeps refinement controls usable on desktop and mobile', asyn
   await expect(page.getByRole('button', { name: 'Brush', exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Refine image · 1 processing credit', exact: true })).toBeEnabled();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
-  const positions = await page.locator('.workspace-header .brand,.workspace-mode-nav,.workspace-header-actions').evaluateAll(elements => elements.map(element => element.getBoundingClientRect().x));
-  expect(positions[0]).toBeLessThan(positions[1]); expect(positions[1]).toBeLessThan(positions[2]);
+  const brand = await page.locator('.workspace-header .brand').boundingBox();
+  const account = await page.locator('.workspace-header-actions').boundingBox();
+  expect(brand!.x + brand!.width).toBeLessThanOrEqual(account!.x);
   await page.screenshot({ path: 'output/workspace-qa/image-refine-mobile.png', fullPage: true });
 });

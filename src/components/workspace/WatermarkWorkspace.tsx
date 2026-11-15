@@ -1,10 +1,11 @@
 import { AppShell } from './AppShell';
 import { WorkspaceAccount } from './WorkspaceAccount';
+import { workspaceToolLabel } from './workspace-tools';
 import { appOperationPath } from './app-entry';
 import type { ProductOperation } from '../../lib/contracts/operation-catalog';
 import { listenForAuthCompletion } from '../../lib/client/auth-completion';
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
-import { ArrowLeft, ArrowRight, Brush, CloudUpload, Download, Eraser, FileImage, Info, LoaderCircle, LockKeyhole, RefreshCw, RotateCcw, Undo2, Video, X, ZoomIn, ZoomOut } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Brush, CloudUpload, Download, Eraser, Info, LoaderCircle, RefreshCw, RotateCcw, Undo2, X, ZoomIn, ZoomOut } from 'lucide-react';
 import { authClient } from '../auth/auth-client';
 import { imageCreditPurchaseHref } from '../payments/BuyCreditsLink';
 import { cleanExpiredMediaDrafts, clearMediaDrafts, deleteMediaDraft, readMediaDraft, saveMediaDraft, workspacePath, type MediaDraft, type MediaKind } from '../../lib/client/media-drafts';
@@ -375,14 +376,13 @@ export default function WatermarkWorkspace({ kind, logo, siteName, initialMode =
   </div>;
 
   async function selectOperation(next: ProductOperation) {
-    if (editingLocked || processing || job?.status === 'UNKNOWN') return;
+    if (editingLocked || processing || job?.status === 'UNKNOWN' || next === operation) return;
     if (next === 'image-refine') { startRefinement(); return; }
-    if (next === 'image-watermark' || next === 'image-watermark-pro' || next === 'background-removal' || next === 'object-removal') {
+    if (kind === 'image' && (next === 'image-watermark' || next === 'image-watermark-pro' || next === 'background-removal' || next === 'object-removal')) {
       invalidateQuote(); setRefining(false); setMode(next === 'object-removal' ? 'object' : next === 'background-removal' ? 'background' : next === 'image-watermark-pro' ? 'pro' : 'standard');
       setJob(null); setHasSelection(false); setSelectionEditing(false); setError('');
       window.history.replaceState({}, '', appOperationPath(next)); return;
     }
-    if (next === operation) return;
     setBusy('Opening operation'); setError('');
     try {
       let source = file;
@@ -397,17 +397,15 @@ export default function WatermarkWorkspace({ kind, logo, siteName, initialMode =
     } catch (cause) { setError(displayError(cause)); setBusy(''); }
   }
   return <AppShell kind={kind} logo={logo} siteName={siteName} operation={operation}
-    disabledOperations={(['image-watermark-pro', 'background-removal', 'object-removal'] as const).filter(operation => !capabilities.find(value => value.operation === operation)?.enabled)}
     locked={editingLocked || processing || job?.status === 'UNKNOWN'}
-    canRefine={Boolean(job && canRefineResult(job) && capabilities.find(value => value.operation === 'image-refine')?.enabled)}
     onOperation={next => void selectOperation(next)}
     onFileDrop={file => void chooseFile(file)}
-    account={<WorkspaceAccount user={session?.user} pending={sessionPending} signIn={signIn} signOut={signOut} />}
-    sidebar={<><h2>Recent work</h2>{!session?.user ? <p>Sign in to restore your recent tasks.</p> : recent.length === 0 ? <p>Your completed and in-progress tasks will appear here.</p> : <ul>{recent.map(value => <li key={value.id}><button type="button" className={job?.id === value.id ? 'is-selected' : ''} onClick={() => selectRecent(value)} disabled={!!busy || uncertainSubmission}>{value.input?.previewUrl && kind === 'image' ? <img src={value.input.previewUrl} alt="" /> : kind === 'video' ? <Video size={24} /> : <FileImage size={24} />}<span><strong>{value.operation === 'object-removal' ? 'Remove object' : value.operation === 'background-removal' ? 'Remove background' : value.operation === 'image-refine' ? 'Image refinement' : kind === 'video' ? 'Video removal' : 'Image removal'}</strong><small>{processingLabel(value.status)}</small></span></button></li>)}</ul>}<p className="workspace-retention"><LockKeyhole size={15} />Temporary files · download before expiry.</p></>}>
+    account={<WorkspaceAccount user={session?.user} pending={sessionPending} balances={balance} signIn={signIn} signOut={signOut} />}
+    >
     <a ref={downloadLink} className="sr-only" tabIndex={-1} aria-hidden="true">Download current result</a>
 
         <a className="workspace-back" href={kind === 'image' ? '/#tool' : '/video-watermark-remover'}><ArrowLeft size={16} />Back to website</a>
-        <div className="workspace-title"><div><h1>{refining ? 'Refine your image' : objectOperation ? 'Remove object' : backgroundOperation ? 'Remove background' : kind === 'video' ? 'Remove video watermarks' : 'Remove image watermarks'}</h1><p>{refining ? 'Paint only over the remaining watermark. Your previous version stays available.' : readyResult ? 'Check the result before downloading.' : kind === 'video' ? 'Choose a video, adjust the area if needed, and remove watermarks in one click.' : 'Choose an image. We check the file and show its cost automatically.'}</p></div>{balance && <div className="workspace-balances">{balance.walletMode === 'unified' ? <><span>{balance.credits} Credits</span>{!balance.admissionEnabled && <span role="status">New processing is paused. Your balance and existing tasks are retained.</span>}<a className="workspace-image-use-link" href="/app/credits">Credits & orders</a></> : <>{kind === 'image' && <><span>{balance.freeUses} free image uses</span><span>Purchased image credits {balance.purchasedImageCredits ?? 0} · Standard, background and object</span></>}<span>{balance.processingCredits} processing credits</span>{kind === 'image' && mode === 'standard' && !refining && <a className="workspace-image-use-link" href={imageCreditPurchaseHref()} target="_blank" rel="noopener noreferrer">Buy image credits</a>}</>}</div>}</div>
+        <div className="workspace-title"><div><h1>{refining ? 'Refine Your Image' : workspaceToolLabel(operation)}</h1><p>{refining ? 'Paint only over the remaining watermark. Your previous version stays available.' : readyResult ? 'Check the result before downloading.' : kind === 'video' ? 'Choose a video, adjust the area if needed, and remove watermarks in one click.' : 'Choose an image. We check the file and show its cost automatically.'}</p></div>{balance && <div className="workspace-balances">{balance.walletMode === 'unified' ? <><span>{balance.credits} Credits</span>{!balance.admissionEnabled && <span role="status">New processing is paused. Your balance and existing tasks are retained.</span>}<a className="workspace-image-use-link" href="/app/credits">Credits & orders</a></> : <>{kind === 'image' && <><span>{balance.freeUses} free image uses</span><span>Purchased image credits {balance.purchasedImageCredits ?? 0} · Standard, background and object</span></>}<span>{balance.processingCredits} processing credits</span>{kind === 'image' && mode === 'standard' && !refining && <a className="workspace-image-use-link" href={imageCreditPurchaseHref()} target="_blank" rel="noopener noreferrer">Buy image credits</a>}</>}</div>}</div>
         {kind === 'video' && <p className="workspace-small">{balance?.walletMode === 'unified' ? 'Video processing uses your Credits balance. File checks use no Credits. Review the quoted cost and click Remove watermarks to start processing.' : 'Video processing uses administrator-allocated processing credits. Free image uses and purchased image credits do not apply. File checks use no credits. Review the quoted cost and click Remove watermarks to start processing.'}</p>}
         <input className="sr-only" ref={input} type="file" aria-label="Upload file to workspace" disabled={editingLocked} accept="image/jpeg,image/png,image/webp,video/mp4" onChange={event => { const file = event.target.files?.[0]; event.target.value = ''; void chooseFile(file); }} />
         {error && <div className="workspace-error" role="alert"><Info size={18} /><p>{error}</p><button type="button" aria-label="Dismiss error" onClick={() => setError('')}><X size={17} /></button></div>}

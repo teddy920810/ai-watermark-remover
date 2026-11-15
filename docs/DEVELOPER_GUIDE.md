@@ -16,7 +16,7 @@ npm run dev
 
 `.env.local` 只保存本机密钥且已被 Git 忽略。真实凭据由管理员通过密码管理器等安全渠道提供。
 
-免费 Gemini 本地工具位于 `/app/free/gemini`，图片/MP4 在浏览器 Worker 处理。引擎固定版本、显式维护命令、原文件付费交接和验收边界见[免费 Gemini](product/FREE_GEMINI.md)；生产登录、付费与分析验收单列，不通过客户端跳过登录来替代。
+免费 Gemini 本地工具位于 `/app/free/gemini`，图片/MP4 在浏览器 Worker 处理。引擎固定版本、显式维护命令、原文件付费交接和验收边界见[免费 Gemini](product/FREE_GEMINI.md)；免费图片/视频处理允许访客使用，登录不再是本地引擎的前置条件；主动付费交接仍需登录及报价确认。真实登录、付费与分析验收单列。
 
 Google 登录还需要：
 

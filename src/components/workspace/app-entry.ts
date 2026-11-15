@@ -2,14 +2,6 @@ import { operationCatalog, type ProductOperation } from '../../lib/contracts/ope
 import type { MediaKind } from '../../lib/client/media-drafts';
 import type { MediaRecommendation } from '../../lib/client/media-recommendation';
 
-export const operationLabels: Record<ProductOperation, string> = {
-  'image-watermark': 'Standard watermark removal',
-  'image-watermark-pro': 'PRO watermark removal',
-  'image-refine': 'Refine current result',
-  'background-removal': 'Remove background',
-  'object-removal': 'Remove object',
-  'video-watermark': 'Video watermark removal',
-};
 export function appOperationPath(operation: ProductOperation) { return `/app?operation=${encodeURIComponent(operation)}`; }
 export function identityHasChanged(previous: string | undefined, current: string | undefined) { return Boolean(previous && previous !== current); }
 export function resolveAppEntry({ kind, requested, hasJob = false, source, recommendation }: { kind: MediaKind; requested?: string | null; hasJob?: boolean; source?: string; recommendation?: MediaRecommendation }) {
