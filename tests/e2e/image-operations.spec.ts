@@ -20,6 +20,25 @@ test.afterAll(async () => { await new Promise<void>((resolve, reject) => downloa
 
 const fixture = (page: Page, initiallySignedIn = true, purchasedImageCredits = 100, operation: 'background-removal' | 'object-removal' = 'background-removal', autoSelect = true) => imageOperationFixture(page, { initiallySignedIn, purchasedImageCredits, operation, autoSelect, output, downloadOrigin });
 
+for (const operation of ['background-removal', 'object-removal'] as const) test(`clicking the active ${operation} tool preserves its selection and downloadable result`, async ({ page }) => {
+  test.setTimeout(60_000);
+  // Editor-state assertions do not depend on the external font CDN being reachable.
+  await page.route('https://fonts.googleapis.com/**', route => route.fulfill({ contentType: 'text/css', body: '' }));
+  const state = await imageOperationFixture(page, { operation, unified: true, output, downloadOrigin });
+  const activeTool = page.locator(`[data-workspace-navigation] a[data-operation="${operation}"]`);
+  const process = page.getByRole('button', { name: `${operation === 'object-removal' ? 'Remove object' : 'Remove background'} · 10 Credits`, exact: true });
+  await expect(process).toBeEnabled();
+  await activeTool.click();
+  await expect(process).toBeEnabled();
+  await process.click();
+  const download = page.getByRole('button', { name: 'Download PNG', exact: true });
+  await expect(download).toBeVisible();
+  await activeTool.click();
+  await expect(download).toBeVisible();
+  expect(state.submissions).toBe(1);
+  await expect(page.locator('.workspace-balances')).toContainText('90 Credits');
+});
+
 test('unified Credits paused admission and insufficient balance retain the file without a misleading purchase prompt', async ({ page }, testInfo) => {
   const state = await imageOperationFixture(page, { unified: true, creditsAdmissionEnabled: false, output, downloadOrigin });
   await expect(page.getByRole('button', { name: 'Remove background · 10 Credits', exact: true })).toBeDisabled();

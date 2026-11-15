@@ -376,14 +376,13 @@ export default function WatermarkWorkspace({ kind, logo, siteName, initialMode =
   </div>;
 
   async function selectOperation(next: ProductOperation) {
-    if (editingLocked || processing || job?.status === 'UNKNOWN') return;
+    if (editingLocked || processing || job?.status === 'UNKNOWN' || next === operation) return;
     if (next === 'image-refine') { startRefinement(); return; }
     if (kind === 'image' && (next === 'image-watermark' || next === 'image-watermark-pro' || next === 'background-removal' || next === 'object-removal')) {
       invalidateQuote(); setRefining(false); setMode(next === 'object-removal' ? 'object' : next === 'background-removal' ? 'background' : next === 'image-watermark-pro' ? 'pro' : 'standard');
       setJob(null); setHasSelection(false); setSelectionEditing(false); setError('');
       window.history.replaceState({}, '', appOperationPath(next)); return;
     }
-    if (next === operation) return;
     setBusy('Opening operation'); setError('');
     try {
       let source = file;
