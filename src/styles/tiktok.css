@@ -5,7 +5,6 @@
 .tiktok-back { margin-left: auto; }
 .tiktok-tool { max-width: 1200px; margin: 0 auto; padding: 44px 32px 36px; }
 .tiktok-heading { margin-bottom: 28px; }
-.tiktok-heading .eyebrow { margin-bottom: 14px; }
 .tiktok-heading h1 { margin: 0 0 12px; font-family: var(--font-display); font-size: clamp(28px, 3.2vw, 44px); line-height: 1.2; letter-spacing: -.045em; font-weight: 800; }
 .tiktok-heading > p { margin: 0; color: var(--muted); font-size: 16px; }
 .tiktok-form { padding: 26px 28px 20px; background: var(--card); border: 1px solid var(--line); border-radius: 16px; }

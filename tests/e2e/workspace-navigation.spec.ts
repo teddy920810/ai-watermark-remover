@@ -4,6 +4,7 @@ import { geminiImage } from '../helpers/gemini-fixtures';
 import { openWorkspace } from '../helpers/workspace';
 
 test('the workspace exposes seven flat tools and preserves the registration reward', async ({ page }) => {
+  await page.route('https://fonts.googleapis.com/**', route => route.fulfill({ contentType: 'text/css', body: '' }));
   await page.route('**/api/auth/get-session', route => route.fulfill({ json: null }));
   await page.goto('/app');
   await waitForWorkspace(page);
