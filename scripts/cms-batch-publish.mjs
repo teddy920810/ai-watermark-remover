@@ -145,13 +145,6 @@ export async function publishBatch({ payload, token, actor, runId, git, request 
   }
   if (!merged) throw new Error(`检查仍未完成；原PR ${pull.html_url} 已保留。重新点发布会继续同一批，不重复发稿。`);
   await report(`已合并：${merged}\n\n等待正式网站完成部署。`);
-  // Merge, never reset: preserve any saves made after the click and newer main content.
-  const synced = await request(`https://api.github.com/repos/${repository}/merges`, {
-    method: 'POST', redirect: 'error', signal: globalThis.AbortSignal.timeout(30_000),
-    headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'Content-Type': 'application/json' },
-    body: JSON.stringify({ base: editorBranch, head: merged, commit_message: 'content: sync published batch into blog editing branch' }),
-  });
-  if (!synced.ok) await report('编辑分支同步未完成，已保留全部保存内容；下次发布前需处理冲突。已合并的线上发布不受影响。');
   git('fetch', 'origin', 'main');
   const entryFiles = plan.files.length ? plan.files : git('diff', '--name-only', `${merged}^`, merged).split('\n');
   const entries = entryFiles.filter(f => blog.test(f)).map(file => parseCmsDocument(file, git('show', `${merged}:${file}`)));
@@ -165,6 +158,14 @@ export async function publishBatch({ payload, token, actor, runId, git, request 
         const response = await request(`https://www.watermarkgemini.com/blog/${entry.data.slug}`, { cache: 'no-store', signal: globalThis.AbortSignal.timeout(20_000) });
         if (response.status !== (entry.data.draft === true ? 404 : 200)) throw new Error(`部署已切换，但文章状态不符合预期：${entry.data.slug}`);
       }
+      // Sync only after acceptance so a failed deployment retry retains its batch SHA.
+      // Merge, never reset: preserve newer saves and main content.
+      const synced = await request(`https://api.github.com/repos/${repository}/merges`, {
+        method: 'POST', redirect: 'error', signal: globalThis.AbortSignal.timeout(30_000),
+        headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'Content-Type': 'application/json' },
+        body: JSON.stringify({ base: editorBranch, head: merged, commit_message: 'content: sync published batch into blog editing branch' }),
+      });
+      if (!synced.ok) await report('编辑分支同步未完成，已保留全部保存内容；下次发布前需处理冲突。已合并的线上发布不受影响。');
       await report(`批量发布完成：${pull.html_url}\n\n正式Site已包含合并版本，${entries.length} 篇博客的公开/草稿状态已核对。刷新CMS编辑页后继续下一批。`);
       return { state: 'published', merged, pull: pull.number };
     }
