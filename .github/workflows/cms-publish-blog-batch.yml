@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       payload:
-        description: Pages CMS publish approval and click-time revision
+        description: Pages CMS publish approval and trusted workflow revision
         required: true
         type: string
 permissions:
