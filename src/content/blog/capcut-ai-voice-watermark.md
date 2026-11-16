@@ -25,13 +25,15 @@ Start with the editable project whenever it is available. Use a saved-file clean
 
 Play the exported file in a separate player, then compare the same moment in your CapCut timeline. Pause on the mark, mute playback, and inspect the last few seconds separately. These checks help establish whether the issue is visual, audible, or attached by the app showing the video.
 
+
 | **What you notice** | **Likely category to investigate** | **First action** |
-| --- | --- | --- |
+| ------------------------------------------------- | ----------------------------------------------- | -------------------------------------------------- |
 | A CapCut ending after the main content | Template or outro segment | Inspect the final timeline clip |
 | A visible logo throughout a shot | Overlay, stock element, or baked-in mark | Check the project's layers and source media |
 | A new AI notice associated with generated content | Possible disclosure or feature-specific marking | Check the current feature instructions and support |
 | A spoken name, beep, or repeated phrase | Audible content in an audio track | Solo the voice and other audio tracks |
 | A label seen only on a social platform | Platform presentation | Compare the local MP4 with the posted version |
+
 
 CapCut's [watermark-free export help](https://www.capcut.com/help/how-to-export-video-without-watermark) describes template endings, default elements, and branded assets as causes of visible marks. Its [AI voiceover guidance](https://www.capcut.com/help/add-voiceover-captions-to-ad-videos-ai) also notes that access and export conditions can vary by platform, plan, account, region, and rollout.
 
@@ -97,13 +99,13 @@ The [documented workflow](https://www.watermarkgemini.com/blog/best-ai-watermark
 
 [WatermarkGemini — image source](https://www.watermarkgemini.com/app?operation=video-watermark)
 
-1.  Open the [video watermark page](https://www.watermarkgemini.com/video-watermark-remover) and enter the video workspace. Check the file's actual format, duration, size, and frame rate first. Keep the original MP4 unchanged.
-2.  Choose **Upload file** and select the authorized video. Confirm the returned preview shows the correct clip and that the mark remains in the same screen area throughout the section you intend to process.
-3.  Where the workspace offers the documented selection controls, choose automatic detection or **Fixed area**. Use a small box covering the whole mark when automatic detection misses it. Scrub the clip to check whether the same box would damage captions or a moving subject.
-4.  Sign in if requested, check the available video processing balance, and read the quoted cost. If no eligible video credits are available, stop and return to the original-project route or obtain an authorized clean source.
-5.  Click **Remove watermarks** to start only when the selection and cost are acceptable. Wait for the actual returned result; choosing a file or seeing a local preview does not mean processing has occurred.
-6.  Play the output with sound. Examine the repaired region through motion, cuts, and any moment a face or hand crosses it. Listen to the narration and compare caption timing with the original.
-7.  Download an acceptable returned MP4. Save it through your browser's download destination with a new filename, and retain the original and the revised project if one exists.
+1. Open the [video watermark page](https://www.watermarkgemini.com/video-watermark-remover) and enter the video workspace. Check the file's actual format, duration, size, and frame rate first. Keep the original MP4 unchanged.
+2. Choose **Upload file** and select the authorized video. Confirm the returned preview shows the correct clip and that the mark remains in the same screen area throughout the section you intend to process.
+3. Where the workspace offers the documented selection controls, choose automatic detection or **Fixed area**. Use a small box covering the whole mark when automatic detection misses it. Scrub the clip to check whether the same box would damage captions or a moving subject.
+4. Sign in if requested, check the available video processing balance, and read the quoted cost. If no eligible video credits are available, stop and return to the original-project route or obtain an authorized clean source.
+5. Click **Remove watermarks** to start only when the selection and cost are acceptable. Wait for the actual returned result; choosing a file or seeing a local preview does not mean processing has occurred.
+6. Play the output with sound. Examine the repaired region through motion, cuts, and any moment a face or hand crosses it. Listen to the narration and compare caption timing with the original.
+7. Download an acceptable returned MP4. Save it through your browser's download destination with a new filename, and retain the original and the revised project if one exists.
 
 Reject a result that flickers, distorts meaningful content, or changes audio. Do not accept a clean first frame as evidence that the complete clip is usable. If the mark moves, use a source edit, a properly tracked composite, or a replacement shot rather than enlarging a fixed box to cover most of the frame.
 
@@ -171,3 +173,4 @@ Use the original CapCut project for editable endings, overlays, and audio. Ask a
 - [WatermarkGemini — Best AI Watermark Remover in 2026: 7 Tools Compared](https://www.watermarkgemini.com/blog/best-ai-watermark-remover)
 - [CapCut — CapCut No Watermark: How to Export Clean Videos Effortlessly](https://www.capcut.com/resource/capcut-no-watermark)
 - [CapCut — Why Is the Text-to-Speech Feature Not Working in CapCut?](https://www.capcut.com/help/text-to-speech-feature)
+
