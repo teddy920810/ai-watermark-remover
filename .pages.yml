@@ -19,6 +19,16 @@ settings:
       rename: "content(rename): {oldPath} -> {newPath}"
 
 actions:
+  # Official action/payload contract: https://pagescms.org/docs/configuration/actions/
+  - name: publish-blog-batch
+    label: 批量发布已保存的博客 / Publish saved blogs
+    workflow: cms-publish-blog-batch.yml
+    ref: main
+    cancelable: false
+    confirm:
+      title: 发布本批全部已保存的博客修改？
+      message: 请先在 codex/cms-blog-editing 分支保存全部修改，并逐篇核对正文、图片和草稿开关。本次点击确认该版本全部博客差异；草稿开启会下架，关闭会上线。检查通过后统一发布，后续保存留待下一批。
+      button: 确认并批量发布
   - name: validate-cms-content
     label: 检查站点内容 / Validate content
     workflow: cms-content-check.yml

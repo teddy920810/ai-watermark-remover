@@ -1,0 +1,34 @@
+name: Publish saved blog batch
+# Pages CMS contract: https://pagescms.org/docs/configuration/actions/
+on:
+  workflow_dispatch:
+    inputs:
+      payload:
+        description: Pages CMS publish approval and click-time revision
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: cms-publish-blog-batch
+  cancel-in-progress: false
+jobs:
+  publish:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Publish the explicitly approved saved batch
+        run: node scripts/cms-batch-publish.mjs
+        env:
+          CMS_ACTION_PAYLOAD: ${{ inputs.payload }}
+          CMS_PUBLISH_TOKEN: ${{ secrets.CMS_PUBLISH_TOKEN }}

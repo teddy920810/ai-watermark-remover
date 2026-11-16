@@ -8,6 +8,13 @@
   "trailingSlash": false,
   "headers": [
     {
+      "source": "/cms-build.json",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex" },
+        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
+      ]
+    },
+    {
       "source": "/(.*)",
       "headers": [
         {
