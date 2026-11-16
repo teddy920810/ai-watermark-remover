@@ -22,7 +22,7 @@ function fixture() {
   return { git, put, commit };
 }
 describe('explicit CMS blog batch publication', () => {
-  it('accepts only the dedicated editor and a fixed click-time SHA', () => {
+  it('accepts only the dedicated editor and the trusted workflow revision', () => {
     const payload = { repository: { owner: 'teddy920810', repo: 'ai-watermark-remover', ref: 'codex/cms-blog-editing', sha: 'a'.repeat(40) }, action: { name: 'publish-blog-batch' } };
     expect(validateRequest(payload)).toBe('a'.repeat(40));
     expect(() => validateRequest({ ...payload, repository: { ...payload.repository, ref: 'main' } })).toThrow();
@@ -83,14 +83,14 @@ describe('explicit CMS blog batch publication', () => {
     f.git('update-ref', 'refs/remotes/origin/main', main); f.git('switch', 'editor'); f.git('merge', 'main');
     f.put('src/content/blog/example.md', original.replace('Original', 'Approved').replace('draft: false', concurrentMainEdit ? 'draft: false' : 'draft: true')); const source = f.commit();
     f.put('src/content/blog/next.md', 'next batch'); const newer = f.commit();
-    let snapshot = ''; let merged = false; let created = 0; let checked = false; let latestMain = main; let updated = false;
+    let snapshot = ''; let merged = false; let created = 0; let checked = false; let latestMain = main; let updated = false; let sourceReads = 0;
     const branch = `codex/cms-batch-${source}`;
     const json = (data: unknown) => new Response(JSON.stringify(data), { status: 200 });
     const request: typeof fetch = async (input, options) => {
       const url = String(input); const route = url.replace('https://api.github.com/repos/teddy920810/ai-watermark-remover', '');
       if (url.endsWith('/cms-build.json')) return json({ revision: snapshot });
       if (url.endsWith('/blog/example')) return new Response('Not found', { status: 404 });
-      if (route === '/git/ref/heads/codex/cms-blog-editing') return json({ object: { sha: newer } });
+      if (route === '/git/ref/heads/codex/cms-blog-editing') return json({ object: { sha: sourceReads++ === 0 ? source : newer } });
       if (route === '/git/ref/heads/main') return json({ object: { sha: latestMain } });
       if (route.startsWith('/pulls?')) return json([]);
       if (route.startsWith('/git/matching-refs')) return json([]);
@@ -120,8 +120,31 @@ describe('explicit CMS blog batch publication', () => {
       if (route === '/pulls/1/merge') { expect(checked).toBe(true); merged = true; return json({ merged: true, sha: snapshot }); }
       throw new Error(`Unexpected request ${route}`);
     };
-    const result = await publishBatch({ payload: { action: { name: 'publish-blog-batch' }, repository: { owner: 'teddy920810', repo: 'ai-watermark-remover', ref: 'codex/cms-blog-editing', sha: source } }, token: 'test', actor: 'test-editor', runId: '1', git: (...args) => args[0] === 'fetch' ? '' : f.git(...args), request, pause: async () => {} });
-    expect(result.state).toBe('published'); expect(merged).toBe(true); expect(created).toBe(1);
+    const result = await publishBatch({ payload: { action: { name: 'publish-blog-batch' }, repository: { owner: 'teddy920810', repo: 'ai-watermark-remover', ref: 'codex/cms-blog-editing', sha: main } }, token: 'test', actor: 'test-editor', runId: '1', git: (...args) => args[0] === 'fetch' ? '' : f.git(...args), request, pause: async () => {} });
+    expect(result.state).toBe('published'); expect(merged).toBe(true); expect(created).toBe(1); expect(sourceReads).toBe(1);
     expect(f.git('ls-tree', snapshot, '--', 'src/content/blog/next.md')).toBe('');
+  });
+  it('retries merged production acceptance before syncing away the original batch identity', async () => {
+    const f = fixture(); f.put('tests/fixtures/seo-content-baseline.json', '{"files":[]}'); const main = f.commit();
+    f.git('switch', 'editor'); f.put('src/content/blog/example.md', '---\nslug: example\ndraft: true\n---\n' + 'Original paragraph.\n'.repeat(30)); const source = f.commit();
+    const merged = f.git('commit-tree', f.git('rev-parse', `${source}^{tree}`), '-p', main, '-m', 'squashed batch');
+    f.git('update-ref', 'refs/remotes/origin/main', merged);
+    const branch = `codex/cms-batch-${source}`; let synced = 0; let proofReads = 0; let unavailable = true;
+    const json = (data: unknown) => new Response(JSON.stringify(data), { status: 200 });
+    const pull = { number: 1, state: 'closed', merged_at: '2026-11-16T00:00:00Z', merged: true, merge_commit_sha: merged, head: { ref: branch }, html_url: 'https://github.com/teddy920810/ai-watermark-remover/pull/1' };
+    const request: typeof fetch = async (input, options) => {
+      const route = String(input).replace('https://api.github.com/repos/teddy920810/ai-watermark-remover', '');
+      if (route === '/git/ref/heads/codex/cms-blog-editing') return json({ object: { sha: synced ? merged : source } });
+      if (route === '/git/ref/heads/main') return json({ object: { sha: merged } });
+      if (route.startsWith('/pulls?')) return json(synced ? [] : [pull]);
+      if (route === '/pulls/1') return json(pull);
+      if (route === '/merges' && options?.method === 'POST') { synced++; return new Response(null, { status: 204 }); }
+      if (String(input).endsWith('/cms-build.json')) { proofReads++; if (unavailable) throw new Error('Temporary site failure'); return json({ revision: merged }); }
+      if (String(input).endsWith('/blog/example')) return new Response(null, { status: 404 });
+      throw new Error(`Unexpected request ${route}`);
+    };
+    const options = { payload: { action: { name: 'publish-blog-batch' }, repository: { owner: 'teddy920810', repo: 'ai-watermark-remover', ref: 'codex/cms-blog-editing', sha: main } }, token: 'test', actor: 'test-editor', runId: '1', git: (...args: string[]) => args[0] === 'fetch' ? '' : f.git(...args), request, pause: async () => {} };
+    await expect(publishBatch(options)).rejects.toThrow('Temporary site failure'); expect(synced).toBe(0);
+    unavailable = false; expect((await publishBatch(options)).state).toBe('published'); expect(proofReads).toBe(2); expect(synced).toBe(1);
   });
 });

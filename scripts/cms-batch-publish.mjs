@@ -78,7 +78,7 @@ export function assertBatchHead({ git, main, source, head }) {
 }
 
 export async function publishBatch({ payload, token, actor, runId, git, request = globalThis.fetch, pause = delay, report = async () => {} }) {
-  const source = validateRequest(payload);
+  validateRequest(payload);
   if (!token) throw new Error('请先配置 GitHub Actions Secret：CMS_PUBLISH_TOKEN。无需修改主分支保护。');
   if (!/^[\w-]+$/.test(actor ?? '') || !/^\d+$/.test(runId ?? '')) throw new Error('Invalid workflow identity');
   const api = async (route, method = 'GET', body) => {
@@ -90,10 +90,10 @@ export async function publishBatch({ payload, token, actor, runId, git, request 
     if (!response.ok) throw new Error(`GitHub ${method} ${route.split('?')[0]} 返回 ${response.status}；保留本批分支与PR，修正后重试。`);
     return response.status === 204 ? {} : response.json();
   };
-  const latestSource = (await api(`/git/ref/heads/${editorBranch}`)).object.sha;
+  // Pages CMS repository.sha resolves workflowRef (main), not the editor ref.
+  // https://github.com/pages-cms/pages-cms/blob/main/app/api/%5Bowner%5D/%5Brepo%5D/%5Bbranch%5D/actions/route.ts
+  const source = (await api(`/git/ref/heads/${editorBranch}`)).object.sha;
   git('fetch', 'origin', 'main', editorBranch);
-  try { git('merge-base', '--is-ancestor', source, latestSource); }
-  catch { throw new Error('点击的版本已不属于当前编辑分支；请重新核对后再发布。'); }
   const main = (await api('/git/ref/heads/main')).object.sha;
   const plan = planBatch({ git, source, main });
   const branch = `codex/cms-batch-${source}`;
@@ -120,11 +120,11 @@ export async function publishBatch({ payload, token, actor, runId, git, request 
     if (baseline) {
       const blob = await api('/git/blobs', 'POST', { content: baseline, encoding: 'utf-8' });
       const tree = await api('/git/trees', 'POST', { base_tree: plan.tree, tree: [{ path: 'tests/fixtures/seo-content-baseline.json', mode: '100644', type: 'blob', sha: blob.sha }] });
-      const commit = await api('/git/commits', 'POST', { message: 'content: record explicit click-time approval of protected blog changes', tree: tree.sha, parents: [releaseHead] });
+      const commit = await api('/git/commits', 'POST', { message: 'content: record explicit saved-batch approval of protected blog changes', tree: tree.sha, parents: [releaseHead] });
       await api(`/git/refs/heads/${branch}`, 'PATCH', { sha: commit.sha, force: false });
     }
     pull = await api('/pulls', 'POST', { title: `content: batch publish saved blogs ${source.slice(0, 7)}`, head: branch, base: 'main',
-      body: `Pages CMS 批量发布。点击发布即确认本批具体内容、图片及上下架状态。\n\nActor: ${actor}\nSource: ${source}\nBase: ${main}\nRun: https://github.com/${repository}/actions/runs/${runId}\n\n${plan.files.map(f => `- ${f}`).join('\n')}\n\n仅发布这次点击的已保存版本；后续保存不混入。必需检查全部通过后才合并，原有SEO基线按本次内容负责人批准同步。` });
+      body: `Pages CMS 批量发布。点击发布即确认本批具体内容、图片及上下架状态。\n\nActor: ${actor}\nSource: ${source}\nBase: ${main}\nRun: https://github.com/${repository}/actions/runs/${runId}\n\n${plan.files.map(f => `- ${f}`).join('\n')}\n\n仅发布任务启动时固定的已保存版本；启动后的保存不混入。必需检查全部通过后才合并，原有SEO基线按本次内容负责人批准同步。` });
   }
   await report(`发布请求：${pull.html_url}\n\n本批 ${plan.files.filter(f => blog.test(f)).length} 篇博客；等待现有必需检查，不重复运行额外的内容构建。`);
   let merged;
@@ -145,13 +145,6 @@ export async function publishBatch({ payload, token, actor, runId, git, request 
   }
   if (!merged) throw new Error(`检查仍未完成；原PR ${pull.html_url} 已保留。重新点发布会继续同一批，不重复发稿。`);
   await report(`已合并：${merged}\n\n等待正式网站完成部署。`);
-  // Merge, never reset: preserve any saves made after the click and newer main content.
-  const synced = await request(`https://api.github.com/repos/${repository}/merges`, {
-    method: 'POST', redirect: 'error', signal: globalThis.AbortSignal.timeout(30_000),
-    headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'Content-Type': 'application/json' },
-    body: JSON.stringify({ base: editorBranch, head: merged, commit_message: 'content: sync published batch into blog editing branch' }),
-  });
-  if (!synced.ok) await report('编辑分支同步未完成，已保留全部保存内容；下次发布前需处理冲突。已合并的线上发布不受影响。');
   git('fetch', 'origin', 'main');
   const entryFiles = plan.files.length ? plan.files : git('diff', '--name-only', `${merged}^`, merged).split('\n');
   const entries = entryFiles.filter(f => blog.test(f)).map(file => parseCmsDocument(file, git('show', `${merged}:${file}`)));
@@ -165,6 +158,14 @@ export async function publishBatch({ payload, token, actor, runId, git, request 
         const response = await request(`https://www.watermarkgemini.com/blog/${entry.data.slug}`, { cache: 'no-store', signal: globalThis.AbortSignal.timeout(20_000) });
         if (response.status !== (entry.data.draft === true ? 404 : 200)) throw new Error(`部署已切换，但文章状态不符合预期：${entry.data.slug}`);
       }
+      // Sync only after acceptance so a failed deployment retry retains its batch SHA.
+      // Merge, never reset: preserve newer saves and main content.
+      const synced = await request(`https://api.github.com/repos/${repository}/merges`, {
+        method: 'POST', redirect: 'error', signal: globalThis.AbortSignal.timeout(30_000),
+        headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'Content-Type': 'application/json' },
+        body: JSON.stringify({ base: editorBranch, head: merged, commit_message: 'content: sync published batch into blog editing branch' }),
+      });
+      if (!synced.ok) await report('编辑分支同步未完成，已保留全部保存内容；下次发布前需处理冲突。已合并的线上发布不受影响。');
       await report(`批量发布完成：${pull.html_url}\n\n正式Site已包含合并版本，${entries.length} 篇博客的公开/草稿状态已核对。刷新CMS编辑页后继续下一批。`);
       return { state: 'published', merged, pull: pull.number };
     }
