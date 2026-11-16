@@ -23,7 +23,7 @@ SEO 静态站、App/API 和容器 Worker 使用独立构建与发布目标。重
 
 ### 内容编辑（不需要写代码）
 
-使用 Pages CMS 在内容审核分支新建或修改博客、工具落地页；通过PR审核和必需CI后合并main，再由Vercel发布。模板入口创建草稿分支与PR，不直接写main。请先阅读 [Pages CMS 中文操作教程](docs/PAGES_CMS_GUIDE.md)，尤其不要修改已发布内容的 URL 路径。
+博客使用 Pages CMS 的固定编辑分支，多次保存后点一次“批量发布已保存的博客”，系统通过现有PR必需检查后统一发布。工具落地页等内容继续沿审核分支与PR流程，不直接写main。请先阅读[博客批量发布](docs/CMS_BLOG_BATCH_PUBLISH.md)与[Pages CMS 中文操作教程](docs/PAGES_CMS_GUIDE.md)，尤其不要修改已发布内容的URL路径。
 
 ### 开发者
 

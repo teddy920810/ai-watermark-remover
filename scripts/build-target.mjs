@@ -277,6 +277,10 @@ if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.ar
     else if (command === 'required') assertRequiredTargetBuilds(JSON.parse(process.env.SELECTED_TARGETS ?? 'null'), process.env.TARGET_BUILD_RESULT, process.env.TARGET_PLAN_RESULT);
     else if (command === 'ignore') {
       if (!['site', 'app'].includes(args[0])) throw new Error('Unknown deployment target');
+      // CMS saves are staging only; the PR builds Site, then main deploys once.
+      if (process.env.VERCEL_ENV === 'preview' && /^(?:codex\/cms-blog-editing|codex\/cms-batch-[a-f0-9]{40})$/.test(process.env.VERCEL_GIT_COMMIT_REF ?? '')) {
+        process.exit(0);
+      }
       const files = changedTargetFiles(process.env.VERCEL_GIT_PREVIOUS_SHA, process.env.VERCEL_GIT_COMMIT_SHA);
       // Same-commit redeployments can carry new environment settings despite an empty Git diff.
       const redeploy = process.env.VERCEL_GIT_PREVIOUS_SHA && process.env.VERCEL_GIT_PREVIOUS_SHA === process.env.VERCEL_GIT_COMMIT_SHA;

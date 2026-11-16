@@ -13,6 +13,7 @@
 | [账户身份](ACCOUNT_IDENTITY.md) / [Credits与旧额度](PROCESSING_CREDITS.md) / [支付](PAYPAL_LIVE_RELEASE.md) | 统一Credits、旧三类权益兼容、逐账户转换、价格目录、来源退款与发布顺序；仓库默认关闭，生产启用以版本发布记录为准 |
 | [支付审计与剩余门禁](PAYMENT_AUDIT.md) | 原订单恢复、代码/旧Sandbox/Live证据、人工交易与费用边界；工程发布不等于开启收款 |
 | [CMS教程](PAGES_CMS_GUIDE.md) / [建站模板](TEMPLATE_GUIDE.md) | 内容编辑和有限模板；不配置真实能力/费率/Provider |
+| [博客批量发布](CMS_BLOG_BATCH_PUBLISH.md) | 固定编辑分支、多次Save、一次明确批准、复用PR必需门禁与正式Site版本验收 |
 | [运营快读](CONTENT_API_QUICKSTART.md) / [内容 API 技术合同](CONTENT_API.md) | 内容域 Bearer Token、Git 变更集、素材、具体差异批准、受保护发布与完整 JSON；生产启用须核对凭据和实际验收 |
 | [图片展示](product/IMAGE_DISPLAY.md) / [素材清单](product/CONTENT_MEDIA_MIGRATION.json) | 单/双图、失败降级、内容归属与已撤销的P5替换；运营素材待办 |
 | [发布记录与兼容观察](product/RELEASE_READINESS.md) | 按版本区分重构发布、后续交付、历史发布前标准与剩余观察 |

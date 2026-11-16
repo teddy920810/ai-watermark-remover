@@ -52,8 +52,14 @@ const config = YAML.parse(configSource) as {
 };
 
 describe('Pages CMS maintenance safeguards', () => {
-  it('offers content validation for direct-main CMS saves', () => {
+  it('offers one explicitly approved blog batch action and separate saved-content diagnostics', () => {
     expect(config.actions).toEqual([
+      expect.objectContaining({
+        name: 'publish-blog-batch',
+        workflow: 'cms-publish-blog-batch.yml',
+        ref: 'main',
+        confirm: expect.objectContaining({ button: '确认并批量发布' }),
+      }),
       expect.objectContaining({
         name: 'validate-cms-content',
         workflow: 'cms-content-check.yml',

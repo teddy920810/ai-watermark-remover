@@ -24,6 +24,19 @@ function fixture() {
 afterEach(() => { for (const directory of directories.splice(0)) rmSync(directory, { recursive: true, force: true }); });
 
 describe('independent build targets', () => {
+  it.each(['site', 'app'])('skips %s preview builds on CMS saves and batch snapshots, keeping production builds', target => {
+    const root = path.resolve(import.meta.dirname, '../../..');
+    for (const branch of ['codex/cms-blog-editing', `codex/cms-batch-${'a'.repeat(40)}`]) {
+      const result = spawnSync(process.execPath, ['scripts/build-target.mjs', 'ignore', target], {
+        cwd: root, encoding: 'utf8', env: { ...process.env, VERCEL_ENV: 'preview', VERCEL_GIT_COMMIT_REF: branch },
+      });
+      expect(result.status).toBe(0);
+    }
+    const result = spawnSync(process.execPath, ['scripts/build-target.mjs', 'ignore', target], {
+      cwd: root, encoding: 'utf8', env: { ...process.env, VERCEL_ENV: 'production', VERCEL_GIT_COMMIT_REF: 'main', VERCEL_GIT_PREVIOUS_SHA: '', VERCEL_GIT_COMMIT_SHA: '' },
+    });
+    expect(result.status).toBe(1);
+  });
   it.each(['site', 'app'])('prepares %s once at lifecycle setup, leaving planning and route injection non-destructive', (target) => {
     const root = fixture(); const plan = createBuildPlan(root, target);
     mkdirSync(plan.outDir, { recursive: true });
@@ -279,7 +292,8 @@ describe('same-origin App and Site proxy', () => {
     const original = JSON.parse(readFileSync(new URL('vercel.json', root), 'utf8'));
     const site = JSON.parse(readFileSync(new URL('apps/site/vercel.json', root), 'utf8'));
     const app = JSON.parse(readFileSync(new URL('apps/app/vercel.json', root), 'utf8'));
-    expect(site.redirects).toEqual(original.redirects); expect(site.headers).toEqual(original.headers);
+    expect(site.redirects).toEqual(original.redirects);
+    expect(site.headers.filter((rule: { source: string }) => rule.source !== '/cms-build.json')).toEqual(original.headers);
     expect(app.headers).toEqual(expect.arrayContaining(original.headers));
   });
 });

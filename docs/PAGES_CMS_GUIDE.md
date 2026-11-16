@@ -1,6 +1,6 @@
 # Pages CMS 中文操作教程（非技术人员）
 
-Pages CMS 是本项目的内容后台。它读写GitHub中当前选中的分支，不需要安装WordPress。请先选择维护者提供的内容审核分支再保存；内容负责人确认、必需CI通过并合并main后才由Vercel发布。普通Save不会自动新建审核分支或PR。关闭草稿只是内容状态，不等于已获发布审核。
+Pages CMS 是本项目的内容后台。博客日常编辑使用 `codex/cms-blog-editing`：可以连续编辑、分别Save，最后点击侧栏“批量发布已保存的博客”，一次确认本批内容并自动完成检查、合并和部署。草稿开启表示不公开，关闭表示公开；Save本身不会发布。操作与配置见[博客批量发布](CMS_BLOG_BATCH_PUBLISH.md)。其他内容仍沿内容审核分支与PR流程，不直接保存受保护main。
 
 ## 1. 登录并选择项目
 
@@ -10,7 +10,7 @@ Pages CMS 是本项目的内容后台。它读写GitHub中当前选中的分支�
 4. 选择维护者提供的内容审核分支；新模板可从main触发，工作流会返回新分支和草稿PR，再切换到该分支编辑。
 5. 左侧会显示站点设置、首页、博客列表设置、博客文章、工具落地页、法律页面、404 页面和静态图片。
 
-main为受保护发布分支，不直接保存内容。运营只需在指定内容分支编辑，完成后把PR交给维护者审核；不需要自己处理Git命令。新增/更换图片、alt、正文与SEO仍由内容负责人决定，研发不能以重构代改。
+main为受保护发布分支，不直接保存内容。博客在固定编辑分支保存后点批量发布即可，不需要自己操作Git；其他内容沿原PR审核流程。新增/更换图片、alt、正文与SEO仍由内容负责人决定，研发不能以重构代改。
 
 模板创建的PR保持Draft。仓库维护者可在GitHub批准“Approve workflows to run”，完成内容确认后标记Ready；单人维护仓库不要求作者批准自己的PR，但仍必须经PR、必需CI和内容审核记录。根据[GitHub的工作流规则](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/trigger-a-workflow)，机器人创建的PR可能需要这一步批准运行。
 
@@ -222,7 +222,7 @@ Header 的每个导航项可以选择两种效果：
 
 内部链接允许真实公开页面、`/pricing`及已知`/app`、`/app/image`、`/app/video`、`/app/credits`入口；未知/草稿SEO路径仍不能发布为链接。`pricing`、`app`等保留路径不能用作工具页slug。公开套餐与真实费率由服务端目录决定，CMS的SEO structuredData.price不控制购买价格或处理费用。
 
-Save只向Pages CMS当前选中的分支提交内容，不会自动创建PR，也不代表上线。先确认选中的是审核分支，再按以下步骤确认发布：
+Save只向Pages CMS当前选中的分支提交内容，不代表上线。博客在 `codex/cms-blog-editing` 点击“批量发布已保存的博客”后，系统会自动创建PR、检查、合并并核对正式Site；可以在后台Actions查看结果。以下人工步骤用于其他内容及批量发布失败后的维护处理：
 
 1. 在GitHub确认 `content(create)` 或 `content(update)` 提交属于预期审核分支，并核对图片及内容的具体差异。模板按钮通过 `cms-create-draft.yml` 创建 `codex/cms-*` 分支和Draft PR；普通编辑由维护者为内容分支创建或更新PR，不能把Save当作创建PR。
 2. 内容负责人确认该次差异及适用的原内容基线审核；内容完成后由维护者将Draft PR标为Ready，核对当前PR头版本的必需 `verify` 和 `Required target artifacts` 检查成功，再合并受保护main。草稿内容即使合并也不会生成公开SEO页面。

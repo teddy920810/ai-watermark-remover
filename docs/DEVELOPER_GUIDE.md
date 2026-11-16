@@ -112,7 +112,7 @@ npm run blog:import-docx -- --input "审核稿.docx" --slug "how-to-remove-examp
 
 Site/App/Worker 的构建入口、路由和产物合同见[部署目标](../apps/DEPLOYMENT_TARGETS.md)。构建准备只在 Astro 的 `astro:config:setup` 生命周期执行；配置读取和目标构建调度不清理目录。生成目录白名单、符号链接检查和独立目标隔离继续生效。
 
-Pages CMS在内容分支保存，经受保护PR与必需CI后进入`main`；模板工作流只创建审核分支和草稿PR。推送前执行`git fetch origin main`检查分歧；如远端领先，先安全rebase/merge，禁止force push。合并后Vercel按目标独立发布。
+Pages CMS博客在固定编辑分支多次保存，内容负责人明确点击批量发布后自动经过现有PR必需检查并合并、验收正式Site；点击批准与独立基线范围、专用凭据及恢复见[博客批量发布](CMS_BLOG_BATCH_PUBLISH.md)。其他内容与原模板仍沿审核分支/草稿PR流程。推送前执行`git fetch origin main`检查分歧；如远端领先，先安全rebase/merge，禁止force push。合并后Vercel按目标独立发布。
 
 ### 合并后的分支收尾
 
