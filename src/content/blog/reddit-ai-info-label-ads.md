@@ -29,11 +29,13 @@ That location-dependent presentation matters. A teammate viewing an ad elsewhere
 
 Separate these three layers when reviewing an ad:
 
+
 | **Layer** | **Example** | **Who manages the relevant change?** |
-| --- | --- | --- |
+| --------------------- | ----------------------------------------------------- | ------------------------------------ |
 | Creative pixels | A sale caption baked into an image | The authorized creative editor |
 | Advertiser disclosure | Information supplied through an available ad workflow | The advertiser or its integration |
 | Viewer presentation | AI Info or a menu entry shown with an ad | Reddit's platform |
+
 
 A media editor works on the first layer. It does not control the other two. Cropping a screenshot of an ad also does not change the underlying ad or its platform disclosure.
 
@@ -81,7 +83,7 @@ When the ad can be previewed or viewed through the normal review process, inspec
 
 ## What changes for Ads API v4 and v3
 
-Reddit names **self\_discloser** as the planned field in the v4 Structured Posts and Creative Assets workflows. The announcement links to [Create Structured Post Creation Job](https://ads-api.reddit.com/docs/v4/api/create-structured-post-creation-job), [Create Creative Asset Uploads](https://ads-api.reddit.com/docs/v4/api/create-creative-asset-uploads), and [Update Creative Asset](https://ads-api.reddit.com/docs/v4/api/update-creative-asset).
+Reddit names **selfdiscloser** as the planned field in the v4 Structured Posts and Creative Assets workflows. The announcement links to [Create Structured Post Creation Job](https://ads-api.reddit.com/docs/v4/api/create-structured-post-creation-job), [Create Creative Asset Uploads](https://ads-api.reddit.com/docs/v4/api/create-creative-asset-uploads), and [Update Creative Asset](https://ads-api.reddit.com/docs/v4/api/update-creative-asset).
 
 Those are distinct operations. Creating an asset in a library is not the same as completing every later post or ad step. An integration team should check where the released schema expects disclosure information, how the value is represented, and whether a subsequent asset update needs to carry it forward.
 
@@ -121,12 +123,12 @@ These image capabilities do not submit Reddit disclosure fields. Standard allowa
 
 [WatermarkGemini — image source](https://www.watermarkgemini.com/blog/best-ai-watermark-remover)
 
-1.  Keep the approved original and create a working copy. Use one JPG, PNG, or WebP up to 10 MB. If the caption remains an editable layer, remove it in the design source instead.
-2.  Open the [image text remover](https://www.watermarkgemini.com/remove-text-from-image), then its workspace. Choose the image watermark operation and select your authorized working file.
-3.  Confirm the local preview shows the correct variant. Sign in when prompted, review Standard or PRO options, and inspect the quoted processing cost or available image allowance.
-4.  Start the image operation using **Remove watermarks** after confirming the cost. Keep the browser task open until the result is returned.
-5.  Compare the repaired area at full size. Check the real product name, packaging, ingredients, textures, and any claims that must remain accurate. Use an available refinement option only if it is suitable and its cost is clear.
-6.  Download the accepted JPG using the browser's configured download location. Store it as a new creative version and record the pixel edit beside the original disclosure review.
+1. Keep the approved original and create a working copy. Use one JPG, PNG, or WebP up to 10 MB. If the caption remains an editable layer, remove it in the design source instead.
+2. Open the [image text remover](https://www.watermarkgemini.com/remove-text-from-image), then its workspace. Choose the image watermark operation and select your authorized working file.
+3. Confirm the local preview shows the correct variant. Sign in when prompted, review Standard or PRO options, and inspect the quoted processing cost or available image allowance.
+4. Start the image operation using **Remove watermarks** after confirming the cost. Keep the browser task open until the result is returned.
+5. Compare the repaired area at full size. Check the real product name, packaging, ingredients, textures, and any claims that must remain accurate. Use an available refinement option only if it is suitable and its cost is clear.
+6. Download the accepted JPG using the browser's configured download location. Store it as a new creative version and record the pixel edit beside the original disclosure review.
 
 If a product detail changes or the repair looks artificial, reject that result and rebuild the visual in its design source. A deliberate new layout can be more reliable than reconstructing a dense label. Recheck the finished ad's content and AI disclosure separately before the campaign goes live.
 
@@ -144,7 +146,7 @@ Also avoid drawing conclusions about performance from the label alone. If click-
 
 The announcement explicitly describes location-dependent presentation. Viewers may see a label, a menu option, or both, so one person's view is not a universal reference.
 
-### Can I already use self\_discloser in any Reddit Ads API request?
+### Can I already use selfdiscloser in any Reddit Ads API request?
 
 Do not assume that. The announcement concerns specific v4 workflows and a planned rollout. Verify the released endpoint schema and availability before changing a production integration.
 
@@ -168,3 +170,4 @@ Prepare an accurate AI-use inventory, follow the current Reddit workflow when it
 - [Reddit Ads API — Update Creative Asset](https://ads-api.reddit.com/docs/v4/api/update-creative-asset)
 - [WatermarkGemini — Remove Text from Image Online with AI](https://www.watermarkgemini.com/remove-text-from-image)
 - [WatermarkGemini — Best AI Watermark Remover in 2026: 7 Tools Compared](https://www.watermarkgemini.com/blog/best-ai-watermark-remover)
+
