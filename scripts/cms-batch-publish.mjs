@@ -154,7 +154,7 @@ export async function publishBatch({ payload, token, actor, runId, git, request 
   if (!synced.ok) await report('编辑分支同步未完成，已保留全部保存内容；下次发布前需处理冲突。已合并的线上发布不受影响。');
   git('fetch', 'origin', 'main');
   const entryFiles = plan.files.length ? plan.files : git('diff', '--name-only', `${merged}^`, merged).split('\n');
-  const entries = entryFiles.filter(f => blog.test(f)).map(file => parseCmsDocument(file, git('show', `${plan.files.length ? plan.tree : merged}:${file}`)));
+  const entries = entryFiles.filter(f => blog.test(f)).map(file => parseCmsDocument(file, git('show', `${merged}:${file}`)));
   for (let attempt = 0; attempt < 60; attempt++) {
     const proof = await request('https://www.watermarkgemini.com/cms-build.json', { cache: 'no-store', signal: globalThis.AbortSignal.timeout(20_000) });
     const revision = proof.ok ? (await proof.json()).revision : '';
