@@ -59,7 +59,7 @@ On the iPhone version documented by Apple, open the edited photo, use the More m
 
 On a Mac, Apple documents Image > Revert to Original in Photos. Make sure the selected item is the one whose adjustments you intend to discard. If you want to preserve the filtered look too, duplicate or export that version before reverting the editable item.
 
-![](/uploads/blog-20261114/remove-filter-from-facebook-photo/figure-1.png)
+![Apple Photos editing interface showing adjustment controls beside a photo.](/uploads/blog-20261114/remove-filter-from-facebook-photo/figure-1.png)
 
 *Apple’s Photos editing interface. Reverting requires the original editable library item; importing a Facebook copy does not restore its history. [Image source](https://support.apple.com/en-us/guide/photos/pht304c2ace6/mac)*
 
