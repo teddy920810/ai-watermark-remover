@@ -3,6 +3,7 @@ import { admissionMatchesJob, DefinitiveProviderError, metadataSchema, Processin
 import type { ProcessingArtifact, ProcessingArtifactStore, ProcessingFinancialStore, ProcessingJob, ProcessingJobStore } from './contracts';
 import type { ProcessingProviderContext, WatermarkProvider, ProviderCheckpoint, ProviderOutcome } from '../providers/watermark-provider';
 import { ProcessingDispatchRecovery } from './dispatch-recovery';
+import type { ProcessingTiming } from './processing-timing';
 
 export interface ProcessingWorkerOptions {
   jobs: ProcessingJobStore;
@@ -14,6 +15,7 @@ export interface ProcessingWorkerOptions {
   leaseMs?: number;
   unknownHoldMs?: number;
   resultTtlMs?: number;
+  recordTiming?(event: ProcessingTiming): void;
 }
 class LeaseLost extends Error {}
 
@@ -24,6 +26,10 @@ export class ProcessingWorker {
 
   async run(jobId: string, workerId: string, dispatchId?: string): Promise<ProcessingJob> {
     const { jobs, artifacts, finance, provider } = this.options;
+    const timing = (phase: ProcessingTiming['phase'], operation: ProcessingJob['operation'], start: number, end: number, outcome: ProcessingTiming['outcome']) => {
+      const durationMs = end - start;
+      if (Number.isFinite(durationMs) && durationMs >= 0) this.options.recordTiming?.({ phase, operation, durationMs, outcome });
+    };
     await new ProcessingDispatchRecovery({ jobs, finance, now: this.now, id: this.id }).recover(jobId);
     let record = await jobs.get(jobId);
     if (!record) throw new ProcessingError('not_found', 'Task not found', 404);
@@ -92,17 +98,24 @@ export class ProcessingWorker {
       const job = await read();
       if (artifact.ownerId !== job.ownerId || artifact.role !== 'result' || !artifact.sealed) throw new ProcessingError('invalid_result', 'Invalid result ownership');
       metadataSchema.parse(artifact.metadata);
-      await update({ status: 'SAVING', pendingResult: artifact });
-      await withSavingLease(async () => {
-        await artifacts.verifyStored(artifact);
-        await heartbeat();
-        await artifacts.create(artifact);
-        await update({ status: 'SETTLING', resultArtifactId: artifact.id });
-        const chargeStatus = await finance.settle(jobId, job.ownerId);
-        await update({ status: 'READY', chargeStatus, resultArtifactId: artifact.id, pendingResult: undefined, progress: 1, error: undefined,
-          expiresAt: new Date(this.now().getTime() + (this.options.resultTtlMs ?? 24 * 60 * 60_000)).toISOString() });
-        await finance.completeOutbox(jobId);
-      });
+      const started = this.now().getTime();
+      let outcome: ProcessingTiming['outcome'] = 'error';
+      try {
+        await update({ status: 'SAVING', pendingResult: artifact });
+        await withSavingLease(async () => {
+          await artifacts.verifyStored(artifact);
+          await heartbeat();
+          await artifacts.create(artifact);
+          await update({ status: 'SETTLING', resultArtifactId: artifact.id });
+          const chargeStatus = await finance.settle(jobId, job.ownerId);
+          await update({ status: 'READY', chargeStatus, resultArtifactId: artifact.id, pendingResult: undefined, progress: 1, error: undefined,
+            expiresAt: new Date(this.now().getTime() + (this.options.resultTtlMs ?? 24 * 60 * 60_000)).toISOString() });
+          await finance.completeOutbox(jobId);
+        });
+        outcome = 'ok';
+      } finally {
+        timing('save-result', job.operation, started, this.now().getTime(), outcome);
+      }
     };
 
     try {
@@ -142,17 +155,27 @@ export class ProcessingWorker {
         checkpoint: async (checkpoint: ProviderCheckpoint) => { await update((current) => ({ attempt: { ...current.attempt!, checkpoint: { ...current.attempt?.checkpoint, ...checkpoint } } })); },
         heartbeat,
       };
-      let outcome: ProviderOutcome;
-      if (job.attempt) {
-        // Image adapters may only consult an immutable local receipt here. They
-        // must never turn this recovery call into a second paid submission.
-        outcome = await provider.poll(context);
-        if (!job.attempt.checkpoint?.providerJobId && outcome.status !== 'completed') { if (job.status !== 'UNKNOWN') await unknown(); return release(); }
-      } else {
+      const existingAttempt = job.attempt;
+      if (!existingAttempt) {
         job = await update({ status: 'SUBMITTING', attempt: { id: this.id(), startedAt: this.now().toISOString() } });
         context.job = job;
-        outcome = await provider.submit(context);
+        if (job.dispatch) {
+          const dispatched = Date.parse(job.dispatch.startedAt);
+          timing('queue', job.operation, Date.parse(job.createdAt), dispatched, 'ok');
+          timing('worker-start', job.operation, dispatched, Date.parse(job.attempt!.startedAt), 'ok');
+        }
       }
+      const started = Date.parse(job.attempt!.startedAt);
+      let outcome: ProviderOutcome;
+      try {
+        // Image adapters may only consult an immutable local receipt on recovery.
+        outcome = existingAttempt ? await provider.poll(context) : await provider.submit(context);
+      } catch (error) {
+        timing('provider', job.operation, started, this.now().getTime(), 'error');
+        throw error;
+      }
+      if (outcome.status !== 'processing') timing('provider', job.operation, started, this.now().getTime(), outcome.status === 'completed' ? 'ok' : 'error');
+      if (existingAttempt && !existingAttempt.checkpoint?.providerJobId && outcome.status !== 'completed') { if (job.status !== 'UNKNOWN') await unknown(); return release(); }
       if (outcome.status === 'failed') throw new DefinitiveProviderError(outcome.message);
       if (outcome.status === 'processing') {
         const current = await read();

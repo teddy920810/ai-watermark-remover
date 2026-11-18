@@ -1,6 +1,6 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
 import { Brush, Eraser, LassoSelect, RotateCcw, Undo2 } from 'lucide-react';
-import { canvasPoint, writeBinaryMask } from '../../lib/client/canvas-mask';
+import { canvasPoint, MaskUndoHistory, writeBinaryMask } from '../../lib/client/canvas-mask';
 import type { MaskEditorHandle } from './ImageMaskEditor';
 import '../../styles/image-editor.css';
 
@@ -11,13 +11,13 @@ interface Props { src: string; width: number; height: number; revision: number; 
 export const ObjectMaskEditor = forwardRef<MaskEditorHandle, Props>(function ObjectMaskEditor({ src, width, height, revision, disabled, onSelection, onSelectionStart }, ref) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const drawingRef = useRef(false); const lastPointRef = useRef<Point | null>(null);
-  const lassoPointsRef = useRef<Point[]>([]); const historyRef = useRef<ImageData[]>([]);
+  const lassoPointsRef = useRef<Point[]>([]); const history = useRef(new MaskUndoHistory(20));
   const [tool, setTool] = useState<'brush' | 'lasso' | 'eraser'>('brush');
   const [brushSize, setBrushSize] = useState(44); const [hasMask, setHasMask] = useState(false);
   function resetMask() {
     const canvas = canvasRef.current; const context = canvas?.getContext('2d');
     if (canvas && context) context.clearRect(0, 0, canvas.width, canvas.height);
-    drawingRef.current = false; lastPointRef.current = null; lassoPointsRef.current = []; historyRef.current = [];
+    drawingRef.current = false; lastPointRef.current = null; lassoPointsRef.current = []; history.current.clear();
     setHasMask(false); onSelection(false);
   }
   // A signed URL can change for the same source without discarding its current selection.
@@ -27,13 +27,6 @@ export const ObjectMaskEditor = forwardRef<MaskEditorHandle, Props>(function Obj
     const canvas = event.currentTarget;
     const rect = canvas.getBoundingClientRect();
     return canvasPoint(rect, canvas.width, canvas.height, event.clientX, event.clientY, true);
-  }
-
-  function snapshot() {
-    const canvas = canvasRef.current;
-    const context = canvas?.getContext('2d');
-    if (!canvas || !context) return;
-    historyRef.current = [...historyRef.current.slice(-19), context.getImageData(0, 0, canvas.width, canvas.height)];
   }
 
   function refreshHasMask() {
@@ -48,6 +41,8 @@ export const ObjectMaskEditor = forwardRef<MaskEditorHandle, Props>(function Obj
   function drawStroke(from: Point, to: Point) {
     const context = canvasRef.current?.getContext('2d');
     if (!context) return;
+    const margin = brushSize / 2 + 2;
+    history.current.capture(context, Math.min(from.x, to.x) - margin, Math.min(from.y, to.y) - margin, Math.max(from.x, to.x) + margin, Math.max(from.y, to.y) + margin);
     context.save();
     context.globalCompositeOperation = tool === 'eraser' ? 'destination-out' : 'source-over';
     context.strokeStyle = '#2563eb';
@@ -63,10 +58,10 @@ export const ObjectMaskEditor = forwardRef<MaskEditorHandle, Props>(function Obj
   }
 
   function pointerDown(event: ReactPointerEvent<HTMLCanvasElement>) {
-    if (disabled) return;
+    if (disabled || drawingRef.current) return;
     onSelectionStart();
     event.currentTarget.setPointerCapture(event.pointerId);
-    snapshot();
+    history.current.begin();
     drawingRef.current = true;
     const point = toCanvasPoint(event);
     lastPointRef.current = point;
@@ -87,6 +82,11 @@ export const ObjectMaskEditor = forwardRef<MaskEditorHandle, Props>(function Obj
     if (tool === 'lasso' && lassoPointsRef.current.length > 2) {
       const context = canvasRef.current?.getContext('2d');
       if (context) {
+        let left = Infinity, top = Infinity, right = -Infinity, bottom = -Infinity;
+        for (const { x, y } of lassoPointsRef.current) {
+          left = Math.min(left, x); top = Math.min(top, y); right = Math.max(right, x); bottom = Math.max(bottom, y);
+        }
+        history.current.capture(context, left - 2, top - 2, right + 2, bottom + 2);
         context.save();
         context.fillStyle = '#2563eb';
         context.globalAlpha = .44;
@@ -101,25 +101,23 @@ export const ObjectMaskEditor = forwardRef<MaskEditorHandle, Props>(function Obj
     drawingRef.current = false;
     lastPointRef.current = null;
     lassoPointsRef.current = [];
-    event.currentTarget.releasePointerCapture(event.pointerId);
+    history.current.finish();
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
     refreshHasMask();
   }
 
   function undo() {
-    if (disabled || !historyRef.current.length) return;
+    if (disabled || !history.current.length) return;
     onSelectionStart();
     const canvas = canvasRef.current;
     const context = canvas?.getContext('2d');
-    const previous = historyRef.current.pop();
-    if (!canvas || !context || !previous) return;
-    context.putImageData(previous, 0, 0);
+    if (!context || !history.current.undo(context)) return;
     refreshHasMask();
   }
 
   function clearMask() {
     if (disabled) return;
     onSelectionStart();
-    snapshot();
     resetMask();
   }
 
@@ -151,7 +149,7 @@ export const ObjectMaskEditor = forwardRef<MaskEditorHandle, Props>(function Obj
     <div className="object-selection-tools" aria-label="Mask tools">
       <div className="object-tool-grid">{(['brush', 'lasso', 'eraser'] as const).map(value => <button key={value} className={tool === value ? 'is-selected' : ''} type="button" aria-pressed={tool === value} disabled={disabled} onClick={() => setTool(value)}>{value === 'brush' ? <Brush size={21} /> : value === 'lasso' ? <LassoSelect size={21} /> : <Eraser size={21} />}<span>{value[0].toUpperCase() + value.slice(1)}</span></button>)}</div>
       <label className="object-brush-size"><span>Brush size</span><input type="range" min="10" max="140" value={brushSize} disabled={disabled} onChange={event => setBrushSize(Number(event.target.value))} /></label>
-      <div className="object-history-actions"><button type="button" onClick={undo} disabled={disabled || historyRef.current.length === 0}><Undo2 size={17} />Undo</button><button type="button" onClick={clearMask} disabled={disabled || !hasMask}><RotateCcw size={17} />Clear</button></div>
+      <div className="object-history-actions"><button type="button" onClick={undo} disabled={disabled || history.current.length === 0}><Undo2 size={17} />Undo</button><button type="button" onClick={clearMask} disabled={disabled || !hasMask}><RotateCcw size={17} />Clear</button></div>
       <p>Paint or lasso the full object. A small margin helps AI blend the repaired area naturally.</p>
     </div>
   </div>;

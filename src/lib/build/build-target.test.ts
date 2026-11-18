@@ -293,7 +293,8 @@ describe('same-origin App and Site proxy', () => {
     const site = JSON.parse(readFileSync(new URL('apps/site/vercel.json', root), 'utf8'));
     const app = JSON.parse(readFileSync(new URL('apps/app/vercel.json', root), 'utf8'));
     expect(site.redirects).toEqual(original.redirects);
-    expect(site.headers.filter((rule: { source: string }) => rule.source !== '/cms-build.json')).toEqual(original.headers);
+    const siteAssetRule = '/_site-assets/:asset([A-Za-z0-9_.-]+[.][A-Za-z0-9_-]{8}[.](?:js|css))';
+    expect(site.headers.filter((rule: { source: string }) => !['/cms-build.json', siteAssetRule].includes(rule.source))).toEqual(original.headers);
     expect(app.headers).toEqual(expect.arrayContaining(original.headers));
   });
 });

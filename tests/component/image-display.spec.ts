@@ -18,7 +18,7 @@ test('preserves independent operator descriptions for Before and After', async (
   await expect(images.nth(1)).toHaveAttribute('alt', 'Operator After description');
 });
 
-test('a cold Before remains loadable after its After has already loaded offscreen', async ({ page }) => {
+test('a deferred comparison enables Before and After when it comes into view', async ({ page }) => {
   let afterLoaded = false;
   await page.route('**/*warm-after=1', async route => {
     await route.fulfill({ contentType: 'image/png', body: readFileSync('public/uploads/home-blueprint/features/hero-sample-02-sunset.png') });
@@ -29,9 +29,10 @@ test('a cold Before remains loadable after its After has already loaded offscree
     await route.fulfill({ contentType: 'image/png', body: readFileSync('public/uploads/home-blueprint/features/hero-sample-01-serum.png') });
   });
   await page.goto('/', { waitUntil: 'domcontentloaded' });
-  await expect.poll(() => afterLoaded).toBe(true);
+  expect(afterLoaded).toBe(false);
   const display = page.locator('#after-first [data-image-display]');
   await display.scrollIntoViewIfNeeded();
+  await expect.poll(() => afterLoaded).toBe(true);
   await expect(display).toHaveAttribute('data-ready', 'true');
   await expect(display.getByRole('slider')).toHaveValue('50');
 });

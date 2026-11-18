@@ -7,6 +7,7 @@ import { createProcessingRuntime, type ProcessingRuntime, type ProcessingRuntime
 import { imageCreditConfigFromEnvironment } from '../../src/lib/payments/image-credit-config';
 import { readImageProviderConfig } from '../../src/lib/config/image-providers';
 import { creditsConfiguration } from '../../src/lib/credits/credit-policy';
+import { logProcessingTiming } from '../../src/lib/processing/processing-timing';
 
 type Environment = Record<string, string | undefined>;
 type Mode = 'preflight' | 'process' | 'reconcile' | 'dispatch' | 'retention';
@@ -75,7 +76,17 @@ export async function runWorker(source: Environment = process.env, dependencies:
       return { mode, status: apply ? 'applied' : 'planned', retention: await runtime.retainExpired({ apply, expectedDigest: source.RETENTION_PLAN_DIGEST }) };
     }
     if (mode === 'dispatch') { await runtime.dispatch(); return { mode, status: 'dispatched' }; }
-    if (mode === 'preflight') { const result = await runtime.runPreflight(ownerId!, jobId!); return { mode, status: result.status, id: result.id }; }
+    if (mode === 'preflight') {
+      const started = now();
+      try {
+        const result = await runtime.runPreflight(ownerId!, jobId!);
+        logProcessingTiming({ phase: 'preflight', operation: result.kind, durationMs: now() - started, outcome: result.status === 'ready' ? 'ok' : 'error' });
+        return { mode, status: result.status, id: result.id };
+      } catch (error) {
+        logProcessingTiming({ phase: 'preflight', operation: 'unknown', durationMs: now() - started, outcome: 'error' });
+        throw error;
+      }
+    }
     const deadline = now() + maxRunMs;
     const maxSteps = Math.max(1, Math.ceil(maxRunMs / pollMs));
     let lastStatus = 'QUEUED';

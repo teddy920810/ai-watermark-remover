@@ -1,6 +1,6 @@
 import { ProcessingError } from '../processing/contracts';
 import type { MediaMetadata, ProcessingArtifact, ProcessingArtifactStore, ProcessingJob, ProcessingQuote, ProcessingOperation } from '../processing/contracts';
-import type { PublicArtifact, PublicDownload, PublicJob, PublicQuote } from '../contracts/processing-public';
+import type { PublicArtifact, PublicDownload, PublicJob, PublicJobSummary, PublicQuote } from '../contracts/processing-public';
 import { mediaKey } from './private-media-store';
 
 export type { PublicArtifact } from '../contracts/processing-public';
@@ -28,6 +28,18 @@ function publicMetadata(value: MediaMetadata): MediaMetadata {
     ...(value.codec !== undefined ? { codec: value.codec } : {}), ...(value.hasAudio !== undefined ? { hasAudio: value.hasAudio } : {}) };
 }
 function format(type: string): string { return ({ 'image/jpeg': 'JPG', 'image/png': 'PNG', 'image/webp': 'WebP', 'video/mp4': 'MP4' } as Record<string, string>)[type] ?? 'File'; }
+
+export function projectJobSummary(ownerId: string, job: ProcessingJob, now = Date.now(), deadline = job.expiresAt): PublicJobSummary {
+  if (job.ownerId !== ownerId) throw new ProcessingError('not_found', 'Task was not found', 404);
+  return {
+    id: job.id,
+    operation: job.operation,
+    status: job.status === 'READY' && deadline && Date.parse(deadline) <= now ? 'EXPIRED' : job.status,
+    charge: { status: job.chargeStatus, amount: job.quote.amount, unit: job.quote.unit },
+    createdAt: job.createdAt,
+    ...(job.parentJobId ? { parentJobId: job.parentJobId } : {}),
+  };
+}
 
 /** Only explicitly selected fields leave the server. Never spread private records. */
 export class PublicProcessingProjection {
@@ -65,10 +77,8 @@ export class PublicProcessingProjection {
     const expired = Boolean(deadline && Date.parse(deadline) <= this.now().getTime());
     const canRefine = Boolean(!expired && this.options.refinementEnabled && job.status === 'READY' && ['image-watermark', 'image-refine'].includes(job.operation) && result?.providerSessionId && result.metadata.kind === 'image' && Math.max(result.metadata.width, result.metadata.height) <= 1920);
     const code = job.error && errors[job.error] ? job.error : job.error ? 'processing_failed' : undefined;
-    return { id: job.id, operation: job.operation, status: job.status === 'READY' && expired ? 'EXPIRED' : job.status, quoteId: job.quote.id,
-      charge: { status: job.chargeStatus, amount: job.quote.amount, unit: job.quote.unit },
-      createdAt: job.createdAt, updatedAt: job.updatedAt, ...(deadline ? { expiresAt: deadline } : {}),
-      ...(job.parentJobId ? { parentJobId: job.parentJobId } : {}),
+    return { ...projectJobSummary(ownerId, job, this.now().getTime(), deadline), quoteId: job.quote.id,
+      updatedAt: job.updatedAt, ...(deadline ? { expiresAt: deadline } : {}),
       ...(typeof job.progress === 'number' && Number.isFinite(job.progress) && job.progress >= 0 && job.progress <= 1 ? { progress: job.progress } : {}),
       ...(input ? { input: await this.artifact(ownerId, input) } : {}), ...(result ? { result: await this.artifact(ownerId, deadline ? { ...result, expiresAt: deadline } : result, canRefine) } : {}),
       ...(code ? { errorCode: code, error: errors[code] } : {}), isDemo: job.attempt?.checkpoint?.provider ? job.attempt.checkpoint.provider === 'mock' : this.options.isDemoFor?.(job.operation) ?? this.options.isDemo ?? false };

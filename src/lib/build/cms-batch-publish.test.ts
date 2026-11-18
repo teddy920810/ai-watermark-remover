@@ -3,7 +3,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { afterEach, describe, expect, it } from 'vitest';
-import { assertBatchHead, planBatch, publishBatch, requiredChecksReady, validateRequest } from '../../../scripts/cms-batch-publish.mjs';
+import { assertBatchHead, planBatch, publishBatch, requiredChecksReady, validateRequest, verifyBlogDiscovery } from '../../../scripts/cms-batch-publish.mjs';
 import { projectContent, contentHash, contentImages } from '../../../scripts/lib/content-baseline.mjs';
 
 const roots: string[] = [];
@@ -22,6 +22,17 @@ function fixture() {
   return { git, put, commit };
 }
 describe('explicit CMS blog batch publication', () => {
+  it('looks for public articles across the paginated archive and excludes drafts from both surfaces', async () => {
+    const pages: Record<string, string> = {
+      '/blog': '<section class="blog-list"><h2><a href="/blog/newer">Newer</a></h2></section><nav class="blog-pagination"><a rel="next" href="/blog/page/2">Older</a></nav>',
+      '/blog/page/2': '<section class="blog-list"><h2><a href="/blog/example">Example</a></h2></section>',
+      '/sitemap.xml': '<loc>https://www.watermarkgemini.com/blog/example</loc>',
+    };
+    const request: typeof fetch = async input => new Response(pages[new URL(String(input)).pathname]);
+    await expect(verifyBlogDiscovery([{ slug: 'example' }, { slug: 'draft', draft: true }], request)).resolves.toBeUndefined();
+    await expect(verifyBlogDiscovery([{ slug: 'example', draft: true }], request)).rejects.toThrow('example');
+    await expect(verifyBlogDiscovery([{ slug: 'absent' }], request)).rejects.toThrow('absent');
+  });
   it('accepts only the dedicated editor and the trusted workflow revision', () => {
     const payload = { repository: { owner: 'teddy920810', repo: 'ai-watermark-remover', ref: 'codex/cms-blog-editing', sha: 'a'.repeat(40) }, action: { name: 'publish-blog-batch' } };
     expect(validateRequest(payload)).toBe('a'.repeat(40));
@@ -90,6 +101,7 @@ describe('explicit CMS blog batch publication', () => {
       const url = String(input); const route = url.replace('https://api.github.com/repos/teddy920810/ai-watermark-remover', '');
       if (url.endsWith('/cms-build.json')) return json({ revision: snapshot });
       if (url.endsWith('/blog/example')) return new Response('Not found', { status: 404 });
+      if (url.endsWith('/blog') || url.endsWith('/sitemap.xml')) return new Response('');
       if (route === '/git/ref/heads/codex/cms-blog-editing') return json({ object: { sha: sourceReads++ === 0 ? source : newer } });
       if (route === '/git/ref/heads/main') return json({ object: { sha: latestMain } });
       if (route.startsWith('/pulls?')) return json([]);
@@ -141,6 +153,7 @@ describe('explicit CMS blog batch publication', () => {
       if (route === '/merges' && options?.method === 'POST') { synced++; return new Response(null, { status: 204 }); }
       if (String(input).endsWith('/cms-build.json')) { proofReads++; if (unavailable) throw new Error('Temporary site failure'); return json({ revision: merged }); }
       if (String(input).endsWith('/blog/example')) return new Response(null, { status: 404 });
+      if (String(input).endsWith('/blog') || String(input).endsWith('/sitemap.xml')) return new Response('');
       throw new Error(`Unexpected request ${route}`);
     };
     const options = { payload: { action: { name: 'publish-blog-batch' }, repository: { owner: 'teddy920810', repo: 'ai-watermark-remover', ref: 'codex/cms-blog-editing', sha: main } }, token: 'test', actor: 'test-editor', runId: '1', git: (...args: string[]) => args[0] === 'fetch' ? '' : f.git(...args), request, pause: async () => {} };

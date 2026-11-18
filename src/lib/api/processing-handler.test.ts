@@ -11,6 +11,18 @@ function fixture() {
 }
 
 describe('processing v1 boundary', () => {
+  it('returns only recent-task fields for the summary view without projecting signed media', async () => {
+    const f = fixture();
+    const createdAt = '2026-11-19T00:00:00Z';
+    f.runtime.service.list.mockResolvedValue([{
+      id: 'job-1', ownerId: 'owner', operation: 'image-watermark', createdAt, status: 'READY',
+      quote: { amount: 1, unit: 'freeUses' }, chargeStatus: 'settled', resultArtifactId: 'private-result',
+    }] as never);
+    expect(await (await f.handler(f.request('jobs?view=summary'))).json()).toEqual({ jobs: [{
+      id: 'job-1', operation: 'image-watermark', status: 'READY', createdAt, charge: { amount: 1, unit: 'freeUses', status: 'settled' },
+    }] });
+    expect(f.runtime.projectJob).not.toHaveBeenCalled();
+  });
   it.each(['jobs', 'jobs/job-1'])('does not project a new-unit task to a client without its currency contract (%s)', async path => {
     const f = fixture(); const job = { id: 'job-1', ownerId: 'owner', quote: { unit: 'credits' } };
     f.runtime.service.get.mockResolvedValue(job as never); f.runtime.service.list.mockResolvedValue([job] as never);

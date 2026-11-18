@@ -1,0 +1,49 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import ResponsiveImage from './ResponsiveImage.astro';
+import { getCollection } from 'astro:content';
+import { sortBlogEntries } from '../lib/content/entries';
+import { resolveBlogMetadata } from '../lib/content/blog-metadata';
+import { resolveImageAlt } from '../lib/content/image-metadata';
+import { buildCollectionPageSchema } from '../lib/content/seo-schema';
+
+interface Props { pageNumber: number }
+const { pageNumber } = Astro.props;
+const blogPosts = sortBlogEntries(await getCollection('blog'));
+const [settingsEntry] = await getCollection('blogIndexSettings');
+if (!settingsEntry) throw new Error('Blog index CMS settings are missing.');
+const settings = settingsEntry.data;
+const offset = (pageNumber - 1) * settings.postsPerPage;
+const pageCount = Math.ceil(blogPosts.length / settings.postsPerPage);
+const previous = pageNumber > 2 ? `/blog/page/${pageNumber - 1}` : '/blog';
+const title = pageNumber === 1 ? settings.title : `${settings.title} · Page ${pageNumber}`;
+const [siteEntry] = await getCollection('siteSettings');
+if (!siteEntry) throw new Error('Site settings CMS content is missing.');
+const [imageSettingsEntry] = await getCollection('imageSettings');
+if (!imageSettingsEntry) throw new Error('Image metadata CMS content is missing.');
+const schema = buildCollectionPageSchema({
+  canonicalOrigin: siteEntry.data.canonicalOrigin,
+  path: pageNumber === 1 ? '/blog' : `/blog/page/${pageNumber}`,
+  name: settings.heading,
+  description: settings.description,
+});
+---
+<SiteLayout title={title} description={settings.description} image={settings.shareImage} schema={schema}>
+  <header class="blog-hero"><span class="eyebrow">{settings.eyebrow}</span><h1>{settings.heading}</h1><p>{settings.intro}</p></header>
+  <section class="blog-list">
+    {blogPosts.slice(offset, offset + settings.postsPerPage).map(({ data: post }) => <article class:list={{ 'has-cover': post.coverImage }}>
+      {post.coverImage && <ResponsiveImage class="blog-card-image" src={post.coverImage} alt={resolveImageAlt(post.coverImage, post.coverAlt, imageSettingsEntry.data.images, post.title)} sizes="(max-width: 900px) calc(100vw - 36px), 560px" />}
+      <div><span class="article-category">{resolveBlogMetadata(post, siteEntry.data.contentDefaults, siteEntry.data.name).category}</span><h2><a href={`/blog/${post.slug}`}>{post.title}</a></h2><p>{post.description}</p></div>
+      <small>{post.readTime}</small>
+    </article>)}
+  </section>
+  {pageCount > 1 && <nav class="blog-pagination" aria-label="Blog pages">
+    {pageNumber > 1 && <a class="button button-ghost" href={previous} rel="prev">Newer posts</a>}
+    <span>Page {pageNumber} of {pageCount}</span>
+    {pageNumber < pageCount && <a class="button button-ghost" href={`/blog/page/${pageNumber + 1}`} rel="next">Older posts</a>}
+  </nav>}
+</SiteLayout>
+<style>
+  .blog-pagination { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 16px; margin: 0 18px 64px; }
+  .blog-list:has(+ .blog-pagination) { margin-bottom: 32px; }
+</style>

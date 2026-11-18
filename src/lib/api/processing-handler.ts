@@ -6,6 +6,7 @@ import { creditsContractVersion } from '../contracts/credits-client';
 import { VIDEO_MAX_BYTES } from '../contracts/operation-catalog';
 import { z } from 'zod';
 import { readBoundedBody, RequestBodyLimitError } from './request-body';
+import { projectJobSummary } from '../runtime/public-projection';
 
 export interface UploadDeclaration { kind: 'image' | 'video' | 'mask'; contentType: string; byteSize: number; inputArtifactId?: string }
 function requireCreditsClient(request: Request) {
@@ -93,6 +94,7 @@ export function createProcessingHandler(options: ProcessingHandlerOptions) {
       if (path === 'jobs' && request.method === 'GET') {
         const jobs = await runtime.service.list(ownerId);
         if (jobs.some(job => job.quote?.unit === 'credits')) requireCreditsClient(request);
+        if (url.searchParams.get('view') === 'summary') return response({ jobs: jobs.map(job => projectJobSummary(ownerId, job)) });
         return response({ jobs: await Promise.all(jobs.map((job) => runtime.projectJob(ownerId, job))) });
       }
       const jobPath = path.match(/^jobs\/([A-Za-z0-9_-]{1,160})(\/download)?$/);

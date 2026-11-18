@@ -18,12 +18,14 @@ class WorkspaceBoundary extends Component<{ children: ReactNode }, { failed: boo
   }
 }
 export default function AppWorkspace(props: Props) {
-  const handoff = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('handoff') : null;
-  const content = <AppWorkspaceContent {...props} />;
+  const query = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+  const handoff = query?.get('handoff');
+  const explicitTools = props.kind === 'auto' && query?.get('view') === 'tools' && !handoff && !query.has('operation') && !query.has('job');
+  const content = <AppWorkspaceContent {...props} explicitTools={explicitTools} />;
   return <WorkspaceBoundary>{handoff ? <PaidHandoffEntry id={handoff}>{content}</PaidHandoffEntry> : content}</WorkspaceBoundary>;
 }
 
-function AppWorkspaceContent({ kind, logo, siteName }: Props) {
+function AppWorkspaceContent({ kind, logo, siteName, explicitTools }: Props & { explicitTools: boolean }) {
   const { data: session, isPending } = authClient.useSession();
   const [entry, setEntry] = useState<Entry | null>(null);
   const [error, setError] = useState('');
@@ -52,6 +54,7 @@ function AppWorkspaceContent({ kind, logo, siteName }: Props) {
         setEntry(null); setOwnerEpoch(value => value + 1);
       }
       previousOwner.current = owner;
+      if (explicitTools) return;
       const query = new URLSearchParams(window.location.search);
       const requested = query.get('operation'); const hasJob = Boolean(query.get('job'));
       let media: MediaKind = kind === 'auto' ? requested === 'video-watermark' ? 'video' : 'image' : kind;
@@ -67,7 +70,8 @@ function AppWorkspaceContent({ kind, logo, siteName }: Props) {
       if (active) setEntry({ kind: media, draft, requested, hasJob });
     }
     void open(); return () => { active = false; };
-  }, [kind, owner, isPending]);
+  }, [kind, owner, isPending, explicitTools]);
+  if (explicitTools) return <WorkspaceOverview logo={logo} siteName={siteName} />;
   if (!entry || !isPending && changedOwner) return <WorkspaceLoading />;
   if (kind === 'auto' && !entry.requested && !entry.hasJob && (['recent', 'tools'].includes(new URLSearchParams(window.location.search).get('view') ?? '') || !entry.draft)) return <WorkspaceOverview logo={logo} siteName={siteName} recent={new URLSearchParams(window.location.search).get('view') === 'recent'} />;
   const selection = resolveAppEntry({ kind: entry.kind, requested: entry.requested, hasJob: entry.hasJob, source: entry.draft?.source, recommendation: entry.draft?.recommendation });
