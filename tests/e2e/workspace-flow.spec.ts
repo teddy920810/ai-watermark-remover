@@ -286,6 +286,36 @@ for (const unified of [false, true]) test(unified ? 'unified Credits refinement 
   await expect(page.getByRole('button', { name: 'Download JPG', exact: true })).toBeVisible();
 });
 
+test('Previous versions opens the original result after two refinements', async ({ page }) => {
+  await account(page);
+  const { image, artifact } = await imageUploadFixture(page);
+  const makeJob = (id: string, parentJobId?: string) => ({
+    id, parentJobId, operation: parentJobId ? 'image-refine' : 'image-watermark', status: 'READY',
+    input: artifact, result: { ...artifact, id: `${id}-result`, role: 'result', previewUrl: `${origin}/fixture/version-${id}.jpg` },
+    charge: { status: 'consumed', amount: 1, unit: 'freeUses' }, createdAt: new Date().toISOString(),
+  });
+  const original = makeJob('original');
+  const first = makeJob('first-refinement', original.id);
+  const latest = makeJob('second-refinement', first.id);
+  const unrelated = makeJob('unrelated');
+  let historyReads = 0;
+  await page.route('**/fixture/version-*.jpg', route => route.fulfill({ contentType: 'image/jpeg', body: image }));
+  await page.route('**/api/v1/jobs', route => { historyReads++; return json(route, { jobs: [latest, unrelated, first, original] }); });
+  await page.route(`**/api/v1/jobs/${latest.id}`, route => json(route, latest));
+  await page.route(`**/api/v1/jobs/${original.id}`, route => json(route, original));
+
+  await openWorkspace(page, `/app/image?job=${latest.id}`);
+  await expect(page.getByRole('button', { name: 'Download JPG', exact: true })).toBeVisible();
+  expect(historyReads).toBe(0);
+  await page.getByText('Previous versions', { exact: true }).click();
+  const versions = page.locator('.workspace-versions').getByRole('button', { name: /Result/ });
+  await expect(versions).toHaveCount(2);
+  const originalVersion = versions.filter({ has: page.locator('img[src$="version-original.jpg"]') });
+  await originalVersion.click();
+  await expect(page).toHaveURL(/\?job=original$/);
+  expect(historyReads).toBe(1);
+});
+
 for (const unified of [false, true]) test(unified ? 'unified Credits video spends 100 per started 2 seconds and downloads the MP4 once' : 'video fixed-area processing prices automatically and produces synchronized, downloadable MP4 media', async ({ page }) => {
   const balance = await account(page, true, unified);
   const amount = unified ? 100 : 1; const unit = unified ? 'credits' : 'processingCredits';

@@ -4,7 +4,7 @@ import { workspaceToolLabel } from './workspace-tools';
 import { appOperationPath } from './app-entry';
 import { operationCatalog, type ProductOperation } from '../../lib/contracts/operation-catalog';
 import { listenForAuthCompletion } from '../../lib/client/auth-completion';
-import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { ArrowLeft, ArrowRight, Brush, CloudUpload, Download, Eraser, Info, LoaderCircle, RefreshCw, RotateCcw, Undo2, X, ZoomIn, ZoomOut } from 'lucide-react';
 import { authClient } from '../auth/auth-client';
 import { imageCreditPurchaseHref } from '../payments/BuyCreditsLink';
@@ -14,7 +14,7 @@ import { ImageMaskEditor, type MaskEditorHandle } from './ImageMaskEditor';
 import { ObjectMaskEditor } from './ObjectMaskEditor';
 import { BackgroundOptions, downloadWithBackground, TRANSPARENT_BACKGROUND, type BackgroundChoice } from './BackgroundOptions';
 import { VideoEditor } from './VideoEditor';
-import { balanceForQuote, canConfirmQuote, canRefineResult, canSubmitConfirmation, creditLabel, jobIsActive, processingLabel } from './workspace-state';
+import { balanceForQuote, canConfirmQuote, canRefineResult, canSubmitConfirmation, creditLabel, jobIsActive, processingLabel, relatedReadyVersions } from './workspace-state';
 import { displayError, WorkspaceApiError, workspaceApi, type Capability, type MediaMetadata, type Operation, type PublicArtifact, type PublicBalances, type PublicJob, type PublicQuote, type PublicUpload } from './workspace-api';
 import { preparationReducer, quoteReducer } from './workspace-flow-state';
 import '../../styles/payments.css';
@@ -419,8 +419,7 @@ export default function WatermarkWorkspace({ kind, logo, siteName, initialMode =
   }
   const resultSrc = job?.result?.previewUrl;
   const imageSrc = refining ? resultSrc ?? previewUrl : readyResult && view !== 'original' ? resultSrc ?? previewUrl : previewUrl;
-  const previousVersions = jobs.filter(value => value.status === 'READY' && value.id !== job?.id
-    && (value.id === job?.parentJobId || value.parentJobId === job?.id || Boolean(job?.parentJobId && value.parentJobId === job.parentJobId)));
+  const previousVersions = useMemo(() => job && versionsState === 'ready' ? relatedReadyVersions(job, jobs) : [], [job, jobs, versionsState]);
   const actionLabel = refining ? 'Refine image' : objectOperation ? 'Remove object' : backgroundOperation ? 'Remove background' : 'Remove watermarks';
   const submissionDisabled = !canSubmitConfirmation(quote, !!busy, balanceInsufficient || quoteBalance === undefined, uncertainSubmission) || !uncertainSubmission && (!!preparationStatus || !!quoteStatus || selectionEditing || needsMask && !hasSelection || !canOperate || balance?.walletMode === 'unified' && !balance.admissionEnabled);
   const actionBlock = <div className="workspace-action-block">

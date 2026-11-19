@@ -1,4 +1,4 @@
-import type { CreditUnit, PublicBalances } from '../../lib/contracts/processing-public';
+import type { CreditUnit, PublicBalances, PublicJob } from '../../lib/contracts/processing-public';
 
 export function canConfirmQuote(quote: { expiresAt: string } | null, busy: boolean, now = Date.now()) {
   return !!quote && !busy && Date.parse(quote.expiresAt) > now;
@@ -11,6 +11,27 @@ export function jobIsActive(status: string) { return active.has(status); }
 export function canRefineResult(job: { status: string; operation: string; result?: { canRefine?: boolean } }) {
   return job.status === 'READY' && ['image-watermark', 'image-refine'].includes(job.operation) && job.result?.canRefine === true;
 }
+
+export function relatedReadyVersions(current: PublicJob, jobs: PublicJob[]) {
+  const parents = new Map(jobs.map(job => [job.id, job.parentJobId]));
+  parents.set(current.id, current.parentJobId);
+
+  function rootOf(id: string) {
+    const seen = new Set<string>();
+    let parent = parents.get(id);
+    while (parent) {
+      if (seen.has(id)) return undefined;
+      seen.add(id);
+      id = parent;
+      parent = parents.get(id);
+    }
+    return id;
+  }
+
+  const root = rootOf(current.id);
+  return root ? jobs.filter(job => job.id !== current.id && job.status === 'READY' && rootOf(job.id) === root) : [];
+}
+
 export function processingLabel(status: string) {
   const labels: Record<string, string> = { PREPARED: 'Preparing your task', QUEUED: 'Waiting to start', VALIDATING: 'Checking your file', TRANSFERRING: 'Preparing the media', SUBMITTING: 'Starting removal', PROCESSING: 'Removing watermarks', SAVING: 'Saving your result', SETTLING: 'Finalizing your result', READY: 'Ready to review', UNKNOWN: 'Checking the processing confirmation', FAILED: 'Processing could not finish', REFUNDED: 'Processing failed · credits returned', EXPIRED: 'This result has expired' };
   return labels[status] ?? 'Checking task status';
