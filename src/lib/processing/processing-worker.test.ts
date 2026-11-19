@@ -16,11 +16,25 @@ async function setup() {
   const service = new ProcessingService({ jobs, artifacts, quotes, finance, inspector: { inspect: async () => source() }, capabilities: [{ operation: 'image-watermark', enabled: true, acceptedTypes: ['image/jpeg'], maxBytes: 1000 }], prices: { version: 'v1', amount: () => 1 }, now: () => new Date(now), id: () => `id-${++next}` });
   const q = await service.quote({ ownerId: 'user-1', operation: 'image-watermark', inputArtifactId: 'input-1' });
   const job = await service.submit({ ownerId: 'user-1', quoteId: q.id, idempotencyKey: 'first' });
-  const worker = new ProcessingWorker({ jobs, artifacts, finance, provider, now: () => new Date(now), id: () => `attempt-${++next}` });
-  return { jobs, artifacts, finance, provider, job, result, worker, setNow: (value: string) => { now = value; } };
+  const recordTiming = vi.fn();
+  const worker = new ProcessingWorker({ jobs, artifacts, finance, provider, now: () => new Date(now), id: () => `attempt-${++next}`, recordTiming });
+  return { jobs, artifacts, finance, provider, job, result, worker, recordTiming, setNow: (value: string) => { now = value; } };
 }
 
 describe('ProcessingWorker', () => {
+  it('records dispatch, worker start, Provider and result timings without job or owner data', async () => {
+    const f = await setup();
+    const record = (await f.jobs.get(f.job.id))!;
+    await f.jobs.compareAndSwap(f.job.id, record.version, { ...record.job, dispatch: { id: 'dispatch', startedAt: new Date(Date.parse(NOW) + 1000).toISOString(), executionRef: 'cloud-execution' } });
+    f.setNow(new Date(Date.parse(NOW) + 4000).toISOString());
+    expect((await f.worker.run(f.job.id, 'timing-worker')).status).toBe('READY');
+    expect(f.recordTiming.mock.calls.map(([event]) => event)).toEqual([
+      { phase: 'queue', operation: 'image-watermark', outcome: 'ok', durationMs: 1000 },
+      { phase: 'worker-start', operation: 'image-watermark', outcome: 'ok', durationMs: 3000 },
+      { phase: 'provider', operation: 'image-watermark', outcome: 'ok', durationMs: 0 },
+      { phase: 'save-result', operation: 'image-watermark', outcome: 'ok', durationMs: 0 },
+    ]);
+  });
   it.each(['environment', 'walletEpoch'] as const)('rejects a Credits admission with mismatched %s before Provider work', async field => {
     const s = await setup();
     const record = (await s.jobs.get(s.job.id))!;

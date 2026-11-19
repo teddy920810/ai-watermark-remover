@@ -8,6 +8,8 @@ export const creditPolicy = {
   rewards: { first: 100, daily: 100, cap: 300 },
   conversion: { purchase: 1, formalProcessing: 100, freeUse: 100 },
 } as const;
+
+export const legacyImageUsesCopy = 'Older accounts may have free image uses for Standard image watermark removal, background removal, and object removal.';
 export type CreditEnvironment = 'sandbox' | 'live';
 export type WalletPhase = 'legacy' | 'draining' | 'unified';
 export interface WalletState { phase: WalletPhase; epoch: number; environment: CreditEnvironment }

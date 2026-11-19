@@ -1,4 +1,25 @@
 const initialized = new WeakSet<HTMLElement>();
+let comparisonObserver: IntersectionObserver | undefined;
+
+function loadComparison(root: Element) {
+  for (const image of root.querySelectorAll<HTMLImageElement>('img[loading="lazy"]')) image.loading = 'eager';
+}
+
+function deferComparison(root: HTMLElement) {
+  if (typeof IntersectionObserver === 'undefined') {
+    loadComparison(root);
+    return;
+  }
+  comparisonObserver ??= new IntersectionObserver((entries, observer) => {
+    for (const { target, isIntersecting } of entries) {
+      if (!isIntersecting) continue;
+      observer.unobserve(target);
+      // The After layer is hidden until decode, so native lazy loading cannot start it.
+      loadComparison(target);
+    }
+  }, { rootMargin: '240px' });
+  comparisonObserver.observe(root);
+}
 
 export function initializeImageDisplays(scope: ParentNode) {
   scope.querySelectorAll<HTMLElement>('[data-image-display]').forEach(root => {
@@ -52,6 +73,7 @@ export function initializeImageDisplays(scope: ParentNode) {
     controls?.addEventListener('pointerup', finish);
     controls?.addEventListener('pointercancel', finish);
     root.addEventListener('image-display:reset', () => setPosition(50));
+    if (after?.loading === 'lazy') deferComparison(root);
     update();
   });
 }

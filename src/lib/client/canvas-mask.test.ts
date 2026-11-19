@@ -1,7 +1,31 @@
 import { describe, expect, it } from 'vitest';
-import { canvasPoint, writeBinaryMask } from './canvas-mask';
+import { canvasPoint, MaskUndoHistory, writeBinaryMask } from './canvas-mask';
 
 describe('small canvas primitives with operation-owned policies', () => {
+  it('keeps 20 small strokes on a 4000 × 3000 canvas without twenty full-frame snapshots', () => {
+    const restored: [number, number][] = [];
+    let bytes = 0;
+    const context = {
+      canvas: { width: 4000, height: 3000 },
+      getImageData: (_x: number, _y: number, width: number, height: number) => {
+        const data = new Uint8ClampedArray(width * height * 4);
+        bytes += data.byteLength;
+        return { width, height, data };
+      },
+      putImageData: (_image: ImageData, x: number, y: number) => restored.push([x, y]),
+    } as unknown as CanvasRenderingContext2D;
+    const history = new MaskUndoHistory(20);
+    for (let step = 0; step < 20; step++) {
+      history.begin();
+      history.capture(context, 10, 10, 80, 80);
+      history.capture(context, 12, 12, 82, 82);
+      history.finish();
+    }
+    expect(history.length).toBe(20);
+    expect(bytes).toBeLessThan(2 * 1024 * 1024);
+    expect(history.undo(context)).toBe(true);
+    expect(restored).toEqual([[0, 0]]);
+  });
   it('maps coordinates at scaled sizes while preserving object clamp and refinement pointer policies', () => {
     const bounds={left:10,top:20,width:100,height:50};
     expect(canvasPoint(bounds,1000,500,60,45,true)).toEqual({x:500,y:250});

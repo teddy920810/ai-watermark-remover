@@ -121,6 +121,8 @@ Cloud Run 环境中不配置 Vercel 的三项联邦身份字段，也不配置 `
 
 `parallelism` 约束单次 execution 的 task 并行度，不限制多个 execution 的总并发。当前每次 dispatcher 最多认领 10 条 outbox；生产容量还应观察同时运行的 execution、数据库连接和供应商配额，不能把 `parallelism=1` 当作全站一次只处理一个任务。
 
+现有 Cloud Run 日志中的 `processing_timing` 事件按 `phase`、`operation`、`outcome` 和 `durationMs` 记录上传检查、排队、投递至启动 Provider、Provider 尝试和结果登记及结算。Provider 耗时从尝试开始到返回最终结果或查询抛错，部分 Provider 在返回前写入结果。结果登记耗时从服务端登记产物到结算完成。回查和恢复可以留下多条错误样本，按阶段统计耗时和错误样本比例时不要将其当作唯一任务失败率。日志不包含账户、文件名、签名地址或任务 ID。
+
 部署模板中的 `WORKER_ENV_FILE` 仅包含上表非敏感值；Secret 名称、版本由发布负责人替换：
 
 ```text

@@ -41,3 +41,18 @@ describe('Vercel canonical URL redirects', () => {
     });
   });
 });
+
+describe('browser caching for fingerprinted build assets', () => {
+  it.each(['site', 'app'])('limits the %s immutable header to generated JS and CSS', target => {
+    const deployment = JSON.parse(readFileSync(new URL(`../../../apps/${target}/vercel.json`, import.meta.url), 'utf8'));
+    const immutable = deployment.headers.find((rule: { headers: { value: string }[] }) => rule.headers.some(header => /\bimmutable\b/.test(header.value)));
+    const source = immutable?.source as string | undefined;
+    expect(source).toBe(`/_${target}-assets/:asset([A-Za-z0-9_.-]+[.][A-Za-z0-9_-]{8}[.](?:js|css))`);
+    const pattern = new RegExp(`^${source!.replace(':asset', '')}$`);
+    expect(pattern.test(`/_${target}-assets/client.BJQPcj77.js`)).toBe(true);
+    expect(pattern.test(`/_${target}-assets/Stage.Z7o2_YG-.css`)).toBe(true);
+    for (const path of ['/app/free/tiktok', '/api/v1/jobs', `/_${target}-assets/public/image.png`, `/_${target}-assets/client.js`, `/_${target}-assets/client.BJQPcj77.png`]) {
+      expect(pattern.test(path)).toBe(false);
+    }
+  });
+});

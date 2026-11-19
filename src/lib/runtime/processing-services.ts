@@ -12,6 +12,7 @@ import { ProcessingDispatchRecovery } from '../processing/dispatch-recovery';
 import { PostgresProcessingStore } from '../processing/postgres-processing-store';
 import { ProcessingService } from '../processing/processing-service';
 import { ProcessingWorker } from '../processing/processing-worker';
+import { logProcessingTiming } from '../processing/processing-timing';
 import { R2ProcessingJobStore, R2ProcessingQuoteStore, S3ConditionalJsonStore } from '../processing/r2-processing-store';
 import { DewatermarkClient } from '../providers/dewatermark-client';
 import type { ProcessingProviderContext, WatermarkProvider, ProviderOutcome } from '../providers/watermark-provider';
@@ -161,7 +162,7 @@ export function createProcessingRuntime(config: ProcessingRuntimeConfig): Proces
       return (imageAdapters[operation] ??= image?.REPLICATE_API_TOKEN ? new ReplicateImageProvider({ media, operation, config: { apiToken: image.REPLICATE_API_TOKEN, baseUrl: image.REPLICATE_BASE_URL, modelVersion: operation === 'object-removal' ? image.REPLICATE_LAMA_MODEL_VERSION : image.REPLICATE_BACKGROUND_MODEL_VERSION, timeoutMs: image.REPLICATE_TIMEOUT_MS, waitSeconds: image.REPLICATE_WAIT_SECONDS }, now, id }) : unavailableProvider);
     }
     const provider: WatermarkProvider = { submit: context => selected(context).submit(context), poll: context => selected(context).poll(context) };
-    return (worker = new ProcessingWorker({ jobs, artifacts: media, finance, provider, now, id }));
+    return (worker = new ProcessingWorker({ jobs, artifacts: media, finance, provider, now, id, recordTiming: config.scope === 'worker' ? logProcessingTiming : undefined }));
   }
   let closing: Promise<void> | undefined;
   const projection = new PublicProcessingProjection({ media, now, isDemoFor: operation => operation === 'object-removal' ? objectMode === 'mock' : operation === 'background-removal' ? backgroundMode === 'mock' : config.providerMode === 'mock', refinementEnabled: available,

@@ -1,0 +1,16 @@
+---
+import { getCollection } from 'astro:content';
+import BlogArchive from '../../../components/BlogArchive.astro';
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const [posts, [settings]] = await Promise.all([getCollection('blog'), getCollection('blogIndexSettings')]);
+  if (!settings) throw new Error('Blog index CMS settings are missing.');
+  const count = Math.ceil(posts.filter(({ data }) => !data.draft).length / settings.data.postsPerPage);
+  return Array.from({ length: Math.max(0, count - 1) }, (_, index) => ({
+    params: { page: String(index + 2) },
+  }));
+}
+---
+<BlogArchive pageNumber={Number(Astro.params.page)} />

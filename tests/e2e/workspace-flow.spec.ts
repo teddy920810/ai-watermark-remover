@@ -235,12 +235,17 @@ for (const unified of [false, true]) test(unified ? 'unified Credits refinement 
   const previous = { id: 'previous-job', status: 'READY', operation: 'image-watermark', input, result, charge: { status: 'consumed', amount: 1, unit: 'freeUses' }, createdAt: new Date().toISOString() };
   let maskBytes: Buffer | null = null;
   let submissions = 0;
+  let versionReads = 0;
   const refined = { id: 'refinement-job', operation: 'image-refine', status: 'READY', parentJobId: previous.id, input: result, result: { ...result, id: 'refined-result' }, charge: { status: 'settled', amount: 100, unit: 'credits' }, createdAt: new Date().toISOString() };
   await page.route('**/fixture/base.jpg', route => route.fulfill({ status: 200, contentType: 'image/jpeg', body: image }));
   await page.route('**/api/v1/jobs', route => {
-    if (route.request().method() === 'GET') return json(route, { jobs: [previous] });
+    if (route.request().method() === 'GET') { versionReads++; return json(route, { jobs: [previous] }); }
     submissions++; if (unified) balance.credits -= 100;
     return json(route, unified ? refined : { id: 'refinement-job', status: 'FAILED', operation: 'image-refine', parentJobId: previous.id, input: result, charge: { status: 'refunded', amount: 1, unit: 'processingCredits' }, error: 'Refinement could not finish. Your previous result is still available.', createdAt: new Date().toISOString() }, 202);
+  });
+  await page.route('**/api/v1/jobs?view=summary', route => {
+    const { id, operation, status, charge, createdAt } = previous;
+    return json(route, { jobs: [{ id, operation, status, charge, createdAt }] });
   });
   await page.route('**/api/v1/jobs/refinement-job', route => json(route, refined));
   downloadFiles.set('/refined.jpg', { contentType: 'image/jpeg', name: 'refined-image.jpg', bytes: image });
@@ -265,6 +270,10 @@ for (const unified of [false, true]) test(unified ? 'unified Credits refinement 
   await refine.click();
   if (unified) {
     await expect(page.locator('.workspace-balances')).toContainText('900 Credits');
+    expect(versionReads).toBe(0);
+    await page.getByText('Previous versions', { exact: true }).click();
+    await expect(page.locator('.workspace-versions').getByRole('button', { name: /Result/ })).toBeVisible();
+    expect(versionReads).toBe(1);
     const event = page.waitForEvent('download'); await page.getByRole('button', { name: 'Download JPG', exact: true }).click();
     const stream = await (await event).createReadStream(); const chunks: Buffer[] = []; for await (const chunk of stream) chunks.push(Buffer.from(chunk));
     expect(await sharp(Buffer.concat(chunks)).metadata()).toMatchObject({ format: 'jpeg', width: 160, height: 120 });
@@ -275,6 +284,36 @@ for (const unified of [false, true]) test(unified ? 'unified Credits refinement 
     await page.locator('.unified-task-list a').filter({ hasText: 'Ready to review' }).click();
   }
   await expect(page.getByRole('button', { name: 'Download JPG', exact: true })).toBeVisible();
+});
+
+test('Previous versions opens the original result after two refinements', async ({ page }) => {
+  await account(page);
+  const { image, artifact } = await imageUploadFixture(page);
+  const makeJob = (id: string, parentJobId?: string) => ({
+    id, parentJobId, operation: parentJobId ? 'image-refine' : 'image-watermark', status: 'READY',
+    input: artifact, result: { ...artifact, id: `${id}-result`, role: 'result', previewUrl: `${origin}/fixture/version-${id}.jpg` },
+    charge: { status: 'consumed', amount: 1, unit: 'freeUses' }, createdAt: new Date().toISOString(),
+  });
+  const original = makeJob('original');
+  const first = makeJob('first-refinement', original.id);
+  const latest = makeJob('second-refinement', first.id);
+  const unrelated = makeJob('unrelated');
+  let historyReads = 0;
+  await page.route('**/fixture/version-*.jpg', route => route.fulfill({ contentType: 'image/jpeg', body: image }));
+  await page.route('**/api/v1/jobs', route => { historyReads++; return json(route, { jobs: [latest, unrelated, first, original] }); });
+  await page.route(`**/api/v1/jobs/${latest.id}`, route => json(route, latest));
+  await page.route(`**/api/v1/jobs/${original.id}`, route => json(route, original));
+
+  await openWorkspace(page, `/app/image?job=${latest.id}`);
+  await expect(page.getByRole('button', { name: 'Download JPG', exact: true })).toBeVisible();
+  expect(historyReads).toBe(0);
+  await page.getByText('Previous versions', { exact: true }).click();
+  const versions = page.locator('.workspace-versions').getByRole('button', { name: /Result/ });
+  await expect(versions).toHaveCount(2);
+  const originalVersion = versions.filter({ has: page.locator('img[src$="version-original.jpg"]') });
+  await originalVersion.click();
+  await expect(page).toHaveURL(/\?job=original$/);
+  expect(historyReads).toBe(1);
 });
 
 for (const unified of [false, true]) test(unified ? 'unified Credits video spends 100 per started 2 seconds and downloads the MP4 once' : 'video fixed-area processing prices automatically and produces synchronized, downloadable MP4 media', async ({ page }) => {

@@ -3,7 +3,8 @@ import { appendFile } from 'node:fs/promises';
 import process from 'node:process';
 import console from 'node:console';
 import { setTimeout as delay } from 'node:timers/promises';
-import { pathToFileURL } from 'node:url';
+import { pathToFileURL, URL } from 'node:url';
+import { parse } from 'parse5';
 import { projectContent, contentHash, contentImages } from './lib/content-baseline.mjs';
 import { parseCmsDocument } from './lib/cms-document.mjs';
 
@@ -12,6 +13,44 @@ const repository = 'teddy920810/ai-watermark-remover';
 const shaPattern = /^[a-f0-9]{40}$/;
 const blog = /^src\/content\/blog\/[a-z0-9]+(?:-[a-z0-9]+)*\.md$/;
 const asset = /^public\/uploads\/(?:[a-zA-Z0-9_-]+\/)*[a-zA-Z0-9_.-]+\.(?:png|jpe?g|webp|gif|avif)$/i;
+const siteOrigin = 'https://www.watermarkgemini.com';
+
+export async function verifyBlogDiscovery(posts, request = globalThis.fetch) {
+  async function get(path) {
+    const response = await request(new URL(path, siteOrigin), { cache: 'no-store', signal: globalThis.AbortSignal.timeout(20_000) });
+    if (!response.ok) throw new Error(`无法确认正式博客归档：${path} (HTTP ${response.status})`);
+    return response.text();
+  }
+
+  const sitemap = new Set([...((await get('/sitemap.xml')).matchAll(/<loc>([^<]+)<\/loc>/g))].map(match => match[1]));
+  const found = new Set();
+  let path = '/blog';
+  for (let page = 1; path; page++) {
+    let next = '';
+    function visit(node, inList = false, inNavigation = false) {
+      const attrs = Object.fromEntries((node.attrs ?? []).map(({ name, value }) => [name, value]));
+      const classes = (attrs.class ?? '').split(/\s+/);
+      const list = inList || classes.includes('blog-list');
+      const navigation = inNavigation || classes.includes('blog-pagination');
+      if (node.tagName === 'a') {
+        if (list && /^\/blog\/[a-z0-9-]+$/.test(attrs.href ?? '')) found.add(attrs.href);
+        if (navigation && attrs.rel === 'next') next = attrs.href ?? '';
+      }
+      for (const child of node.childNodes ?? []) visit(child, list, navigation);
+    }
+    visit(parse(await get(path)));
+    if (next && next !== `/blog/page/${page + 1}`) throw new Error(`正式博客归档的下一页地址不符合预期：${path}`);
+    path = next;
+  }
+
+  for (const { slug, draft } of posts) {
+    const href = `/blog/${slug}`;
+    const published = draft !== true;
+    if (found.has(href) !== published || sitemap.has(siteOrigin + href) !== published) {
+      throw new Error(`部署已切换，但博客归档或站点地图状态不符合预期：${slug}`);
+    }
+  }
+}
 export function validateRequest(payload) {
   if (payload?.action?.name !== 'publish-blog-batch' || payload.repository?.owner !== 'teddy920810'
     || payload.repository?.repo !== 'ai-watermark-remover' || payload.repository?.ref !== editorBranch
@@ -158,6 +197,7 @@ export async function publishBatch({ payload, token, actor, runId, git, request 
         const response = await request(`https://www.watermarkgemini.com/blog/${entry.data.slug}`, { cache: 'no-store', signal: globalThis.AbortSignal.timeout(20_000) });
         if (response.status !== (entry.data.draft === true ? 404 : 200)) throw new Error(`部署已切换，但文章状态不符合预期：${entry.data.slug}`);
       }
+      await verifyBlogDiscovery(entries.map(entry => entry.data), request);
       // Sync only after acceptance so a failed deployment retry retains its batch SHA.
       // Merge, never reset: preserve newer saves and main content.
       const synced = await request(`https://api.github.com/repos/${repository}/merges`, {
@@ -166,7 +206,7 @@ export async function publishBatch({ payload, token, actor, runId, git, request 
         body: JSON.stringify({ base: editorBranch, head: merged, commit_message: 'content: sync published batch into blog editing branch' }),
       });
       if (!synced.ok) await report('编辑分支同步未完成，已保留全部保存内容；下次发布前需处理冲突。已合并的线上发布不受影响。');
-      await report(`批量发布完成：${pull.html_url}\n\n正式Site已包含合并版本，${entries.length} 篇博客的公开/草稿状态已核对。刷新CMS编辑页后继续下一批。`);
+      await report(`批量发布完成：${pull.html_url}\n\n正式Site已包含合并版本，${entries.length} 篇博客的访问、归档和站点地图状态已核对。刷新CMS编辑页后继续下一批。`);
       return { state: 'published', merged, pull: pull.number };
     }
     await pause(15_000);

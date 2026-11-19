@@ -79,6 +79,8 @@ export interface PublicJob {
   isDemo: boolean;
 }
 
+export type PublicJobSummary = Pick<PublicJob, 'id' | 'operation' | 'status' | 'charge' | 'createdAt' | 'parentJobId'>;
+
 export interface PublicUpload {
   id: string;
   kind: 'image' | 'video' | 'mask';
