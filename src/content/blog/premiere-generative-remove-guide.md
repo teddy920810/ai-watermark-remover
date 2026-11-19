@@ -10,7 +10,7 @@ readTime: 10 min read
 author: WatermarkGemini Editorial Team
 category: Guide
 featured: false
-draft: true
+draft: false
 contentMode: markdown
 bodyHtml: <p></p>
 ---
