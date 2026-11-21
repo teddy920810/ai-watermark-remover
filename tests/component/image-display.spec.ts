@@ -2,7 +2,10 @@ import { expect, test } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 
 const loadingMessage = 'Loading comparison…';
-test.use({ reducedMotion: 'reduce' });
+
+test.beforeEach(async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+});
 
 test('preserves the configured alt verbatim for both image sources', async ({ page }) => {
   await page.goto('/');
