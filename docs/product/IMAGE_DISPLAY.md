@@ -7,9 +7,9 @@ Status: current implementation contract. P5 content replacements were revoked by
 - No image: render nothing; the enclosing module decides whether the module is required.
 - Image 1 only: static image without labels, range, line or handle.
 - Image 1 and a different Image 2: Image 1 is Before on the left, Image 2 is After on the right. Enable comparison only after both load and their aspect ratios match. Matching ratios cannot establish that two photos show the same composition; editors must verify that separately.
-- Both sources of a pair load eagerly. Otherwise an After that finishes first can hide the still-lazy Before and prevent comparison from becoming ready. Single-image loading still follows its normal eager/lazy setting.
-- Failure: show the successfully loaded image without comparison controls. If neither loads, show the existing readable failure state. A generated placeholder never counts as a loaded comparison source.
-- Comparison starts at 50%, supports native range keyboard navigation, pointer capture and touch. `image-display:reset` resets a newly selected example to 50%.
+- The default Hero example starts loading both images on page load. A deferred pair starts both requests when it comes within 240 px of the viewport or as soon as the visitor selects its example. Single-image loading follows its configured eager/lazy setting.
+- An active pair displays “Loading comparison…” after 300 ms while waiting for either image. The notice clears when both images load or either fails. A failed or misaligned pair keeps the available static image. If neither image loads, show the existing readable failure state. A generated placeholder never counts as a loaded comparison source.
+- Comparison starts at 50%, supports native range keyboard navigation, pointer capture and touch. `image-display:reset` resets a newly selected example to 50% and starts its deferred pair immediately.
 
 Natural aspect ratio is the default. Existing fixed-size cards/step frames explicitly pass `fit="cover"`; both sources then use the same frame and crop rule. This keeps nested image markup from leaving blank bands in a pre-existing frame. It does not turn a single image into a comparison.
 
