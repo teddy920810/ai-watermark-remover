@@ -51,59 +51,64 @@
       "title": "Remove Logo from Image",
       "description": "Remove unwanted logos and brand marks from images you own or are authorized to edit. Compare the original and cleaned result side by side to check edges, textures, colors, and surrounding details before downloading.",
       "href": "/remove-logo-from-image",
-      "image": "/uploads/home-blueprint/results/result-01-logo-hiker.png",
+      "image": "/uploads/home-blueprint/results/result-01-logo-hiker-before.png",
       "imageAlt": "Hiker in a mountain landscape for a branded logo removal comparison",
       "cta": "Remove Logo Now →",
-      "watermark": "watermark"
+      "watermark": "watermark",
+      "afterImage": "/uploads/home-blueprint/results/result-01-logo-hiker.png"
     },
     {
       "icon": "T",
       "title": "Remove Text from Image",
       "description": "Remove unwanted text from image files, including captions, labels, text overlays, and visible stamps. AI reconstructs the cleared area using surrounding image information for a cleaner result.",
       "href": "/remove-text-from-image",
-      "image": "/uploads/home-blueprint/results/result-02-magazine-model.png",
+      "image": "/uploads/home-blueprint/results/result-02-magazine-model-before.png",
       "imageAlt": "Fashion model for a magazine-cover text removal comparison",
       "cta": "Remove Text Now →",
-      "watermark": "watermark"
+      "watermark": "watermark",
+      "afterImage": "/uploads/home-blueprint/results/result-02-magazine-model.png"
     },
     {
       "icon": "✦",
       "title": "Remove Gemini Watermark",
       "description": "Remove a visible Gemini watermark from an image you own or have permission to edit. Keep the original crop and review the cleaned area before downloading the result.",
       "href": "/gemini-watermark-remover",
-      "image": "/uploads/home-blueprint/results/result-03-gemini-water.png",
+      "image": "/uploads/home-blueprint/results/result-03-gemini-water-before.png",
       "imageAlt": "Portrait in water for an AI-generated mark removal comparison",
       "cta": "Remove Gemini Watermark →",
-      "watermark": "watermark"
+      "watermark": "watermark",
+      "afterImage": "/uploads/home-blueprint/results/result-03-gemini-water.png"
     },
     {
       "icon": "◷",
       "title": "Remove Date Stamp",
       "description": "Remove date stamps and visible timestamps from travel photos, camera images, old photos, and other files you are allowed to edit while keeping nearby image details intact.",
       "href": "/#tool",
-      "image": "/uploads/home-blueprint/results/result-04-date-pyramids.png",
+      "image": "/uploads/home-blueprint/results/result-04-date-pyramids-before.png",
       "imageAlt": "Tourist in front of pyramids for a date stamp removal comparison",
       "cta": "Remove Date Stamp →",
       "watermark": "2025.06.18 14:32",
-      "comparisonStyle": "date"
+      "comparisonStyle": "date",
+      "afterImage": "/uploads/home-blueprint/results/result-04-date-pyramids.png"
     },
     {
       "icon": "✎",
       "title": "Remove Signature",
       "description": "Remove a visible signature from an authorized image or document screenshot and compare the repaired area with the original before you download.",
       "href": "/#tool",
-      "image": "/uploads/home-blueprint/results/result-05-signature-invoice.png",
+      "image": "/uploads/home-blueprint/results/result-05-signature-invoice-before.png",
       "imageAlt": "Invoice document for a handwritten signature removal comparison",
       "cta": "Remove Signature →",
       "watermark": "Avery Collins, Authorized",
-      "comparisonStyle": "signature"
+      "comparisonStyle": "signature",
+      "afterImage": "/uploads/home-blueprint/results/result-05-signature-invoice.png"
     }
   ],
   "useCaseSection": {
-    "eyebrow": "Real-world results",
+    "eyebrow": "Illustrative examples",
     "heading": "See What Our Image Watermark Remover Can Clean",
     "headingHighlight": "Image Watermark Remover",
-    "intro": "Explore common watermark removal examples and drag the slider to compare the original image with the cleaned result."
+    "intro": "Explore common watermark removal examples and drag the slider to compare the original image with the cleaned result. Illustrative comparisons — not tested product outputs. Actual results depend on your image."
   },
   "process": {
     "eyebrow": "How it works",

@@ -2,12 +2,28 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { homepageSchema } from './homepage';
 import { parse } from 'yaml';
+import sharp from 'sharp';
 
 const homepage = JSON.parse(
   readFileSync(new URL('../../content/homepage/home.json', import.meta.url), 'utf8'),
 );
 
 describe('homepage CMS content', () => {
+  it('supplies five aligned result pairs while retaining every original scene', async () => {
+    const parsed = homepageSchema.parse(homepage);
+    const originals = ['result-01-logo-hiker.png', 'result-02-magazine-model.png', 'result-03-gemini-water.png', 'result-04-date-pyramids.png', 'result-05-signature-invoice.png'];
+    expect(parsed.useCases).toHaveLength(originals.length);
+    for (const [index, item] of parsed.useCases.entries()) {
+      expect(item.afterImage, item.title).toBeTruthy();
+      expect(item.image).not.toBe(item.afterImage);
+      expect(item.afterImage).toBe(`/uploads/home-blueprint/results/${originals[index]}`);
+      const sources = [item.image!, item.afterImage!].map(source => new URL(`../../../public${source}`, import.meta.url));
+      const images = await Promise.all(sources.map(source => sharp(readFileSync(source)).metadata()));
+      expect([images[0].width, images[0].height]).toEqual([images[1].width, images[1].height]);
+      expect(readFileSync(sources[0]).equals(readFileSync(sources[1]))).toBe(false);
+    }
+    expect(parsed.useCaseSection.intro).toContain('Illustrative comparisons');
+  });
   it('supplies the four approved independent hero image pairs', () => {
     const parsed = homepageSchema.parse(homepage);
     const approvedSamples = [
@@ -75,7 +91,7 @@ describe('homepage CMS content', () => {
     expect(parsed.audiences.cards).toHaveLength(3);
     expect(parsed.testimonials.cards).toHaveLength(8);
     expect(parsed.removalTools.cards).toHaveLength(8);
-    expect(parsed.useCases.slice(0, 3).map(item => item.image)).toEqual([
+    expect(parsed.useCases.slice(0, 3).map(item => item.afterImage ?? item.image)).toEqual([
       '/uploads/home-blueprint/results/result-01-logo-hiker.png',
       '/uploads/home-blueprint/results/result-02-magazine-model.png',
       '/uploads/home-blueprint/results/result-03-gemini-water.png',

@@ -331,7 +331,7 @@ test('homepage matches blueprint geometry and keeps mobile comparisons and activ
   expect(mobile.noteBottom).toBeLessThanOrEqual(mobile.trustTop);
 });
 
-test('homepage hero pairs drag and reset when samples switch while scenarios remain single images', async ({ page }) => {
+test('homepage hero pairs drag and reset when samples switch', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/');
   const home = JSON.parse(readFileSync(new URL('../../src/content/homepage/home.json', import.meta.url), 'utf8'));
@@ -387,9 +387,7 @@ test('homepage hero pairs drag and reset when samples switch while scenarios rem
       }, position)).toBeLessThan(2);
     }
   }
-  await page.locator('[data-scenario-direction=next]:visible').click();
-  await expect(page.locator('[data-scenario-panel]:visible [data-image-display]')).toBeVisible();
-  await expect(page.locator('[data-scenario-panel]:visible input[type=range],.fixed-watermark,.home-demo-watermark')).toHaveCount(0);
+  await expect(page.locator('.fixed-watermark,.home-demo-watermark')).toHaveCount(0);
 });
 
 test('homepage reference controls, tools, highlighted headings, and guide lists work together', async ({ page }) => {
@@ -425,7 +423,7 @@ test('homepage CMS PNG and JPEG images load generated responsive WebP variants',
 
   for (let index = 0; index < await panels.count(); index += 1) {
     await results.getByRole('tab').nth(index).click();
-    const image = panels.nth(index).locator('img');
+    const image = panels.nth(index).locator('[data-image-side="before"] img');
     await image.scrollIntoViewIfNeeded();
     await expect(image.locator('xpath=..')).toHaveJSProperty('tagName', 'PICTURE');
     await expect(image.locator('xpath=..').locator('source[type="image/webp"]')).toHaveAttribute(
