@@ -346,8 +346,12 @@
     },
     {
       "file": "src/content/homepage/home.json",
-      "semanticSha256": "6752c0f7dee51c4484c0e2afdeef1c67d562d75528247220aad661e22291fe41",
+      "semanticSha256": "5369706fed8982e3dc32809a00884e175ec1a3844a1fe2dbfa73bafb682761c6",
       "images": [
+        {
+          "path": "/shareImage",
+          "value": "/uploads/og-card.svg"
+        },
         {
           "path": "/hero/samples/0/image",
           "value": "/uploads/content-api/7e8cdeb0709d4133eb01d84d/gemini-watermark-remover-hero-03-serum-product-before-d397e6da83740ca6.webp"
@@ -382,43 +386,63 @@
         },
         {
           "path": "/useCases/0/image",
-          "value": "/uploads/home-blueprint/results/result-01-logo-hiker.png"
+          "value": "/uploads/home-blueprint/results/result-01-logo-hiker-before.png"
         },
         {
           "path": "/useCases/0/imageAlt",
           "value": "Hiker in a mountain landscape for a branded logo removal comparison"
         },
         {
+          "path": "/useCases/0/afterImage",
+          "value": "/uploads/home-blueprint/results/result-01-logo-hiker.png"
+        },
+        {
           "path": "/useCases/1/image",
-          "value": "/uploads/home-blueprint/results/result-02-magazine-model.png"
+          "value": "/uploads/home-blueprint/results/result-02-magazine-model-before.png"
         },
         {
           "path": "/useCases/1/imageAlt",
           "value": "Fashion model for a magazine-cover text removal comparison"
         },
         {
+          "path": "/useCases/1/afterImage",
+          "value": "/uploads/home-blueprint/results/result-02-magazine-model.png"
+        },
+        {
           "path": "/useCases/2/image",
-          "value": "/uploads/home-blueprint/results/result-03-gemini-water.png"
+          "value": "/uploads/home-blueprint/results/result-03-gemini-water-before.png"
         },
         {
           "path": "/useCases/2/imageAlt",
           "value": "Portrait in water for an AI-generated mark removal comparison"
         },
         {
+          "path": "/useCases/2/afterImage",
+          "value": "/uploads/home-blueprint/results/result-03-gemini-water.png"
+        },
+        {
           "path": "/useCases/3/image",
-          "value": "/uploads/home-blueprint/results/result-04-date-pyramids.png"
+          "value": "/uploads/home-blueprint/results/result-04-date-pyramids-before.png"
         },
         {
           "path": "/useCases/3/imageAlt",
           "value": "Tourist in front of pyramids for a date stamp removal comparison"
         },
         {
+          "path": "/useCases/3/afterImage",
+          "value": "/uploads/home-blueprint/results/result-04-date-pyramids.png"
+        },
+        {
           "path": "/useCases/4/image",
-          "value": "/uploads/home-blueprint/results/result-05-signature-invoice.png"
+          "value": "/uploads/home-blueprint/results/result-05-signature-invoice-before.png"
         },
         {
           "path": "/useCases/4/imageAlt",
           "value": "Invoice document for a handwritten signature removal comparison"
+        },
+        {
+          "path": "/useCases/4/afterImage",
+          "value": "/uploads/home-blueprint/results/result-05-signature-invoice.png"
         },
         {
           "path": "/features/items/0/image",
@@ -541,7 +565,7 @@
           "value": "Before-and-after architecture sketch showing a handwritten signature removed"
         }
       ],
-      "contentOwnerApproval": "https://github.com/teddy920810/ai-watermark-remover/pull/117#issuecomment-6606766433"
+      "contentOwnerApproval": "https://github.com/teddy920810/ai-watermark-remover/pull/169"
     },
     {
       "file": "src/content/landing-pages/batch-watermark-remover.json",

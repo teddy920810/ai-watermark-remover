@@ -333,7 +333,7 @@ test('homepage matches blueprint geometry and keeps mobile comparisons and activ
 
 test('homepage hero pairs drag and reset when samples switch', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto('/');
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
   const home = JSON.parse(readFileSync(new URL('../../src/content/homepage/home.json', import.meta.url), 'utf8'));
   await expect(page.locator('.illustration-note')).toHaveText('Illustrative comparisons — not tested product outputs. Actual results depend on your image.');
   const buttons = page.locator('[data-hero-sample]');
