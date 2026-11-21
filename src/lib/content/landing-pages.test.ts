@@ -124,7 +124,7 @@ describe('tool landing-page usage steps', () => {
     expect(searchableCopy).toContain(keyword);
   });
 
-  it('initializes /remove-background with its dedicated tool, steps, features, FAQ, and original visuals', () => {
+  it('initializes /remove-background with its dedicated tool, workflow images, features, and FAQ', () => {
     const page = JSON.parse(
       readFileSync(new URL('../../content/landing-pages/remove-background.json', import.meta.url), 'utf8'),
     );
@@ -133,7 +133,7 @@ describe('tool landing-page usage steps', () => {
     expect(page.toolKind).toBe('background-remover');
     expect(page.process.steps).toHaveLength(3);
     expect(page.process.steps.every((step: { image?: string }) => step.image?.startsWith('/uploads/background-remover-'))).toBe(true);
-    expect(page.features.items).toHaveLength(3);
+    expect(page.features.items).toHaveLength(4);
     expect(page.features.items.every((item: { image: string }) => existsSync(new URL(`../../../public${item.image}`, import.meta.url)))).toBe(true);
     expect(page.faq.items.length).toBeGreaterThanOrEqual(6);
     expect(landingPageSource).toContain('recommendation = pageRecommendation(page)');
@@ -148,7 +148,7 @@ describe('tool landing-page usage steps', () => {
 
     expect(page).toMatchObject({ slug: 'remove-object', toolKind: 'object-remover' });
     expect(page.process.steps).toHaveLength(3);
-    expect(page.features.items).toHaveLength(3);
+    expect(page.features.items).toHaveLength(4);
     expect(page.faq.items.length).toBeGreaterThanOrEqual(6);
     expect(landingPageSource).toContain('recommendation = pageRecommendation(page)');
     expect(landingPageSource).toContain('<MediaLauncher source={page.slug}');
@@ -167,9 +167,9 @@ describe('tool landing-page usage steps', () => {
     });
     expect(page.statusLabel).toBeUndefined();
     expect(page.process.steps).toHaveLength(3);
-    expect(page.faq.items).toHaveLength(6);
-    expect(page.features.items).toHaveLength(3);
-    expect(page.features.items.map((item: { imagePosition: string }) => item.imagePosition)).toEqual(['right', 'left', 'right']);
+    expect(page.faq.items).toHaveLength(11);
+    expect(page.features.items).toHaveLength(4);
+    expect(page.features.items.map((item: { imagePosition: string }) => item.imagePosition)).toEqual(['right', 'left', 'right', 'left']);
     expect(page.scope.items).toHaveLength(3);
     expect(page.cta.buttonHref).toBe('#tool');
     expect(page.heroActions.map((action: { href: string }) => action.href)).toEqual(['#tool', '#image-requirements']);
@@ -177,9 +177,29 @@ describe('tool landing-page usage steps', () => {
     expect(copy).toContain('c2pa content credentials');
     expect(copy).toContain('synthid');
     expect(copy).toContain('does not detect or remove hidden or invisible');
-    expect(copy).toContain('does not process chatgpt text');
+    expect(copy).toContain('it cannot process copied responses');
     expect(copy).toContain('not affiliated with or endorsed by openai');
     expect(copy).not.toMatch(/hold|serp|release blocker/i);
   });
 
+  it.each([
+    'batch-watermark-remover', 'capcut-watermark-remover', 'chatgpt-watermark-remover',
+    'instagram-watermark-remover', 'nano-banana-watermark-remover', 'remove-background',
+    'remove-emoji-from-photo', 'remove-logo-from-video', 'remove-object-from-video',
+    'remove-object', 'remove-person-from-photo', 'remove-text-from-video',
+  ])('keeps all delivered Hero and Feature comparisons usable on /%s', slug => {
+    const page = JSON.parse(readFileSync(new URL(`../../content/landing-pages/${slug}.json`, import.meta.url), 'utf8'));
+    expect(page.heroSamples).toHaveLength(3);
+    expect(page.features.items).toHaveLength(4);
+    for (const { image, afterImage, imageAlt, afterImageAlt } of [...page.heroSamples, ...page.features.items]) {
+      expect(image).not.toBe(afterImage);
+      for (const source of [image, afterImage]) {
+        expect(source).toMatch(new RegExp(`^/uploads/landing-20261121/${slug}/.+\\.png$`));
+        expect(existsSync(new URL(`../../../public${source}`, import.meta.url))).toBe(true);
+      }
+      expect(imageAlt).toMatch(/\S/);
+      expect(afterImageAlt).toMatch(/\S/);
+      expect(afterImageAlt).not.toBe(imageAlt);
+    }
+  });
 });

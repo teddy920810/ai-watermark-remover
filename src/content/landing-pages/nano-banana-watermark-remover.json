@@ -17,20 +17,26 @@
     {
       "id": "still-life",
       "label": "Product still life",
-      "image": "/uploads/nano-banana-20261107/still-life.webp",
-      "imageAlt": "AI-generated illustrative still life of a pale yellow vase, green stems, a banana and cream linen on a stone plinth; not a processed result."
+      "image": "/uploads/landing-20261121/nano-banana-watermark-remover/Hero_01_Before_538x436.png",
+      "imageAlt": "Illustrative before view of a yellow vase and banana still life with a Gemini sparkle in the corner.",
+      "afterImage": "/uploads/landing-20261121/nano-banana-watermark-remover/Hero_01_After_538x436.png",
+      "afterImageAlt": "Illustrative after view of the same still life without the corner sparkle."
     },
     {
       "id": "landscape",
       "label": "Travel landscape",
-      "image": "/uploads/nano-banana-20261107/landscape.webp",
-      "imageAlt": "AI-generated illustrative alpine lake landscape with a small timber cabin, mountains and wildflowers; not a processed result."
+      "image": "/uploads/landing-20261121/nano-banana-watermark-remover/Hero_02_Before_538x436.png",
+      "imageAlt": "Illustrative before view of an alpine lake and cabin with a Gemini sparkle in the corner.",
+      "afterImage": "/uploads/landing-20261121/nano-banana-watermark-remover/Hero_02_After_538x436.png",
+      "afterImageAlt": "Illustrative after view of the same alpine scene without the corner sparkle."
     },
     {
       "id": "texture",
       "label": "Fine textures",
-      "image": "/uploads/nano-banana-20261107/texture.webp",
-      "imageAlt": "AI-generated illustrative close-up of woven linen, a ribbed glass and leaf shadows on a sunlit table; not a processed result."
+      "image": "/uploads/landing-20261121/nano-banana-watermark-remover/Hero_03_Before_538x436.png",
+      "imageAlt": "Illustrative before view of a glass on textured linen with a Gemini sparkle in the corner.",
+      "afterImage": "/uploads/landing-20261121/nano-banana-watermark-remover/Hero_03_After_538x436.png",
+      "afterImageAlt": "Illustrative after view of the same glass and linen without the corner sparkle."
     }
   ],
   "process": {
@@ -65,36 +71,44 @@
         "eyebrow": "FEATURE 1",
         "heading": "Clean Nano Banana Watermarks Without Cropping",
         "description": "A sparkle near the edge can interfere with a product arrangement, slide title or social-media safe area. Cropping may remove valuable whitespace, cut off a border or change the aspect ratio. WatermarkGemini targets a visible marked region of an authorized image rather than cutting away the picture. Compare the full frame before and after, especially if text or a subject touches the corner.",
-        "image": "/uploads/nano-banana-20261107/still-life.webp",
-        "imageAlt": "AI-generated illustrative product arrangement with a yellow vase, banana and linen, showing space around the subject; not a tested cleanup result.",
-        "imagePosition": "left"
+        "image": "/uploads/landing-20261121/nano-banana-watermark-remover/Feature_01_Before_640x347.png",
+        "imageAlt": "Illustrative before view of a terracotta bottle and fruit with a Gemini sparkle in the corner.",
+        "imagePosition": "left",
+        "afterImage": "/uploads/landing-20261121/nano-banana-watermark-remover/Feature_01_After_640x347.png",
+        "afterImageAlt": "Illustrative after view of the same arrangement without the corner sparkle."
       },
       {
         "enabled": true,
         "eyebrow": "FEATURE 2",
         "heading": "Keep Fine Details in Nano Banana Pro and 2 Images",
         "description": "Nano Banana Pro and Nano Banana 2 can produce detailed text, textures and visual compositions. That makes an obvious blur patch more frustrating. The removal workflow aims to blend the visibly marked area with nearby colors and detail, but fine typography, hair, patterned cloth, reflections and shadows can still change. Inspect 100% zoom and do not claim pixel-perfect restoration.",
-        "image": "/uploads/nano-banana-20261107/landscape.webp",
-        "imageAlt": "AI-generated illustrative alpine lake and timber cabin with mountains and wildflowers, representing a saved travel composition; not a tested cleanup result.",
-        "imagePosition": "right"
+        "image": "/uploads/landing-20261121/nano-banana-watermark-remover/Feature_02_Before_640x347.png",
+        "imageAlt": "Illustrative before view of a knitted throw and patterned cup with a Gemini sparkle in the corner.",
+        "imagePosition": "right",
+        "afterImage": "/uploads/landing-20261121/nano-banana-watermark-remover/Feature_02_After_640x347.png",
+        "afterImageAlt": "Illustrative after view of the same still life without the corner sparkle."
       },
       {
         "enabled": true,
         "eyebrow": "FEATURE 3",
         "heading": "Clean Existing Gemini Images Without Generating Again",
         "description": "When a client has approved a precise image, making another Nano Banana prompt may shift identity, layout, lighting or written content. A targeted edit of the saved image can be a practical alternative, whether it was created using Nano Banana, Nano Banana Pro or Nano Banana 2. The tool does not generate images, change your prompt, access your Google image library or automatically identify which model created a file.",
-        "image": "/uploads/nano-banana-20261107/texture.webp",
-        "imageAlt": "AI-generated illustrative detail of woven linen, ribbed glass and leaf shadows, showing textures to inspect after editing; not a tested cleanup result.",
-        "imagePosition": "left"
+        "image": "/uploads/landing-20261121/nano-banana-watermark-remover/Feature_03_Before_640x347.png",
+        "imageAlt": "Illustrative before view of a green chair in a sunlit room with a Gemini sparkle in the corner.",
+        "imagePosition": "left",
+        "afterImage": "/uploads/landing-20261121/nano-banana-watermark-remover/Feature_03_After_640x347.png",
+        "afterImageAlt": "Illustrative after view of the same room without the corner sparkle."
       },
       {
         "eyebrow": "FEATURE 4",
         "heading": "Know What Is Removed, What Stays and What It Costs",
         "description": "This service works with visible image marks. It does not claim to remove invisible Google SynthID, C2PA Content Credentials or a required AI-origin disclosure. JPG, PNG and WebP inputs up to 10 MB are supported, with JPG output. Google sign-in is required before processing; eligible standard images may use limited free uses, while other modes require available credits. Uploaded files and results use private temporary storage and are generally scheduled for deletion after about 24 hours; deletion can occur later.",
         "enabled": true,
-        "image": "/uploads/nano-banana-20261114/feature-04.webp",
-        "imageAlt": "Illustrative nano banana watermark remover use case 4: know what is removed, what stays and what it costs, showing one matched scene without cropping or missing subjects.",
-        "imagePosition": "right"
+        "image": "/uploads/landing-20261121/nano-banana-watermark-remover/Feature_04_Before_640x347.png",
+        "imageAlt": "Illustrative before view of a teapot and cup with a Gemini sparkle in the corner.",
+        "imagePosition": "right",
+        "afterImage": "/uploads/landing-20261121/nano-banana-watermark-remover/Feature_04_After_640x347.png",
+        "afterImageAlt": "Illustrative after view of the same tea set without the corner sparkle."
       }
     ]
   },

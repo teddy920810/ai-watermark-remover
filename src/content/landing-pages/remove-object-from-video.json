@@ -45,23 +45,26 @@
     {
       "id": "preview-1",
       "label": "Fixed corner prop",
-      "image": "/uploads/landing-new-20261114/remove-object-from-video/hero-01-before.webp",
-      "afterImage": "/uploads/landing-new-20261114/remove-object-from-video/hero-01-after.webp",
-      "imageAlt": "Illustrative before-and-after comparison for fixed corner prop, with the same composition and only the selected distracting overlay changed."
+      "image": "/uploads/landing-20261121/remove-object-from-video/Hero_01_Before_538x436.png",
+      "afterImage": "/uploads/landing-20261121/remove-object-from-video/Hero_01_After_538x436.png",
+      "imageAlt": "Illustrative before view of a pitcher on a table with a cable at the edge of the frame.",
+      "afterImageAlt": "Illustrative after view of the same pitcher scene without the cable."
     },
     {
       "id": "preview-2",
       "label": "Static sign near a wall",
-      "image": "/uploads/landing-new-20261114/remove-object-from-video/hero-02-before.webp",
-      "afterImage": "/uploads/landing-new-20261114/remove-object-from-video/hero-02-after.webp",
-      "imageAlt": "Illustrative before-and-after comparison for static sign near a wall, with the same composition and only the selected distracting overlay changed."
+      "image": "/uploads/landing-20261121/remove-object-from-video/Hero_02_Before_538x436.png",
+      "afterImage": "/uploads/landing-20261121/remove-object-from-video/Hero_02_After_538x436.png",
+      "imageAlt": "Illustrative before view of an arched doorway with a small red sign beside it.",
+      "afterImageAlt": "Illustrative after view of the same doorway frame without the sign."
     },
     {
       "id": "preview-3",
       "label": "Small overlay-like distraction",
-      "image": "/uploads/landing-new-20261114/remove-object-from-video/hero-03-before.webp",
-      "afterImage": "/uploads/landing-new-20261114/remove-object-from-video/hero-03-after.webp",
-      "imageAlt": "Illustrative before-and-after comparison for small overlay-like distraction, with the same composition and only the selected distracting overlay changed."
+      "image": "/uploads/landing-20261121/remove-object-from-video/Hero_03_Before_538x436.png",
+      "afterImage": "/uploads/landing-20261121/remove-object-from-video/Hero_03_After_538x436.png",
+      "imageAlt": "Illustrative before view of a coastal sunset with an orange rectangle in the sky.",
+      "afterImageAlt": "Illustrative after view of the same sunset frame without the orange rectangle."
     }
   ],
   "features": {
@@ -74,36 +77,44 @@
         "eyebrow": "FEATURE 1",
         "heading": "Target a Small Distraction Without Reframing the Shot",
         "description": "Cropping a prop or mark from the frame can also cut off a subject, a product label or needed space for captions. For a small object-like distraction that stays in one screen location, a tight selection may be worth testing as an alternative. The existing video tool is built for visible marks and watermarks; it is not validated as a general physical-object remover.",
-        "image": "/uploads/landing-new-20261114/remove-object-from-video/feature-01.webp",
-        "imageAlt": "Illustrative remove object from video use case 1: target a small distraction without reframing the shot, showing one matched scene without cropping or missing subjects.",
-        "imagePosition": "left"
+        "image": "/uploads/landing-20261121/remove-object-from-video/Feature_01_Before_640x347.png",
+        "imageAlt": "Illustrative before view of a teapot on a table with a loose cable at the edge.",
+        "imagePosition": "left",
+        "afterImage": "/uploads/landing-20261121/remove-object-from-video/Feature_01_After_640x347.png",
+        "afterImageAlt": "Illustrative after view of the same table frame with the cable absent."
       },
       {
         "enabled": true,
         "eyebrow": "FEATURE 2",
         "heading": "Understand the Difference Between Fixed and Moving Objects",
         "description": "A coffee cup sitting in exactly the same on-screen position is a different challenge from a passerby walking across the scene. The current fixed box does not track moving objects, follow perspective or turn itself off when a subject leaves the area. For moving people, vehicles, pets or handheld props, choose a video editor with object masks and motion tracking, or reshoot or replace the segment.",
-        "image": "/uploads/landing-new-20261114/remove-object-from-video/feature-02.webp",
-        "imageAlt": "Illustrative remove object from video use case 2: understand the difference between fixed and moving objects, showing one matched scene without cropping or missing subjects.",
-        "imagePosition": "right"
+        "image": "/uploads/landing-20261121/remove-object-from-video/Feature_02_Before_640x347.png",
+        "imageAlt": "Illustrative before view of a courtyard with a small object on a round table.",
+        "imagePosition": "right",
+        "afterImage": "/uploads/landing-20261121/remove-object-from-video/Feature_02_After_640x347.png",
+        "afterImageAlt": "Illustrative after view of the same courtyard frame with the table clear."
       },
       {
         "enabled": true,
         "eyebrow": "FEATURE 3",
         "heading": "Review Background Repair Across Frames",
         "description": "AI may approximate pixels hidden behind the selected area, but it cannot restore the exact recorded background. Check shadows, straight edges, flicker and frames in which the area crosses important visual content. A flat wall or plain surface is usually easier than water, hair, reflections or patterned clothing. Testing a short representative segment is safer than relying on a still-image preview alone.",
-        "image": "/uploads/landing-new-20261114/remove-object-from-video/feature-03.webp",
-        "imageAlt": "Illustrative remove object from video use case 3: review background repair across frames, showing one matched scene without cropping or missing subjects.",
-        "imagePosition": "left"
+        "image": "/uploads/landing-20261121/remove-object-from-video/Feature_03_Before_640x347.png",
+        "imageAlt": "Illustrative before view of a bench and planter beside a dark wall plaque.",
+        "imagePosition": "left",
+        "afterImage": "/uploads/landing-20261121/remove-object-from-video/Feature_03_After_640x347.png",
+        "afterImageAlt": "Illustrative after view of the same courtyard wall without the plaque."
       },
       {
         "enabled": true,
         "eyebrow": "FEATURE 4",
         "heading": "Check Real File Limits, Credits and Privacy",
         "description": "The currently documented video workspace processes one compatible MP4 at 24 fps, up to 9 minutes and 100 MB. Google sign-in and administrator-allocated processing credits are required; standard photo free uses are separate. Fixed-area cleanup and automatic watermark detection are the documented controls. Uploads and results use private temporary storage scheduled for deletion after around 24 hours; avoid unsupported claims about prompt selection, multi-keyframe tracking or batch exports.",
-        "image": "/uploads/landing-new-20261114/remove-object-from-video/feature-04.webp",
-        "imageAlt": "Illustrative remove object from video use case 4: check real file limits, credits and privacy, showing one matched scene without cropping or missing subjects.",
-        "imagePosition": "right"
+        "image": "/uploads/landing-20261121/remove-object-from-video/Feature_04_Before_640x347.png",
+        "imageAlt": "Illustrative before view of a laptop and camera with an orange item on the desk.",
+        "imagePosition": "right",
+        "afterImage": "/uploads/landing-20261121/remove-object-from-video/Feature_04_After_640x347.png",
+        "afterImageAlt": "Illustrative after view of the same desk frame without the orange item."
       }
     ]
   },

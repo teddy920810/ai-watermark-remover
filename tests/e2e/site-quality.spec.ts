@@ -13,25 +13,30 @@ async function openPublicPage(page: Page, path: string) {
   return response;
 }
 
-test('ChatGPT landing modules keep source visuals and page-local actions without changing other pages', async ({ page }) => {
+test('ChatGPT landing uses delivered comparison pairs and keeps page-local actions', async ({ page }) => {
   await page.goto('/chatgpt-watermark-remover');
-  await expect(page.locator('.landing-features-section .feature-item')).toHaveCount(3);
-  await expect(page.locator('.faq-list details')).toHaveCount(6);
+  await expect(page.locator('.landing-features-section .feature-item')).toHaveCount(4);
+  await expect(page.locator('.faq-list details')).toHaveCount(11);
   await expect(page.locator('.tool-landing > section')).toHaveCount(7);
   await expect(page.locator('.tool-landing > section').nth(3)).toHaveAttribute('id', 'image-requirements');
-  for (const image of await page.locator('.landing-features-section img').all()) {
-    await image.scrollIntoViewIfNeeded();
-    await expect(image).toHaveAttribute('src', /\/uploads\/chatgpt-feature-/);
-    await expect.poll(() => image.evaluate((element) => (element as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
+  const comparisons = page.locator('.landing-features-section [data-pair="true"]');
+  await expect(comparisons).toHaveCount(4);
+  for (const comparison of await comparisons.all()) {
+    await comparison.scrollIntoViewIfNeeded();
+    await expect(comparison.locator('img')).toHaveCount(2);
+    for (const image of await comparison.locator('img').all()) {
+      await expect(image).toHaveAttribute('src', /\/uploads\/landing-20261121\/chatgpt-watermark-remover\/Feature_/);
+      await expect.poll(() => image.evaluate((element) => (element as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
+    }
   }
   await page.locator('.hero-actions').getByRole('link', { name: 'Review image requirements' }).click();
   await expect(page).toHaveURL(/#image-requirements$/);
   const footer = page.locator('.site-cta'); await footer.scrollIntoViewIfNeeded();
   const fileChooser = page.waitForEvent('filechooser');
-  await footer.getByRole('button', { name: 'Upload file', exact: true }).click();
+  await footer.getByRole('button', { name: 'Open Image Workspace', exact: true }).click();
   await (await fileChooser).setFiles([]);
   await expect(page).toHaveURL(/\/chatgpt-watermark-remover#image-requirements$/);
-  await expect(page.locator('.site-cta h2')).toHaveText('Ready to Review an Authorized Image?');
+  await expect(page.locator('.site-cta h2')).toHaveText('Clean an Unwanted Visible Mark in Your Image');
   await page.goto('/remove-text-from-image');
   await expect(page.locator('#image-requirements')).toHaveCount(0);
   const textPage = JSON.parse(readFileSync(new URL('../../src/content/landing-pages/remove-text-from-image.json', import.meta.url), 'utf8'));

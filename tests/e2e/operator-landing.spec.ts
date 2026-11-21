@@ -30,10 +30,25 @@ test('operator copy renders supplied card titles, descriptions and links on desk
   }
 });
 
-test('unmodified tools retain their automatic cards and upload control', async ({ page }) => {
+test('the revised background page retains its tool cards and existing upload control', async ({ page }) => {
   await page.goto('/remove-background');
   await expect(page.locator('#ai-tools .tool-card')).not.toHaveCount(0);
   await page.locator('.site-cta').scrollIntoViewIfNeeded();
   await expect(page.locator('.site-cta [data-testid="compact-launcher-file"]')).toBeEnabled();
-  await expect(page.locator('.tool-note')).toHaveCount(0);
+  await expect(page.locator('.tool-note')).toContainText('Illustrative examples.');
+});
+
+test('operator feature copy and FAQ answers render supplied policy links', async ({ page }) => {
+  await page.goto('/instagram-watermark-remover', { waitUntil: 'domcontentloaded' });
+  const features = page.locator('.landing-features-section');
+  await expect(features.getByRole('link', { name: 'Pricing', exact: true })).toHaveAttribute('href', 'https://www.watermarkgemini.com/pricing');
+  await expect(features.getByRole('link', { name: 'Privacy', exact: true })).toHaveAttribute('href', 'https://www.watermarkgemini.com/privacy');
+  const pricingFaq = page.locator('.faq-list details').filter({ hasText: 'See the' }).filter({ hasText: 'for current terms before starting a video task' });
+  await pricingFaq.locator('summary').click();
+  await expect(pricingFaq.getByRole('link', { name: 'Pricing page' })).toHaveAttribute('href', 'https://www.watermarkgemini.com/pricing');
+
+  await page.goto('/batch-watermark-remover', { waitUntil: 'domcontentloaded' });
+  const privacyFaq = page.locator('.faq-list details').filter({ hasText: 'Are my photos processed entirely on my device?' });
+  await privacyFaq.locator('summary').click();
+  await expect(privacyFaq.getByRole('link', { name: 'Privacy Policy' })).toHaveAttribute('href', 'https://www.watermarkgemini.com/privacy');
 });
