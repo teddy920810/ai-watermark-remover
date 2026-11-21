@@ -545,38 +545,126 @@
     },
     {
       "file": "src/content/landing-pages/batch-watermark-remover.json",
-      "semanticSha256": "42cee0098c41f9c781ce8eb68a5f177544705e534b7281eab624b394ab1cd2fc",
+      "semanticSha256": "04db3dcc579839cb1d5a948d1b7d74713263319c430c12aa4e980d5c0dc55bdb",
       "images": [
         {
           "path": "/heroSamples/0/image",
-          "value": "/uploads/workflow-upload-step.png"
+          "value": "/uploads/landing-20261121/batch-watermark-remover/Hero_01_Before_538x436.png"
         },
         {
           "path": "/heroSamples/0/imageAlt",
-          "value": "Image entering the secure upload workflow"
+          "value": "Illustrative before view of a ceramic pitcher and cups with an old shop label."
+        },
+        {
+          "path": "/heroSamples/0/afterImage",
+          "value": "/uploads/landing-20261121/batch-watermark-remover/Hero_01_After_538x436.png"
+        },
+        {
+          "path": "/heroSamples/0/afterImageAlt",
+          "value": "Illustrative after view of the same ceramic catalog photo without the old label."
         },
         {
           "path": "/heroSamples/1/image",
-          "value": "/uploads/workflow-ai-detection-step.png"
+          "value": "/uploads/landing-20261121/batch-watermark-remover/Hero_02_Before_538x436.png"
         },
         {
           "path": "/heroSamples/1/imageAlt",
-          "value": "AI detecting a visible watermark area in an image"
+          "value": "Illustrative before view of an interior photo with a studio label along the rug."
+        },
+        {
+          "path": "/heroSamples/1/afterImage",
+          "value": "/uploads/landing-20261121/batch-watermark-remover/Hero_02_After_538x436.png"
+        },
+        {
+          "path": "/heroSamples/1/afterImageAlt",
+          "value": "Illustrative after view of the same interior photo without the studio label."
         },
         {
           "path": "/heroSamples/2/image",
-          "value": "/uploads/workflow-download-step.png"
+          "value": "/uploads/landing-20261121/batch-watermark-remover/Hero_03_Before_538x436.png"
         },
         {
           "path": "/heroSamples/2/imageAlt",
-          "value": "Before and after image ready for secure download"
+          "value": "Illustrative before view of a family portrait with a date stamp."
+        },
+        {
+          "path": "/heroSamples/2/afterImage",
+          "value": "/uploads/landing-20261121/batch-watermark-remover/Hero_03_After_538x436.png"
+        },
+        {
+          "path": "/heroSamples/2/afterImageAlt",
+          "value": "Illustrative after view of the same portrait without the date stamp."
+        },
+        {
+          "path": "/features/items/0/image",
+          "value": "/uploads/landing-20261121/batch-watermark-remover/Feature_01_Before_640x347.png"
+        },
+        {
+          "path": "/features/items/0/afterImage",
+          "value": "/uploads/landing-20261121/batch-watermark-remover/Feature_01_After_640x347.png"
+        },
+        {
+          "path": "/features/items/0/imageAlt",
+          "value": "Illustrative before view of folded linens with an old label along the edge."
+        },
+        {
+          "path": "/features/items/0/afterImageAlt",
+          "value": "Illustrative after view of the same linen photo without the old label."
+        },
+        {
+          "path": "/features/items/1/image",
+          "value": "/uploads/landing-20261121/batch-watermark-remover/Feature_02_Before_640x347.png"
+        },
+        {
+          "path": "/features/items/1/afterImage",
+          "value": "/uploads/landing-20261121/batch-watermark-remover/Feature_02_After_640x347.png"
+        },
+        {
+          "path": "/features/items/1/imageAlt",
+          "value": "Illustrative before view of a sneaker product photo with a logo in the bottom corner."
+        },
+        {
+          "path": "/features/items/1/afterImageAlt",
+          "value": "Illustrative after view of the same sneaker photo without the corner logo."
+        },
+        {
+          "path": "/features/items/2/image",
+          "value": "/uploads/landing-20261121/batch-watermark-remover/Feature_03_Before_640x347.png"
+        },
+        {
+          "path": "/features/items/2/afterImage",
+          "value": "/uploads/landing-20261121/batch-watermark-remover/Feature_03_After_640x347.png"
+        },
+        {
+          "path": "/features/items/2/imageAlt",
+          "value": "Illustrative before view of a lakeside cabin photo with a small signature in the frame."
+        },
+        {
+          "path": "/features/items/2/afterImageAlt",
+          "value": "Illustrative after view of the same cabin photo without the signature."
+        },
+        {
+          "path": "/features/items/3/image",
+          "value": "/uploads/landing-20261121/batch-watermark-remover/Feature_04_Before_640x347.png"
+        },
+        {
+          "path": "/features/items/3/afterImage",
+          "value": "/uploads/landing-20261121/batch-watermark-remover/Feature_04_After_640x347.png"
+        },
+        {
+          "path": "/features/items/3/imageAlt",
+          "value": "Illustrative before view of a botanical print with old edition text."
+        },
+        {
+          "path": "/features/items/3/afterImageAlt",
+          "value": "Illustrative after view of the same botanical print without the edition text."
         }
       ],
-      "contentOwnerApproval": "https://github.com/teddy920810/ai-watermark-remover/pull/130"
+      "contentOwnerApproval": "https://github.com/teddy920810/ai-watermark-remover/pull/170"
     },
     {
       "file": "src/content/landing-pages/capcut-watermark-remover.json",
-      "semanticSha256": "e991b80e3d5e154c1159357c7a37ea3670c3775fa45be422da64d4529b05ccaa",
+      "semanticSha256": "f519d9eaabd22847eeeb80bea26a9884d3dcaa12f23b39145fe24c6f743705e1",
       "images": [
         {
           "path": "/process/steps/0/image",
@@ -604,54 +692,118 @@
         },
         {
           "path": "/features/items/0/image",
-          "value": "/uploads/capcut-operations-feature-1.png"
+          "value": "/uploads/landing-20261121/capcut-watermark-remover/Feature_01_Before_640x347.png"
+        },
+        {
+          "path": "/features/items/0/afterImage",
+          "value": "/uploads/landing-20261121/capcut-watermark-remover/Feature_01_After_640x347.png"
         },
         {
           "path": "/features/items/0/imageAlt",
-          "value": "Use an export you can edit"
+          "value": "Illustrative before view of a portable speaker with a CapCut-style mark in the corner."
+        },
+        {
+          "path": "/features/items/0/afterImageAlt",
+          "value": "Illustrative after view of the same speaker frame without that mark."
         },
         {
           "path": "/features/items/1/image",
-          "value": "/uploads/capcut-operations-feature-2.png"
+          "value": "/uploads/landing-20261121/capcut-watermark-remover/Feature_02_Before_640x347.png"
+        },
+        {
+          "path": "/features/items/1/afterImage",
+          "value": "/uploads/landing-20261121/capcut-watermark-remover/Feature_02_After_640x347.png"
         },
         {
           "path": "/features/items/1/imageAlt",
-          "value": "Identify the visible area"
+          "value": "Illustrative before view of a potted plant and watering can with a CapCut-style mark."
+        },
+        {
+          "path": "/features/items/1/afterImageAlt",
+          "value": "Illustrative after view of the same plant and watering-can frame without that mark."
         },
         {
           "path": "/features/items/2/image",
-          "value": "/uploads/capcut-operations-feature-3.png"
+          "value": "/uploads/landing-20261121/capcut-watermark-remover/Feature_03_Before_640x347.png"
+        },
+        {
+          "path": "/features/items/2/afterImage",
+          "value": "/uploads/landing-20261121/capcut-watermark-remover/Feature_03_After_640x347.png"
         },
         {
           "path": "/features/items/2/imageAlt",
-          "value": "Review before you export"
+          "value": "Illustrative before view of a courtyard door with a CapCut-style mark in the corner."
+        },
+        {
+          "path": "/features/items/2/afterImageAlt",
+          "value": "Illustrative after view of the same courtyard frame without that mark."
+        },
+        {
+          "path": "/features/items/3/image",
+          "value": "/uploads/landing-20261121/capcut-watermark-remover/Feature_04_Before_640x347.png"
+        },
+        {
+          "path": "/features/items/3/afterImage",
+          "value": "/uploads/landing-20261121/capcut-watermark-remover/Feature_04_After_640x347.png"
+        },
+        {
+          "path": "/features/items/3/imageAlt",
+          "value": "Illustrative before view of a lantern and lavender with a CapCut-style mark in the corner."
+        },
+        {
+          "path": "/features/items/3/afterImageAlt",
+          "value": "Illustrative after view of the same lantern frame without that mark."
         },
         {
           "path": "/heroSamples/0/image",
-          "value": "/uploads/capcut-operations-feature-1.png"
+          "value": "/uploads/landing-20261121/capcut-watermark-remover/Hero_01_Before_538x436.png"
         },
         {
           "path": "/heroSamples/0/imageAlt",
-          "value": "Use an export you can edit"
+          "value": "Illustrative before view of a camper by the sea with a CapCut-style mark in the corner."
+        },
+        {
+          "path": "/heroSamples/0/afterImage",
+          "value": "/uploads/landing-20261121/capcut-watermark-remover/Hero_01_After_538x436.png"
+        },
+        {
+          "path": "/heroSamples/0/afterImageAlt",
+          "value": "Illustrative after view of the same coastal camper frame without that mark."
         },
         {
           "path": "/heroSamples/1/image",
-          "value": "/uploads/capcut-operations-feature-2.png"
+          "value": "/uploads/landing-20261121/capcut-watermark-remover/Hero_02_Before_538x436.png"
         },
         {
           "path": "/heroSamples/1/imageAlt",
-          "value": "Identify the visible area"
+          "value": "Illustrative before view of a strawberry tart beside a cup of coffee with a CapCut-style mark."
+        },
+        {
+          "path": "/heroSamples/1/afterImage",
+          "value": "/uploads/landing-20261121/capcut-watermark-remover/Hero_02_After_538x436.png"
+        },
+        {
+          "path": "/heroSamples/1/afterImageAlt",
+          "value": "Illustrative after view of the same café frame without that mark."
         },
         {
           "path": "/heroSamples/2/image",
-          "value": "/uploads/capcut-operations-feature-3.png"
+          "value": "/uploads/landing-20261121/capcut-watermark-remover/Hero_03_Before_538x436.png"
         },
         {
           "path": "/heroSamples/2/imageAlt",
-          "value": "Review before you export"
+          "value": "Illustrative before view of a red canoe on a mountain lake with a CapCut-style mark."
+        },
+        {
+          "path": "/heroSamples/2/afterImage",
+          "value": "/uploads/landing-20261121/capcut-watermark-remover/Hero_03_After_538x436.png"
+        },
+        {
+          "path": "/heroSamples/2/afterImageAlt",
+          "value": "Illustrative after view of the same lake frame without that mark."
         }
       ],
-      "contentOwnerApproval": "https://github.com/teddy920810/ai-watermark-remover/pull/130"
+      "contentOwnerApproval": "https://github.com/teddy920810/ai-watermark-remover/pull/170"
     },
     {
       "file": "src/content/landing-pages/facebook-watermark-remover.json",
@@ -976,34 +1128,122 @@
     },
     {
       "file": "src/content/landing-pages/instagram-watermark-remover.json",
-      "semanticSha256": "4cfd4c596200c68d3b9450a2640caa47425906ed65d9214bec478fd39aa7c8f6",
+      "semanticSha256": "0eeb57e0b360b4621dd462ea5bf74cbe2e1846623da64c682dfffd282ff72912",
       "images": [
         {
           "path": "/heroSamples/0/image",
-          "value": "/uploads/workflow-upload-step.png"
+          "value": "/uploads/landing-20261121/instagram-watermark-remover/Hero_01_Before_538x436.png"
         },
         {
           "path": "/heroSamples/0/imageAlt",
-          "value": "Image entering the secure upload workflow"
+          "value": "Illustrative before view of a dance rehearsal frame with an Instagram logo and handle."
+        },
+        {
+          "path": "/heroSamples/0/afterImage",
+          "value": "/uploads/landing-20261121/instagram-watermark-remover/Hero_01_After_538x436.png"
+        },
+        {
+          "path": "/heroSamples/0/afterImageAlt",
+          "value": "Illustrative after view of the same dance rehearsal frame without the logo and handle."
         },
         {
           "path": "/heroSamples/1/image",
-          "value": "/uploads/workflow-ai-detection-step.png"
+          "value": "/uploads/landing-20261121/instagram-watermark-remover/Hero_02_Before_538x436.png"
         },
         {
           "path": "/heroSamples/1/imageAlt",
-          "value": "AI detecting a visible watermark area in an image"
+          "value": "Illustrative before view of a latte preparation frame with an Instagram logo and handle."
+        },
+        {
+          "path": "/heroSamples/1/afterImage",
+          "value": "/uploads/landing-20261121/instagram-watermark-remover/Hero_02_After_538x436.png"
+        },
+        {
+          "path": "/heroSamples/1/afterImageAlt",
+          "value": "Illustrative after view of the same latte preparation frame without the logo and handle."
         },
         {
           "path": "/heroSamples/2/image",
-          "value": "/uploads/workflow-download-step.png"
+          "value": "/uploads/landing-20261121/instagram-watermark-remover/Hero_03_Before_538x436.png"
         },
         {
           "path": "/heroSamples/2/imageAlt",
-          "value": "Before and after image ready for secure download"
+          "value": "Illustrative before view of a pottery demonstration frame with an Instagram logo and handle."
+        },
+        {
+          "path": "/heroSamples/2/afterImage",
+          "value": "/uploads/landing-20261121/instagram-watermark-remover/Hero_03_After_538x436.png"
+        },
+        {
+          "path": "/heroSamples/2/afterImageAlt",
+          "value": "Illustrative after view of the same pottery demonstration frame without the logo and handle."
+        },
+        {
+          "path": "/features/items/0/image",
+          "value": "/uploads/landing-20261121/instagram-watermark-remover/Feature_01_Before_640x347.png"
+        },
+        {
+          "path": "/features/items/0/afterImage",
+          "value": "/uploads/landing-20261121/instagram-watermark-remover/Feature_01_After_640x347.png"
+        },
+        {
+          "path": "/features/items/0/imageAlt",
+          "value": "Illustrative before view of a fitness rehearsal frame with a visible Instagram identifier."
+        },
+        {
+          "path": "/features/items/0/afterImageAlt",
+          "value": "Illustrative after view of the same fitness frame without the Instagram identifier."
+        },
+        {
+          "path": "/features/items/1/image",
+          "value": "/uploads/landing-20261121/instagram-watermark-remover/Feature_02_Before_640x347.png"
+        },
+        {
+          "path": "/features/items/1/afterImage",
+          "value": "/uploads/landing-20261121/instagram-watermark-remover/Feature_02_After_640x347.png"
+        },
+        {
+          "path": "/features/items/1/imageAlt",
+          "value": "Illustrative before view of a jewelry close-up with an Instagram identifier in the corner."
+        },
+        {
+          "path": "/features/items/1/afterImageAlt",
+          "value": "Illustrative after view of the same jewelry close-up without the identifier."
+        },
+        {
+          "path": "/features/items/2/image",
+          "value": "/uploads/landing-20261121/instagram-watermark-remover/Feature_03_Before_640x347.png"
+        },
+        {
+          "path": "/features/items/2/afterImage",
+          "value": "/uploads/landing-20261121/instagram-watermark-remover/Feature_03_After_640x347.png"
+        },
+        {
+          "path": "/features/items/2/imageAlt",
+          "value": "Illustrative before view of a frame of a cyclist in a park with an Instagram identifier."
+        },
+        {
+          "path": "/features/items/2/afterImageAlt",
+          "value": "Illustrative after view of the same cycling frame without the identifier."
+        },
+        {
+          "path": "/features/items/3/image",
+          "value": "/uploads/landing-20261121/instagram-watermark-remover/Feature_04_Before_640x347.png"
+        },
+        {
+          "path": "/features/items/3/afterImage",
+          "value": "/uploads/landing-20261121/instagram-watermark-remover/Feature_04_After_640x347.png"
+        },
+        {
+          "path": "/features/items/3/imageAlt",
+          "value": "Illustrative before view of a baking demonstration frame with an Instagram identifier."
+        },
+        {
+          "path": "/features/items/3/afterImageAlt",
+          "value": "Illustrative after view of the same baking frame without the identifier."
         }
       ],
-      "contentOwnerApproval": "https://github.com/teddy920810/ai-watermark-remover/pull/130"
+      "contentOwnerApproval": "https://github.com/teddy920810/ai-watermark-remover/pull/170"
     },
     {
       "file": "src/content/landing-pages/kling-watermark-remover.json",
@@ -1352,7 +1592,7 @@
     },
     {
       "file": "src/content/landing-pages/remove-background.json",
-      "semanticSha256": "09757031cd1a80bb02cf4044cbc8c881c127669ab44211410488f6958bdb9ed6",
+      "semanticSha256": "2610be3f6a6c2e9331c4af6b52c145c8918189d3a48fbdf99c795d98f3b93456",
       "images": [
         {
           "path": "/process/steps/0/image",
@@ -1380,53 +1620,118 @@
         },
         {
           "path": "/features/items/0/image",
-          "value": "/uploads/background-remover-product-photo.png"
+          "value": "/uploads/landing-20261121/remove-background/Feature_01_Product_PNG_Before_640x347.png"
+        },
+        {
+          "path": "/features/items/0/afterImage",
+          "value": "/uploads/landing-20261121/remove-background/Feature_01_Product_PNG_After_640x347.png"
         },
         {
           "path": "/features/items/0/imageAlt",
-          "value": "Product photo shown before and after background removal"
+          "value": "Illustrative before view of a purple and white sneaker in a studio setting."
+        },
+        {
+          "path": "/features/items/0/afterImageAlt",
+          "value": "Illustrative after view of the sneaker isolated against a checkerboard illustration."
         },
         {
           "path": "/features/items/1/image",
-          "value": "/uploads/background-remover-hair-detail.png"
+          "value": "/uploads/landing-20261121/remove-background/Feature_02_Hair_Edges_Before_640x347.png"
+        },
+        {
+          "path": "/features/items/1/afterImage",
+          "value": "/uploads/landing-20261121/remove-background/Feature_02_Hair_Edges_After_640x347.png"
         },
         {
           "path": "/features/items/1/imageAlt",
-          "value": "Detailed hair edges preserved on a transparent background"
+          "value": "Illustrative before view of a backlit portrait with loose strands of hair."
+        },
+        {
+          "path": "/features/items/1/afterImageAlt",
+          "value": "Illustrative after view of the same portrait isolated against a checkerboard illustration."
         },
         {
           "path": "/features/items/2/image",
-          "value": "/uploads/background-remover-background-colors.png"
+          "value": "/uploads/landing-20261121/remove-background/Feature_03_Background_Color_Before_640x347.png"
+        },
+        {
+          "path": "/features/items/2/afterImage",
+          "value": "/uploads/landing-20261121/remove-background/Feature_03_Background_Color_After_640x347.png"
         },
         {
           "path": "/features/items/2/imageAlt",
-          "value": "Background-removed subject previewed on several color options"
+          "value": "Illustrative before view of a perfume bottle with pink flowers in the background."
+        },
+        {
+          "path": "/features/items/2/afterImageAlt",
+          "value": "Illustrative after view of the perfume bottle against a solid lilac background."
+        },
+        {
+          "path": "/features/items/3/image",
+          "value": "/uploads/landing-20261121/remove-background/Feature_04_Online_Three_Steps_Before_640x347.png"
+        },
+        {
+          "path": "/features/items/3/afterImage",
+          "value": "/uploads/landing-20261121/remove-background/Feature_04_Online_Three_Steps_After_640x347.png"
+        },
+        {
+          "path": "/features/items/3/imageAlt",
+          "value": "Illustrative before view of a plant in a pot beside a bright window."
+        },
+        {
+          "path": "/features/items/3/afterImageAlt",
+          "value": "Illustrative after view of the potted plant isolated against a checkerboard illustration."
         },
         {
           "path": "/heroSamples/0/image",
-          "value": "/uploads/background-remover-product-photo.png"
+          "value": "/uploads/landing-20261121/remove-background/Hero_01_Product_Photography_Before_538x436.png"
         },
         {
           "path": "/heroSamples/0/imageAlt",
-          "value": "Product photo shown before and after background removal"
+          "value": "Illustrative before view of a skincare bottle on a bathroom counter."
+        },
+        {
+          "path": "/heroSamples/0/afterImage",
+          "value": "/uploads/landing-20261121/remove-background/Hero_01_Product_Photography_After_538x436.png"
+        },
+        {
+          "path": "/heroSamples/0/afterImageAlt",
+          "value": "Illustrative after view of the skincare bottle isolated against a checkerboard illustration."
         },
         {
           "path": "/heroSamples/1/image",
-          "value": "/uploads/background-remover-hair-detail.png"
+          "value": "/uploads/landing-20261121/remove-background/Hero_02_Portrait_Hair_Before_538x436.png"
         },
         {
           "path": "/heroSamples/1/imageAlt",
-          "value": "Detailed hair edges preserved on a transparent background"
+          "value": "Illustrative before view of a portrait against a blue sky."
+        },
+        {
+          "path": "/heroSamples/1/afterImage",
+          "value": "/uploads/landing-20261121/remove-background/Hero_02_Portrait_Hair_After_538x436.png"
+        },
+        {
+          "path": "/heroSamples/1/afterImageAlt",
+          "value": "Illustrative after view of the portrait and loose hair against a checkerboard illustration."
         },
         {
           "path": "/heroSamples/2/image",
-          "value": "/uploads/background-remover-background-colors.png"
+          "value": "/uploads/landing-20261121/remove-background/Hero_03_Pet_Fur_Before_538x436.png"
         },
         {
           "path": "/heroSamples/2/imageAlt",
-          "value": "Background-removed subject previewed on several color options"
+          "value": "Illustrative before view of a golden retriever in a garden."
+        },
+        {
+          "path": "/heroSamples/2/afterImage",
+          "value": "/uploads/landing-20261121/remove-background/Hero_03_Pet_Fur_After_538x436.png"
+        },
+        {
+          "path": "/heroSamples/2/afterImageAlt",
+          "value": "Illustrative after view of the retriever isolated against a checkerboard illustration."
         }
-      ]
+      ],
+      "contentOwnerApproval": "https://github.com/teddy920810/ai-watermark-remover/pull/170"
     },
     {
       "file": "src/content/landing-pages/remove-logo-from-image.json",

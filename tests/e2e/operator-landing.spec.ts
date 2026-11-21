@@ -30,10 +30,10 @@ test('operator copy renders supplied card titles, descriptions and links on desk
   }
 });
 
-test('unmodified tools retain their automatic cards and upload control', async ({ page }) => {
+test('the revised background page retains its tool cards and existing upload control', async ({ page }) => {
   await page.goto('/remove-background');
   await expect(page.locator('#ai-tools .tool-card')).not.toHaveCount(0);
   await page.locator('.site-cta').scrollIntoViewIfNeeded();
   await expect(page.locator('.site-cta [data-testid="compact-launcher-file"]')).toBeEnabled();
-  await expect(page.locator('.tool-note')).toHaveCount(0);
+  await expect(page.locator('.tool-note')).toContainText('Illustrative examples.');
 });
