@@ -45,23 +45,26 @@
     {
       "id": "preview-1",
       "label": "Outdated sale label",
-      "image": "/uploads/landing-new-20261114/remove-text-from-video/hero-01-before.webp",
-      "afterImage": "/uploads/landing-new-20261114/remove-text-from-video/hero-01-after.webp",
-      "imageAlt": "Illustrative before-and-after comparison for outdated sale label, with the same composition and only the selected distracting overlay changed."
+      "image": "/uploads/landing-20261121/remove-text-from-video/Hero_01_Before_538x436.png",
+      "afterImage": "/uploads/landing-20261121/remove-text-from-video/Hero_01_After_538x436.png",
+      "imageAlt": "Illustrative before view of a handbag product frame with a Summer Sale label.",
+      "afterImageAlt": "Illustrative after view of the same handbag frame without the sale label."
     },
     {
       "id": "preview-2",
       "label": "Burned-in lower third",
-      "image": "/uploads/landing-new-20261114/remove-text-from-video/hero-02-before.webp",
-      "afterImage": "/uploads/landing-new-20261114/remove-text-from-video/hero-02-after.webp",
-      "imageAlt": "Illustrative before-and-after comparison for burned-in lower third, with the same composition and only the selected distracting overlay changed."
+      "image": "/uploads/landing-20261121/remove-text-from-video/Hero_02_Before_538x436.png",
+      "afterImage": "/uploads/landing-20261121/remove-text-from-video/Hero_02_After_538x436.png",
+      "imageAlt": "Illustrative before view of a ceramic artist interview frame with a name in the lower third.",
+      "afterImageAlt": "Illustrative after view of the same interview frame without the name label."
     },
     {
       "id": "preview-3",
       "label": "Camera date stamp",
-      "image": "/uploads/landing-new-20261114/remove-text-from-video/hero-03-before.webp",
-      "afterImage": "/uploads/landing-new-20261114/remove-text-from-video/hero-03-after.webp",
-      "imageAlt": "Illustrative before-and-after comparison for camera date stamp, with the same composition and only the selected distracting overlay changed."
+      "image": "/uploads/landing-20261121/remove-text-from-video/Hero_03_Before_538x436.png",
+      "afterImage": "/uploads/landing-20261121/remove-text-from-video/Hero_03_After_538x436.png",
+      "imageAlt": "Illustrative before view of a lakeside town and boat with a camera date stamp.",
+      "afterImageAlt": "Illustrative after view of the same lakeside frame without the date stamp."
     }
   ],
   "features": {
@@ -74,36 +77,44 @@
         "eyebrow": "FEATURE 1",
         "heading": "Remove Old Prices and Campaign Text from Product Videos",
         "description": "A once-useful “20% OFF” overlay can become misleading after a promotion ends. For your own product footage, a fixed-region video cleanup can help clear an outdated price or temporary label so the scene can be edited again. Never remove mandatory safety disclosures, ingredient information or required product claims. Inspect the repaired area carefully when packaging, hands or reflections pass behind the words.",
-        "image": "/uploads/landing-new-20261114/remove-text-from-video/feature-01.webp",
-        "imageAlt": "Illustrative remove text from video use case 1: remove old prices and campaign text from product videos, showing one matched scene without cropping or missing subjects.",
-        "imagePosition": "left"
+        "image": "/uploads/landing-20261121/remove-text-from-video/Feature_01_Before_640x347.png",
+        "imageAlt": "Illustrative before view of a skincare product frame with a promotional price overlay.",
+        "imagePosition": "left",
+        "afterImage": "/uploads/landing-20261121/remove-text-from-video/Feature_01_After_640x347.png",
+        "afterImageAlt": "Illustrative after view of the same skincare frame without the offer text."
       },
       {
         "enabled": true,
         "eyebrow": "FEATURE 2",
         "heading": "Clean Burned-In Subtitles and Lower Thirds",
         "description": "Hardcoded subtitles are part of the rendered picture, unlike SRT files or switchable caption tracks. When captions stay within a stable lower-third band, a fixed selection may remove their visible pixels. This can help prepare an authorized interview or tutorial for new language captions. Results are less reliable when animated subtitles cross faces, text changes position, or captions overlap moving subjects.",
-        "image": "/uploads/landing-new-20261114/remove-text-from-video/feature-02.webp",
-        "imageAlt": "Illustrative remove text from video use case 2: clean burned-in subtitles and lower thirds, showing one matched scene without cropping or missing subjects.",
-        "imagePosition": "right"
+        "image": "/uploads/landing-20261121/remove-text-from-video/Feature_02_Before_640x347.png",
+        "imageAlt": "Illustrative before view of a coffee roaster interview frame with a burned-in subtitle.",
+        "imagePosition": "right",
+        "afterImage": "/uploads/landing-20261121/remove-text-from-video/Feature_02_After_640x347.png",
+        "afterImageAlt": "Illustrative after view of the same interview frame without the subtitle."
       },
       {
         "enabled": true,
         "eyebrow": "FEATURE 3",
         "heading": "Keep the Full Frame Instead of Blurring or Cropping",
         "description": "Cropping out a lower-third label can cut off gestures, product details or subtitles you plan to add later. A targeted repair preserves more of the 9:16 or 16:9 composition. AI fills an estimated background where lettering once appeared; it does not retrieve exact original footage. Compare hard edges and fine texture at real playback speed, especially in social clips.",
-        "image": "/uploads/landing-new-20261114/remove-text-from-video/feature-03.webp",
-        "imageAlt": "Illustrative remove text from video use case 3: keep the full frame instead of blurring or cropping, showing one matched scene without cropping or missing subjects.",
-        "imagePosition": "left"
+        "image": "/uploads/landing-20261121/remove-text-from-video/Feature_03_Before_640x347.png",
+        "imageAlt": "Illustrative before view of hands preparing dough with a date stamp on the worktop.",
+        "imagePosition": "left",
+        "afterImage": "/uploads/landing-20261121/remove-text-from-video/Feature_03_After_640x347.png",
+        "afterImageAlt": "Illustrative after view of the same full frame without the date stamp."
       },
       {
         "enabled": true,
         "eyebrow": "FEATURE 4",
         "heading": "Online Text Cleanup with Clear Limits",
         "description": "Choose a local MP4, use the video workspace, sign in and review its quoted cost. Current input requires MP4 at 24 fps, up to 9 minutes and 100 MB; no video trial is promised from free image uses. You can try fixed-area or automatic watermark detection, not a guaranteed dedicated OCR/subtitle-tracking mode. Uploaded media and returned files use temporary private storage scheduled to expire after about 24 hours.",
-        "image": "/uploads/landing-new-20261114/remove-text-from-video/feature-04.webp",
-        "imageAlt": "Illustrative remove text from video use case 4: online text cleanup with clear limits, showing one matched scene without cropping or missing subjects.",
-        "imagePosition": "right"
+        "image": "/uploads/landing-20261121/remove-text-from-video/Feature_04_Before_640x347.png",
+        "imageAlt": "Illustrative before view of a laptop preview of a coast video with a Travel Diary caption.",
+        "imagePosition": "right",
+        "afterImage": "/uploads/landing-20261121/remove-text-from-video/Feature_04_After_640x347.png",
+        "afterImageAlt": "Illustrative after view of the same coast preview without the caption."
       }
     ]
   },

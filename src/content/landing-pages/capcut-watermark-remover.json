@@ -2,13 +2,15 @@
   "draft": false,
   "slug": "capcut-watermark-remover",
   "toolKind": "watermark-remover",
-  "title": "CapCut Watermark Remover Online | WatermarkGemini",
-  "description": "Explore WatermarkGemini’s forthcoming CapCut watermark remover online page. Learn the permission-first steps to prepare image exports.",
-  "eyebrow": "CAPCUT IMAGE EXPORTS",
-  "heading": "CapCut Watermark Remover",
-  "intro": "WatermarkGemini is preparing a dedicated page for visible-watermark cleanup on CapCut image exports you own or are authorized to edit. The CapCut-specific processing workflow is not available yet.\n\nLooking for how to remove capcut watermark from an image you are allowed to modify? Start by confirming ownership, saving the original, and checking the available tools before you upload anything.",
+  "title": "CapCut Watermark Remover: Ending, Template & Video Fixes",
+  "description": "How to remove CapCut watermarks from ending clips, templates and videos. See free in-app fixes and when an authorized MP4 needs a separate cleanup tool.",
+  "eyebrow": "CAPCUT WATERMARK REMOVER",
+  "heading": "CapCut Watermark Remover for Ending Clips & Video Marks",
+  "intro": "Trying to remove a CapCut watermark from a video? First check whether the logo is a separate ending clip or an editable template overlay—both are often easier to remove inside CapCut before export. If the mark is baked into an MP4 you own or may edit, explore WatermarkGemini's separate Video Watermark Remover for supported fixed-area cleanup. The CapCut-specific processing workflow on this page is not available yet. All comparisons here are illustrative, not verified processing results.",
   "benefits": [
-    "CapCut workflow"
+    "Delete an editable ending clip first",
+    "Check template and Pro restrictions",
+    "Use the separate MP4 tool only when eligible"
   ],
   "uploader": {
     "hero": {
@@ -20,27 +22,27 @@
   },
   "process": {
     "eyebrow": "HOW TO",
-    "heading": "How to prepare for a CapCut watermark cleanup",
-    "intro": "Prepare an authorized CapCut image export before choosing a cleanup tool.",
+    "heading": "How to Remove a CapCut Watermark from Your Video",
+    "intro": "Choose the method that matches your file. An editable ending clip needs a different solution from a logo embedded in an exported MP4.",
     "steps": [
       {
         "number": "01",
-        "title": "Confirm you can edit the export.",
-        "description": "Use an image you own or have permission to modify, and retain the original file.",
+        "title": "Check the Original CapCut Project",
+        "description": "If you still have your project, go to the end of the timeline and remove a separate CapCut-branded outro. Inspect text, sticker and template layers too. Re-export and review the final seconds; this is often the simplest free solution.",
         "image": "/uploads/capcut-operations-feature-1.png",
         "imageAlt": "Use an export you can edit"
       },
       {
         "number": "02",
-        "title": "Locate the visible mark.",
-        "description": "Note the area you want to evaluate and avoid altering source material you are not authorized to change.",
+        "title": "Identify an Embedded Mark in an MP4",
+        "description": "If the logo is already part of your video frames, save a copy and check whether the mark stays in one position. WatermarkGemini has a separate Video Watermark Remover for MP4 at 24 fps, up to 9 minutes and 100 MB; a moving logo may need a different editor.",
         "image": "/uploads/capcut-operations-feature-2.png",
         "imageAlt": "Identify the visible area"
       },
       {
         "number": "03",
-        "title": "Check the tool status.",
-        "description": "Review the live page for supported-file and processing details before you submit a file.",
+        "title": "Review Eligibility, Cost and Result",
+        "description": "For a supported MP4 that you own or may edit, open the separate video workspace, sign in, and review any administrator-allocated video credits before processing. Compare the result throughout the clip for flicker, altered details and sound. CapCut-specific processing is not live on this page.",
         "image": "/uploads/capcut-operations-feature-3.png",
         "imageAlt": "Review before you export"
       }
@@ -49,41 +51,70 @@
   "faq": {
     "eyebrow": "FAQ",
     "heading": "CapCut Watermark Remover FAQs",
-    "intro": "Answers about CapCut image exports and supported cleanup workflows.",
+    "intro": "Answers about free CapCut ending removal, templates, Pro export prompts, authorized MP4 cleanup, tool availability and processing limits.",
     "items": [
       {
         "enabled": true,
-        "question": "Is this a capcut watermark remover?",
-        "answer": "This is WatermarkGemini’s discovery page for a forthcoming CapCut-specific workflow. A dedicated CapCut-specific processing workflow has not been verified."
+        "question": "How do I remove the CapCut watermark from a video?",
+        "answer": "If you still have the editable CapCut project, scroll to the end and delete the separate branded outro, then inspect template overlay tracks and re-export. If the logo is baked into an authorized finished MP4, use a compatible video editor or a separate general video cleanup tool after checking its limits."
       },
       {
         "enabled": true,
-        "question": "How to remove capcut watermark?",
-        "answer": "If you are asking how do i remove capcut watermark or how do i remove the capcut watermark, first confirm that you own the export or have permission to edit it. This page does not yet provide a live CapCut-specific processing workflow."
+        "question": "Can I remove a CapCut ending watermark for free?",
+        "answer": "Often, yes. When it is a separate ending clip in your editable project, deleting that clip and exporting again can cost nothing. A premium template or Pro-badged asset may still require an eligible free replacement or the appropriate paid access."
       },
       {
         "enabled": true,
-        "question": "Can I remove capcut watermark from any export?",
-        "answer": "No universal promise should be made. Whether you can change an image depends on ownership, permission, and the available tool’s verified support. This also applies to “how do you remove capcut watermark” searches."
+        "question": "How do I remove a CapCut template watermark?",
+        "answer": "Open the template project and check the last timeline clip, text layers, stickers, logos and other overlays. Remove or replace a layer only when you have permission and the template allows it; then preview and re-export. The best fix depends on whether the mark is editable or embedded in video frames."
       },
       {
         "enabled": true,
-        "question": "Can you remove capcut watermark online free?",
-        "answer": "Not on the dedicated workflow yet. The page must not claim free processing, output availability, or successful removal until product testing confirms it."
+        "question": "Can I remove the CapCut watermark on iPhone or Android?",
+        "answer": "Yes, for an editable outro in many projects: open the project, swipe to the end, select the branded ending clip, tap Delete and export again. If the logo is in an overlay or the export uses Pro resources, inspect those elements separately. App controls can vary by version."
       },
       {
         "enabled": true,
-        "question": "Is there a capcut watermark remover free option?",
-        "answer": "Do not equate an existing free image-cleanup offer with this unreleased workflow."
+        "question": "How do I remove a CapCut watermark on PC or online?",
+        "answer": "Open CapCut desktop or web, navigate to the end of the timeline, delete any separate branded outro, inspect text and sticker tracks, preview, and export. If a Pro prompt appears, check for premium resources rather than expecting an external remover to unlock them."
       },
       {
         "enabled": true,
-        "question": "Can you remove capcut watermark?",
-        "answer": "Can you remove the capcut watermark, can i remove the capcut watermark, and can you remove capcut watermark are permission-and-product questions. The accurate current answer for this page is that the dedicated process is not available yet."
+        "question": "Is this CapCut watermark remover available online right now?",
+        "answer": "The dedicated CapCut-specific workflow on this page is not live yet. WatermarkGemini does offer a separate general Video Watermark Remover for eligible MP4 files with supported fixed-area processing. Its existence does not mean every CapCut video or moving logo is supported."
+      },
+      {
+        "enabled": true,
+        "question": "Why does CapCut ask me to upgrade to Pro to remove a watermark?",
+        "answer": "CapCut's official help says that certain premium templates, effects, transitions, fonts and other Pro-badged elements can restrict clean export. Replace these with eligible free assets or use the required licensed access. Removing a visible mark from a file does not bypass usage rights or export terms."
+      },
+      {
+        "enabled": true,
+        "question": "Can I remove a watermark from an already exported CapCut MP4?",
+        "answer": "Sometimes, when the mark is visible in a file you own or may edit. If it is a standalone end card, trim the ending. For a small fixed in-frame logo, check WatermarkGemini's separate MP4 workspace. Repaired pixels can vary and moving marks or complex shots may need another editor."
+      },
+      {
+        "enabled": true,
+        "question": "Does WatermarkGemini support MOV, moving logos or long CapCut videos?",
+        "answer": "The current general video tool lists MP4 only at 24 fps, up to 9 minutes and 100 MB; MOV is not listed. It offers automatic detection or fixed-area selection, not a verified moving-logo tracking feature. Convert or trim your authorized source only when suitable, or choose a dedicated editor."
+      },
+      {
+        "enabled": true,
+        "question": "Is CapCut watermark remover online free and unlimited?",
+        "answer": "No unlimited-free claim is supported for the dedicated CapCut tool because that workflow is not released. Deleting a separate outro in CapCut can be free. WatermarkGemini's general video processing requires administrator-allocated video credits, with the cost displayed before processing."
+      },
+      {
+        "enabled": true,
+        "question": "Will video watermark removal affect quality or the audio?",
+        "answer": "It can. Removing an embedded mark changes video pixels and may introduce softness, repeated details or frame-to-frame flicker. Keep your original MP4, watch the full clip—including transitions—and listen to the audio before using the result. Only edit footage you own or are authorized to modify."
       }
     ]
   },
   "heroActions": [
+    {
+      "label": "Explore Video Watermark Remover",
+      "href": "/video-watermark-remover"
+    },
     {
       "label": "See available image cleanup tools",
       "href": "/#tool"
@@ -91,75 +122,173 @@
   ],
   "features": {
     "eyebrow": "CAPCUT IMAGE EXPORTS",
-    "heading": "How to prepare for a CapCut watermark cleanup",
-    "intro": "The CapCut-specific processing workflow is not available yet.",
+    "heading": "The Right Fix for Each CapCut Watermark",
+    "intro": "The best result depends on whether the mark is still an editable project element or already baked into exported frames. Start with a clean re-export when possible and use video pixel cleanup only for the cases it can actually handle.",
     "items": [
       {
-        "eyebrow": "CAPCUT IMAGE EXPORTS",
-        "heading": "Use an export you can edit",
-        "description": "Start with an image export you own or have permission to change, so the cleanup decision begins with the right file.",
-        "listItems": [],
+        "enabled": true,
+        "eyebrow": "FEATURE 1",
+        "heading": "Remove the Separate CapCut Ending Before Export",
+        "description": "A short CapCut logo card at the end of a project is often a separate timeline clip. Delete that ending in your editable CapCut project, check the final scene, and export again. This avoids rebuilding video pixels, preserves your main footage, and can be free when no Pro-only asset blocks export.",
         "imagePosition": "right",
-        "image": "/uploads/capcut-operations-feature-1.png",
-        "imageAlt": "Use an export you can edit"
+        "image": "/uploads/landing-20261121/capcut-watermark-remover/Feature_01_Before_640x347.png",
+        "afterImage": "/uploads/landing-20261121/capcut-watermark-remover/Feature_01_After_640x347.png",
+        "imageAlt": "Illustrative before view of a portable speaker with a CapCut-style mark in the corner.",
+        "afterImageAlt": "Illustrative after view of the same speaker frame without that mark."
       },
       {
-        "eyebrow": "CAPCUT IMAGE EXPORTS",
-        "heading": "Identify the visible area",
-        "description": "Mark only the visible overlay area you intend to address, then review the surrounding image before you continue.",
-        "listItems": [],
+        "enabled": true,
+        "eyebrow": "FEATURE 2",
+        "heading": "Check Template Logos and Pro-Only Elements",
+        "description": "A template may contain a logo on a text, sticker, or overlay track rather than a removable ending. Open the original edit and replace or delete permitted layers. If the export prompt comes from a Pro template or premium resource, use a licensed option or eligible free asset instead of assuming a watermark eraser unlocks paid usage rights.",
         "imagePosition": "left",
-        "image": "/uploads/capcut-operations-feature-2.png",
-        "imageAlt": "Identify the visible area"
+        "image": "/uploads/landing-20261121/capcut-watermark-remover/Feature_02_Before_640x347.png",
+        "afterImage": "/uploads/landing-20261121/capcut-watermark-remover/Feature_02_After_640x347.png",
+        "imageAlt": "Illustrative before view of a potted plant and watering can with a CapCut-style mark.",
+        "afterImageAlt": "Illustrative after view of the same plant and watering-can frame without that mark."
       },
       {
-        "eyebrow": "CAPCUT IMAGE EXPORTS",
-        "heading": "Review before you export",
-        "description": "Compare the preview with the source and decide whether the result is appropriate before you export a new copy.",
-        "listItems": [],
+        "enabled": true,
+        "eyebrow": "FEATURE 3",
+        "heading": "Clean an Authorized Fixed Logo After Export",
+        "description": "When the source project is unavailable and a small logo stays in a fixed location throughout an authorized exported MP4, WatermarkGemini's separate general video tool offers automatic detection or a fixed-area workflow. The supported format is MP4 at 24 fps, no more than 9 minutes or 100 MB; video processing needs allocated credits. Inspect motion, edges and sound after processing.",
         "imagePosition": "right",
-        "image": "/uploads/capcut-operations-feature-3.png",
-        "imageAlt": "Review before you export"
+        "image": "/uploads/landing-20261121/capcut-watermark-remover/Feature_03_Before_640x347.png",
+        "afterImage": "/uploads/landing-20261121/capcut-watermark-remover/Feature_03_After_640x347.png",
+        "imageAlt": "Illustrative before view of a courtyard door with a CapCut-style mark in the corner.",
+        "afterImageAlt": "Illustrative after view of the same courtyard frame without that mark."
+      },
+      {
+        "enabled": true,
+        "eyebrow": "FEATURE 4",
+        "heading": "Avoid Blurry Patches, Flicker and Misleading Free Claims",
+        "description": "Cropping may cut off faces or subtitles, while a blurred square can remain obvious in motion. A fixed-area cleanup is not motion tracking and may fail when a logo moves across shots. The dedicated CapCut tool here is not released, so do not promise free one-click CapCut removal; use the live general video tool only after checking its limits and price.",
+        "imagePosition": "left",
+        "image": "/uploads/landing-20261121/capcut-watermark-remover/Feature_04_Before_640x347.png",
+        "afterImage": "/uploads/landing-20261121/capcut-watermark-remover/Feature_04_After_640x347.png",
+        "imageAlt": "Illustrative before view of a lantern and lavender with a CapCut-style mark in the corner.",
+        "afterImageAlt": "Illustrative after view of the same lantern frame without that mark."
       }
     ]
   },
   "cta": {
     "eyebrow": "CAPCUT IMAGE EXPORTS",
-    "heading": "CapCut workflow",
-    "description": "WatermarkGemini is preparing a dedicated page for visible-watermark cleanup on CapCut image exports you own or are authorized to edit. The CapCut-specific processing workflow is not available yet.",
-    "buttonLabel": "See available image cleanup tools",
-    "buttonHref": "/#tool"
+    "heading": "Choose the Right CapCut Watermark Fix",
+    "description": "Delete an editable outro in CapCut first. Already have an authorized MP4 with a fixed in-frame mark? Check our separate video tool and its cost and format limits; the CapCut-specific workflow here is still unavailable.",
+    "buttonLabel": "Upload file",
+    "buttonHref": "/video-watermark-remover"
   },
   "heroSamples": [
     {
       "id": "preview-1",
-      "label": "Example 1",
-      "image": "/uploads/capcut-operations-feature-1.png",
-      "imageAlt": "Use an export you can edit"
+      "label": "Coastal travel",
+      "image": "/uploads/landing-20261121/capcut-watermark-remover/Hero_01_Before_538x436.png",
+      "imageAlt": "Illustrative before view of a camper by the sea with a CapCut-style mark in the corner.",
+      "afterImage": "/uploads/landing-20261121/capcut-watermark-remover/Hero_01_After_538x436.png",
+      "afterImageAlt": "Illustrative after view of the same coastal camper frame without that mark."
     },
     {
       "id": "preview-2",
-      "label": "Example 2",
-      "image": "/uploads/capcut-operations-feature-2.png",
-      "imageAlt": "Identify the visible area"
+      "label": "Food export",
+      "image": "/uploads/landing-20261121/capcut-watermark-remover/Hero_02_Before_538x436.png",
+      "imageAlt": "Illustrative before view of a strawberry tart beside a cup of coffee with a CapCut-style mark.",
+      "afterImage": "/uploads/landing-20261121/capcut-watermark-remover/Hero_02_After_538x436.png",
+      "afterImageAlt": "Illustrative after view of the same café frame without that mark."
     },
     {
       "id": "preview-3",
-      "label": "Example 3",
-      "image": "/uploads/capcut-operations-feature-3.png",
-      "imageAlt": "Review before you export"
+      "label": "Mountain lake",
+      "image": "/uploads/landing-20261121/capcut-watermark-remover/Hero_03_Before_538x436.png",
+      "imageAlt": "Illustrative before view of a red canoe on a mountain lake with a CapCut-style mark.",
+      "afterImage": "/uploads/landing-20261121/capcut-watermark-remover/Hero_03_After_538x436.png",
+      "afterImageAlt": "Illustrative after view of the same lake frame without that mark."
     }
   ],
   "relatedTools": {
     "enabled": true,
     "eyebrow": "Popular tools",
-    "heading": "All AI tools of WatermarkGemini",
-    "intro": "Start with the cleanup workflow that best matches your image."
+    "heading": "Explore Other Watermark and Video Tools",
+    "intro": "Choose a related video or image workflow and check each tool’s actual availability and requirements.",
+    "items": [
+      {
+        "title": "Video Watermark Remover",
+        "description": "Open the live general MP4 workspace for eligible fixed-area video edits.",
+        "href": "/video-watermark-remover"
+      },
+      {
+        "title": "TikTok Watermark Remover",
+        "description": "Read the dedicated TikTok tool page and its availability.",
+        "href": "/tiktok-watermark-remover"
+      },
+      {
+        "title": "Instagram Watermark Remover",
+        "description": "Explore Instagram video watermark considerations and tool status.",
+        "href": "/instagram-watermark-remover"
+      },
+      {
+        "title": "Facebook Watermark Remover",
+        "description": "Review Facebook video or Reel overlay use cases.",
+        "href": "/facebook-watermark-remover"
+      },
+      {
+        "title": "Sora Watermark Remover",
+        "description": "Explore generated-video mark cases and tool status.",
+        "href": "/sora-watermark-remover"
+      },
+      {
+        "title": "Kling Watermark Remover",
+        "description": "Explore authorized generated-video cleanup options.",
+        "href": "/kling-watermark-remover"
+      },
+      {
+        "title": "Remove Subtitles from Video",
+        "description": "See the separate video subtitle workflow and availability.",
+        "href": "/remove-subtitle-from-video"
+      },
+      {
+        "title": "Image Watermark Remover",
+        "description": "For a separate still image or thumbnail rather than an MP4.",
+        "href": "/"
+      }
+    ]
   },
   "guides": {
     "enabled": true,
     "eyebrow": "Helpful guides",
-    "heading": "Learn More About Free AI Watermark Remover from Image",
-    "intro": "Practical guides for cleaner, more polished images."
-  }
+    "heading": "Helpful Guides for CapCut and Video Watermarks",
+    "intro": "Fix common CapCut export problems, understand moving marks and compare related video editing methods.",
+    "items": [
+      {
+        "title": "How to Remove CapCut Watermark",
+        "description": "Free timeline fixes, template marks, Pro prompts and exported MP4s.",
+        "href": "/blog/how-to-remove-capcut-watermark"
+      },
+      {
+        "title": "Remove Moving Watermarks Without Flicker",
+        "description": "Understand when fixed-area video cleanup cannot track motion.",
+        "href": "/blog/remove-moving-watermark-from-video"
+      },
+      {
+        "title": "How to Remove TikTok Watermarks",
+        "description": "Compare clean exports, cropping and authorized cleanup methods.",
+        "href": "/blog/how-to-remove-watermark-tiktok"
+      },
+      {
+        "title": "Remove Instagram Watermarks from Reels",
+        "description": "Choose a workflow for saved Reels you have rights to edit.",
+        "href": "/blog/how-to-remove-instagram-watermark"
+      },
+      {
+        "title": "How to Remove Filmora Watermark",
+        "description": "Learn why source-project and licensing fixes come before AI.",
+        "href": "/blog/how-to-remove-filmora-watermark"
+      },
+      {
+        "title": "Remove Hardcoded Subtitles from Video",
+        "description": "Tell editable captions from text burned into an MP4.",
+        "href": "/blog/remove-hardcoded-subtitles-from-video"
+      }
+    ]
+  },
+  "toolNote": "Illustrative examples. Results may vary."
 }

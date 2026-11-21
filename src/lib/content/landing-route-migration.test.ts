@@ -26,7 +26,7 @@ describe('background-remover route migration', () => {
 
     expect(landingPage.slug).toBe('remove-background');
     expect(landingPage.toolKind).toBe('background-remover');
-    expect(landingPage.features.items).toHaveLength(3);
+    expect(landingPage.features.items).toHaveLength(4);
     expect(landingPage.faq.items.length).toBeGreaterThanOrEqual(6);
     expect(existsSync(retiredPath)).toBe(false);
     expect(site).toContain('/remove-background');
