@@ -5,6 +5,7 @@ import ImageDisplay from './ImageDisplay.astro';
 import SiteLayout from '../layouts/SiteLayout.astro';
 import { getCollection, type CollectionEntry } from 'astro:content';
 import { splitFeatureCopy } from '../lib/content/feature-copy';
+import { splitInlineLinks } from '../lib/content/inline-links';
 import { visibleItems } from '../lib/content/item-visibility';
 import { resolveImagePair } from '../lib/content/image-pair';
 import { pageRecommendation } from '../lib/client/media-recommendation';
@@ -61,13 +62,17 @@ const featureItems = visibleItems(features?.items ?? []).map((item) => ({
   ...resolveImagePair(item),
   copy: splitFeatureCopy(item.description, item.listItems),
 }));
-const visibleFaqItems = visibleItems(page.faq.items);
+const inlineLinks = (copy: string) => splitInlineLinks(copy, site.canonicalOrigin);
+const visibleFaqItems = visibleItems(page.faq.items).map(item => ({
+  ...item,
+  answerParts: inlineLinks(item.answer),
+}));
 const faqSchema = visibleFaqItems.length > 0 ? {
   '@type': 'FAQPage',
   mainEntity: visibleFaqItems.map((item) => ({
     '@type': 'Question',
     name: item.question,
-    acceptedAnswer: { '@type': 'Answer', text: item.answer },
+    acceptedAnswer: { '@type': 'Answer', text: item.answerParts.map(part => part.text).join('') },
   })),
 } : undefined;
 ---
@@ -117,7 +122,12 @@ const faqSchema = visibleFaqItems.length > 0 ? {
       <div class="feature-list">
         {featureItems.map(item => <article class:list={{ 'feature-row': true, 'feature-item': true, 'is-image-left': item.imagePosition === 'left', reverse: item.imagePosition === 'right' }}>
           <div class="feature-media"><ImageDisplay fit="cover" image={item.image} afterImage={item.afterImage} afterImageAlt={item.afterImageAlt} alt={item.imageAlt} sizes="(max-width: 900px) calc(100vw - 40px), 540px" /></div>
-          <div class="feature-copy"><span class="eyebrow">{item.eyebrow}</span><h3>{item.heading}</h3><p>{item.copy.description}</p>{item.copy.listItems.length > 0 && <ul class="feature-list-items">{item.copy.listItems.map((listItem) => <li>{listItem}</li>)}</ul>}</div>
+          <div class="feature-copy">
+            <span class="eyebrow">{item.eyebrow}</span>
+            <h3>{item.heading}</h3>
+            <p>{inlineLinks(item.copy.description).map(part => part.href ? <a class="landing-copy-link" href={part.href}>{part.text}</a> : part.text)}</p>
+            {item.copy.listItems.length > 0 && <ul class="feature-list-items">{item.copy.listItems.map((listItem) => <li>{listItem}</li>)}</ul>}
+          </div>
         </article>)}
       </div>
     </section>
@@ -140,10 +150,23 @@ const faqSchema = visibleFaqItems.length > 0 ? {
 
   {visibleFaqItems.length > 0 && <section class="faq section-shell faq-section">
     <div class="section-heading"><span class="eyebrow">{page.faq.eyebrow}</span><h2>{page.faq.heading}</h2><p>{page.faq.intro}</p></div>
-    <div class="faq-list">{visibleFaqItems.map((item) => <details><summary>{item.question}<span aria-hidden="true"><Plus size={20} /></span></summary><p>{item.answer}</p></details>)}</div>
+    <div class="faq-list">
+      {visibleFaqItems.map(item => <details>
+        <summary>{item.question}<span aria-hidden="true"><Plus size={20} /></span></summary>
+        <p>{item.answerParts.map(part => part.href ? <a class="landing-copy-link" href={part.href}>{part.text}</a> : part.text)}</p>
+      </details>)}
+    </div>
   </section>}
   </div>
 </SiteLayout>
+
+<style>
+  .landing-copy-link {
+    color: var(--brand-blue-text);
+    text-decoration: underline;
+    text-underline-offset: .15em;
+  }
+</style>
 
 <script>
   import { initializeLandingInteractions } from '../lib/landing-interactions';
