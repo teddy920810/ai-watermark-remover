@@ -172,7 +172,7 @@ describe('tool landing-page usage steps', () => {
     expect(page.features.items.map((item: { imagePosition: string }) => item.imagePosition)).toEqual(['right', 'left', 'right', 'left']);
     expect(page.scope.items).toHaveLength(3);
     expect(page.cta.buttonHref).toBe('#tool');
-    expect(page.heroActions.map((action: { href: string }) => action.href)).toEqual(['#tool', '#image-requirements']);
+    expect(page.heroActions).toBeUndefined();
     expect(copy).toContain('own or have permission');
     expect(copy).toContain('c2pa content credentials');
     expect(copy).toContain('synthid');

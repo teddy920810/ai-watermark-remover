@@ -7,6 +7,7 @@
 .home-blueprint .hero-copy > p { max-width:690px; margin:16px auto 0; }
 .home-blueprint .hero-workbench { width:1160px; max-width:calc(100% - 120px); grid-template-columns:minmax(0,640fr) minmax(0,480fr); gap:40px; align-items:start; }
 .home-blueprint .compare-panel,.home-blueprint .upload-panel { min-height:0; padding:0; border:0; border-radius:0; background:transparent; box-shadow:none; }
+.home-blueprint [data-hero-preview] > .image-display { border-radius:18px; }
 .home-blueprint .upload-panel > astro-island > .tool-card { padding:0; border:0; box-shadow:none; background:transparent; }
 .home-blueprint .upload-panel .tool-heading { display:none; }
 .home-blueprint .result-panel img { height:200px; object-fit:contain; }

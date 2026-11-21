@@ -9,7 +9,7 @@ describe('published processing scope', () => {
   it('publishes video requirements and administrator allowance without promising free processing', () => {
     expect(video.statusLabel ?? '').not.toMatch(/coming soon/i);
     expect(video.title).not.toMatch(/free/i);
-    const requirements = [video.toolNote, ...video.process.steps.map((step: { description: string }) => step.description)].join(' ');
+    const requirements = video.process.steps.map((step: { description: string }) => step.description).join(' ');
     expect(requirements).toMatch(/24\s?fps/i);
     expect(requirements).toMatch(/100\s?MB/i);
     expect(requirements).toMatch(/9\s?min/i);

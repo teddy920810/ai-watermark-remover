@@ -5,6 +5,7 @@ const home = JSON.parse(readFileSync(new URL('../../src/content/homepage/home.js
 
 for (const width of [1440, 390]) {
   test(`homepage features: all four pairs load and drag at ${width}px`, async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.setViewportSize({ width, height: 900 });
     await page.goto('/', { waitUntil: 'domcontentloaded' });
     const cards = page.locator('.features-section .feature-item');

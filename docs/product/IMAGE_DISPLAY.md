@@ -9,9 +9,10 @@ Status: current implementation contract. P5 content replacements were revoked by
 - Image 1 and a different Image 2: Image 1 is Before on the left, Image 2 is After on the right. Enable comparison only after both load and their aspect ratios match. Matching ratios cannot establish that two photos show the same composition; editors must verify that separately.
 - The default Hero example starts loading both images on page load. A deferred pair starts both requests when it comes within 240 px of the viewport or as soon as the visitor selects its example. Single-image loading follows its configured eager/lazy setting.
 - An active pair displays “Loading comparison…” after 300 ms while waiting for either image. The notice clears when both images load or either fails. A failed or misaligned pair keeps the available static image. If neither image loads, show the existing readable failure state. A generated placeholder never counts as a loaded comparison source.
-- Comparison starts at 50%, supports native range keyboard navigation, pointer capture and touch. `image-display:reset` resets a newly selected example to 50% and starts its deferred pair immediately.
+- Comparisons support native range keyboard navigation, pointer capture and touch. The keyboard focus outline appears during keyboard use. `image-display:reset` restores the example to the center and starts its deferred pair immediately.
+- Each loaded pair demonstrates independently when at least 35% is in view, sweeping toward both sides before settling at 50%. Leaving the viewport allows it to demonstrate again on a later visit. Hover, touch, or keyboard use stops that visit's demo at the current position. Reduced motion keeps the slider static and interactive. No CMS schema migration is required.
 
-Natural aspect ratio is the default. Existing fixed-size cards/step frames explicitly pass `fit="cover"`; both sources then use the same frame and crop rule. This keeps nested image markup from leaving blank bands in a pre-existing frame. It does not turn a single image into a comparison.
+Natural aspect ratio is the default. Fixed-size cards and steps pass `fit="cover"` to fill the frame for a single image. Pairs inside fixed frames are centered and scaled to show the complete image. With source dimensions available, both layers and the controls share the rendered image bounds. Landing-page Hero pairs use a height-limited frame. Landing-page Features use the same responsive 640:347 frame across tools, with `fit="contain"` to show the complete image for singles and pairs.
 
 Pages CMS exposes Image 1 and optional Image 2. It does not expose slider implementations, upload endpoints, illustrative watermark text or overlay presets. New records do not acquire synthetic watermark defaults. Public templates use ImageDisplay for both single images and pairs. Stored legacy fields are retained for content compatibility; the renderer never synthesizes an overlay from them. A configured primary image takes priority over an illustrative legacy comparison image; a real legacy pair with an explicit Before source remains compatible. Each rendered image alt preserves its supplied value verbatim; optional `afterImageAlt` supplies a separate After description and otherwise falls back to `imageAlt`. The renderer adds no suffix.
 
@@ -27,4 +28,22 @@ Shared auth completion only treats a same-origin popup or origin-scoped Broadcas
 
 Canvas helpers map coordinates and write opaque black/white masks. Object removal retains clamped coordinates and alpha >10; refinement retains unclamped coordinates and alpha >0. Brush, lasso, history, eraser and output policies stay in their operation modules. Media detection and local draft storage continue using the existing shared client primitives; server media validation remains authoritative.
 
-Verification: targeted unit contracts and the isolated browser fixture in `tests/component` cover static/pair/failure/ratio, 0/50/100, keyboard, drag, touch, cancellation and reset. The fixture uses unrelated existing test images solely to test mechanics and does not claim processing results. Production OAuth and Provider acceptance remain separate release gates.
+Verification: targeted unit contracts and the isolated browser fixture in `tests/component` cover static images, pairs, failure, aspect ratio, range endpoints, keyboard, drag, touch, cancellation and reset. The fixture uses unrelated existing test images solely to test mechanics and does not claim processing results. Production OAuth and Provider acceptance remain separate release gates.
+
+## Tool landing-page source image sizes
+
+Use these canvas sizes for new or replacement tool landing-page images. The browser scales the image to the available space.
+
+| Slot | Source canvas | Aspect ratio | Display frame |
+| --- | --- | --- | --- |
+| Hero comparison | 1280 × 800 px | 8:5 | Responsive 8:5 on desktop and 35:24 on phones |
+| Features | 1280 × 694 px | 640:347 | Responsive 640:347 at every viewport size |
+| How it works | 768 × 480 px | 8:5 | Step illustration. Keep important details in the center for the responsive frame. |
+| Related tool card, when supplying a new card image | 640 × 480 px | 4:3 | The landing page normally reuses an existing tool card or Hero image. |
+| Social share image | 1200 × 630 px | 40:21 | Social link preview |
+
+- Export Before and After at the same canvas size. Keep the framing, subject position, and scale aligned on both images.
+- Leave about 5% clear around the edges for rounded corners. Keep the watermark or edit away from the top corners occupied by the Before and After labels.
+- Preview the full Before and After states at desktop and phone widths. The change should be easy to see during the demo, with the subject and the relevant corner visible at both endpoints.
+- Existing images can stay in their current frames with centered, proportional scaling. When a source looks too small or leaves excessive space, the content owner can reframe or replace the source using the slot's canvas size. Apply any reframing consistently to both files and keep the target area visible.
+- Hero thumbnails reuse the Hero sources and crop them to squares. Keep the example recognizable at thumbnail size.

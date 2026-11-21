@@ -36,7 +36,7 @@ for (const slug of slugs) {
       await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', new RegExp(copy.shareImage + '$'));
       await expect(page.locator('#tool input[type=file]')).toBeEnabled({ timeout: 30_000 });
       await expect(page.locator('#tool button')).toHaveText(copy.uploadButtonLabel);
-      await expect(page.locator('.hero-tool .tool-note')).toHaveText(copy.toolNote);
+      await expect(page.locator('.hero-tool .tool-note')).toHaveCount(0);
       const pairs = page.locator('[data-landing-preview]');
       await expect(pairs).toHaveCount(3);
       for (const [index, sample] of copy.heroSamples.entries()) {
