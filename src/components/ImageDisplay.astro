@@ -22,6 +22,7 @@ const pair = Boolean(image && afterImage && image !== afterImage);
       <span class="image-display-divider" aria-hidden="true"><span>↔</span></span>
       <input type="range" min="0" max="100" value="50" aria-label={`Compare before and after: ${alt}`} />
     </div>
+    <p class="image-display-loading" role="status" hidden>Loading comparison…</p>
   </>}
   <p class="image-display-error" role="status" hidden>The image could not be loaded.</p>
 </div>}
@@ -40,6 +41,7 @@ const pair = Boolean(image && afterImage && image !== afterImage);
   .image-display-cover, .image-display-cover .image-display-layer { height: 100%; }
   .image-display-cover .image-display-layer :global(picture), .image-display-cover .image-display-layer :global(img), .image-display-cover[data-ready="true"] [data-image-side="before"] :global(img) { height: 100%; max-height: none; object-fit: cover; }
   .image-display-controls { position: absolute; z-index: 2; inset: 0; cursor: ew-resize; touch-action: none; }
+  .image-display-loading { position: absolute; inset-block-start: 12px; inset-inline-end: 12px; margin: 0; padding: 4px 8px; border-radius: 6px; background: #172033; color: white; font-size: 0.75rem; line-height: 1.4; pointer-events: none; }
   .image-display-controls input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; pointer-events: none; }
   .image-display:has(input:focus-visible) { outline: 3px solid var(--brand-blue, #3975ff); outline-offset: 3px; }
   .image-display-divider { position: absolute; left: var(--image-position); top: 0; height: 100%; width: 2px; background: white; box-shadow: 0 0 4px #17203388; transform: translateX(-50%); }
