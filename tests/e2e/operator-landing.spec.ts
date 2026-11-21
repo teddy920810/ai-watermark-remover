@@ -7,7 +7,7 @@ test('operator copy renders supplied card titles, descriptions and links on desk
     await page.setViewportSize({ width, height: 900 });
     await page.goto('/remove-logo-from-image', { waitUntil: 'domcontentloaded' });
     await expect(page.locator('h1')).toHaveText(copy.heading);
-    await expect(page.locator('.hero-tool .tool-note')).toHaveText(copy.toolNote);
+    await expect(page.locator('.hero-tool .tool-note')).toHaveCount(0);
     const tools = page.locator('#ai-tools .tool-card');
     await expect(tools).toHaveCount(8);
     for (const [index, item] of copy.relatedTools.items.entries()) {
@@ -35,7 +35,7 @@ test('the revised background page retains its tool cards and existing upload con
   await expect(page.locator('#ai-tools .tool-card')).not.toHaveCount(0);
   await page.locator('.site-cta').scrollIntoViewIfNeeded();
   await expect(page.locator('.site-cta [data-testid="compact-launcher-file"]')).toBeEnabled();
-  await expect(page.locator('.tool-note')).toContainText('Illustrative examples.');
+  await expect(page.locator('.hero-tool .tool-note')).toHaveCount(0);
 });
 
 test('operator feature copy and FAQ answers render supplied policy links', async ({ page }) => {

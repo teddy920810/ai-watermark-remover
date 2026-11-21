@@ -5,6 +5,7 @@ const home = JSON.parse(readFileSync(new URL('../../src/content/homepage/home.js
 
 for (const width of [1440, 390]) {
   test(`homepage results: all five pairs load, drag and reset at ${width}px`, async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.setViewportSize({ width, height: 900 });
     await page.goto('/', { waitUntil: 'domcontentloaded' });
     const section = page.locator('[data-scenario-section]');

@@ -13,8 +13,16 @@ async function openPublicPage(page: Page, path: string) {
   return response;
 }
 
-test('ChatGPT landing uses delivered comparison pairs and keeps page-local actions', async ({ page }) => {
-  await page.goto('/chatgpt-watermark-remover');
+test('ChatGPT landing uses the shared Hero upload entry and keeps its images and requirements', async ({ page }) => {
+  await page.goto('/chatgpt-watermark-remover', { waitUntil: 'domcontentloaded' });
+  const hero = page.locator('#upload');
+  await expect(hero.locator('.hero-actions')).toHaveCount(0);
+  const upload = hero.getByRole('button', { name: 'Upload file', exact: true });
+  await expect(upload).toHaveCount(1);
+  await expect(hero.locator('#tool').getByRole('button', { name: 'Upload file', exact: true })).toBeEnabled();
+  const heroFileChooser = page.waitForEvent('filechooser');
+  await upload.click();
+  await (await heroFileChooser).setFiles([]);
   await expect(page.locator('.landing-features-section .feature-item')).toHaveCount(4);
   await expect(page.locator('.faq-list details')).toHaveCount(11);
   await expect(page.locator('.tool-landing > section')).toHaveCount(7);
@@ -29,14 +37,16 @@ test('ChatGPT landing uses delivered comparison pairs and keeps page-local actio
       await expect.poll(() => image.evaluate((element) => (element as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
     }
   }
-  await page.locator('.hero-actions').getByRole('link', { name: 'Review image requirements' }).click();
-  await expect(page).toHaveURL(/#image-requirements$/);
+  await expect(page.locator('#image-requirements')).toBeVisible();
   const footer = page.locator('.site-cta'); await footer.scrollIntoViewIfNeeded();
   const fileChooser = page.waitForEvent('filechooser');
   await footer.getByRole('button', { name: 'Open Image Workspace', exact: true }).click();
   await (await fileChooser).setFiles([]);
-  await expect(page).toHaveURL(/\/chatgpt-watermark-remover#image-requirements$/);
+  await expect(page).toHaveURL(/\/chatgpt-watermark-remover$/);
   await expect(page.locator('.site-cta h2')).toHaveText('Clean an Unwanted Visible Mark in Your Image');
+});
+
+test('standard tool landing keeps the shared footer CTA without a page-specific requirements section', async ({ page }) => {
   await page.goto('/remove-text-from-image');
   await expect(page.locator('#image-requirements')).toHaveCount(0);
   const textPage = JSON.parse(readFileSync(new URL('../../src/content/landing-pages/remove-text-from-image.json', import.meta.url), 'utf8'));
@@ -253,6 +263,7 @@ test('homepage exposes the features and FAQ sections in CMS-managed order', asyn
 });
 
 test('homepage blueprint previews, CTA routes and motion controls work on desktop and mobile', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   let processingRequests = 0;
   await page.route('**/api/jobs', route => { processingRequests++; return route.abort(); });
   for (const width of [1920, 390]) {
@@ -337,6 +348,7 @@ test('homepage matches blueprint geometry and keeps mobile comparisons and activ
 });
 
 test('homepage hero pairs drag and reset when samples switch', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/', { waitUntil: 'domcontentloaded' });
   const home = JSON.parse(readFileSync(new URL('../../src/content/homepage/home.json', import.meta.url), 'utf8'));
@@ -441,6 +453,7 @@ test('homepage CMS PNG and JPEG images load generated responsive WebP variants',
 });
 
 test('original missing content keeps its fallback and network failures use the site-wide placeholder', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   const content = JSON.parse(readFileSync(new URL('../../src/content/landing-pages/remove-logo-from-image.json', import.meta.url), 'utf8'));
   const items = content.features.items.filter((item: { enabled?: boolean }) => item.enabled !== false);
   const writes: string[] = [];

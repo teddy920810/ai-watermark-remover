@@ -1444,10 +1444,6 @@ content:
         type: text
         required: true
         description: H1 下方的一段简短说明文字。
-      - name: toolNote
-        label: 本页工具说明（可选）
-        type: text
-        description: 显示运营提供的工具状态或使用说明，不修改实际工具能力。
       - name: uploadButtonLabel
         label: 本页上传按钮文案（可选）
         type: string

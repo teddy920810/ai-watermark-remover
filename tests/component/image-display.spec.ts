@@ -3,6 +3,10 @@ import { readFileSync } from 'node:fs';
 
 const loadingMessage = 'Loading comparison…';
 
+test.beforeEach(async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+});
+
 test('preserves the configured alt verbatim for both image sources', async ({ page }) => {
   await page.goto('/');
   const images = page.locator('#pair img');
@@ -118,7 +122,7 @@ test('zero and single images never expose comparison controls; a failed pair deg
   await expect(page.locator('#both-failed').getByRole('status').filter({ hasText: 'The image could not be loaded.' })).toBeVisible();
 });
 
-test('a real aligned pair supports 0/50/100, keyboard, pointer capture, touch and switch reset', async ({ page }) => {
+test('a real aligned pair supports keyboard, pointer capture, touch and switch reset', async ({ page }) => {
   await page.goto('/');
   const display = page.locator('#pair [data-image-display]');
   const range = display.getByRole('slider');
@@ -146,7 +150,7 @@ test('a real aligned pair supports 0/50/100, keyboard, pointer capture, touch an
   await expect(framed).toHaveAttribute('data-ready', 'true');
   for (const side of ['before', 'after']) {
     const image = framed.locator(`[data-image-side="${side}"] img`);
-    await expect(image).toHaveCSS('object-fit', 'cover');
+    await expect(image).toHaveCSS('object-fit', 'contain');
     expect((await image.boundingBox())!.height).toBe(240);
   }
   await page.setViewportSize({ width: 390, height: 844 });

@@ -1,5 +1,6 @@
 ---
 import ResponsiveImage from './ResponsiveImage.astro';
+import { resolvePublicImageDimensions } from '../lib/content/public-image-dimensions';
 interface Props {
   image?: string;
   afterImage?: string;
@@ -7,20 +8,29 @@ interface Props {
   alt: string;
   sizes?: string;
   eager?: boolean;
-  fit?: 'natural' | 'cover';
+  fit?: 'natural' | 'cover' | 'contain';
   class?: string;
 }
 const { image, afterImage, afterImageAlt, alt, sizes = '(max-width: 900px) calc(100vw - 40px), 640px', eager = false, fit = 'natural', class: className } = Astro.props;
 const pair = Boolean(image && afterImage && image !== afterImage);
+const framed = fit !== 'natural';
+const cover = fit === 'cover' && !pair;
+const dimensions = framed && pair && image ? resolvePublicImageDimensions(image) : undefined;
+const ratio = dimensions?.width && dimensions.height ? dimensions.width / dimensions.height : undefined;
+const initialPosition = 50;
 ---
-{image && <div class:list={['image-display', { 'image-display-cover': fit === 'cover' }, className]} data-image-display data-pair={pair ? 'true' : undefined} style="--image-position:50%">
+{image && <div class:list={[
+  'image-display',
+  { 'image-display-cover': cover, 'image-display-frame': framed && !cover, 'image-display-frame--sized': Boolean(ratio) },
+  className,
+]} data-image-display data-pair={pair ? 'true' : undefined} style={{ '--image-position': `${initialPosition}%`, '--source-ratio': ratio }}>
   <div class="image-display-layer" data-image-side="before"><ResponsiveImage src={image} alt={alt} sizes={sizes} loading={eager ? 'eager' : 'lazy'} fetchpriority={eager ? 'high' : undefined} /></div>
   {pair && <>
     <div class="image-display-layer" data-image-side="after" hidden><ResponsiveImage src={afterImage!} alt={afterImageAlt ?? alt} sizes={sizes} loading={eager ? 'eager' : 'lazy'} /></div>
     <div class="image-display-controls" hidden>
       <span class="image-display-label image-display-before">Before</span><span class="image-display-label image-display-after">After</span>
       <span class="image-display-divider" aria-hidden="true"><span>↔</span></span>
-      <input type="range" min="0" max="100" value="50" aria-label={`Compare before and after: ${alt}`} />
+      <input type="range" min="0" max="100" value={initialPosition} aria-label={`Compare before and after: ${alt}`} />
     </div>
     <p class="image-display-loading" role="status" hidden>Loading comparison…</p>
   </>}
@@ -35,15 +45,36 @@ const pair = Boolean(image && afterImage && image !== afterImage);
   .image-display { position: relative; width: 100%; overflow: hidden; }
   .image-display-layer { width: 100%; }
   .image-display-layer :global(picture), .image-display-layer :global(img) { display: block; width: 100%; height: auto; }
+  .image-display[data-pair="true"] .image-display-layer :global(img) { max-height: none; }
   .image-display [hidden] { display: none !important; }
   .image-display[data-ready="true"] [data-image-side="before"] { position: absolute; inset: 0; z-index: 1; clip-path: inset(0 calc(100% - var(--image-position)) 0 0); }
   .image-display[data-ready="true"] [data-image-side="before"] :global(picture), .image-display[data-ready="true"] [data-image-side="before"] :global(img) { height: 100%; object-fit: contain; }
   .image-display-cover, .image-display-cover .image-display-layer { height: 100%; }
-  .image-display-cover .image-display-layer :global(picture), .image-display-cover .image-display-layer :global(img), .image-display-cover[data-ready="true"] [data-image-side="before"] :global(img) { height: 100%; max-height: none; object-fit: cover; }
+  .image-display-cover .image-display-layer :global(picture), .image-display-cover .image-display-layer :global(img) { height: 100%; max-height: none; object-fit: cover; }
   .image-display-controls { position: absolute; z-index: 2; inset: 0; cursor: ew-resize; touch-action: none; }
+  .image-display-frame { height: 100%; container-type: size; }
+  .image-display-frame > :is(.image-display-layer, .image-display-controls),
+  .image-display-frame[data-ready="true"] [data-image-side="before"] {
+    position: absolute;
+    inset: 50% auto auto 50%;
+    translate: -50% -50%;
+    width: var(--frame-image-width, 100%);
+    height: var(--frame-image-height, 100%);
+  }
+  @supports (height: 1cqh) {
+    .image-display-frame--sized > :is(.image-display-layer, .image-display-controls) {
+      --frame-image-width: min(100%, calc(100cqh * var(--source-ratio)));
+      --frame-image-height: min(100%, calc(100cqw / var(--source-ratio)));
+    }
+  }
+  .image-display-frame .image-display-layer :global(picture),
+  .image-display-frame .image-display-layer :global(img) {
+    height: 100%;
+    object-fit: contain;
+  }
   .image-display-loading { position: absolute; inset-block-start: 12px; inset-inline-end: 12px; margin: 0; padding: 4px 8px; border-radius: 6px; background: #172033; color: white; font-size: 0.75rem; line-height: 1.4; pointer-events: none; }
   .image-display-controls input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; pointer-events: none; }
-  .image-display:has(input:focus-visible) { outline: 3px solid var(--brand-blue, #3975ff); outline-offset: 3px; }
+  .image-display:not([data-pointer-focus]):has(input:focus-visible) { outline: 3px solid var(--brand-blue, #3975ff); outline-offset: 3px; }
   .image-display-divider { position: absolute; left: var(--image-position); top: 0; height: 100%; width: 2px; background: white; box-shadow: 0 0 4px #17203388; transform: translateX(-50%); }
   .image-display-divider span { position: absolute; top: 50%; left: 50%; width: 36px; height: 36px; display: grid; place-items: center; border-radius: 50%; background: white; color: #172033; box-shadow: 0 2px 8px #17203344; transform: translate(-50%,-50%); }
   .image-display-label { position: absolute; top: 12px; padding: 5px 10px; border-radius: 6px; background: #172033cc; color: white; font: 600 12px/1.5 system-ui; }

@@ -57,13 +57,16 @@ async function expectConfiguredImage(display: Locator, item: ConfiguredImage) {
     await expect(range).toHaveAttribute('min', '0');
     await expect(range).toHaveAttribute('max', '100');
     await expect(range).toHaveValue('50');
-    await range.focus(); await range.press('Home'); await expect(range).toHaveValue('0');
-    await expect.poll(() => display.evaluate(element => (element as HTMLElement).style.getPropertyValue('--image-position'))).toBe('0%');
-    const divider = display.locator('.image-display-divider');
-    const start = (await divider.boundingBox())!.x;
-    await range.press('End'); await expect(range).toHaveValue('100');
-    await expect.poll(() => display.evaluate(element => (element as HTMLElement).style.getPropertyValue('--image-position'))).toBe('100%');
-    expect((await divider.boundingBox())!.x - start).toBeCloseTo((await display.boundingBox())!.width, 0);
+    await range.focus();
+    for (const [key, value] of [['Home', '0'], ['End', '100']] as const) {
+      await range.press(key);
+      await expect(range).toHaveValue(value);
+      await expect.poll(() => range.evaluate(element => {
+        const track = element.getBoundingClientRect();
+        const divider = element.parentElement!.querySelector('.image-display-divider')!.getBoundingClientRect();
+        return (divider.left + divider.width / 2 - track.left) / track.width * 100;
+      })).toBeCloseTo(Number(value), 1);
+    }
     await range.press('ArrowLeft'); await expect(range).toHaveValue('99');
     await expect(display.locator('[data-image-side="before"]')).toHaveCSS('clip-path', 'inset(0px 1% 0px 0px)');
   } else {
@@ -82,6 +85,20 @@ async function expectConfiguredImage(display: Locator, item: ConfiguredImage) {
     expect(Math.abs(ratios[0] - ratios[1])).toBeLessThan(0.01);
   }
 }
+
+test('PDF landing shows the shared uploader without a page-specific note below it', async ({ page }) => {
+  await page.setViewportSize({ width: 997, height: 901 });
+  const writes = await anonymousLauncher(page);
+  await page.goto('/pdf-watermark-remover', { waitUntil: 'domcontentloaded' });
+
+  const tool = page.locator('#upload #tool');
+  await expect(tool.locator('.tool-note')).toHaveCount(0);
+  await expect(tool.getByRole('button', { name: 'Upload file', exact: true })).toBeEnabled();
+  await expect(tool.getByText('Review the cost before processing.', { exact: true })).toBeVisible();
+  await expect(tool.getByRole('link', { name: 'Open workspace' })).toBeVisible();
+  await expect(page.getByText('PDF Upload Not Yet Supported', { exact: true })).toBeVisible();
+  expect(writes).toEqual([]);
+});
 
 test('focused tool launchers keep the designed upload target and workspace entry at both viewports', async ({ page }) => {
   test.setTimeout(90_000);
@@ -142,7 +159,40 @@ test('focused image and video landing entries hand local files to their matching
   expect(writes).toEqual([]);
 });
 
+test('Gemini and ChatGPT Features share the same frame without cropping the comparisons', async ({ page }) => {
+  await anonymousLauncher(page);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  for (const width of [1440, 390]) {
+    await page.setViewportSize({ width, height: 900 });
+    const heights: number[] = [];
+    for (const [route, featureIndex] of [
+      ['/gemini-watermark-remover', 0],
+      ['/chatgpt-watermark-remover', 1],
+    ] as const) {
+      await page.goto(route, { waitUntil: 'domcontentloaded' });
+      const frame = page.locator('.landing-features-section .feature-media').nth(featureIndex);
+      const display = frame.locator('[data-image-display]');
+      await frame.scrollIntoViewIfNeeded();
+      await expect(display).toHaveAttribute('data-ready', 'true');
+      const box = (await frame.boundingBox())!;
+      expect(Math.abs(box.width / box.height - 640 / 347)).toBeLessThan(0.015);
+      heights.push(box.height);
+      const slider = (await display.getByRole('slider').boundingBox())!;
+      for (const image of await display.locator('img').all()) {
+        await expect(image).toHaveCSS('object-fit', 'contain');
+        const photo = (await image.boundingBox())!;
+        const ratio = await image.evaluate(element => (element as HTMLImageElement).naturalWidth / (element as HTMLImageElement).naturalHeight);
+        expect(Math.abs(photo.width / photo.height - ratio)).toBeLessThan(0.015);
+        expect(photo.width).toBeCloseTo(slider.width, 0);
+        expect(photo.height).toBeCloseTo(slider.height, 0);
+      }
+    }
+    expect(heights[0]).toBeCloseTo(heights[1], 0);
+  }
+});
+
 test('Gemini features preserve configured single images and real pairs without synthetic overlays', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   const writes = await anonymousLauncher(page);
   const content = JSON.parse(readFileSync(new URL('../../src/content/landing-pages/gemini-watermark-remover.json', import.meta.url), 'utf8'));
   for (const width of [1920, 390]) {
@@ -153,7 +203,7 @@ test('Gemini features preserve configured single images and real pairs without s
       await expectConfiguredImage(feature.locator('[data-image-display]'), content.features.items[index]);
       const image = feature.locator('[data-image-side="before"] img');
       expect((await image.boundingBox())!.height).toBeGreaterThan(100);
-      expect((await image.boundingBox())!.height).toBeCloseTo((await feature.locator('.feature-media').boundingBox())!.height - 2, 0);
+      expect((await image.boundingBox())!.height).toBeLessThanOrEqual((await feature.locator('.feature-media').boundingBox())!.height);
       await expect(feature.locator('.landing-watermark,.fixed-watermark')).toHaveCount(0);
     }
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
@@ -162,12 +212,13 @@ test('Gemini features preserve configured single images and real pairs without s
 });
 
 test('landing configured examples switch and reset on desktop and mobile without creating processing requests', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   const writes = await anonymousLauncher(page);
   const content = JSON.parse(readFileSync(new URL('../../src/content/landing-pages/gemini-watermark-remover.json', import.meta.url), 'utf8'));
 
   for (const width of [1440, 390]) {
     await page.setViewportSize({ width, height: 900 });
-    await page.goto('/gemini-watermark-remover');
+    await page.goto('/gemini-watermark-remover', { waitUntil: 'domcontentloaded' });
     await expect(page.locator('.tool-landing')).toBeVisible();
     await expect(page.locator('[data-landing-sample]')).toHaveCount(3);
     await expect(page.locator('[data-landing-preview]:visible')).toHaveCount(1);
