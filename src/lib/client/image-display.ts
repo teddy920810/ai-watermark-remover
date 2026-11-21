@@ -1,39 +1,32 @@
-const initialized = new WeakSet<HTMLElement>();
+const startComparisons = new WeakMap<Element, () => void>();
 let comparisonObserver: IntersectionObserver | undefined;
-
-function loadComparison(root: Element) {
-  for (const image of root.querySelectorAll<HTMLImageElement>('img[loading="lazy"]')) image.loading = 'eager';
-}
+const loadingNoticeDelay = 300;
 
 function deferComparison(root: HTMLElement) {
   if (typeof IntersectionObserver === 'undefined') {
-    loadComparison(root);
+    startComparisons.get(root)?.();
     return;
   }
-  comparisonObserver ??= new IntersectionObserver((entries, observer) => {
-    for (const { target, isIntersecting } of entries) {
-      if (!isIntersecting) continue;
-      observer.unobserve(target);
-      // The After layer is hidden until decode, so native lazy loading cannot start it.
-      loadComparison(target);
-    }
+  comparisonObserver ??= new IntersectionObserver(entries => {
+    for (const { target, isIntersecting } of entries) if (isIntersecting) startComparisons.get(target)?.();
   }, { rootMargin: '240px' });
   comparisonObserver.observe(root);
 }
 
 export function initializeImageDisplays(scope: ParentNode) {
   scope.querySelectorAll<HTMLElement>('[data-image-display]').forEach(root => {
-    if (initialized.has(root)) return;
-    initialized.add(root);
+    if (startComparisons.has(root)) return;
     const before = root.querySelector<HTMLImageElement>('[data-image-side="before"] img');
     const after = root.querySelector<HTMLImageElement>('[data-image-side="after"] img');
     const beforeLayer = root.querySelector<HTMLElement>('[data-image-side="before"]');
     const afterLayer = root.querySelector<HTMLElement>('[data-image-side="after"]');
     const controls = root.querySelector<HTMLElement>('.image-display-controls');
+    const loading = root.querySelector<HTMLElement>('.image-display-loading');
     const error = root.querySelector<HTMLElement>('.image-display-error');
     const range = root.querySelector<HTMLInputElement>('input[type="range"]');
     const loaded = (img: HTMLImageElement | null) => Boolean(img?.complete && img.naturalWidth && img.dataset.imageFallback !== 'true');
     const failed = (img: HTMLImageElement | null) => Boolean(img?.complete && (!img.naturalWidth || img.dataset.imageFallback === 'true'));
+    let loadingTimer: number | undefined;
     function setPosition(value: number) {
       const position = Math.max(0, Math.min(100, value));
       root.style.setProperty('--image-position', `${position}%`);
@@ -41,14 +34,32 @@ export function initializeImageDisplays(scope: ParentNode) {
     }
     function update() {
       const beforeLoaded = loaded(before), afterLoaded = loaded(after);
+      const beforeFailed = failed(before), afterFailed = failed(after);
       const aligned = before && after && Math.abs(before.naturalWidth / before.naturalHeight - after.naturalWidth / after.naturalHeight) < 0.01;
       const ready = Boolean(beforeLoaded && afterLoaded && aligned);
       root.dataset.ready = String(ready);
       if (controls) controls.hidden = !ready;
       if (beforeLayer) beforeLayer.hidden = !beforeLoaded && afterLoaded;
       if (afterLayer) afterLayer.hidden = !afterLoaded || (!ready && beforeLoaded);
-      if (error) error.hidden = beforeLoaded || afterLoaded || !(failed(before) && (!after || failed(after)));
+      if (error) error.hidden = beforeLoaded || afterLoaded || !(beforeFailed && (!after || afterFailed));
+      if (loading) {
+        const waiting = after?.loading === 'eager' && !(beforeLoaded && afterLoaded) && !beforeFailed && !afterFailed;
+        if (waiting) {
+          loadingTimer ??= window.setTimeout(() => { loading.hidden = false; }, loadingNoticeDelay);
+        } else {
+          window.clearTimeout(loadingTimer);
+          loadingTimer = undefined;
+          loading.hidden = true;
+        }
+      }
     }
+    function startComparison() {
+      comparisonObserver?.unobserve(root);
+      // The hidden After layer cannot rely on native lazy loading.
+      for (const image of [before, after]) if (image?.loading === 'lazy') image.loading = 'eager';
+      update();
+    }
+    startComparisons.set(root, startComparison);
     for (const img of [before, after]) {
       img?.addEventListener('load', update);
       img?.addEventListener('error', update);
@@ -72,7 +83,10 @@ export function initializeImageDisplays(scope: ParentNode) {
     };
     controls?.addEventListener('pointerup', finish);
     controls?.addEventListener('pointercancel', finish);
-    root.addEventListener('image-display:reset', () => setPosition(50));
+    root.addEventListener('image-display:reset', () => {
+      setPosition(50);
+      if (after?.loading === 'lazy') startComparison();
+    });
     if (after?.loading === 'lazy') deferComparison(root);
     update();
   });
