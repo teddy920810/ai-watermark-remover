@@ -24,6 +24,20 @@ describe('homepage CMS content', () => {
     }
     expect(parsed.useCaseSection.intro).toContain('Illustrative comparisons');
   });
+  it('supplies four aligned feature pairs with the original artwork as After', async () => {
+    const parsed = homepageSchema.parse(homepage);
+    const originals = ['feature-01-cream-branded-base.png', 'feature-02-date-base.png', 'feature-03-travel-clean-base.png', 'feature-04-laptop-clean-base.png'];
+    expect(parsed.features.items).toHaveLength(originals.length);
+    for (const [index, item] of parsed.features.items.entries()) {
+      expect(item.afterImage, item.heading).toBe(`/uploads/home-blueprint/features/${originals[index]}`);
+      expect(item.image).not.toBe(item.afterImage);
+      const sources = [item.image!, item.afterImage!].map(source => new URL(`../../../public${source}`, import.meta.url));
+      const images = await Promise.all(sources.map(source => sharp(readFileSync(source)).metadata()));
+      expect([images[0].width, images[0].height]).toEqual([images[1].width, images[1].height]);
+      expect(readFileSync(sources[0]).equals(readFileSync(sources[1]))).toBe(false);
+    }
+    expect(parsed.features.intro).toContain('Illustrative comparisons');
+  });
   it('supplies the four approved independent hero image pairs', () => {
     const parsed = homepageSchema.parse(homepage);
     const approvedSamples = [
@@ -96,7 +110,7 @@ describe('homepage CMS content', () => {
       '/uploads/home-blueprint/results/result-02-magazine-model.png',
       '/uploads/home-blueprint/results/result-03-gemini-water.png',
     ]);
-    expect(parsed.features.items.slice(0, 3).map(item => item.image)).toEqual([
+    expect(parsed.features.items.slice(0, 3).map(item => item.afterImage ?? item.image)).toEqual([
       '/uploads/home-blueprint/features/feature-01-cream-branded-base.png',
       '/uploads/home-blueprint/features/feature-02-date-base.png',
       '/uploads/home-blueprint/features/feature-03-travel-clean-base.png',

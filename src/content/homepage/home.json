@@ -176,7 +176,7 @@
     "eyebrow": "Why choose WatermarkGemini",
     "heading": "Remove Watermarks Cleanly with AI",
     "headingHighlight": "Cleanly with AI",
-    "intro": "From small corner logos to text overlays, transparent marks, signatures, and date stamps, WatermarkGemini uses AI to detect unwanted elements and rebuild the surrounding area for a cleaner, more natural-looking image.",
+    "intro": "From small corner logos to text overlays, transparent marks, signatures, and date stamps, WatermarkGemini uses AI to detect unwanted elements and rebuild the surrounding area for a cleaner, more natural-looking image. Illustrative comparisons — not tested product outputs. Actual results depend on your image.",
     "items": [
       {
         "enabled": true,
@@ -188,10 +188,11 @@
           "Text",
           "Stamp"
         ],
-        "image": "/uploads/home-blueprint/features/feature-01-cream-branded-base.png",
+        "image": "/uploads/home-blueprint/features/feature-01-cream-branded-base-before.png",
         "imageAlt": "Branded cream jar product photo for transparent watermark removal comparison",
         "imagePosition": "right",
-        "watermark": "watermark"
+        "watermark": "watermark",
+        "afterImage": "/uploads/home-blueprint/features/feature-01-cream-branded-base.png"
       },
       {
         "enabled": true,
@@ -199,10 +200,11 @@
         "heading": "Keep Details Clear on Complex Backgrounds",
         "description": "Watermarks often overlap fabric, hair, buildings, landscapes, shadows, and other detailed areas. WatermarkGemini analyzes the surrounding image to reconstruct the removed region and reduce obvious blur, smudges, and distracting patches.",
         "listItems": [],
-        "image": "/uploads/home-blueprint/features/feature-02-date-base.png",
+        "image": "/uploads/home-blueprint/features/feature-02-date-base-before.png",
         "imageAlt": "Portrait in front of a detailed stone building for date watermark removal comparison",
         "imagePosition": "left",
-        "watermark": "2025.06.18"
+        "watermark": "2025.06.18",
+        "afterImage": "/uploads/home-blueprint/features/feature-02-date-base.png"
       },
       {
         "enabled": true,
@@ -217,10 +219,11 @@
           "Transparent Mark",
           "AI Watermark"
         ],
-        "image": "/uploads/home-blueprint/features/feature-03-travel-clean-base.png",
+        "image": "/uploads/home-blueprint/features/feature-03-travel-clean-base-before.png",
         "imageAlt": "Clean travel portrait with a dog in Santorini for multi-element watermark removal comparison",
         "imagePosition": "right",
-        "watermark": "watermark"
+        "watermark": "watermark",
+        "afterImage": "/uploads/home-blueprint/features/feature-03-travel-clean-base.png"
       },
       {
         "enabled": true,
@@ -233,11 +236,12 @@
           "Private Storage",
           "24-Hour Deletion"
         ],
-        "image": "/uploads/home-blueprint/features/feature-04-laptop-clean-base.png",
+        "image": "/uploads/home-blueprint/features/feature-04-laptop-clean-base-before.png",
         "imageAlt": "Laptop showing a clean travel image ready for watermark removal comparison",
         "imagePosition": "left",
         "watermark": "watermark",
-        "comparisonStyle": "laptop"
+        "comparisonStyle": "laptop",
+        "afterImage": "/uploads/home-blueprint/features/feature-04-laptop-clean-base.png"
       }
     ]
   },

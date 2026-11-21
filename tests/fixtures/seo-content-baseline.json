@@ -346,7 +346,7 @@
     },
     {
       "file": "src/content/homepage/home.json",
-      "semanticSha256": "5369706fed8982e3dc32809a00884e175ec1a3844a1fe2dbfa73bafb682761c6",
+      "semanticSha256": "35f720b020091011cad67f7d0e6ab2fc871618715d47e3883d4ffb71cbf31f8f",
       "images": [
         {
           "path": "/shareImage",
@@ -446,35 +446,51 @@
         },
         {
           "path": "/features/items/0/image",
-          "value": "/uploads/home-blueprint/features/feature-01-cream-branded-base.png"
+          "value": "/uploads/home-blueprint/features/feature-01-cream-branded-base-before.png"
         },
         {
           "path": "/features/items/0/imageAlt",
           "value": "Branded cream jar product photo for transparent watermark removal comparison"
         },
         {
+          "path": "/features/items/0/afterImage",
+          "value": "/uploads/home-blueprint/features/feature-01-cream-branded-base.png"
+        },
+        {
           "path": "/features/items/1/image",
-          "value": "/uploads/home-blueprint/features/feature-02-date-base.png"
+          "value": "/uploads/home-blueprint/features/feature-02-date-base-before.png"
         },
         {
           "path": "/features/items/1/imageAlt",
           "value": "Portrait in front of a detailed stone building for date watermark removal comparison"
         },
         {
+          "path": "/features/items/1/afterImage",
+          "value": "/uploads/home-blueprint/features/feature-02-date-base.png"
+        },
+        {
           "path": "/features/items/2/image",
-          "value": "/uploads/home-blueprint/features/feature-03-travel-clean-base.png"
+          "value": "/uploads/home-blueprint/features/feature-03-travel-clean-base-before.png"
         },
         {
           "path": "/features/items/2/imageAlt",
           "value": "Clean travel portrait with a dog in Santorini for multi-element watermark removal comparison"
         },
         {
+          "path": "/features/items/2/afterImage",
+          "value": "/uploads/home-blueprint/features/feature-03-travel-clean-base.png"
+        },
+        {
           "path": "/features/items/3/image",
-          "value": "/uploads/home-blueprint/features/feature-04-laptop-clean-base.png"
+          "value": "/uploads/home-blueprint/features/feature-04-laptop-clean-base-before.png"
         },
         {
           "path": "/features/items/3/imageAlt",
           "value": "Laptop showing a clean travel image ready for watermark removal comparison"
+        },
+        {
+          "path": "/features/items/3/afterImage",
+          "value": "/uploads/home-blueprint/features/feature-04-laptop-clean-base.png"
         },
         {
           "path": "/audiences/cards/0/image",
