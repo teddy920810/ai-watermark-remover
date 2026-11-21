@@ -57,13 +57,16 @@ async function expectConfiguredImage(display: Locator, item: ConfiguredImage) {
     await expect(range).toHaveAttribute('min', '0');
     await expect(range).toHaveAttribute('max', '100');
     await expect(range).toHaveValue('50');
-    await range.focus(); await range.press('Home'); await expect(range).toHaveValue('0');
-    await expect.poll(() => display.evaluate(element => (element as HTMLElement).style.getPropertyValue('--image-position'))).toBe('0%');
-    const divider = display.locator('.image-display-divider');
-    const start = (await divider.boundingBox())!.x;
-    await range.press('End'); await expect(range).toHaveValue('100');
-    await expect.poll(() => display.evaluate(element => (element as HTMLElement).style.getPropertyValue('--image-position'))).toBe('100%');
-    expect((await divider.boundingBox())!.x - start).toBeCloseTo((await range.boundingBox())!.width, 0);
+    await range.focus();
+    for (const [key, value] of [['Home', '0'], ['End', '100']] as const) {
+      await range.press(key);
+      await expect(range).toHaveValue(value);
+      await expect.poll(() => range.evaluate(element => {
+        const track = element.getBoundingClientRect();
+        const divider = element.parentElement!.querySelector('.image-display-divider')!.getBoundingClientRect();
+        return (divider.left + divider.width / 2 - track.left) / track.width * 100;
+      })).toBeCloseTo(Number(value), 1);
+    }
     await range.press('ArrowLeft'); await expect(range).toHaveValue('99');
     await expect(display.locator('[data-image-side="before"]')).toHaveCSS('clip-path', 'inset(0px 1% 0px 0px)');
   } else {
@@ -215,7 +218,7 @@ test('landing configured examples switch and reset on desktop and mobile without
 
   for (const width of [1440, 390]) {
     await page.setViewportSize({ width, height: 900 });
-    await page.goto('/gemini-watermark-remover');
+    await page.goto('/gemini-watermark-remover', { waitUntil: 'domcontentloaded' });
     await expect(page.locator('.tool-landing')).toBeVisible();
     await expect(page.locator('[data-landing-sample]')).toHaveCount(3);
     await expect(page.locator('[data-landing-preview]:visible')).toHaveCount(1);

@@ -29,21 +29,23 @@ for (const [width, frameRatio] of [[1440, 8 / 5], [390, 35 / 24]]) test(`tool He
   const frame = page.locator('.landing-sample-image').first();
   const controls = frame.locator('.image-display-controls');
   await expect(controls).toBeVisible();
-  const frameBounds = (await frame.boundingBox())!;
-  const controlBounds = (await controls.boundingBox())!;
-  expect(frameBounds.width / frameBounds.height).toBeCloseTo(frameRatio, 2);
-  expect(controlBounds.height).toBeLessThan(frameBounds.height);
-
-  for (const side of ['before', 'after']) {
-    const image = frame.locator(`[data-image-side="${side}"] img`);
-    await expect(image).toHaveCSS('object-fit', 'contain');
-    const { box, sourceRatio } = await image.evaluate((element: HTMLImageElement) => ({
-      box: element.getBoundingClientRect().toJSON(),
-      sourceRatio: element.naturalWidth / element.naturalHeight,
-    }));
+  const bounds = await frame.evaluate(element => ({
+    frame: element.getBoundingClientRect().toJSON(),
+    controls: element.querySelector('.image-display-controls')!.getBoundingClientRect().toJSON(),
+    images: Array.from(element.querySelectorAll<HTMLImageElement>('.image-display img'), image => ({
+      box: image.getBoundingClientRect().toJSON(),
+      fit: getComputedStyle(image).objectFit,
+      sourceRatio: image.naturalWidth / image.naturalHeight,
+    })),
+  }));
+  expect(bounds.frame.width / bounds.frame.height).toBeCloseTo(frameRatio, 2);
+  expect(bounds.controls.height).toBeLessThan(bounds.frame.height);
+  expect(bounds.images).toHaveLength(2);
+  for (const { box, fit, sourceRatio } of bounds.images) {
+    expect(fit).toBe('contain');
     expect(box.width / box.height).toBeCloseTo(sourceRatio, 2);
     for (const key of ['x', 'y', 'width', 'height'] as const) {
-      expect(Math.abs(box[key] - controlBounds[key])).toBeLessThanOrEqual(1);
+      expect(Math.abs(box[key] - bounds.controls[key]), `image and controls align on ${key}`).toBeLessThanOrEqual(1);
     }
   }
 });
