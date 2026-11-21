@@ -45,23 +45,26 @@
     {
       "id": "preview-1",
       "label": "Emoji on a travel photo",
-      "image": "/uploads/landing-new-20261114/remove-emoji-from-photo/hero-01-before.webp",
-      "afterImage": "/uploads/landing-new-20261114/remove-emoji-from-photo/hero-01-after.webp",
-      "imageAlt": "Illustrative before-and-after comparison for emoji on a travel photo, with the same composition and only the selected distracting overlay changed."
+      "image": "/uploads/landing-20261121/remove-emoji-from-photo/Hero_01_Before_538x436.png",
+      "afterImage": "/uploads/landing-20261121/remove-emoji-from-photo/Hero_01_After_538x436.png",
+      "imageAlt": "Illustrative before view of a coastal hiking photo with a smiling emoji in the sky.",
+      "afterImageAlt": "Illustrative after view of the same coastline without the emoji."
     },
     {
       "id": "preview-2",
       "label": "Heart sticker on a product flat lay",
-      "image": "/uploads/landing-new-20261114/remove-emoji-from-photo/hero-02-before.webp",
-      "afterImage": "/uploads/landing-new-20261114/remove-emoji-from-photo/hero-02-after.webp",
-      "imageAlt": "Illustrative before-and-after comparison for heart sticker on a product flat lay, with the same composition and only the selected distracting overlay changed."
+      "image": "/uploads/landing-20261121/remove-emoji-from-photo/Hero_02_Before_538x436.png",
+      "afterImage": "/uploads/landing-20261121/remove-emoji-from-photo/Hero_02_After_538x436.png",
+      "imageAlt": "Illustrative before view of a coffee and bottle flat lay with a pink heart sticker.",
+      "afterImageAlt": "Illustrative after view of the same flat lay without the heart sticker."
     },
     {
       "id": "preview-3",
       "label": "Social-story reaction overlay",
-      "image": "/uploads/landing-new-20261114/remove-emoji-from-photo/hero-03-before.webp",
-      "afterImage": "/uploads/landing-new-20261114/remove-emoji-from-photo/hero-03-after.webp",
-      "imageAlt": "Illustrative before-and-after comparison for social-story reaction overlay, with the same composition and only the selected distracting overlay changed."
+      "image": "/uploads/landing-20261121/remove-emoji-from-photo/Hero_03_Before_538x436.png",
+      "afterImage": "/uploads/landing-20261121/remove-emoji-from-photo/Hero_03_After_538x436.png",
+      "imageAlt": "Illustrative before view of a dog portrait with a reaction emoji and stars.",
+      "afterImageAlt": "Illustrative after view of the same dog portrait without the reaction and stars."
     }
   ],
   "features": {
@@ -74,36 +77,44 @@
         "eyebrow": "FEATURE 1",
         "heading": "Clean Decorative Emojis, Hearts and Reactions",
         "description": "Delete visible decorative overlays you added to your own saved photo: smileys, heart stickers, stars or small reaction badges. Brush selection allows you to target the icon itself instead of cropping away an important part of the scene. For a sticker on sky, a wall, cloth or a simple tabletop, nearby patterns can give AI useful clues. Avoid claims that removing the sticker reveals hidden personal information.",
-        "image": "/uploads/landing-new-20261114/remove-emoji-from-photo/feature-01.webp",
-        "imageAlt": "Illustrative remove emoji from photo use case 1: clean decorative emojis, hearts and reactions, showing one matched scene without cropping or missing subjects.",
-        "imagePosition": "left"
+        "image": "/uploads/landing-20261121/remove-emoji-from-photo/Feature_01_Before_640x347.png",
+        "imageAlt": "Illustrative before view of a cyclist by a lake with a smile and hearts over the sky.",
+        "imagePosition": "left",
+        "afterImage": "/uploads/landing-20261121/remove-emoji-from-photo/Feature_01_After_640x347.png",
+        "afterImageAlt": "Illustrative after view of the same cycling photo without the emoji and hearts."
       },
       {
         "enabled": true,
         "eyebrow": "FEATURE 2",
         "heading": "Capture the Sticker Border, Glow and Shadow",
         "description": "Many photo emojis have a white outline, soft halo or drop shadow. If the selection covers only the colored center, the outer edge can remain as a ghost image. Use Brush or Lasso to cover the full outline with a narrow margin, then check the mask before processing. The Eraser and Undo controls let you correct any accidental overlap with the main subject.",
-        "image": "/uploads/landing-new-20261114/remove-emoji-from-photo/feature-02.webp",
-        "imageAlt": "Illustrative remove emoji from photo use case 2: capture the sticker border, glow and shadow, showing one matched scene without cropping or missing subjects.",
-        "imagePosition": "right"
+        "image": "/uploads/landing-20261121/remove-emoji-from-photo/Feature_02_Before_640x347.png",
+        "imageAlt": "Illustrative before view of a notebook beside a glowing heart sticker.",
+        "imagePosition": "right",
+        "afterImage": "/uploads/landing-20261121/remove-emoji-from-photo/Feature_02_After_640x347.png",
+        "afterImageAlt": "Illustrative after view of the same notebook photo without the sticker."
       },
       {
         "enabled": true,
         "eyebrow": "FEATURE 3",
         "heading": "Reconstruct a Plausible Background, Not Hidden Pixels",
         "description": "AI inpainting predicts how nearby grass, wall texture, fabric or sky might continue behind the removed sticker. It does not reverse the edit or recover information that is no longer present in the photo. A sticker across someone’s face, a license plate or detailed text is therefore not a way to recover the original identity or content. For exact recovery, find the unstickered original.",
-        "image": "/uploads/landing-new-20261114/remove-emoji-from-photo/feature-03.webp",
-        "imageAlt": "Illustrative remove emoji from photo use case 3: reconstruct a plausible background, not hidden pixels, showing one matched scene without cropping or missing subjects.",
-        "imagePosition": "left"
+        "image": "/uploads/landing-20261121/remove-emoji-from-photo/Feature_03_Before_640x347.png",
+        "imageAlt": "Illustrative before view of a vase and textured fabric with a smile sticker.",
+        "imagePosition": "left",
+        "afterImage": "/uploads/landing-20261121/remove-emoji-from-photo/Feature_03_After_640x347.png",
+        "afterImageAlt": "Illustrative after view of the same fabric and vase without the sticker."
       },
       {
         "enabled": true,
         "eyebrow": "FEATURE 4",
         "heading": "Browser-Based Photo Cleanup with Review and Privacy",
         "description": "Use the existing image object-removal editor with JPG/JPEG, PNG, WebP or JFIF up to 10 MB; download the edited result as PNG. Eligible standard-image free uses share the same account balance. The website says uploaded photos and results use private temporary storage and are scheduled for deletion after roughly 24 hours. Check the result for repeated patterns or unnatural edges before sharing.",
-        "image": "/uploads/landing-new-20261114/remove-emoji-from-photo/feature-04.webp",
-        "imageAlt": "Illustrative remove emoji from photo use case 4: browser-based photo cleanup with review and privacy, showing one matched scene without cropping or missing subjects.",
-        "imagePosition": "right"
+        "image": "/uploads/landing-20261121/remove-emoji-from-photo/Feature_04_Before_640x347.png",
+        "imageAlt": "Illustrative before view of a laptop preview of a plant photo with a reaction emoji.",
+        "imagePosition": "right",
+        "afterImage": "/uploads/landing-20261121/remove-emoji-from-photo/Feature_04_After_640x347.png",
+        "afterImageAlt": "Illustrative after view of the same plant preview without the emoji."
       }
     ]
   },

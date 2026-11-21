@@ -45,23 +45,26 @@
     {
       "id": "preview-1",
       "label": "Product-demo rebrand",
-      "image": "/uploads/landing-new-20261114/remove-logo-from-video/hero-01-before.webp",
-      "afterImage": "/uploads/landing-new-20261114/remove-logo-from-video/hero-01-after.webp",
-      "imageAlt": "Illustrative before-and-after comparison for product-demo rebrand, with the same composition and only the selected distracting overlay changed."
+      "image": "/uploads/landing-20261121/remove-logo-from-video/Hero_01_Before_538x436.png",
+      "afterImage": "/uploads/landing-20261121/remove-logo-from-video/Hero_01_After_538x436.png",
+      "imageAlt": "Illustrative before view of a product shot of a green bottle with a corner brand mark.",
+      "afterImageAlt": "Illustrative after view of the same bottle frame without the brand mark."
     },
     {
       "id": "preview-2",
       "label": "Creator channel corner badge",
-      "image": "/uploads/landing-new-20261114/remove-logo-from-video/hero-02-before.webp",
-      "afterImage": "/uploads/landing-new-20261114/remove-logo-from-video/hero-02-after.webp",
-      "imageAlt": "Illustrative before-and-after comparison for creator channel corner badge, with the same composition and only the selected distracting overlay changed."
+      "image": "/uploads/landing-20261121/remove-logo-from-video/Hero_02_Before_538x436.png",
+      "afterImage": "/uploads/landing-20261121/remove-logo-from-video/Hero_02_After_538x436.png",
+      "imageAlt": "Illustrative before view of a potter holding a bowl with a corner channel logo.",
+      "afterImageAlt": "Illustrative after view of the same potter frame without the channel logo."
     },
     {
       "id": "preview-3",
       "label": "Presentation or training video",
-      "image": "/uploads/landing-new-20261114/remove-logo-from-video/hero-03-before.webp",
-      "afterImage": "/uploads/landing-new-20261114/remove-logo-from-video/hero-03-after.webp",
-      "imageAlt": "Illustrative before-and-after comparison for presentation or training video, with the same composition and only the selected distracting overlay changed."
+      "image": "/uploads/landing-20261121/remove-logo-from-video/Hero_03_Before_538x436.png",
+      "afterImage": "/uploads/landing-20261121/remove-logo-from-video/Hero_03_After_538x436.png",
+      "imageAlt": "Illustrative before view of a team-workflow slide with a logo in the upper right.",
+      "afterImageAlt": "Illustrative after view of the same slide with the workflow content still visible and the logo absent."
     }
   ],
   "features": {
@@ -74,36 +77,44 @@
         "eyebrow": "FEATURE 1",
         "heading": "Remove a Corner Logo Without Cropping the Video",
         "description": "Cropping may cut off a product, a speaker, an interface button, or safe space needed for a vertical export. A fixed-area cleanup can target an old corner bug without changing the whole composition. This is useful for brand refreshes, marketing demos and tutorials in which the badge stays in the same screen position. Review the area at each scene change because the selected region still affects whatever passes behind it.",
-        "image": "/uploads/landing-new-20261114/remove-logo-from-video/feature-01.webp",
-        "imageAlt": "Illustrative remove logo from video use case 1: remove a corner logo without cropping the video, showing one matched scene without cropping or missing subjects.",
-        "imagePosition": "left"
+        "image": "/uploads/landing-20261121/remove-logo-from-video/Feature_01_Before_640x347.png",
+        "imageAlt": "Illustrative before view of a guitarist in a room with a corner logo.",
+        "imagePosition": "left",
+        "afterImage": "/uploads/landing-20261121/remove-logo-from-video/Feature_01_After_640x347.png",
+        "afterImageAlt": "Illustrative after view of the same guitar frame without the corner logo."
       },
       {
         "enabled": true,
         "eyebrow": "FEATURE 2",
         "heading": "Rebuild the Area Instead of Adding a Blurry Box",
         "description": "A blur bar is obvious on walls, fabric, screens and moving backgrounds. AI-assisted reconstruction attempts to blend the selected logo region with nearby image detail. It does not reveal the exact original pixels and cannot promise a flawless result. Check straight lines, product edges, skin, reflections and frame-to-frame consistency rather than relying on a single preview image.",
-        "image": "/uploads/landing-new-20261114/remove-logo-from-video/feature-02.webp",
-        "imageAlt": "Illustrative remove logo from video use case 2: rebuild the area instead of adding a blurry box, showing one matched scene without cropping or missing subjects.",
-        "imagePosition": "right"
+        "image": "/uploads/landing-20261121/remove-logo-from-video/Feature_02_Before_640x347.png",
+        "imageAlt": "Illustrative before view of a model house on a desk with a small brand mark.",
+        "imagePosition": "right",
+        "afterImage": "/uploads/landing-20261121/remove-logo-from-video/Feature_02_After_640x347.png",
+        "afterImageAlt": "Illustrative after view of the same model-house frame without the brand mark."
       },
       {
         "enabled": true,
         "eyebrow": "FEATURE 3",
         "heading": "Refresh Your Own Product and Training Footage",
         "description": "Old campaign logos, retired business identities and channel badges can date otherwise useful videos. When the logo is baked into an export and the editable project is gone, a short test of the fixed-area workflow may be worthwhile. If you still have the source project, replace the logo layer there first: this protects detail and is usually more reliable than reconstructing the video.",
-        "image": "/uploads/landing-new-20261114/remove-logo-from-video/feature-03.webp",
-        "imageAlt": "Illustrative remove logo from video use case 3: refresh your own product and training footage, showing one matched scene without cropping or missing subjects.",
-        "imagePosition": "left"
+        "image": "/uploads/landing-20261121/remove-logo-from-video/Feature_03_Before_640x347.png",
+        "imageAlt": "Illustrative before view of an espresso machine and cup with a corner logo.",
+        "imagePosition": "left",
+        "afterImage": "/uploads/landing-20261121/remove-logo-from-video/Feature_03_After_640x347.png",
+        "afterImageAlt": "Illustrative after view of the same espresso scene without the logo."
       },
       {
         "enabled": true,
         "eyebrow": "FEATURE 4",
         "heading": "Online MP4 Processing with Transparent Limits",
         "description": "Use the browser to choose a local MP4, sign in, review compatibility and the quoted processing cost, and inspect the result. Video jobs require administrator-allocated credits rather than the free image allowance. Current support is MP4, 24 fps, up to 9 minutes and 100 MB; it does not follow logos that travel around the screen. Files and results are held in private temporary storage and scheduled for deletion after roughly 24 hours.",
-        "image": "/uploads/landing-new-20261114/remove-logo-from-video/feature-04.webp",
-        "imageAlt": "Illustrative remove logo from video use case 4: online mp4 processing with transparent limits, showing one matched scene without cropping or missing subjects.",
-        "imagePosition": "right"
+        "image": "/uploads/landing-20261121/remove-logo-from-video/Feature_04_Before_640x347.png",
+        "imageAlt": "Illustrative before view of a lake video preview on a laptop with a corner mark.",
+        "imagePosition": "right",
+        "afterImage": "/uploads/landing-20261121/remove-logo-from-video/Feature_04_After_640x347.png",
+        "afterImageAlt": "Illustrative after view of the same lake preview without the corner mark."
       }
     ]
   },

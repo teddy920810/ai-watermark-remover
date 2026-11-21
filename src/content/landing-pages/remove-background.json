@@ -2,17 +2,15 @@
   "draft": false,
   "slug": "remove-background",
   "toolKind": "background-remover",
-  "title": "Remove Background Online for Free | Transparent PNG",
-  "description": "Remove background from images online with AI. Create a transparent PNG or add a clean color background for product photos, portraits, and social posts.",
-  "eyebrow": "FREE AI BACKGROUND REMOVER",
-  "heading": "Remove Background from Images with Precise AI",
-  "intro": "Create clean, transparent cutouts for product photos, portraits, social posts, and design assets. Upload one image, let AI isolate the subject, choose transparency or a color, and download the finished PNG—no editor required.",
+  "title": "Remove Background from Image Online | Transparent PNG",
+  "description": "Remove background from image online with AI. Create transparent PNG cutouts for products, portraits and pets, or choose a clean color background.",
+  "eyebrow": "AI BACKGROUND REMOVER",
+  "heading": "Remove Background from Image Online with AI",
+  "intro": "Remove the background from an image and keep the subject ready for your next design. Upload a photo, let AI isolate the main subject, then preview a transparent PNG or choose a new color background. It is a practical workflow for product listings, portraits, pet photos and social graphics without manual tracing.",
   "benefits": [
-    "Free to Try",
-    "Shared Daily Rewards",
-    "Transparent PNG",
-    "JPG, PNG, WebP & JFIF",
-    "Private Uploads"
+    "Transparent PNG Download",
+    "Hair & Edge Detail Preview",
+    "Choose a Background Color"
   ],
   "uploader": {
     "hero": {
@@ -58,27 +56,27 @@
   },
   "process": {
     "eyebrow": "HOW IT WORKS",
-    "heading": "Remove a Background in Three Simple Steps",
-    "intro": "There is no layer setup or manual tracing. The full workflow runs in your browser and returns a downloadable PNG.",
+    "heading": "How to Remove the Background from an Image",
+    "intro": "A clear three-step workflow helps you choose the appropriate method and understand what to inspect before keeping an edited file.",
     "steps": [
       {
         "number": "01",
-        "title": "Upload Your Image",
-        "description": "Drag and drop, browse, or paste a JPG, JPEG, PNG, WebP, or JFIF image up to 10 MB.",
+        "title": "Upload Your Product, Portrait or Pet Photo",
+        "description": "Choose an image you have permission to edit. The current page describes JPG, PNG, WebP and JFIF inputs up to 10 MB.",
         "image": "/uploads/background-remover-upload.png",
         "imageAlt": "Photo being uploaded to the background remover"
       },
       {
         "number": "02",
-        "title": "Let AI Isolate the Subject",
-        "description": "The AI detects the main subject and removes the surrounding background while preserving detailed edges.",
+        "title": "Let AI Isolate the Main Subject",
+        "description": "The tool separates the subject from the background. Inspect hair, fur, transparent surfaces and other tricky edges.",
         "image": "/uploads/background-remover-ai-cutout.png",
         "imageAlt": "AI isolating a subject from its original background"
       },
       {
         "number": "03",
-        "title": "Choose a Background and Download",
-        "description": "Keep the result transparent or select a preset or custom color, then download the finished PNG directly.",
+        "title": "Choose Transparency or Color and Save PNG",
+        "description": "Keep a transparent PNG or preview a preset/custom color background; download after checking the result at full size.",
         "image": "/uploads/background-remover-download.png",
         "imageAlt": "Transparent background result ready to download as PNG"
       }
@@ -86,125 +84,235 @@
   },
   "features": {
     "eyebrow": "BUILT FOR CLEAN CUTOUTS",
-    "heading": "A Background Remover for Everyday Visual Work",
-    "intro": "Prepare useful image assets without opening a full editor. The result controls stay focused on the decisions that matter after a cutout is created.",
+    "heading": "Why Choose WatermarkGemini for Image Background Removal?",
+    "intro": "Make a useful cutout, not merely a missing background. Inspect edges, choose transparency, and prepare a file you can reuse.",
     "items": [
       {
         "enabled": true,
-        "eyebrow": "PRODUCT PHOTOS",
-        "heading": "Create Consistent Product Images",
-        "description": "Remove distracting scenes from product photos and turn them into clean assets for listings, catalogs, presentations, and campaigns.",
-        "listItems": [
-          "Keep a transparent PNG for flexible layouts",
-          "Apply a neutral color for consistent storefront images",
-          "Download without continuing to a separate editor"
-        ],
-        "image": "/uploads/background-remover-product-photo.png",
-        "imageAlt": "Product photo shown before and after background removal",
-        "imagePosition": "right"
+        "eyebrow": "FEATURE 1",
+        "heading": "Create Transparent PNGs for Product Images",
+        "description": "A product listing often needs the same clean presentation across many items. Remove the original background, keep the bottle, shoe, accessory or gadget, and download a transparent PNG you can position on your own layout. The workflow is especially useful when the product already has a strong silhouette. Inspect glass, reflective surfaces and shadows carefully, because complex transparent materials can require extra attention.",
+        "imagePosition": "right",
+        "image": "/uploads/landing-20261121/remove-background/Feature_01_Product_PNG_Before_640x347.png",
+        "afterImage": "/uploads/landing-20261121/remove-background/Feature_01_Product_PNG_After_640x347.png",
+        "imageAlt": "Illustrative before view of a purple and white sneaker in a studio setting.",
+        "afterImageAlt": "Illustrative after view of the sneaker isolated against a checkerboard illustration."
       },
       {
         "enabled": true,
-        "eyebrow": "DETAILED EDGES",
-        "heading": "Preserve Hair, Fur, and Fine Outlines",
-        "description": "AI segmentation is designed to follow detailed subject boundaries, helping portraits, pets, clothing, and objects retain a more natural silhouette.",
-        "listItems": [
-          "Useful for portraits and profile images",
-          "Handles soft fur and fine hair better than simple cropping",
-          "Works best with a clear, well-lit source image"
-        ],
-        "image": "/uploads/background-remover-hair-detail.png",
-        "imageAlt": "Detailed hair edges preserved on a transparent background",
-        "imagePosition": "left"
+        "eyebrow": "FEATURE 2",
+        "heading": "Keep Hair, Fur and Fine Subject Edges",
+        "description": "A quick cutout is only useful if the subject still looks believable. WatermarkGemini aims to preserve delicate boundaries around hair, fur, clothing and small object details while separating them from the original background. Use clear, well-lit images when possible and zoom in before download, especially around flyaway strands, dark hair on dark walls, and translucent objects. The result should be judged on detail, not marketing claims about flawless accuracy.",
+        "imagePosition": "left",
+        "image": "/uploads/landing-20261121/remove-background/Feature_02_Hair_Edges_Before_640x347.png",
+        "afterImage": "/uploads/landing-20261121/remove-background/Feature_02_Hair_Edges_After_640x347.png",
+        "imageAlt": "Illustrative before view of a backlit portrait with loose strands of hair.",
+        "afterImageAlt": "Illustrative after view of the same portrait isolated against a checkerboard illustration."
       },
       {
         "enabled": true,
-        "eyebrow": "READY TO USE",
-        "heading": "Transparent, Preset, or Custom Color",
-        "description": "Preview the cutout on transparency, compare it with the original, or place it on a color before downloading—all within the result screen.",
-        "listItems": [
-          "Transparent output by default",
-          "Quick preset colors for common use cases",
-          "Custom color picker for brand and design needs"
-        ],
-        "image": "/uploads/background-remover-background-colors.png",
-        "imageAlt": "Background-removed subject previewed on several color options",
-        "imagePosition": "right"
+        "eyebrow": "FEATURE 3",
+        "heading": "Choose Transparency or a New Background Color",
+        "description": "Removing a background is often the first step, not the last. Keep a transparent cutout for flexible placement, or preview a preset color or a custom background directly in the result view. This makes it easier to prepare a profile portrait, simple graphic, or consistent product tile without opening another editor for a basic color swap. Confirm the final color and boundary before downloading.",
+        "imagePosition": "right",
+        "image": "/uploads/landing-20261121/remove-background/Feature_03_Background_Color_Before_640x347.png",
+        "afterImage": "/uploads/landing-20261121/remove-background/Feature_03_Background_Color_After_640x347.png",
+        "imageAlt": "Illustrative before view of a perfume bottle with pink flowers in the background.",
+        "afterImageAlt": "Illustrative after view of the perfume bottle against a solid lilac background."
+      },
+      {
+        "enabled": true,
+        "eyebrow": "FEATURE 4",
+        "heading": "Remove Image Backgrounds Online in Three Steps",
+        "description": "Upload a supported image, review the cutout, adjust your background choice and download the resulting PNG in your browser. The current page describes JPG, PNG, WebP and JFIF inputs up to 10 MB, but its shared upload widget also shows generic MP4 information that should be removed from this page-specific presentation. Free image allowances are limited, so confirm the credit quote before processing.",
+        "imagePosition": "left",
+        "image": "/uploads/landing-20261121/remove-background/Feature_04_Online_Three_Steps_Before_640x347.png",
+        "afterImage": "/uploads/landing-20261121/remove-background/Feature_04_Online_Three_Steps_After_640x347.png",
+        "imageAlt": "Illustrative before view of a plant in a pot beside a bright window.",
+        "afterImageAlt": "Illustrative after view of the potted plant isolated against a checkerboard illustration."
       }
     ]
   },
   "faq": {
     "eyebrow": "BACKGROUND REMOVAL FAQ",
-    "heading": "Frequently Asked Questions About Removing Backgrounds",
-    "intro": "Learn how the AI background remover works, what files it accepts, how shared free uses work, and what happens to uploaded images.",
+    "heading": "Remove Background FAQs",
+    "intro": "Answers to the most common questions about use cases, formats, results, pricing, and safe editing.",
     "items": [
       {
         "enabled": true,
         "question": "How do I remove the background from an image?",
-        "answer": "Upload or paste an image, sign in when you are ready to process it, and select Remove background. When processing finishes, preview the transparent result, choose an optional background color, and download the PNG."
+        "answer": "Upload a photo to WatermarkGemini, let AI isolate the main subject, and preview the transparent result. You can keep transparency or choose a background color, then download a PNG once the edges look right."
       },
       {
         "enabled": true,
-        "question": "Is the background remover free?",
-        "answer": "You can try it with your WatermarkGemini free balance. Background removal and watermark removal share the same balance: a new eligible account receives one initial use, and daily check-in rewards can add uses up to the current account cap."
+        "question": "Can I remove background from an image for free?",
+        "answer": "Eligible accounts may have limited free image uses or credits, depending on processing type and balance. Check the allowance displayed in the workspace; the service does not guarantee unlimited free exports."
       },
       {
         "enabled": true,
-        "question": "Which image formats are supported?",
-        "answer": "You can upload JPG, JPEG, PNG, WebP, and JFIF images up to 10 MB. Results are delivered as PNG files so transparent pixels can be preserved."
+        "question": "How do I make an image background transparent?",
+        "answer": "Use the Background Remover to isolate the subject and keep the transparent result. Download it as PNG, since PNG supports an alpha channel for transparency."
       },
       {
         "enabled": true,
-        "question": "Can I replace the removed background with a color?",
-        "answer": "Yes. Keep the checkerboard option for transparency, select a preset color, or use the custom color picker. The chosen color is applied when the PNG is prepared for download."
+        "question": "Can I remove background from an image online without Photoshop?",
+        "answer": "Yes. This browser-based workflow can create a cutout without manual Photoshop masking. Upload your photo, preview the edges, choose transparency or a color and save the PNG."
       },
       {
         "enabled": true,
-        "question": "Does it work with hair, fur, and detailed edges?",
-        "answer": "The AI is designed to preserve fine subject edges, including hair and fur. A sharp, well-lit source image with visible separation between subject and background usually produces the cleanest result."
+        "question": "Does the AI background remover work on hair and fur?",
+        "answer": "It is designed to follow detailed subject boundaries, including hair and fur. Results can vary with lighting, motion blur, similar foreground/background colors and flyaway strands, so zoom in before exporting."
       },
       {
         "enabled": true,
-        "question": "What happens to my uploaded image?",
-        "answer": "Uploads and results are stored in private object storage and are designed to expire after 24 hours. For this feature, a short-lived signed input link is sent to Replicate for processing; Replicate's API prediction data is automatically removed after one hour under its current retention policy."
+        "question": "Can I make a white background for product photos?",
+        "answer": "After the background is removed, choose white from the available background colors or use a custom white value. Preview the product edge and shadow before saving the result."
       },
       {
         "enabled": true,
-        "question": "Can I remove the background from any image?",
-        "answer": "Only upload images you own or are authorized to edit. Do not use the service to infringe copyright, privacy, trademark, or other rights, and avoid uploading confidential material."
+        "question": "Can I change the background to another color?",
+        "answer": "The current result controls describe transparency, preset colors and a custom color picker. Choose a color that matches your design, then review the cutout before downloading."
+      },
+      {
+        "enabled": true,
+        "question": "What file formats does the background remover support?",
+        "answer": "The page describes JPG, JPEG, PNG, WebP and JFIF inputs up to 10 MB. It provides PNG download. Confirm exact accepted formats in the live uploader, which currently shares a generic upload message."
+      },
+      {
+        "enabled": true,
+        "question": "Does background removal reduce image quality?",
+        "answer": "AI matting changes pixels near the subject boundary, and exporting can affect encoding. The cutout may need inspection around hair, glass and shadows. Keep the original file and compare before relying on the new asset."
+      },
+      {
+        "enabled": true,
+        "question": "What is the difference between removing a background and removing an object?",
+        "answer": "Background removal isolates the main subject and deletes the surrounding scene. Object removal targets one selected distraction while preserving the rest of the background. Choose the page that matches your intended result."
+      },
+      {
+        "enabled": true,
+        "question": "Can I remove backgrounds from multiple images at once?",
+        "answer": "The current page presents a single-image workflow. Do not assume batch uploads or automated large catalogs are supported unless the product team confirms a separate batch feature."
       }
     ]
   },
   "heroSamples": [
     {
       "id": "preview-1",
-      "label": "Example 1",
-      "image": "/uploads/background-remover-product-photo.png",
-      "imageAlt": "Product photo shown before and after background removal"
+      "label": "Skincare product",
+      "image": "/uploads/landing-20261121/remove-background/Hero_01_Product_Photography_Before_538x436.png",
+      "imageAlt": "Illustrative before view of a skincare bottle on a bathroom counter.",
+      "afterImage": "/uploads/landing-20261121/remove-background/Hero_01_Product_Photography_After_538x436.png",
+      "afterImageAlt": "Illustrative after view of the skincare bottle isolated against a checkerboard illustration."
     },
     {
       "id": "preview-2",
-      "label": "Example 2",
-      "image": "/uploads/background-remover-hair-detail.png",
-      "imageAlt": "Detailed hair edges preserved on a transparent background"
+      "label": "Portrait and hair",
+      "image": "/uploads/landing-20261121/remove-background/Hero_02_Portrait_Hair_Before_538x436.png",
+      "imageAlt": "Illustrative before view of a portrait against a blue sky.",
+      "afterImage": "/uploads/landing-20261121/remove-background/Hero_02_Portrait_Hair_After_538x436.png",
+      "afterImageAlt": "Illustrative after view of the portrait and loose hair against a checkerboard illustration."
     },
     {
       "id": "preview-3",
-      "label": "Example 3",
-      "image": "/uploads/background-remover-background-colors.png",
-      "imageAlt": "Background-removed subject previewed on several color options"
+      "label": "Pet and fur",
+      "image": "/uploads/landing-20261121/remove-background/Hero_03_Pet_Fur_Before_538x436.png",
+      "imageAlt": "Illustrative before view of a golden retriever in a garden.",
+      "afterImage": "/uploads/landing-20261121/remove-background/Hero_03_Pet_Fur_After_538x436.png",
+      "afterImageAlt": "Illustrative after view of the retriever isolated against a checkerboard illustration."
     }
   ],
   "relatedTools": {
     "enabled": true,
     "eyebrow": "Popular tools",
-    "heading": "All AI tools of WatermarkGemini",
-    "intro": "Start with the cleanup workflow that best matches your image."
+    "heading": "Explore More AI Image Editing Tools",
+    "intro": "Choose a workflow that matches the file you own and the specific edit you need.",
+    "items": [
+      {
+        "title": "Background Remover",
+        "description": "Create transparent or color backgrounds for permitted photos.",
+        "href": "/remove-background"
+      },
+      {
+        "title": "Object Remover",
+        "description": "Select unwanted people, items, or clutter in your own photos.",
+        "href": "/remove-object"
+      },
+      {
+        "title": "Remove Text from Image",
+        "description": "Clean unwanted text overlays from images you can edit.",
+        "href": "/remove-text-from-image"
+      },
+      {
+        "title": "Remove Logo from Image",
+        "description": "Review authorized logo cleanup on supported images.",
+        "href": "/remove-logo-from-image"
+      },
+      {
+        "title": "ChatGPT Watermark Remover",
+        "description": "Explore visible image mark cleanup for supported files.",
+        "href": "/chatgpt-watermark-remover"
+      },
+      {
+        "title": "Gemini Watermark Remover",
+        "description": "Clean eligible visible Gemini sparkles without cropping.",
+        "href": "/gemini-watermark-remover"
+      },
+      {
+        "title": "Video Watermark Remover",
+        "description": "Inspect the video overlay workflow and processing limits.",
+        "href": "/video-watermark-remover"
+      },
+      {
+        "title": "PDF Watermark Remover",
+        "description": "Review PDF watermark handling and supported input requirements.",
+        "href": "/pdf-watermark-remover"
+      }
+    ]
   },
   "guides": {
     "enabled": true,
     "eyebrow": "Helpful guides",
-    "heading": "Learn More About Free AI Watermark Remover from Image",
-    "intro": "Practical guides for cleaner, more polished images."
-  }
+    "heading": "Helpful Guides for Cleaner Image Assets",
+    "intro": "Learn practical methods, understand file limitations, and check usage rights before editing.",
+    "items": [
+      {
+        "title": "How to Remove Date Stamp from Photo",
+        "description": "Check editor export options and rights before trying to repair watermarks.",
+        "href": "/blog/how-to-remove-date-stamp-from-photo"
+      },
+      {
+        "title": "How to Remove Samsung Watermark from Photos",
+        "description": "Manage camera-stamp overlays and preserve the original photo.",
+        "href": "/blog/how-to-remove-samsung-watermark-from-photos"
+      },
+      {
+        "title": "How to Fix GPT Image 2.5 Grain Noise",
+        "description": "Inspect grain and image-quality artifacts before publishing.",
+        "href": "/blog/how-to-remove-gpt-image-2-5-grain-noise"
+      },
+      {
+        "title": "How to Remove Metadata From an Image",
+        "description": "Understand file provenance and safer sharing of owned images.",
+        "href": "/blog/how-to-remove-metadata-from-image"
+      },
+      {
+        "title": "Best AI Watermark Remover in 2026",
+        "description": "Compare online cleanup methods and their processing limitations.",
+        "href": "/blog/best-ai-watermark-remover"
+      },
+      {
+        "title": "How to Remove an iStock Watermark from an Image",
+        "description": "Review stock-image licensing and the safest route to a clean authorized source.",
+        "href": "/blog/how-to-remove-istock-watermark"
+      }
+    ]
+  },
+  "cta": {
+    "eyebrow": "Ready when you are",
+    "heading": "Try Remove Background Online",
+    "description": "Use a file you own or may edit. Review supported formats, sign-in requirements, and processing cost before starting.",
+    "buttonLabel": "Open Remove Background",
+    "buttonHref": "#tool"
+  },
+  "toolNote": "Illustrative examples. The checkerboard is part of the example image."
 }

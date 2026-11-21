@@ -45,23 +45,26 @@
     {
       "id": "preview-1",
       "label": "Tourist at a landmark",
-      "image": "/uploads/landing-new-20261114/remove-person-from-photo/hero-01-before.webp",
-      "afterImage": "/uploads/landing-new-20261114/remove-person-from-photo/hero-01-after.webp",
-      "imageAlt": "Illustrative before-and-after comparison for tourist at a landmark, with the same composition and only the selected distracting overlay changed."
+      "image": "/uploads/landing-20261121/remove-person-from-photo/Hero_01_Before_538x436.png",
+      "afterImage": "/uploads/landing-20261121/remove-person-from-photo/Hero_01_After_538x436.png",
+      "imageAlt": "Illustrative before view of a couple posing at a landmark with a passerby in the square.",
+      "afterImageAlt": "Illustrative after view of the same landmark photo with the passerby absent."
     },
     {
       "id": "preview-2",
       "label": "Photobomber in a group photo",
-      "image": "/uploads/landing-new-20261114/remove-person-from-photo/hero-02-before.webp",
-      "afterImage": "/uploads/landing-new-20261114/remove-person-from-photo/hero-02-after.webp",
-      "imageAlt": "Illustrative before-and-after comparison for photobomber in a group photo, with the same composition and only the selected distracting overlay changed."
+      "image": "/uploads/landing-20261121/remove-person-from-photo/Hero_02_Before_538x436.png",
+      "afterImage": "/uploads/landing-20261121/remove-person-from-photo/Hero_02_After_538x436.png",
+      "imageAlt": "Illustrative before view of a family posing on a lawn with another person behind them.",
+      "afterImageAlt": "Illustrative after view of the same family portrait with the extra person absent."
     },
     {
       "id": "preview-3",
       "label": "Beach or outdoor portrait",
-      "image": "/uploads/landing-new-20261114/remove-person-from-photo/hero-03-before.webp",
-      "afterImage": "/uploads/landing-new-20261114/remove-person-from-photo/hero-03-after.webp",
-      "imageAlt": "Illustrative before-and-after comparison for beach or outdoor portrait, with the same composition and only the selected distracting overlay changed."
+      "image": "/uploads/landing-20261121/remove-person-from-photo/Hero_03_Before_538x436.png",
+      "afterImage": "/uploads/landing-20261121/remove-person-from-photo/Hero_03_After_538x436.png",
+      "imageAlt": "Illustrative before view of a beach portrait with a person passing by in the background.",
+      "afterImageAlt": "Illustrative after view of the same beach portrait with the passerby absent."
     }
   ],
   "features": {
@@ -74,36 +77,44 @@
         "eyebrow": "FEATURE 1",
         "heading": "Erase Photobombers and Strangers from Travel Photos",
         "description": "A passerby at the edge of a vacation photo can pull attention away from the moment. Mark that person instead of cropping out the landmark, horizon or other people you want to keep. The model estimates the scene behind the selection using nearby context, so it works best over grass, sand, walls, sky and other repeatable backgrounds. Inspect the rebuilt scenery before sharing.",
-        "image": "/uploads/landing-new-20261114/remove-person-from-photo/feature-01.webp",
-        "imageAlt": "Illustrative remove person from photo use case 1: erase photobombers and strangers from travel photos, showing one matched scene without cropping or missing subjects.",
-        "imagePosition": "left"
+        "image": "/uploads/landing-20261121/remove-person-from-photo/Feature_01_Before_640x347.png",
+        "imageAlt": "Illustrative before view of a portrait by a stone wall with a passerby farther down the lane.",
+        "imagePosition": "left",
+        "afterImage": "/uploads/landing-20261121/remove-person-from-photo/Feature_01_After_640x347.png",
+        "afterImageAlt": "Illustrative after view of the same portrait with the passerby absent."
       },
       {
         "enabled": true,
         "eyebrow": "FEATURE 2",
         "heading": "Use Brush and Lasso to Keep the Right People",
         "description": "You decide who should go. Use Brush for hair, limbs and irregular silhouettes, or Lasso for a larger figure; Eraser and Undo help refine selection boundaries. Cover the subject completely, including belongings and shadows, but avoid painting over the person you want to keep. This is especially important for wedding photos, friends standing together and crowded event pictures.",
-        "image": "/uploads/landing-new-20261114/remove-person-from-photo/feature-02.webp",
-        "imageAlt": "Illustrative remove person from photo use case 2: use brush and lasso to keep the right people, showing one matched scene without cropping or missing subjects.",
-        "imagePosition": "right"
+        "image": "/uploads/landing-20261121/remove-person-from-photo/Feature_02_Before_640x347.png",
+        "imageAlt": "Illustrative before view of three people posing with a blue mask over a bystander.",
+        "imagePosition": "right",
+        "afterImage": "/uploads/landing-20261121/remove-person-from-photo/Feature_02_After_640x347.png",
+        "afterImageAlt": "Illustrative after view of the same group photo with the masked bystander absent."
       },
       {
         "enabled": true,
         "eyebrow": "FEATURE 3",
         "heading": "Rebuild the Background Instead of Leaving a Hole",
         "description": "Deleting a person is not a transparent cutout. The tool attempts to continue visible texture, color, structure and light across the selected area. A small figure against a wall often gives AI stronger context than someone blocking a face, sign or complex building. No service can guarantee the exact original background; review straight lines, shadows, skin and repeated patterns at full size.",
-        "image": "/uploads/landing-new-20261114/remove-person-from-photo/feature-03.webp",
-        "imageAlt": "Illustrative remove person from photo use case 3: rebuild the background instead of leaving a hole, showing one matched scene without cropping or missing subjects.",
-        "imagePosition": "left"
+        "image": "/uploads/landing-20261121/remove-person-from-photo/Feature_03_Before_640x347.png",
+        "imageAlt": "Illustrative before view of a garden portrait with another person on the lawn.",
+        "imagePosition": "left",
+        "afterImage": "/uploads/landing-20261121/remove-person-from-photo/Feature_03_After_640x347.png",
+        "afterImageAlt": "Illustrative after view of the same garden portrait with the extra person absent."
       },
       {
         "enabled": true,
         "eyebrow": "FEATURE 4",
         "heading": "Online Photo Cleanup with Clear Usage and Privacy",
         "description": "The photo object-removal workflow supports JPG/JPEG, PNG, WebP and JFIF up to 10 MB and returns a PNG. WatermarkGemini offers eligible shared free image uses; check the live allowance and any required credits before processing. Uploaded files, masks and results are stored privately and scheduled to expire after about 24 hours. Keep a local copy of the original for later comparisons.",
-        "image": "/uploads/landing-new-20261114/remove-person-from-photo/feature-04.webp",
-        "imageAlt": "Illustrative remove person from photo use case 4: online photo cleanup with clear usage and privacy, showing one matched scene without cropping or missing subjects.",
-        "imagePosition": "right"
+        "image": "/uploads/landing-20261121/remove-person-from-photo/Feature_04_Before_640x347.png",
+        "imageAlt": "Illustrative before view of a laptop preview with a blue mask over a person on a waterfront path.",
+        "imagePosition": "right",
+        "afterImage": "/uploads/landing-20261121/remove-person-from-photo/Feature_04_After_640x347.png",
+        "afterImageAlt": "Illustrative after view of the same preview with the masked person absent."
       }
     ]
   },
