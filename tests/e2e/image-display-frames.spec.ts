@@ -38,12 +38,12 @@ for (const width of [1440, 390]) test(`tool Hero preserves the comparison image 
       sourceRatio: image.naturalWidth / image.naturalHeight,
     })),
   }));
-  expect(bounds.frame.width / bounds.frame.height).toBeCloseTo(538 / 436, 2);
-  expect(bounds.controls.height).toBeLessThan(bounds.frame.height);
+  expect(bounds.frame.width / bounds.frame.height).toBeCloseTo(640 / 347, 2);
   expect(bounds.images).toHaveLength(2);
   for (const { box, fit, sourceRatio } of bounds.images) {
     expect(fit).toBe('contain');
     expect(box.width / box.height).toBeCloseTo(sourceRatio, 2);
+    expect(Math.abs(box.width - Math.min(bounds.frame.width, bounds.frame.height * sourceRatio))).toBeLessThanOrEqual(1);
     for (const key of ['x', 'y', 'width', 'height'] as const) {
       expect(Math.abs(box[key] - bounds.controls[key]), `image and controls align on ${key}`).toBeLessThanOrEqual(1);
     }
