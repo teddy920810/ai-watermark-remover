@@ -36,7 +36,7 @@
 | [单次处理交互](product/INTERACTION_SIMPLIFICATION.md)、[头部上传](product/HEADER_UNIFIED_UPLOAD.md)、[设计QA](../design-qa.md) | 已接受交互与历史发布证据；保留首失败及待验收 |
 | `docs/templates/`、`cms-templates/` | 可执行/可复制模板，与消费者一起维护 |
 
-P0–P7阶段及PR98原始发布证据在[重构台账](product/REFACTOR_LEDGER.md)，2026-11-01后续交付从[发布记录](product/RELEASE_READINESS.md)进入。台账中的本地阶段快照不代表后续版本仍未提交或上线。原 output 草稿只保留指向台账的入口；方案历史快照与历史材料分类见[归档索引](history/README.md)。本地证据仍留在忽略目录，不把凭据或历史产物加入源码。
+P0–P7阶段及PR98原始发布证据在[重构台账](product/REFACTOR_LEDGER.md)，2026-11-01后续交付从[发布记录](product/RELEASE_READINESS.md)进入。台账中的本地阶段快照不代表后续版本仍未提交或上线。方案历史快照与历史材料分类见[归档索引](history/README.md)。本地证据仍留在忽略目录，不把凭据或历史产物加入源码。
 
 当前规范、决策背景/ADR、历史发布/验收与可执行模板按上表分开；历史文中的“当前”和预算只指其记录日期，不能覆盖现行合同。
 

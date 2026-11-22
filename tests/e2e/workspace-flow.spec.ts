@@ -453,6 +453,92 @@ test('insufficient balance shows the full processing cost inline and never submi
   await expect(page.getByRole('dialog')).toHaveCount(0); expect(submissions).toBe(0);
 });
 
+for (const { event, staleStatus, staleCredits } of [
+  { event: 'focus', staleStatus: 200, staleCredits: 0 },
+  { event: 'benefits:changed', staleStatus: 503, staleCredits: 0 },
+]) test(`balance refresh on ${event} queries once after a quote and ignores a late ${staleStatus} response`, async ({ page }) => {
+  await account(page, true, true);
+  const { image } = await imageUploadFixture(page);
+  let balance = 125;
+  let holdNextRead = false;
+  let releaseStaleRead!: () => void;
+  const staleRead = new Promise<void>(resolve => { releaseStaleRead = resolve; });
+  const calls: string[] = [];
+  await page.route('**/api/v1/me', async route => {
+    calls.push('balance');
+    if (holdNextRead) {
+      holdNextRead = false;
+      await staleRead;
+      return route.fulfill({ status: staleStatus, headers: { 'x-test-response': 'stale' }, json: { walletMode: 'unified', unit: 'credits', credits: staleCredits, admissionEnabled: true } });
+    }
+    return json(route, { walletMode: 'unified', unit: 'credits', credits: balance, admissionEnabled: true });
+  });
+  await page.route('**/api/v1/quotes', route => {
+    calls.push('quote');
+    return json(route, imageQuote('balance-refresh-quote', 'image-watermark', 100, 'credits'));
+  });
+  let submissions = 0;
+  await page.route('**/api/v1/jobs', route => {
+    if (route.request().method() === 'GET') return json(route, { jobs: [] });
+    submissions += 1;
+    return json(route, {}, 409);
+  });
+  await openWorkspace(page, '/app/image');
+  await expect(page.locator('.unified-balance')).toContainText('125 Credits');
+  const dispatch = () => page.evaluate(name => window.dispatchEvent(new Event(name)), event);
+  try {
+    holdNextRead = true;
+    await dispatch();
+    await expect.poll(() => holdNextRead).toBe(false);
+    await page.getByLabel('Upload file to workspace').setInputFiles({ name: 'sample.jpg', mimeType: 'image/jpeg', buffer: image });
+    const cost = page.getByLabel('Processing cost');
+    await expect(cost).toContainText('125 Credits');
+
+    calls.length = 0;
+    balance = 150;
+    await dispatch();
+    await expect(cost).toContainText('150 Credits');
+    expect.soft(calls).toEqual(['quote', 'balance']);
+
+    const response = page.waitForResponse(reply => reply.headers()['x-test-response'] === 'stale');
+    releaseStaleRead();
+    await (await response).finished();
+    await page.evaluate(() => new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
+    await expect(cost).toContainText('150 Credits');
+    await expect(page.getByRole('button', { name: 'Remove watermarks · 100 Credits' })).toBeEnabled();
+    expect(submissions).toBe(0);
+  } finally {
+    releaseStaleRead();
+  }
+});
+
+test('a balance refresh falls back once when the editor cannot get a new quote', async ({ page }) => {
+  await account(page, true, true);
+  const { image } = await imageUploadFixture(page);
+  let quoteUnavailable = false;
+  const calls: string[] = [];
+  await page.route('**/api/v1/me', route => {
+    calls.push('balance');
+    return json(route, { walletMode: 'unified', unit: 'credits', credits: quoteUnavailable ? 150 : 125, admissionEnabled: true });
+  });
+  await page.route('**/api/v1/quotes', route => {
+    calls.push('quote');
+    if (quoteUnavailable) return json(route, { error: 'Quote unavailable for this test' }, 503);
+    return json(route, imageQuote('balance-refresh-quote', 'image-watermark', 100, 'credits'));
+  });
+  await openWorkspace(page, '/app/image');
+  await page.getByLabel('Upload file to workspace').setInputFiles({ name: 'sample.jpg', mimeType: 'image/jpeg', buffer: image });
+  await expect(page.getByLabel('Processing cost')).toContainText('125 Credits');
+
+  calls.length = 0;
+  quoteUnavailable = true;
+  await page.evaluate(() => window.dispatchEvent(new Event('focus')));
+  await expect(page.getByRole('alert')).toContainText('Quote unavailable for this test');
+  await expect(page.locator('.unified-balance')).toContainText('150 Credits');
+  await expect(page.getByRole('button', { name: 'Remove watermarks', exact: true })).toBeDisabled();
+  expect(calls).toEqual(['quote', 'balance']);
+});
+
 test('a restored anonymous draft prepares itself after sign-in without starting processing', async ({ page }) => {
   await account(page, false); const { image } = await imageUploadFixture(page); let signedIn = false;
   let uploads = 0; let quotes = 0; let submissions = 0;

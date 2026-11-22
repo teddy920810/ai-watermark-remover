@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { authClient } from '../auth/auth-client';
-import { createPaymentCallbacks, formatPrice, loadPayPalSDK, orderCheckoutStatus, PaymentRequestError, paymentRequest, recoverPaymentOrder, safeReturnPath, type CheckoutStatus, type PaymentCatalog, type PaymentOrder, type PayPalButtons } from './payment-client';
+import { createPaymentCallbacks, formatPrice, loadPayPalSDK, orderCheckoutStatus, PaymentRequestError, paymentRequest, recoverPaymentOrder, safeReturnPath, videoWorkspaceReturnLabel, type CheckoutStatus, type PaymentCatalog, type PaymentOrder, type PayPalButtons } from './payment-client';
 import { canResolveAttempt, parsePaymentAttempt, paymentAccountId, type PaymentAttempt } from './payment-attempt';
 import { selectCheckoutSku } from './checkout-selection';
 
@@ -282,7 +282,7 @@ export default function CreditCheckout({ initialCatalog, initialSku, initialRetu
       </section> : null}
       {status === 'fulfilled' && order ? <section className="payment-outcome" role="status">
         <h2>Your credits have arrived</h2><p>{order.credits.toLocaleString('en-US')} {catalog?.universalCredits ? 'Credits' : 'image credits'} were added. Order: <code>{order.id}</code></p>
-        <a className="button button-primary" href={returnTo}>Return to image tools</a>
+        <a className="button button-primary" href={returnTo}>{videoWorkspaceReturnLabel(returnTo) ?? 'Return to image tools'}</a>
         <button className="button button-ghost" type="button" onClick={resetCheckout}>Make another purchase</button>
       </section> : null}
       {status === 'review' && order ? <section className="payment-outcome" role="status">
