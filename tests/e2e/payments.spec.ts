@@ -2,6 +2,7 @@ import { selectWorkspaceOperation } from '../helpers/workspace';
 import { openWorkspace } from '../helpers/workspace';
 import { expect, test, type Page } from '@playwright/test';
 import sharp from 'sharp';
+import { readFileSync } from 'node:fs';
 
 const order = { id: '10000000-0000-4000-8000-000000000001', paypalOrderId: 'PAYPAL-ORDER', sku: 'starter', credits: 5, amountCents: 499, currency: 'USD', status: 'pending', createdAt: '2026-10-25T00:00:00Z' };
 const packages = [{ sku: 'starter', name: 'Starter', credits: 5, amountCents: 499, currency: 'USD' }, { sku: 'regular', name: 'Regular', credits: 15, amountCents: 999, currency: 'USD' }, { sku: 'batch', name: 'Batch', credits: 40, amountCents: 1999, currency: 'USD' }];
@@ -236,6 +237,66 @@ test('one-time checkout captures on the server before showing credits and refres
   await page.getByRole('button', { name: 'Account menu', exact: true }).click();
   await expect(page.locator('.header-account-panel')).toContainText('Purchased image credits 5');
   await expect(page.locator('#orders')).toContainText('Credits added');
+});
+
+test('video credits checkout returns to the same video on desktop and narrow screens', async ({ page }) => {
+  test.slow(); // Covers three full navigations to checkout and back to the editor.
+  await setup(page);
+  const video = readFileSync(new URL('../fixtures/workspace-24fps.mp4', import.meta.url));
+  const expiresAt = new Date(Date.now() + 5 * 60_000).toISOString();
+  const origin = 'http://127.0.0.1:4379';
+  const metadata = { kind: 'video', contentType: 'video/mp4', byteSize: video.length, width: 160, height: 90, durationSeconds: 2, fps: 24 };
+  const input = { id: 'video-input', role: 'input', metadata, previewUrl: `${origin}/fixture/credits-video.mp4`, expiresAt };
+  let credits = 0;
+  let uploads = 0;
+  let submissions = 0;
+  await page.route('**/api/v1/me', route => route.fulfill({ json: { walletMode: 'unified', unit: 'credits', credits, admissionEnabled: true } }));
+  await page.route('**/api/v1/capabilities', route => route.fulfill({ json: { operations: [{ operation: 'video-watermark', enabled: true, acceptedTypes: ['video/mp4'], maxBytes: 104_857_600 }] } }));
+  await page.route('**/api/v1/uploads', route => {
+    uploads += 1;
+    return route.fulfill({ status: 201, json: { id: 'credits-video-upload', uploadUrl: `${origin}/fixture/credits-video-upload` } });
+  });
+  await page.route('**/fixture/credits-video-upload', route => route.fulfill({ status: 200 }));
+  await page.route('**/fixture/credits-video.mp4', route => route.fulfill({ status: 200, contentType: 'video/mp4', body: video }));
+  await page.route('**/api/v1/uploads/credits-video-upload/complete', route => route.fulfill({ status: 202, json: { status: 'validating' } }));
+  await page.route('**/api/v1/uploads/credits-video-upload', route => route.fulfill({ json: { id: 'credits-video-upload', status: 'ready', artifact: input } }));
+  await page.route('**/api/v1/quotes', route => {
+    expect(route.request().postDataJSON()).toEqual({ operation: 'video-watermark', inputArtifactId: input.id });
+    return route.fulfill({ json: { id: 'video-credits-quote', operation: 'video-watermark', amount: 100, unit: 'credits', expiresAt, expectedOutput: { format: 'MP4', width: 160, height: 90 } } });
+  });
+  await page.route('**/api/v1/jobs', route => {
+    if (route.request().method() === 'GET') return route.fulfill({ json: { jobs: [] } });
+    submissions += 1;
+    return route.fulfill({ status: 409, json: {} });
+  });
+
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await openWorkspace(page, '/app/video');
+  await page.getByLabel('Upload file to workspace').setInputFiles({ name: 'clip.mp4', mimeType: 'video/mp4', buffer: video });
+  const action = page.locator('.workspace-action-block');
+  const checkoutLink = action.getByRole('link', { name: 'Credits & orders' });
+  const backName = { name: 'Back to video workspace', exact: true };
+
+  for (const [width, container] of [[1440, '.credits-header'], [390, '.pricing-page']] as const) {
+    await page.setViewportSize({ width, height: 900 });
+    await checkoutLink.click();
+    await expect(page).toHaveURL('/app/credits?returnTo=%2Fapp%2Fvideo');
+    await page.locator(container).getByRole('link', backName).click();
+    await expect(page).toHaveURL('/app/video');
+    await expect(action.getByRole('alert')).toContainText('You do not have enough Credits.');
+  }
+
+  await checkoutLink.click();
+  await page.getByRole('button', { name: 'PayPal test checkout' }).click();
+  const fulfilled = page.locator('.payment-outcome').filter({ hasText: 'Your credits have arrived' });
+  await expect(fulfilled).toBeVisible();
+  credits = 125;
+  await fulfilled.getByRole('link', backName).click();
+  await expect(page).toHaveURL('/app/video');
+  await expect(page.locator('.workspace-video-stage video')).toHaveAttribute('src', input.previewUrl);
+  await expect(action.getByRole('button', { name: 'Remove watermarks · 100 Credits' })).toBeEnabled();
+  expect(uploads).toBe(1);
+  expect(submissions).toBe(0);
 });
 
 test('a delayed capture stays unconfirmed until the original order is recovered', async ({ page }) => {

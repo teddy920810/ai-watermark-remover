@@ -70,7 +70,7 @@
 }
 .tool-landing .hero-status-badge { margin-bottom: 10px; }
 .tool-landing .landing-hero h1 {
-  max-width: 800px;
+  max-width: 1160px;
   margin: 0 auto;
   color: var(--landing-ink);
   font: 800 46px/1.08 "Plus Jakarta Sans", sans-serif;

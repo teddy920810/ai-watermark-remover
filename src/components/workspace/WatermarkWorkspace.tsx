@@ -37,6 +37,8 @@ export default function WatermarkWorkspace({ kind, logo, siteName, initialMode =
   const { data: session, isPending: sessionPending, refetch: refetchSession } = authClient.useSession();
   const [capabilities, setCapabilities] = useState<Capability[]>([]); const [capabilityError, setCapabilityError] = useState(false);
   const [balance, setBalance] = useState<PublicBalances | null>(null);
+  const latestBalanceRequest = useRef<Promise<{ balance: PublicBalances } | { error: unknown }> | undefined>(undefined);
+  const pendingBalanceRefreshOwner = useRef<string | undefined>(undefined);
   const [localMedia, setLocalMedia] = useState<{ file: File | null; draft: MediaDraft | null; url: string; metadata: MediaMetadata | null }>({ file: null, draft: null, url: '', metadata: null });
   const { file, draft, url: localUrl, metadata: localMetadata } = localMedia;
   const [mediaRevision, setMediaRevision] = useState(0);
@@ -101,12 +103,33 @@ export default function WatermarkWorkspace({ kind, logo, siteName, initialMode =
   }, [quote, uncertainSubmission]);
   useEffect(() => { if (job?.status === 'READY') setView('result'); }, [job?.status]);
   useEffect(() => () => { if (localUrl) URL.revokeObjectURL(localUrl); }, [localUrl]);
-  useEffect(() => () => { uploadGeneration.current += 1; quoteGeneration.current += 1; for (const request of requests.current) request.abort(); }, []);
+  useEffect(() => () => { uploadGeneration.current += 1; quoteGeneration.current += 1; latestBalanceRequest.current = undefined; for (const request of requests.current) request.abort(); }, []);
   const refreshCapabilities = useCallback(async () => { try { const data = await workspaceApi<{ operations: Capability[] }>('/capabilities'); setCapabilities(data.operations); setCapabilityError(false); } catch { setCapabilityError(true); } }, []);
-  const refreshAccount = useCallback(async () => { if (!ownerId) return; try { const next = await workspaceApi<PublicBalances>('/me'); if (activeOwner.current === ownerId) setBalance(next); return next; } catch { if (activeOwner.current === ownerId) setBalance(null); } }, [ownerId]);
+  const refreshAccount = useCallback(() => {
+    if (!ownerId || activeOwner.current !== ownerId) return;
+    const request = workspaceApi<PublicBalances>('/me').then(
+      balance => ({ balance }),
+      (error: unknown) => ({ error }),
+    );
+    latestBalanceRequest.current = request;
+    void request.then(result => {
+      if (activeOwner.current === ownerId && latestBalanceRequest.current === request) {
+        setBalance('balance' in result ? result.balance : null);
+      }
+    });
+    return request;
+  }, [ownerId]);
   useEffect(() => {
     if (!ownerId) return;
-    const refresh = () => { void refreshAccount(); if (!submitLock.current) setQuoteAttempt(value => value + 1); };
+    const refresh = () => {
+      if (submitLock.current) {
+        void refreshAccount();
+        return;
+      }
+      pendingBalanceRefreshOwner.current = ownerId;
+      quoteGeneration.current += 1;
+      setQuoteAttempt(value => value + 1);
+    };
     window.addEventListener('focus', refresh);
     window.addEventListener('benefits:changed', refresh);
     return () => { window.removeEventListener('focus', refresh); window.removeEventListener('benefits:changed', refresh); };
@@ -242,9 +265,20 @@ export default function WatermarkWorkspace({ kind, logo, siteName, initialMode =
 
   useEffect(() => {
     const generation = ++quoteGeneration.current;
-    if (loadingDraft || uncertainSubmission || submitLock.current) return;
+    function takePendingBalanceRefresh() {
+      if (!ownerId || pendingBalanceRefreshOwner.current !== ownerId) return false;
+      pendingBalanceRefreshOwner.current = undefined;
+      return true;
+    }
+    if (loadingDraft || uncertainSubmission || submitLock.current) {
+      if (takePendingBalanceRefresh()) void refreshAccount();
+      return;
+    }
     currentQuoteKey.current = null; dispatchQuote({ type: 'reset' });
-    if (!ownerId || !accountReady || !currentArtifact || !canOperate || processing || readyResult && !refining || failedRefinement || needsSignIn || needsMask && (!hasSelection || selectionEditing)) return;
+    if (!ownerId || !accountReady || !currentArtifact || !canOperate || processing || readyResult && !refining || failedRefinement || needsSignIn || needsMask && (!hasSelection || selectionEditing)) {
+      if (takePendingBalanceRefresh()) void refreshAccount();
+      return;
+    }
     let cancelled = false;
     const scope = quoteScope; const artifactId = currentArtifact.id;
     const current = () => !cancelled && generation === quoteGeneration.current && activeOwner.current === ownerId && activeQuoteScope.current === scope && !submitLock.current;
@@ -267,16 +301,26 @@ export default function WatermarkWorkspace({ kind, logo, siteName, initialMode =
         const next = await workspaceApi<PublicQuote>('/quotes', { operation, inputArtifactId: artifactId, ...(maskArtifact ? { maskArtifactId: maskArtifact.id } : {}), ...(parentJobId ? { parentJobId } : {}) });
         if (!current()) return;
         if (next.operation !== operation || !canConfirmQuote(next, false)) throw new Error('The processing cost could not be confirmed. Try again.');
-        const available = await workspaceApi<PublicBalances>('/me'); if (!current()) return;
-        setBalance(available); currentQuoteKey.current = { quoteId: next.id, key: crypto.randomUUID(), scope }; dispatchQuote({ type: 'ready', quote: next });
+        takePendingBalanceRefresh();
+        // A newer account refresh can replace this read while the quote waits.
+        for (let request = refreshAccount(); request; request = latestBalanceRequest.current) {
+          const result = await request;
+          if (!current()) return;
+          if (request !== latestBalanceRequest.current) continue;
+          if ('error' in result) throw result.error;
+          currentQuoteKey.current = { quoteId: next.id, key: crypto.randomUUID(), scope };
+          dispatchQuote({ type: 'ready', quote: next });
+          return;
+        }
       } catch (cause) {
         if (!current()) return;
+        if (takePendingBalanceRefresh()) void refreshAccount();
         setError(displayError(cause)); dispatchQuote({ type: 'fail' });
         if (cause instanceof WorkspaceApiError && cause.status === 401) setNeedsSignIn(true);
       }
     })(); }, needsMask ? 400 : 150);
     return () => { cancelled = true; clearTimeout(timeout); };
-  }, [ownerId, accountReady, loadingDraft, currentArtifact?.id, operation, parentJobId, canOperate, processing, readyResult, refining, failedRefinement, needsMask, hasSelection, selectionEditing, selectionRevision, quoteScope, quoteAttempt, uncertainSubmission, needsSignIn]);
+  }, [ownerId, accountReady, loadingDraft, currentArtifact?.id, operation, parentJobId, canOperate, processing, readyResult, refining, failedRefinement, needsMask, hasSelection, selectionEditing, selectionRevision, quoteScope, quoteAttempt, uncertainSubmission, needsSignIn, refreshAccount]);
 
   async function chooseFile(picked?: File) {
     if (!picked) return;
@@ -421,13 +465,14 @@ export default function WatermarkWorkspace({ kind, logo, siteName, initialMode =
   const imageSrc = refining ? resultSrc ?? previewUrl : readyResult && view !== 'original' ? resultSrc ?? previewUrl : previewUrl;
   const previousVersions = useMemo(() => job && versionsState === 'ready' ? relatedReadyVersions(job, jobs) : [], [job, jobs, versionsState]);
   const actionLabel = refining ? 'Refine image' : objectOperation ? 'Remove object' : backgroundOperation ? 'Remove background' : 'Remove watermarks';
+  const creditsOrdersHref = kind === 'video' ? `/app/credits?returnTo=${encodeURIComponent(workspacePath(kind))}` : '/app/credits';
   const submissionDisabled = !canSubmitConfirmation(quote, !!busy, balanceInsufficient || quoteBalance === undefined, uncertainSubmission) || !uncertainSubmission && (!!preparationStatus || !!quoteStatus || selectionEditing || needsMask && !hasSelection || !canOperate || balance?.walletMode === 'unified' && !balance.admissionEnabled);
   const actionBlock = <div className="workspace-action-block">
     {(preparationStatus || quoteStatus) && <p className="workspace-preparation-status" role="status" aria-live="polite"><LoaderCircle className="workspace-spinner" size={17} />{preparationStatus || quoteStatus}</p>}
     {preparationStatus === 'Uploading your file' && <progress aria-label="File upload progress" max={100} value={uploadProgress} />}
     {quote && <div className="workspace-inline-quote" aria-label="Processing cost"><strong>{creditLabel(quote.amount, quote.unit)}</strong><dl><div><dt>Your balance</dt><dd>{quoteBalance === undefined ? 'Checking…' : creditLabel(quoteBalance, quote.unit)}</dd></div><div><dt>Output</dt><dd>{quote.expectedOutput.format ?? (kind === 'video' ? 'MP4' : 'JPG')}{quote.expectedOutput.width ? ` · ${quote.expectedOutput.width} × ${quote.expectedOutput.height}` : ''}</dd></div></dl></div>}
     {balanceInsufficient && !uncertainSubmission && <p className="workspace-error" role="alert">You do not have enough {quote?.unit === 'credits' ? 'Credits' : quote?.unit === 'freeUses' ? 'free image uses' : quote?.unit === 'purchasedImageCredits' ? 'purchased image credits' : 'processing credits'}. No processing has started.{quote?.unit === 'processingCredits' ? ' Ask an administrator to allocate processing credits.' : ''}</p>}
-    {quote?.unit === 'credits' && balanceInsufficient && !uncertainSubmission ? <p className="workspace-small"><a href="/app/credits">Credits & orders</a></p> : kind === 'image' && mode !== 'pro' && !refining && balanceInsufficient && !uncertainSubmission && <p className="workspace-small"><a className="workspace-image-use-link" href={imageCreditPurchaseHref()} target="_blank" rel="noopener noreferrer">Buy image credits</a> in a new tab, then return to this image.</p>}
+    {quote?.unit === 'credits' && balanceInsufficient && !uncertainSubmission ? <p className="workspace-small"><a href={creditsOrdersHref}>Credits & orders</a></p> : kind === 'image' && mode !== 'pro' && !refining && balanceInsufficient && !uncertainSubmission && <p className="workspace-small"><a className="workspace-image-use-link" href={imageCreditPurchaseHref()} target="_blank" rel="noopener noreferrer">Buy image credits</a> in a new tab, then return to this image.</p>}
     {uncertainSubmission && <p className="workspace-small">Check the same submission to recover its confirmation. This does not create another charge.</p>}
     {needsMask && !hasSelection && !uncertainSubmission && !preparationStatus && <p className="workspace-small">{refining ? 'Paint over the remaining watermark.' : objectOperation ? 'Brush or lasso over the object.' : 'Draw an area over the watermark.'} The cost will update automatically.</p>}
     <button className="button button-primary" type="button" onClick={() => void (!session?.user || needsSignIn ? signIn() : confirmProcessing())} disabled={!session?.user || needsSignIn ? !!busy || sessionPending : submissionDisabled}>{busy ? <LoaderCircle className="workspace-spinner" size={18} /> : refining ? <Brush size={18} /> : <ArrowRight size={18} />}{busy || (!session?.user || needsSignIn ? 'Sign in to continue' : uncertainSubmission ? 'Check submission' : quote ? `${actionLabel} · ${creditLabel(quote.amount, quote.unit)}` : actionLabel)}</button>

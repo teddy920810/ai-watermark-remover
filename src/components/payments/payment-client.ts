@@ -46,6 +46,10 @@ export function safeReturnPath(value: string | null): string {
   return url.origin === 'https://local.invalid' && !['/pricing', '/app/credits'].includes(url.pathname) ? `${url.pathname}${url.search}${url.hash}` : '/app/image';
 }
 
+export function videoWorkspaceReturnLabel(returnTo: string) {
+  return returnTo.split(/[?#]/, 1)[0] === '/app/video' ? 'Back to video workspace' : undefined;
+}
+
 export function formatPrice(amountCents: number, currency: string) {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(amountCents / 100);
 }

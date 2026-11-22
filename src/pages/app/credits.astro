@@ -3,7 +3,7 @@ import AuthControls from '../../components/auth/AuthControls';
 import CreditCheckout from '../../components/payments/CreditCheckout';
 import { getPaymentConfig, publicPaymentCatalog } from '../../lib/payments/payment-config';
 import { selectCheckoutSku } from '../../components/payments/checkout-selection';
-import { safeReturnPath } from '../../components/payments/payment-client';
+import { safeReturnPath, videoWorkspaceReturnLabel } from '../../components/payments/payment-client';
 import site from '../../content/settings/site.json';
 import '../../styles/design-system.css';
 import '../../styles/payments.css';
@@ -13,6 +13,7 @@ Astro.response.headers.set('Cache-Control', 'private, no-store');
 const initialCatalog = publicPaymentCatalog(getPaymentConfig());
 const initialSku = selectCheckoutSku(initialCatalog.packages, Astro.url.searchParams.get('sku'));
 const returnTo = safeReturnPath(Astro.url.searchParams.get('returnTo'));
+const videoReturnLabel = videoWorkspaceReturnLabel(returnTo);
 const appAsset = (path: string) => import.meta.env.BUILD_TARGET === 'app' ? `/_app-assets/public${path}` : path;
 ---
 <!doctype html>
@@ -28,11 +29,11 @@ const appAsset = (path: string) => import.meta.env.BUILD_TARGET === 'app' ? `/_a
   <body class="credits-page">
     <header class="site-header credits-header">
       <a class="brand" href="/" aria-label={`${site.name} home`}><img class="brand-logo" src={appAsset(site.logo)} alt="" /><span>{site.name}</span></a>
-      <nav aria-label="Checkout navigation"><a href="/app">Open app</a><a href={`/pricing?returnTo=${encodeURIComponent(returnTo)}`}>Pricing</a><a href="#orders">Your orders</a></nav>
+      <nav aria-label="Checkout navigation"><a href={videoReturnLabel ? returnTo : '/app'}>{videoReturnLabel ?? 'Open app'}</a><a href={`/pricing?returnTo=${encodeURIComponent(returnTo)}`}>Pricing</a><a href="#orders">Your orders</a></nav>
       <div class="header-auth"><AuthControls client:load /></div>
     </header>
     <main class="pricing-page" aria-labelledby="pricing-heading">
-      <a class="credits-back" href="/app/image">Back to image workspace</a>
+      <a class="credits-back" href={videoReturnLabel ? returnTo : '/app/image'}>{videoReturnLabel ?? 'Back to image workspace'}</a>
       <div class="pricing-hero">
         <h1 id="pricing-heading">{initialCatalog.universalCredits ? 'Credits and orders' : 'Confirm your image credits'}</h1>
         <p class="pricing-intro">Review your selected plan, complete payment, and manage your orders.</p>
