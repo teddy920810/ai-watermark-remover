@@ -21,7 +21,7 @@ describe('shared local and CI verification paths', () => {
     expect(verificationCommands('full')).toEqual(full);
     expect(verificationCommands('release')).toEqual(['audit:dependencies', 'site:validate', ...full]);
     expect(verificationCommands('full', true)).toEqual(['audit:dependencies', 'test:coverage', 'lint:code', 'typecheck', 'images:optimize', 'test:e2e', 'test:components']);
-    expect(verificationCommands('ui')).toEqual(verificationCommands('ui', true));
+    expect(verificationCommands('ui')).toEqual(verificationCommands('ui', true, { imageDisplay: true }));
     expect(verificationCommands('ui')[0]).toBe('images:optimize');
     expect(verificationCommands('docs', true)).toEqual([]);
     expect(() => verificationCommands('unknown')).toThrow();
@@ -33,6 +33,14 @@ describe('shared local and CI verification paths', () => {
     expect(execute.mock.calls[0][0]).toBe(process.execPath);
     expect(execute.mock.calls[0][1]).toEqual(['/fixture/npm-cli.js', 'run', 'audit:dependencies']);
     expect(execute.mock.calls[0][2]).toMatchObject({ shell: false, stdio: 'inherit' });
+  });
+  it('runs each browser shard exactly once and keeps the other gates in the checks job', () => {
+    expect(verificationCommands('full', true, { part: 'checks' })).toEqual(['audit:dependencies', 'test:coverage', 'lint:code', 'typecheck', 'images:optimize', 'test:components']);
+    for (const part of ['1/2', '2/2']) {
+      expect(verificationCommands('full', true, { part })).toEqual(['images:optimize', `test:e2e -- --shard=${part}`]);
+    }
+    expect(() => verificationCommands('ui', true, { part: '1/2' })).toThrow();
+    expect(() => verificationCommands('full', true, { part: '3/2' })).toThrow();
   });
   it('requires an npm execution context before starting checks', () => {
     const execute = vi.fn();

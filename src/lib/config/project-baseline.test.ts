@@ -22,11 +22,14 @@ describe('project baseline configuration', () => {
   });
 
   it('audits every public sitemap route and the 404 page for accessibility and heading structure', () => {
-    const e2e = readProjectFile('tests/e2e/site-quality.spec.ts');
+    const e2e = readProjectFile('tests/e2e/support/public-page.ts');
     expect(e2e).toContain("request.get('/sitemap.xml')");
-    expect(e2e).toContain("routes.push('/missing-page-for-404-check')");
+    expect(e2e).toContain("const missingPage = '/missing-page-for-404-check'");
+    expect(e2e).toContain('routes.push(missingPage)');
     expect(e2e).toContain("page.locator('main h1')");
     expect(e2e).toContain('new AxeBuilder({ page }).analyze()');
+    expect(readProjectFile('tests/e2e/accessibility.spec.ts')).toContain("testPublicAccessibility('odd')");
+    expect(readProjectFile('tests/e2e/site-quality.spec.ts')).toContain("testPublicAccessibility('even')");
   });
 
   it('runs Playwright against an isolated project-owned development server', () => {

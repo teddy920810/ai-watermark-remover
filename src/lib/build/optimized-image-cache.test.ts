@@ -17,7 +17,7 @@ describe('remote optimized image cache', () => {
   });
 
   it.each([
-    ['.github/workflows/ci.yml', 'verify', 'node22'],
+    ['.github/workflows/ci.yml', 'checks', 'node22'],
     ['.github/workflows/build-targets.yml', 'build', 'node24'],
   ])('restores and saves only disposable images without replacing checks: %s', (file, job, nodeVersion) => {
     const workflow = YAML.parse(read(file));
@@ -38,14 +38,14 @@ describe('remote optimized image cache', () => {
     expect(save.if).toContain("steps.image-cache.outputs.cache-hit != 'true'");
     expect(restore['continue-on-error']).toBeUndefined();
     expect(save['continue-on-error']).toBeUndefined();
-    const check = steps.find((step: { run?: string }) => step.run === (job === 'verify' ? 'npm run ci:verify' : 'node scripts/build-target.mjs ${{ matrix.target }}'));
+    const check = steps.find((step: { run?: string }) => step.run === (job === 'checks' ? 'npm run ci:verify -- "$VERIFY_PART"' : 'node scripts/build-target.mjs ${{ matrix.target }}'));
     expect(check).toBeDefined();
     expect(check.if).toBeUndefined();
     expect(steps.indexOf(restore)).toBeLessThan(steps.indexOf(check));
     expect(steps.indexOf(save)).toBeGreaterThan(steps.indexOf(check));
-    if (job === 'verify') {
-      expect(restore.if).toBe("steps.plan.outputs.mode == 'full' || steps.plan.outputs.mode == 'ui'");
-      expect(save.if).toContain(restore.if);
+    if (job === 'checks') {
+      expect(restore.if).toBe("needs.plan.outputs.browser == 'true'");
+      expect(save.if).toContain("needs.plan.outputs.mode == 'ui' || matrix.part == '1/2'");
     } else {
       expect(restore.if).toBe("matrix.target == 'site'");
       expect(save.if).toContain(restore.if);

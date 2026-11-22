@@ -94,6 +94,23 @@ describe('single content change audit closure from immutable Git objects', () =>
     const result = execFileSync(process.execPath, ['scripts/ci-plan.mjs', 'plan'], { cwd: f.cwd, env: { ...process.env, BASE_SHA: f.base, HEAD_SHA: f.base, GITHUB_OUTPUT: path.join(f.cwd, 'plan.txt') }, encoding: 'utf8' });
     expect(result).toContain('full');
   });
+  it('rejects a missing or stale CI matrix plan before running scoped verification', () => {
+    const f = current;
+    f.put('scripts/ci-plan.mjs', readFileSync(new URL('../../../scripts/ci-plan.mjs', import.meta.url)));
+    f.put('README.md', '# Documentation change\n');
+    f.git('add', 'README.md');
+    f.git('commit', '-qm', 'docs only');
+    const head = f.git('rev-parse', 'HEAD');
+    const run = (mode: string) => execFileSync(process.execPath, ['scripts/ci-plan.mjs', 'run', 'checks'], {
+      cwd: f.cwd,
+      env: { ...process.env, BASE_SHA: f.base, HEAD_SHA: head, CI_PLANNED_VERIFICATION_MODE: mode },
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'pipe'],
+    });
+    expect(() => run('')).toThrow('CI verification scope changed between planning and execution');
+    expect(() => run('full')).toThrow('CI verification scope changed between planning and execution');
+    expect(run('docs')).toContain('allowlisted change range');
+  });
   it('compares legacy presets with the real base entry, never with the candidate itself', () => {
     const f = current; const file = 'src/content/landing-pages/legacy-example.json';
     const doc = JSON.parse(readFileSync(new URL('../../../docs/examples/content-api/landing.json', import.meta.url), 'utf8')); doc.data.slug = 'legacy-example';
