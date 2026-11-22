@@ -13,7 +13,15 @@ export default defineConfig({
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
   },
-  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+  projects: [{
+    name: 'chromium',
+    use: {
+      ...devices['Desktop Chrome'],
+      // The AdSense contract test fulfills its script through Playwright routing.
+      // Live ads and regional Google Ads audience requests can hold local navigation open.
+      launchOptions: { args: ['--host-resolver-rules=MAP pagead2.googlesyndication.com ~NOTFOUND, MAP www.google.* ~NOTFOUND'] },
+    },
+  }],
   webServer: {
     command: 'node scripts/test-server.mjs',
     url: e2eOrigin,

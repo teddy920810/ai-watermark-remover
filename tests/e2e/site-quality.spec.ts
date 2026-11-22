@@ -1,17 +1,6 @@
-import AxeBuilder from '@axe-core/playwright';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
-
-async function openPublicPage(page: Page, path: string) {
-  // Public readiness is visible HTML plus the usable launcher, not dev-audit/analytics silence.
-  const response = await page.goto(path, { waitUntil: 'domcontentloaded' });
-  await expect(page.locator('main')).toBeVisible();
-  await expect(page.locator('.site-header')).toBeVisible();
-  const launcher = page.getByTestId('media-launcher-file');
-  if (await launcher.count()) await expect(launcher).toBeEnabled();
-  await page.evaluate(() => document.fonts.ready);
-  return response;
-}
+import { openPublicPage, testPublicAccessibility } from './support/public-page';
 
 test('ChatGPT landing uses the shared Hero upload entry and keeps its images and requirements', async ({ page }) => {
   await page.goto('/chatgpt-watermark-remover', { waitUntil: 'domcontentloaded' });
@@ -210,27 +199,7 @@ test('article navigation and related guides flank the story on desktop and stack
   await expect(page.locator('.article-layout')).toHaveCount(0);
 });
 
-test('all public content routes and 404 have one H1 and no serious accessibility violations', async ({ page, request }) => {
-  test.setTimeout(240_000);
-  const sitemap = await (await request.get('/sitemap.xml')).text();
-  const routes = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => new URL(match[1]).pathname);
-  routes.push('/missing-page-for-404-check');
-
-  for (const route of routes) {
-    const response = await openPublicPage(page, route);
-    expect(response?.status(), `${route} should return its expected status`).toBe(route.includes('missing-page') ? 404 : 200);
-    await expect(page.locator('main')).toBeVisible();
-    await expect(page.locator('main h1'), `${route} should have exactly one content H1`).toHaveCount(1);
-    if (route.includes('missing-page')) {
-      await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex, follow');
-    }
-    const results = await new AxeBuilder({ page }).analyze();
-    expect(
-      results.violations.filter((violation) => ['serious', 'critical'].includes(violation.impact ?? '')),
-      `${route} should have no serious accessibility violations`,
-    ).toEqual([]);
-  }
-});
+testPublicAccessibility('even');
 
 test('Google tag emits a page_view collection request', async ({ page }) => {
   await page.route('**/g/collect**', (route) => route.fulfill({ status: 204 }));

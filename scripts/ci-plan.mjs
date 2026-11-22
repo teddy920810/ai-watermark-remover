@@ -11,6 +11,7 @@ export function classifyVerification(files) {
   const full = (reason) => ({ mode: 'full', reason, browser: true });
   if (!Array.isArray(files) || !files.length) return full('missing or empty change range');
   const kinds = new Set();
+  let imageDisplay = false;
   for (const raw of files) {
     if (typeof raw !== 'string' || /(^|[/\\])\.\.([/\\]|$)|^[/\\]|[\r\n\0]/.test(raw)) return full('invalid path');
     const file = raw.replaceAll('\\', '/');
@@ -18,11 +19,15 @@ export function classifyVerification(files) {
     if (/^src\/content\/(?:blog\/[^/]+\.md|landing-pages\/[^/]+\.json)$/.test(file)
       || /^public\/uploads\/.+\.(?:png|jpe?g|webp|gif|avif)$/i.test(file)) kinds.add('content');
     else if (/^src\/styles\/(?:global|home-blueprint|home-integration|tool-landing)\.css$/.test(file)) kinds.add('ui');
+    else if (file === 'src/components/ImageDisplay.astro' || file === 'src/lib/client/image-display.ts') {
+      kinds.add('ui');
+      imageDisplay = true;
+    }
     else return full(`requires complete verification: ${file}`);
   }
   if (kinds.size > 1) return full('mixed risk categories');
   const mode = [...kinds][0] ?? 'docs';
-  return { mode, reason: 'allowlisted change range', browser: mode === 'ui' };
+  return { mode, reason: 'allowlisted change range', browser: mode === 'ui', ...(imageDisplay && { imageDisplay }) };
 }
 
 export function changedFiles(base, head, cwd = process.cwd()) {
@@ -118,10 +123,16 @@ if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.ar
       if (!process.env.GITHUB_OUTPUT) throw new Error('GITHUB_OUTPUT is required for workflow planning');
       appendFileSync(process.env.GITHUB_OUTPUT, `mode=${plan.mode}\nbrowser=${plan.browser}\n`);
     } else if (process.argv[2] === 'run') {
-      if (plan.mode === 'docs') requireSuccess('git', ['diff', '--check', process.env.BASE_SHA, process.env.HEAD_SHA, '--']);
-      else {
+      const plannedMode = process.env.CI_PLANNED_VERIFICATION_MODE;
+      if (plannedMode !== undefined && plannedMode !== plan.mode) throw new Error('CI verification scope changed between planning and execution');
+      const part = process.argv[3];
+      if (process.argv.length > 4) throw new Error('Usage: ci-plan.mjs run [checks|1/2|2/2]');
+      if (plan.mode === 'docs') {
+        if (part && part !== 'checks') throw new Error('Documentation verification cannot be sharded');
+        requireSuccess('git', ['diff', '--check', process.env.BASE_SHA, process.env.HEAD_SHA, '--']);
+      } else {
         const { runVerification } = await import('./verify.mjs');
-        runVerification(plan.mode, { ci: true });
+        runVerification(plan.mode, { ci: true, part, imageDisplay: plan.imageDisplay });
       }
     } else throw new Error('Usage: ci-plan.mjs plan|run');
   } catch (error) { process.stderr.write(`${error.message}\n`); process.exitCode = 1; }

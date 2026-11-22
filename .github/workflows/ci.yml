@@ -8,16 +8,20 @@ on:
 permissions:
   contents: read
 
+env:
+  BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+  HEAD_SHA: ${{ github.sha }}
+
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  verify:
+  plan:
     runs-on: ubuntu-latest
-    env:
-      BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
-      HEAD_SHA: ${{ github.sha }}
+    outputs:
+      mode: ${{ steps.scope.outputs.mode }}
+      browser: ${{ steps.scope.outputs.browser }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -25,26 +29,43 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
-      - id: plan
+      - id: scope
         run: node scripts/ci-plan.mjs plan
+
+  checks:
+    needs: plan
+    strategy:
+      matrix:
+        part: ${{ fromJSON(needs.plan.outputs.mode == 'full' && '["checks","1/2","2/2"]' || '["checks"]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: ${{ needs.plan.outputs.mode != 'docs' && 'npm' || '' }}
       # Data only: a hit never skips verification. https://github.com/actions/cache/tree/v6/restore
       - name: Restore optimized image cache
         id: image-cache
-        if: steps.plan.outputs.mode == 'full' || steps.plan.outputs.mode == 'ui'
+        if: needs.plan.outputs.browser == 'true'
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: .vercel/cache/optimized-images
           key: images-v1-${{ runner.os }}-${{ runner.arch }}-node22-${{ hashFiles('package-lock.json', 'scripts/lib/optimized-images.mjs', 'scripts/optimize-images.mjs') }}-${{ github.sha }}
           restore-keys: images-v1-${{ runner.os }}-${{ runner.arch }}-node22-${{ hashFiles('package-lock.json', 'scripts/lib/optimized-images.mjs', 'scripts/optimize-images.mjs') }}-
       - run: npm ci
-        if: steps.plan.outputs.mode != 'docs'
+        if: needs.plan.outputs.mode != 'docs'
       - run: npx playwright install --with-deps chromium
-        if: steps.plan.outputs.browser == 'true'
-      - name: Run selected verification (full regression; builds use Required target artifacts)
-        run: npm run ci:verify
+        if: needs.plan.outputs.browser == 'true'
+      - name: Run selected verification
+        env:
+          CI_PLANNED_VERIFICATION_MODE: ${{ needs.plan.outputs.mode }}
+          VERIFY_PART: ${{ matrix.part }}
+        run: npm run ci:verify -- "$VERIFY_PART"
       - name: Save optimized image cache
-        if: success() && (steps.plan.outputs.mode == 'full' || steps.plan.outputs.mode == 'ui') && steps.image-cache.outputs.cache-hit != 'true'
+        if: success() && (needs.plan.outputs.mode == 'ui' || matrix.part == '1/2') && steps.image-cache.outputs.cache-hit != 'true'
         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: .vercel/cache/optimized-images
@@ -53,9 +74,20 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-failure-${{ github.run_id }}
+          name: playwright-failure-${{ github.run_id }}-${{ strategy.job-index }}
           path: |
             test-results/
             playwright-report/
           if-no-files-found: ignore
           retention-days: 7
+
+  verify:
+    needs: [plan, checks]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require the plan and all selected checks to pass
+        env:
+          PLAN_RESULT: ${{ needs.plan.result }}
+          CHECKS_RESULT: ${{ needs.checks.result }}
+        run: test "$PLAN_RESULT" = success && test "$CHECKS_RESULT" = success
