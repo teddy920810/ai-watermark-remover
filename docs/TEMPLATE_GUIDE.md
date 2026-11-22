@@ -41,17 +41,17 @@ Pages CMS 的详细字段说明见 `docs/PAGES_CMS_GUIDE.md`。
 
 新站必须单独配置：
 
-- Vercel 项目和 `SITE_URL`、`BETTER_AUTH_URL`；
+- 独立的 Vercel Site 和 App 项目。两边设置新站 `SITE_URL`，App 设置 `BETTER_AUTH_URL` 与指向新 Site 的 `APP_SITE_ORIGIN`。构建和路由见[独立部署说明](../apps/DEPLOYMENT_TARGETS.md)；
 - Google OAuth Client 与新域名回调；
-- GA4 Measurement ID（暂不使用时在站点设置留空）；
+- GA4 Measurement ID（暂不使用时在站点设置留空）。当前公开布局包含 WatermarkGemini 的 AdSense 发布商接入，初始化器不会替换它，新站上线前需按自身账号审核或移除这段接入；
 - Cloudflare R2 Bucket、生命周期、CORS 和最小权限密钥；
 - GitHub Pages CMS App 权限与分支保护。
 
-真实图片处理 Provider 不在当前模板初始化范围内；接入前仍会使用 Mock Provider，不能对外宣称已真实移除水印。
+模板初始化只处理站点身份。处理开关默认关闭，本地示例使用 Mock Provider 配置。需要云端处理时，另建数据库、私有媒体存储和独立 Worker，按[处理配置](product/PROCESSING_CONFIGURATION.md)完成调度、密钥和真实验收后再开放。
 
 ## 5. 上线前验收
 
-先执行 `npm run site:validate`，它会检查域名一致性、缺失图片、GitHub blob 图片地址、无效站内链接、重复 URL 和保留路由冲突。再执行 `npm run verify`，确认 GitHub CI 通过；浏览器验收会覆盖 sitemap 中的全部公开页面和 404。随后检查桌面端和移动端、登录回调、上传流程、法律内容、Canonical、robots.txt、sitemap.xml 和 GA 收数，最后把根域名 308 重定向到选定的唯一规范域名。
+先执行 `npm run site:validate`，处理域名、图片和路由等检查的错误及警告。首次完整上线按[验证矩阵](TESTING_GUIDE.md#动态验证矩阵)运行本地发布检查，再独立确认 GitHub 必需门禁、受影响目标与生产验收。检查规范域名及其 308 重定向，并核对最终的 Canonical、robots.txt 和 sitemap.xml。
 
 ## WatermarkGemini 是否会被保留
 

@@ -3,16 +3,17 @@
 ## 生产资源
 
 - 正式域名：`https://www.watermarkgemini.com`
-- 备用 Vercel 域名：`https://ai-watermark-remover-peach.vercel.app`
 - GitHub：`teddy920810/ai-watermark-remover`
 - Cloudflare R2 Bucket：`watermark`
 - Google Analytics：`G-52ZWCGEZ7R`
 
 ## Vercel 必要配置
 
-Production 环境至少配置 `SITE_URL=https://www.watermarkgemini.com`、所有 `R2_*` 变量、`GOOGLE_CLIENT_ID`、`GOOGLE_CLIENT_SECRET`、`BETTER_AUTH_SECRET` 和 `BETTER_AUTH_URL=https://www.watermarkgemini.com`。启用真实图片处理时还必须仅在服务端配置 `WATERMARK_PROVIDER=dewatermark` 与 `DEWATERMARK_API_KEY`；不要给变量添加 `PUBLIC_` 前缀。Preview/Development 如需上传、登录或真实处理，也应单独配置对应变量。密钥或 Provider 变更后需要重新部署才能生效。
+Site 和 App 是独立的 Vercel 目标。两者都以 `SITE_URL=https://www.watermarkgemini.com` 为规范站点地址；App 通过 `APP_SITE_ORIGIN` 将公开页面代理到 Site。App 的服务端环境负责 `BETTER_AUTH_URL`、`BETTER_AUTH_SECRET`、Google OAuth、数据库和私有 R2，Site 无需这些密钥。预览与开发环境按各自的目标和连接配置。发布项目、代理边界与构建命令见[独立部署说明](../apps/DEPLOYMENT_TARGETS.md)。
 
-Google Cloud OAuth Web Client 必须包含正式回调 `https://www.watermarkgemini.com/api/auth/callback/google`。根域名 `https://watermarkgemini.com` 应使用 308 重定向到 `www`。OAuth 修改部署后必须使用真实测试用户完成一次登录、确认回调成功、会话建立、退出登录和处理任务；仅检查按钮或接口 200 不代表集成完成。
+真实图片去水印走耐久处理链，由 `PROCESSING_ENABLED=true`、`PROCESSING_PROVIDER=dewatermark` 和服务端 `DEWATERMARK_API_KEY` 启用。按[处理配置](product/PROCESSING_CONFIGURATION.md)设置 App 调度和独立 Worker；背景、物体、视频各有自己的 Provider 配置。正式 PayPal 收款的启动校验另外读取 `WATERMARK_PROVIDER=dewatermark`，见[PayPal 发布手册](PAYPAL_LIVE_RELEASE.md)。密钥不要使用 `PUBLIC_` 前缀，变更后重新部署受影响目标。
+
+Google Cloud OAuth Web Client 必须包含正式回调 `https://www.watermarkgemini.com/api/auth/callback/google`。OAuth 变更后，用真实测试用户核对回调、会话建立和退出。涉及媒体处理时按[验证矩阵](TESTING_GUIDE.md#动态验证矩阵)另选操作和授权预算。
 
 Git 页面应保持仓库连接到 `main`；域名页面以 `www.watermarkgemini.com` 为正式站点，根域名以 308 重定向到 `www`。正常情况下 Vercel 自动管理 HTTPS 证书。代码、CI、部署绑定与线上验收分开结清，Ready不代表已通过真实功能验收。
 
@@ -34,7 +35,7 @@ Git 页面应保持仓库连接到 `main`；域名页面以 `www.watermarkgemini
 
 确认预期提交已进入 `main`，受影响目标的 Production 部署为 **Ready** 且绑定预期 SHA。检查内容、页面和真实功能的范围统一按[验证矩阵](TESTING_GUIDE.md#动态验证矩阵)与[抽查标准](TESTING_GUIDE.md#抽查标准)执行，本页不另设全站检查清单。
 
-环境变量或域名变更运行公开只读 smoke；R2、CORS、鉴权、Provider 或处理流程变更运行对应操作的认证验收。命令、单位、预算及失败恢复要求见[运维验收](TESTING_GUIDE.md#运维人员)。GA 改动核对真实 `page_view`/Realtime 信号，普通内容或样式发布不重复验证 GA、登录或收费处理。
+命令、单位、预算及失败恢复要求见[运维验收](TESTING_GUIDE.md#运维人员)。GA 改动核对真实 `page_view`/Realtime 信号，普通内容或样式发布不重复验证 GA、登录或收费处理。
 
 ## 常见故障
 

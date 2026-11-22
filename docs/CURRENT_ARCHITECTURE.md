@@ -2,11 +2,12 @@
 
 适用范围：当前源码。改动执行者同步本页，复核者核对合同。版本与生产信号从具体发布记录读取，不在本页维护实时SHA。
 
-- `src/`是产品单一源码；`apps/site/src`与`apps/app/src`是路由发现容器。Site静态输出公开内容，App承接私有页面/API和同域代理，Worker独立执行耐久任务。独立gateway生成入口已在本地第三批退役；组合构建继续供开发和集成测试使用。
+- `src/`是产品单一源码；`apps/site/src`与`apps/app/src`是路由发现容器。Site静态输出公开内容，App承接私有页面/API和同域代理，Worker独立执行耐久任务。独立gateway生成入口已退役；组合构建继续供开发和集成测试使用。
 - 内容/SEO拥有图片路径、命名、字节、alt、示例说明与全部页面内容。2026-11-01已撤销P5替图，恢复原内容；研发仅维护ImageDisplay的单/双图及失败机制。原图烘焙控件和缺失资产由运营决定，不由重构替换，见[图片展示](product/IMAGE_DISPLAY.md)。
-- [操作目录](../src/lib/contracts/operation-catalog.ts)拥有六类能力、输入/输出类型、协议、限制、计费来源和执行器映射；`imageCreditOperation`仅映射服务端图片价格目录中的操作键，不开放旧处理协议。六类操作均通过v1/Worker；旧上传和JobService路由已在本地第三批退役。目录不决定运行开关，也不存密钥或复制售价。
+- [操作目录](../src/lib/contracts/operation-catalog.ts)拥有六类能力、输入/输出类型、协议、限制、计费来源和执行器映射；`imageCreditOperation`映射服务端图片价格目录中的操作键。六类操作均通过v1/Worker；旧上传和JobService路由已退役。目录不决定运行开关，也不存密钥或复制售价。
 - 上传字节限制由操作目录统一提供给文件入口、本地草稿、v1声明和服务端图片检查；服务端下发限制和显式解码限制仍可覆盖默认值。任务状态、结算状态和单位名称由`src/lib/contracts/processing-state.ts`共享，公开和私有记录保持分离。
 - 同一操作目录中的 `localOperationCatalog` 声明免费 Gemini 图片/视频，独立于六类耐久操作和所有额度。`/app/free/gemini` 通过浏览器 Worker 处理本地媒体；主动付费交接后才进入既有 R2/Provider/报价链路，见[免费 Gemini](product/FREE_GEMINI.md)。
+- `/app/free/tiktok` 走独立的公开链接解析与下载流程，详见[免费 TikTok](product/FREE_TIKTOK.md)。`/app` 未收到文件或任务时展示工具总览，已有文件交接和任务深链继续打开对应编辑器，详见[工作区规范](product/APP_WORKSPACE.md)。
 - [公开处理合同](../src/lib/contracts/processing-public.ts)是工作区、服务端投影和验收脚本的字段依据：媒体属性只在`metadata`，任务费用只在`charge`，原报价由`quoteId`关联，上传标识为`id`、产物在`artifact`，下载地址为`url`。私有任务、原报价快照、旧单位、退款和恢复记录不随公开字段精简迁移；本地待确认报价格式也保持不变。
 - [受限请求体读取](../src/lib/api/request-body.ts)只负责按实际字节计数、超限取消与释放读取锁。处理、支付和内容接口各自保留原有MIME、声明长度、解码/BOM、JSON和错误状态规则；内容幂等仍使用原始请求文本，支付Webhook保留独立上限。
 - [路由规则](../src/lib/contracts/route-policy.mjs)分别定义目标归属、私有性、索引与CMS已知入口。公开内容静态生成；精确`/pricing`是App提供的公开SSR例外，使用服务端白名单目录、canonical和no-store，不加载支付SDK/订单。`/app/credits`保留私有确认/支付/订单与原activeAttempt恢复，Site不导入支付私有配置。App入口与未知SEO路径不混为一类。
@@ -17,7 +18,7 @@
 - 产物按操作区分：耐久水印图片JPEG/视频MP4/背景RGBA PNG/物体原尺寸PNG；保留原尺寸/透明语义、视频时长/音轨检查、原结果版本及精修关系。真实效果和真实费用单列验收，mock不代表生产能力。
 - App入口与image/video兼容深链共用AppWorkspaceLayout/AppShell；六类新操作沿同一耐久协调，物体选区与精修各自保留绘画政策；v1任务、原报价和未知结果继续恢复。操作选择、文件归属和静态加载/错误壳见[工作区规范](product/APP_WORKSPACE.md)，本地代码迁移与真实Provider/生产迁移验收分别记录。
 - 工作区本地媒体作为一组更新，准备和报价/提交各用明确阶段；同步提交锁、原报价幂等键、账户与异步代次隔离继续保留。验证命令共用`scripts/verify.mjs`，CI差异分类和独立目标门禁保持各自职责，详见[验证指南](TESTING_GUIDE.md)。
-- 公开模板与页尾CTA使用MediaLauncher；App选择/拖入复用字节识别、限制与本地草稿基础。CMS只提供现有工具类型/状态推荐，已接受任务优先；不兼容或未开放来源明确提示。背景/物体编辑器和图片价格客户端现仅由App消费，公共入口由两个Web目标共用，见[文件入口](product/FILE_INTAKE.md)。
+- 公开文件入口使用MediaLauncher；App选择/拖入复用字节识别、限制与本地草稿基础。CMS可设置工具页空闲上传文案和工具类型/状态推荐，已接受任务优先；不兼容或未开放来源明确提示。背景/物体编辑器和图片价格客户端由App消费，API、媒体限制和价格由代码决定，见[文件入口](product/FILE_INTAKE.md)。
 - [运营内容 API](CONTENT_API.md)由App的`/api/content/v1`承接，服务端内容Token与单仓库凭据分开；纯内容schema由Astro与API共用。草稿、原字节公共素材、幂等与批准审计持久到Git内容分支，经具体差异批准、独立基线、受保护PR/必需CI发布。Site只提供静态内容与id/digest发布证明；不读取内容凭据，用户R2/权益/Provider不进入内容服务。
 
 兼容登记和退场条件见[兼容清单](COMPATIBILITY.md)，规范分类见[总索引](INDEX.md)。新的媒体类型包括音频必须另定义真实操作、产物、费用和验收，当前不开放音频处理。
