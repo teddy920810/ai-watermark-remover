@@ -31,11 +31,11 @@ Google 登录还需要：
 
 当前操作、协议、数据与文档权威入口见[当前架构](CURRENT_ARCHITECTURE.md)和[总索引](INDEX.md)。每次从已登记维护根目录启动，先运行`npm run project:check -- --read-only`；既有改动分类后用`--classified <本机JSON>`核对。路径登记使用本机环境/已有Codex registry，不写进产品运行依赖。
 
-Astro 负责静态内容和 v1 服务端 API；React 承接交互工作区。浏览器先请求预签名地址，再直接上传到私有 R2。六类处理共用 v1 报价、明确确认和独立 Worker，费用、PNG、选区与恢复规则见[图片操作规范](product/IMAGE_OPERATIONS.md)。旧上传、`/api/jobs` 与 JobService 在本地第三批退役，部署状态另见发布记录。
+Astro 负责静态内容和 v1 服务端 API；React 承接交互工作区。浏览器先请求预签名地址，再直接上传到私有 R2。六类处理共用 v1 报价、明确确认和独立 Worker，费用、PNG、选区与恢复规则见[图片操作规范](product/IMAGE_OPERATIONS.md)。旧上传、`/api/jobs` 与 JobService 在第三批退役。当前文件接入、推荐与购买返回见[文件入口](product/FILE_INTAKE.md)。
 
 新图片/视频工作区位于 `/app/image`、`/app/video`，使用 `/api/v1` 报价、任务和临时下载接口。非收费媒体检查和已确认任务由独立 Worker 执行，金融预留和耐久 outbox 在 PostgreSQL，媒体与权威任务状态在私有 R2。新账户与已审核升级的账户可使用统一 Credits；旧账户、旧单位和已接受任务继续兼容。仓库开关默认关闭，实际启用、逐账户转换和来源账本见 [Credits 合同](PROCESSING_CREDITS.md)与[发布记录](product/RELEASE_READINESS.md)。
 
-工作区切回前台或收到积分权益更新时，能重新报价就只在报价成功后查一次余额。无法报价、报价阶段失败或正在确认任务时，单独刷新余额。页面只接收当前账户最近发起的余额查询结果。视频积分不足入口携带返回路径，积分页在付款前后都可返回视频工作区；同一标签页可通过有效的上传记录重开视频，固定选区需重画。处理仍由用户点击确认后发起。
+报价与余额刷新见[工作区合同](product/APP_WORKSPACE.md)，视频返回和本机文件恢复见[文件入口](product/FILE_INTAKE.md)。
 
 新处理配置见 [配置说明](product/PROCESSING_CONFIGURATION.md)，独立 Web 构建见 [部署目标](../apps/DEPLOYMENT_TARGETS.md)，Worker、R2 清理和真实验收见 [部署说明](product/WORKER_DEPLOYMENT.md)。新账号和再次登录的稳定归属见 [Google 账户身份](ACCOUNT_IDENTITY.md)。现行规范从 [总索引](INDEX.md) 进入；重构阶段与原始验收见 [重构台账](product/REFACTOR_LEDGER.md)，后续交付见 [发布记录](product/RELEASE_READINESS.md)。原 [T0–T11 TODO](product/IMPLEMENTATION_TODO.md) 为历史记录，不能继承其中预算或测试结果。
 

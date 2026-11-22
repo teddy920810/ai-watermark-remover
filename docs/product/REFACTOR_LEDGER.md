@@ -1,15 +1,17 @@
 # AI Watermark 重构阶段与发布验收台账
 
-更新：2026-11-01。唯一当前阶段台账；方案历史保存在[归档快照](../history/REFACTOR_PLAN_2026-10-31.md)。P0–P7及内容回退阶段为本地交付；用户于2026-11-01（Asia/Shanghai）在主任务明确“目标是上线，去安排吧”，已核实原始用户消息，目标扩大为研发收尾、受保护PR/CI/main、Site/App/Worker部署与匹配生产验收。既有内容原值和预算继续保护；不自动充值，不开启/扩大正式收款，不删除金融依据或未恢复任务。
+更新：2026-11-01。P0–P7 重构和 PR98 发布的历史台账；方案历史保存在[归档快照](../history/REFACTOR_PLAN_2026-10-31.md)。P0–P7及内容回退阶段为本地交付；用户于2026-11-01（Asia/Shanghai）在主任务明确“目标是上线，去安排吧”，已核实原始用户消息，目标扩大为研发收尾、受保护PR/CI/main、Site/App/Worker部署与匹配生产验收。既有内容原值和预算继续保护；不自动充值，不开启/扩大正式收款，不删除金融依据或未恢复任务。
 
 PR98重构已于2026-11-01发布，代码为`028a8d2`，原始生产验收见文末“本轮上线交付与验收结清”。后续下载核查、视频入口、内容API与支付恢复交付见[发布记录](RELEASE_READINESS.md)。素材原值、金融恢复与预算继续保护；正式购买未开启。以下P0–P7、内容回退及候选准备章节保存各自当时的状态，“未提交”“pending”不表示后续仍未交付，也不能把原通过结果继承给新版本。
+
+本页的阶段状态、代码路径与上线结论以记录日期为准。现行规则见[文档索引](../INDEX.md)。`output/` 路径是对应时点的本机证据，属于被 Git 忽略的目录。
 
 ## 版本与唯一执行位置
 
 - 当前维护目录：D:/ermei/ai-watermark-remove。origin：https://github.com/teddy920810/ai-watermark-remover.git。
 - P0–P7本地阶段快照：基线 HEAD 为574ad43e53e5696e225f7fa73606e3849d7bd2db，分支为codex/refactor-local-20261031。当时实现尚未提交，阶段版本由独立 manifest、文件 SHA-256 和二进制 patch 识别；PR98发布版本与后续交付另见对应记录。
 - 产品源码、配置和仓库脚本保持跨平台；D 盘是本机维护登记，不是产品运行依赖。本轮在Windows主机验证，未冒称macOS/Linux实机验收。其他聊天的源码工作目录没有被覆盖、删除或归档。
-- 原始D盘103个文件已逐一保全，原HEAD为5be42381；恢复stash为410512fce71bab1a8fc2554e893c6ffaea5a4de1。按[原件清单](../../output/refactor-plan-2026-10-31/p0-preservation/manifest.json)选择性恢复，不将旧Pricing/支付草稿整体回灌当前实现。凭据不在这些源码工作包中。
+- 原始D盘103个文件已逐一保全，原HEAD为5be42381；恢复stash为410512fce71bab1a8fc2554e893c6ffaea5a4de1。按原件清单（`output/refactor-plan-2026-10-31/p0-preservation/manifest.json`）选择性恢复，不将旧Pricing/支付草稿整体回灌当前实现。凭据不在这些源码工作包中。
 
 ## 43项状态（P0–P7本地阶段快照）
 
@@ -75,14 +77,14 @@ PR98重构已于2026-11-01发布，代码为`028a8d2`，原始生产验收见文
 
 | 阶段 | 独立实现/恢复包 | 主要门禁记录 |
 | --- | --- | --- |
-| P0 | [原件](../../output/refactor-plan-2026-10-31/p0-preservation/manifest.json) / [逐项处置](../../output/refactor-plan-2026-10-31/P0_DISPOSITION.md) | [基线](../../output/refactor-plan-2026-10-31/p0-preservation/baseline-verification.json) |
-| P1 | [工作包](../../output/refactor-plan-2026-10-31/p1-implementation/manifest.json) | [首次完整检查](../../output/refactor-plan-2026-10-31/p1-release-verify-first.log)及下文补验 |
-| P2 | [工作包](../../output/refactor-plan-2026-10-31/p2-implementation/manifest.json) | [分项](../../output/refactor-plan-2026-10-31/p2-gate-results.json) |
-| P3 | [基础包](../../output/refactor-plan-2026-10-31/p3-implementation/manifest.json) / [收尾包](../../output/refactor-plan-2026-10-31/p3-completion/manifest.json) | [分项](../../output/refactor-plan-2026-10-31/p3-gate-results.json) |
-| P4 | [工作包](../../output/refactor-plan-2026-10-31/p4-implementation/manifest.json) | [分项](../../output/refactor-plan-2026-10-31/p4-gate-results.json) |
-| P5 | [工作包](../../output/refactor-plan-2026-10-31/p5-implementation/manifest.json) | [分项](../../output/refactor-plan-2026-10-31/p5-gate-results.json) |
-| P6 | [后端A](../../output/refactor-plan-2026-10-31/p6-a-implementation/manifest.json) / [背景](../../output/refactor-plan-2026-10-31/p6-background-implementation/manifest.json) / [物体](../../output/refactor-plan-2026-10-31/p6-object-implementation/manifest.json) | [完整分项及首失败/补验来源](../../output/refactor-plan-2026-10-31/p6-gate-results.json) |
-| P7 | [原件与静态入边](../../output/refactor-plan-2026-10-31/p7-retirement/manifest.json) / [清理范围](../../output/refactor-plan-2026-10-31/p7-retirement/cleanup.json) / [最终工作包](../../output/refactor-plan-2026-10-31/p7-implementation/manifest.json) | [本地分项](../../output/refactor-plan-2026-10-31/p7-gate-results.json) |
+| P0 | 原件（`output/refactor-plan-2026-10-31/p0-preservation/manifest.json`） / 逐项处置（`output/refactor-plan-2026-10-31/P0_DISPOSITION.md`） | 基线（`output/refactor-plan-2026-10-31/p0-preservation/baseline-verification.json`） |
+| P1 | 工作包（`output/refactor-plan-2026-10-31/p1-implementation/manifest.json`） | 首次完整检查（`output/refactor-plan-2026-10-31/p1-release-verify-first.log`）及下文补验 |
+| P2 | 工作包（`output/refactor-plan-2026-10-31/p2-implementation/manifest.json`） | 分项（`output/refactor-plan-2026-10-31/p2-gate-results.json`） |
+| P3 | 基础包（`output/refactor-plan-2026-10-31/p3-implementation/manifest.json`） / 收尾包（`output/refactor-plan-2026-10-31/p3-completion/manifest.json`） | 分项（`output/refactor-plan-2026-10-31/p3-gate-results.json`） |
+| P4 | 工作包（`output/refactor-plan-2026-10-31/p4-implementation/manifest.json`） | 分项（`output/refactor-plan-2026-10-31/p4-gate-results.json`） |
+| P5 | 工作包（`output/refactor-plan-2026-10-31/p5-implementation/manifest.json`） | 分项（`output/refactor-plan-2026-10-31/p5-gate-results.json`） |
+| P6 | 后端A（`output/refactor-plan-2026-10-31/p6-a-implementation/manifest.json`） / 背景（`output/refactor-plan-2026-10-31/p6-background-implementation/manifest.json`） / 物体（`output/refactor-plan-2026-10-31/p6-object-implementation/manifest.json`） | 完整分项及首失败/补验来源（`output/refactor-plan-2026-10-31/p6-gate-results.json`） |
+| P7 | 原件与静态入边（`output/refactor-plan-2026-10-31/p7-retirement/manifest.json`） / 清理范围（`output/refactor-plan-2026-10-31/p7-retirement/cleanup.json`） / 最终工作包（`output/refactor-plan-2026-10-31/p7-implementation/manifest.json`） | 本地分项（`output/refactor-plan-2026-10-31/p7-gate-results.json`） |
 
 ## 门禁分别结清（P0–P7本地阶段快照）
 
@@ -103,39 +105,39 @@ PR98重构已于2026-11-01发布，代码为`028a8d2`，原始生产验收见文
 
 - P1.6：本地AGENTS、预检、PR模板、合同和规范已落地。P1只读快照显示main保护未启用、Protect规则disabled，CMS/模板仍存在main直写；这是2026-10-31的回读证据，不能当后续时刻的现状。外部强制设置未获本轮修改授权，仍需在后续发布前核实并处理。
 - 旧 /api/jobs、上传、查询、下载、Provider与金融/身份/attempt/receipt记录继续保留。当前客户端迁入v1不证明旧客户端、在途任务、结果和会话窗口已结束；不停止旧准入，也不重写旧账本。
-- 已发布资源的来源与逐项hash以[App retained清单](../../apps/app/retained-assets.json)为权威；公共图片原始分类见[素材清单](CONTENT_MEDIA_MIGRATION.json)，P5替换映射已全部撤销，原内容语义由独立基线验证。P7只移除当前无消费者的源代码/CSS，不删除保留的哈希资产或原始图片；构建仍校验retained资产。退出条件统一见[兼容清单](../COMPATIBILITY.md)。
+- 已发布资源的来源与逐项hash以当时的 `apps/app/retained-assets.json`（现已[退役](../COMPATIBILITY.md#第三批退役记录)）为权威；公共图片原始分类见[素材清单](CONTENT_MEDIA_MIGRATION.json)，P5替换映射已全部撤销，原内容语义由独立基线验证。P7只移除当前无消费者的源代码/CSS，不删除保留的哈希资产或原始图片；构建仍校验retained资产。退出条件统一见[兼容清单](../COMPATIBILITY.md)。
 - 过期session/旧诊断遮罩清理已在发布候选实现，见[合同](SENSITIVE_RETENTION.md)，默认dry-run，云端计划与擦除仍须单列。新owner六真实PG连接首次奖励已验证；其他PG场景、Linux候选产物、OAuth及六类Provider分别结清。现有production-smoke workflow的收费选项仅旧背景操作，新v1入口见processing-acceptance脚本。
-- [工作目录复核](../../output/refactor-plan-2026-10-31/p7-worktree-inventory.json)共10目录，其中9个属于其他聊天，3个有未提交内容。当前chat artifacts为空；保留P0恢复包，未绕过应用归属限制归档或删除。全项目其他聊天归档仍pending，不能宣称已清理全部历史目录。
+- 工作目录复核（`output/refactor-plan-2026-10-31/p7-worktree-inventory.json`）共10目录，其中9个属于其他聊天，3个有未提交内容。当前chat artifacts为空；保留P0恢复包，未绕过应用归属限制归档或删除。全项目其他聊天归档仍pending，不能宣称已清理全部历史目录。
 
 ## P7清理与恢复说明
 
 静态扫描确认9个候选模块没有集合外的运行导入，16个源文件/专属测试逐一hash保全后删除；API和Provider服务端实现保持。清理287个已无当前消费者的选择器，App颜色和物体控制仅保留自己的作用域；通用营销卡片仍保留。物体竖图的旧高度限制会让图像与二值mask的坐标比例不同，已由红测确认并移除。CMS删去无消费者的组件定义与CTA按钮/链接字段，merge和存量数据/schema兼容保留，App不再序列化旧控件文案。原MVP PRD逐字节归档，旧路径保留指针。
 
-恢复退役源文件使用[保全清单](../../output/refactor-plan-2026-10-31/p7-retirement/manifest.json)及其files-before，改动前的编辑文件在同目录edits-before。恢复旧UI不会授权新建付费任务、回滚金融记录或关闭新的已接受任务；先按原任务/报价/操作键核对。
+恢复退役源文件使用保全清单（`output/refactor-plan-2026-10-31/p7-retirement/manifest.json`）及其files-before，改动前的编辑文件在同目录edits-before。恢复旧UI不会授权新建付费任务、回滚金融记录或关闭新的已接受任务；先按原任务/报价/操作键核对。
 
 ## 分阶段证据与首失败记录
 
 ### P0 — 本地完成（2026-10-31）
 
-- 原始78项展开为103个文件、13,693,422字节，原件逐一SHA-256复核；[逐项处置](../../output/refactor-plan-2026-10-31/P0_DISPOSITION.md)、[恢复manifest](../../output/refactor-plan-2026-10-31/p0-preservation/manifest.json)。未归类0。原件和二进制patch留本机忽略目录，不进入Git；本机凭据未复制、未输出。
+- 原始78项展开为103个文件、13,693,422字节，原件逐一SHA-256复核；逐项处置（`output/refactor-plan-2026-10-31/P0_DISPOSITION.md`）、恢复manifest（`output/refactor-plan-2026-10-31/p0-preservation/manifest.json`）。未归类0。原件和二进制patch留本机忽略目录，不进入Git；本机凭据未复制、未输出。
 - 使用本地Git stash `410512fce71bab1a8fc2554e893c6ffaea5a4de1`保存原始受控与未跟踪工作，未创建交付commit；原始HEAD `5be42381`。恢复时先另作安全副本，按manifest重放文件，不将旧支付/迁移草稿覆盖当前实现。
-- D盘main安全快进到`574ad43`，切换`codex/refactor-local-20261031`；Git tree与origin/main完全一致后，仅恢复用户最新AGENTS独有16行。[基线证明](../../output/refactor-plan-2026-10-31/p0-preservation/baseline-verification.json)。旧Pricing、SQL、支付、首页蒙层全部留待续包；P2从新main拆分。
-- 核对10个关联工作树、分支、HEAD、独有提交与聊天归属；3个脏历史框架工作树另复制可读原件和patch，未改其源码。其余工作树属于其他聊天，本任务附件为空，因此没有调用归档，也没有删除文件夹。[登记](../../output/refactor-plan-2026-10-31/p0-preservation/worktree-inventory.json)。所有历史树归档留P7，不阻塞D盘实施。
-- 工具落地页工作树178份证据已转入D、613,034,612字节逐一校验。[转移清单](../../output/refactor-plan-2026-10-31/evidence-transfer.json)。原始路径作为证据来源保留，当前报告入口统一指向D。构建zip只是历史证据，未作为本次产物。
+- D盘main安全快进到`574ad43`，切换`codex/refactor-local-20261031`；Git tree与origin/main完全一致后，仅恢复用户最新AGENTS独有16行。基线证明（`output/refactor-plan-2026-10-31/p0-preservation/baseline-verification.json`）。旧Pricing、SQL、支付、首页蒙层全部留待续包；P2从新main拆分。
+- 核对10个关联工作树、分支、HEAD、独有提交与聊天归属；3个脏历史框架工作树另复制可读原件和patch，未改其源码。其余工作树属于其他聊天，本任务附件为空，因此没有调用归档，也没有删除文件夹。登记（`output/refactor-plan-2026-10-31/p0-preservation/worktree-inventory.json`）。所有历史树归档留P7，不阻塞D盘实施。
+- 工具落地页工作树178份证据已转入D、613,034,612字节逐一校验。转移清单（`output/refactor-plan-2026-10-31/evidence-transfer.json`）。原始路径作为证据来源保留，当前报告入口统一指向D。构建zip只是历史证据，未作为本次产物。
 - npm ci完成（750包）；首安装使用系统Node22.14并提示engine和旧目录EPERM清理警告，退出0，未掩盖。后续预览/测试明确使用满足engines的Node24.19.0，npm10.9.2，不改系统安装或项目依赖版本。
-- 停止原D预览，从D根目录重启`http://127.0.0.1:4386/`；HTTP200且初始HTML有main和文件入口。[预览证明](../../output/refactor-plan-2026-10-31/p0-preview-verification.json)。当前版本574ad43＋AGENTS。仅mock预览，不发真实上传/付款/Provider。
+- 停止原D预览，从D根目录重启`http://127.0.0.1:4386/`；HTTP200且初始HTML有main和文件入口。预览证明（`output/refactor-plan-2026-10-31/p0-preview-verification.json`）。当前版本574ad43＋AGENTS。仅mock预览，不发真实上传/付款/Provider。
 - 门禁：源码tree、原始字节、凭据路径、Markdown/diff和预览来源核对；仅路径/基线归一，不重复main产品全量测试。Git/PR=本地未发布；部署、域名、OAuth与生产smoke=not applicable。
 - 下一步P1：先对支付目标归属、测试文件分类与CMS路由增加红测，再修改最小规则；本阶段选一次release:verify。长期目录预检与规范同步按P1.6落地。
 
 ### P1 — 本地依赖验收完成；外部门禁pending（2026-10-31）
 
 - 实现：唯一六类操作目录及旧协议映射；能力/类型/限制由目录投影，不改原费率、三类余额、输出和恢复。路由目标与私有/索引分类拆开，CMS共享保留slug和真实App入口。支付组件按真实消费者选择Site/App；测试/文档不触发生产target，required CI仍保留。Site显式拒绝支付服务端模块。
-- 维护：跨平台`project:check`读取已有本机登记/显式环境路径，错误目录/origin或未分类文件阻断变更；只读盘点可继续。AGENTS、PR影响说明、规范索引、当前架构及兼容退出清单已落地。32个已审阅改动路径见[p1-classified](../../output/refactor-plan-2026-10-31/p1-classified.json)，独立工作包见[p1-implementation](../../output/refactor-plan-2026-10-31/p1-implementation/manifest.json)。
+- 维护：跨平台`project:check`读取已有本机登记/显式环境路径，错误目录/origin或未分类文件阻断变更；只读盘点可继续。AGENTS、PR影响说明、规范索引、当前架构及兼容退出清单已落地。32个已审阅改动路径见p1-classified（`output/refactor-plan-2026-10-31/p1-classified.json`），独立工作包见p1-implementation（`output/refactor-plan-2026-10-31/p1-implementation/manifest.json`）。
 - 文档：纠正Worker HTTPS subject audience与STS资源名区别（仅文档，原初始化代码未动）；根域跳www；公共/旧操作/v1功能smoke；CI与Vercel职责；风险门禁、内容删除、输出/报价模板、历史列表、生命周期、retained清单权威和历史PRD索引。新文档30个本地链接通过。
-- 红绿：[首轮红测](../../output/refactor-plan-2026-10-31/p1-red.log)锁定分类/CMS缺口；[96项绿测](../../output/refactor-plan-2026-10-31/p1-green-initial.log)；[预检红](../../output/refactor-plan-2026-10-31/p1-preflight-red.log)/[绿](../../output/refactor-plan-2026-10-31/p1-preflight-green.log)；真实消费者补充[红](../../output/refactor-plan-2026-10-31/p1-consumer-red.log)/[绿](../../output/refactor-plan-2026-10-31/p1-consumer-green.log)；私有支付目录边界[红](../../output/refactor-plan-2026-10-31/p1-private-catalog-red.log)/[绿](../../output/refactor-plan-2026-10-31/p1-private-catalog-green.log)。没有放宽断言。
-- 唯一门禁release:verify采用分段补验：首次audit无high/critical（19 moderate、1 low按原依赖记录），site validation通过，140文件/1121测试通过、9项外部集成显式skip，覆盖率达标。Lint首失败为新增脚本缺Node导入；补验构建发现该脚本默认空数组被推为never[]，补明类型。两个失败均保留，未重复audit/全覆盖率/图片优化。最终Lint、Astro零error、Build、响应式资源校验通过。[首日志](../../output/refactor-plan-2026-10-31/p1-release-verify-first.log)、[补验1](../../output/refactor-plan-2026-10-31/p1-release-verify-resume.log)、[补验2](../../output/refactor-plan-2026-10-31/p1-release-verify-resume2.log)。
-- E2E首轮104 passed/5 failed/1 skipped；并发时本机可用内存曾低于1GB，未改产品代码/测试断言。保留[全部首失败trace](../../output/refactor-plan-2026-10-31/p1-e2e-first-failure/)，安全核查端口/进程后只用1 worker复验失败5项，全部通过（42.7s）。[单并发补验](../../output/refactor-plan-2026-10-31/p1-e2e-single-worker-retry.log)。合计109项通过，1项dummy enabled-SSR opt-in未运行，不能记为通过。
-- 外部只读核实：main protection API为404 Branch not protected；rulesets为200，Protect enforcement=disabled。[原始回读](../../output/refactor-plan-2026-10-31/p1-protection-readback.json)。CMS和模板workflow仍直接写main，Vercel/required CI的外部发布拦截未获修改授权，保持pending；P1.6不整体勾选。CLI gh不可用后使用Git已有凭据仅在内存访问GitHub同仓库只读API，无凭据输出。
+- 红绿：首轮红测（`output/refactor-plan-2026-10-31/p1-red.log`）锁定分类/CMS缺口；96项绿测（`output/refactor-plan-2026-10-31/p1-green-initial.log`）；预检红（`output/refactor-plan-2026-10-31/p1-preflight-red.log`）/绿（`output/refactor-plan-2026-10-31/p1-preflight-green.log`）；真实消费者补充红（`output/refactor-plan-2026-10-31/p1-consumer-red.log`）/绿（`output/refactor-plan-2026-10-31/p1-consumer-green.log`）；私有支付目录边界红（`output/refactor-plan-2026-10-31/p1-private-catalog-red.log`）/绿（`output/refactor-plan-2026-10-31/p1-private-catalog-green.log`）。没有放宽断言。
+- 唯一门禁release:verify采用分段补验：首次audit无high/critical（19 moderate、1 low按原依赖记录），site validation通过，140文件/1121测试通过、9项外部集成显式skip，覆盖率达标。Lint首失败为新增脚本缺Node导入；补验构建发现该脚本默认空数组被推为never[]，补明类型。两个失败均保留，未重复audit/全覆盖率/图片优化。最终Lint、Astro零error、Build、响应式资源校验通过。首日志（`output/refactor-plan-2026-10-31/p1-release-verify-first.log`）、补验1（`output/refactor-plan-2026-10-31/p1-release-verify-resume.log`）、补验2（`output/refactor-plan-2026-10-31/p1-release-verify-resume2.log`）。
+- E2E首轮104 passed/5 failed/1 skipped；并发时本机可用内存曾低于1GB，未改产品代码/测试断言。保留全部首失败trace（`output/refactor-plan-2026-10-31/p1-e2e-first-failure/`），安全核查端口/进程后只用1 worker复验失败5项，全部通过（42.7s）。单并发补验（`output/refactor-plan-2026-10-31/p1-e2e-single-worker-retry.log`）。合计109项通过，1项dummy enabled-SSR opt-in未运行，不能记为通过。
+- 外部只读核实：main protection API为404 Branch not protected；rulesets为200，Protect enforcement=disabled。原始回读（`output/refactor-plan-2026-10-31/p1-protection-readback.json`）。CMS和模板workflow仍直接写main，Vercel/required CI的外部发布拦截未获修改授权，保持pending；P1.6不整体勾选。CLI gh不可用后使用Git已有凭据仅在内存访问GitHub同仓库只读API，无凭据输出。
 - P1.4已完成实际App入口与统一保留路径；公开/pricing尚未存在，避免接受不存在的CMS链接，随P2新增真实路由再补齐，暂不勾选。P1本地产品依赖已经验收，继续P2；外部强制发布门禁不宣称完成，也不阻塞独立本地代码工作。
 - 工具：本机验证已统一使用D下忽略的Node24.22.1/npm11.19.1工具副本（仅运行时，非C源码/构建产物），产品与脚本无机器路径依赖。仓库/PR=本地未提交；部署与生产验证未执行，域名/OAuth/真实付款/Provider=not applicable于本阶段本地验收。
 - 回退：P1独立文件/patch保全；原始D工作仍在P0恢复包。尚未改变外部设置或生产流量。下一步P2先补公开首屏、目录一致、SKU/returnTo、恢复优先与索引/代理红测。
@@ -144,11 +146,11 @@ PR98重构已于2026-11-01发布，代码为`028a8d2`，原始生产验收见文
 
 - 公开`/pricing`由现有App SSR提供，沿用getPaymentConfig→publicPaymentCatalog白名单；首屏真实目录、canonical、no-store、可索引。纯CreditCatalog无客户端水合、SDK、订单或鉴权请求。Site仅导航与sitemap，不导入支付私有配置；实际Site/App产物报告已验证精确归属和私有模块隔离。未知Pricing子路径仍404。
 - `/app/credits`保留所选套餐确认、登录、支付、Your orders和旧存储key；移除套餐营销卡片/费率职责。入口统一去/pricing，选SKU进入结算，URL金额无效，returnTo同源白名单保持。活跃attempt优先于URL，含下架SKU，原order金额展示；无法确认创建/付款时只能恢复原请求，不新建替代订单。官方付款SDK/按钮回调形状及服务端Create/Capture、身份/金融协议未改；已复核PayPal官方文档。
-- [P2增量工作包](../../output/refactor-plan-2026-10-31/p2-implementation/manifest.json)相对P1快照保存；累计50个已分类路径见[p2-classified](../../output/refactor-plan-2026-10-31/p2-classified.json)。docs/PAYPAL_LIVE_RELEASE、当前架构、CMS链接和部署目标说明已同步。P1.4的/pricing真实路由及CMS链接验收随本阶段补齐；P1.6外部保护仍pending。
-- 目标红测：[路由/索引/选择红](../../output/refactor-plan-2026-10-31/p2-red.log)、[公开页404红](../../output/refactor-plan-2026-10-31/p2-browser-red.log)、[导航缺口红](../../output/refactor-plan-2026-10-31/p2-navigation-red.log)。定向绿测72项通过。首轮浏览器24 passed/4 failed；修复一个实际恢复回归（隐藏确认区同时藏了错误反馈），费率断言迁到真实公开展示，折叠菜单先打开，标题限定main排除开发工具；[补验5项全绿](../../output/refactor-plan-2026-10-31/p2-browser-corrected.log)。首失败[trace](../../output/refactor-plan-2026-10-31/p2-browser-first-failure/)与[p2-green.log](../../output/refactor-plan-2026-10-31/p2-green.log)均保留；新增纯组件测试使用已有esbuild编译JSX，不改全局测试配置。
-- 高风险门禁按P1已确认的本机并发问题采用单并发等价验证；替代重复的combined build，直接验证两个实际Web目标产物，并单独跑全部类型检查。依赖锁/依赖/overrides未变，复用P1 audit；图片模板/媒体未变，复用其响应式栅格校验。全覆盖率142文件/1126 passed、9项外部集成skip，Lint、Astro check零error和Site/App构建通过。新增测试的安全清理检查曾触发no-unsafe-finally，移到finally之前后补验，未重跑已过的覆盖率。[首门禁](../../output/refactor-plan-2026-10-31/p2-release-verify.log)、[补验](../../output/refactor-plan-2026-10-31/p2-release-verify-resume.log)、[分项结果](../../output/refactor-plan-2026-10-31/p2-gate-results.json)。
-- 全套浏览器启用dummy Sandbox以覆盖SDK首屏门禁，112 passed/1 failed；失败是旧免费物体用例收到额外consent字段。保持断言，以该用例原本PAYPAL_CREDITS_ENABLED=false补验，1 passed（35.1s）；合计113个唯一用例均通过，包括enabled-SSR的SDK请求前置条件。原始[全套失败](../../output/refactor-plan-2026-10-31/p2-full-browser-first-failure/)和[正确上下文补验](../../output/refactor-plan-2026-10-31/p2-legacy-fixture-corrected.log)分开保留。可复现runner已把普通全套与dummy enabled SDK子验收隔离，不再用全局dummy污染旧免费夹具。
-- 人工视觉：Playwright独立本地浏览器，只读检查公开Pricing/结算桌面与手机，Blog负向区域。截图在output/playwright/refactor-p2-*；已逐张查看，无横向溢出/遮挡产品控件；底部黑色浮层是仅开发环境的Astro toolbar。截图显示关闭收款的本地Sandbox预览，不能当正式套餐或生产状态证据。[本地HTTP](../../output/refactor-plan-2026-10-31/p2-local-http.json)确认/pricing 200/no-store/无noindex/canonical，/app/credits 200/private no-store/noindex，/pricing/unknown真实404。
+- P2增量工作包（`output/refactor-plan-2026-10-31/p2-implementation/manifest.json`）相对P1快照保存；累计50个已分类路径见p2-classified（`output/refactor-plan-2026-10-31/p2-classified.json`）。docs/PAYPAL_LIVE_RELEASE、当前架构、CMS链接和部署目标说明已同步。P1.4的/pricing真实路由及CMS链接验收随本阶段补齐；P1.6外部保护仍pending。
+- 目标红测：路由/索引/选择红（`output/refactor-plan-2026-10-31/p2-red.log`）、公开页404红（`output/refactor-plan-2026-10-31/p2-browser-red.log`）、导航缺口红（`output/refactor-plan-2026-10-31/p2-navigation-red.log`）。定向绿测72项通过。首轮浏览器24 passed/4 failed；修复一个实际恢复回归（隐藏确认区同时藏了错误反馈），费率断言迁到真实公开展示，折叠菜单先打开，标题限定main排除开发工具；补验5项全绿（`output/refactor-plan-2026-10-31/p2-browser-corrected.log`）。首失败trace（`output/refactor-plan-2026-10-31/p2-browser-first-failure/`）与p2-green.log（`output/refactor-plan-2026-10-31/p2-green.log`）均保留；新增纯组件测试使用已有esbuild编译JSX，不改全局测试配置。
+- 高风险门禁按P1已确认的本机并发问题采用单并发等价验证；替代重复的combined build，直接验证两个实际Web目标产物，并单独跑全部类型检查。依赖锁/依赖/overrides未变，复用P1 audit；图片模板/媒体未变，复用其响应式栅格校验。全覆盖率142文件/1126 passed、9项外部集成skip，Lint、Astro check零error和Site/App构建通过。新增测试的安全清理检查曾触发no-unsafe-finally，移到finally之前后补验，未重跑已过的覆盖率。首门禁（`output/refactor-plan-2026-10-31/p2-release-verify.log`）、补验（`output/refactor-plan-2026-10-31/p2-release-verify-resume.log`）、分项结果（`output/refactor-plan-2026-10-31/p2-gate-results.json`）。
+- 全套浏览器启用dummy Sandbox以覆盖SDK首屏门禁，112 passed/1 failed；失败是旧免费物体用例收到额外consent字段。保持断言，以该用例原本PAYPAL_CREDITS_ENABLED=false补验，1 passed（35.1s）；合计113个唯一用例均通过，包括enabled-SSR的SDK请求前置条件。原始全套失败（`output/refactor-plan-2026-10-31/p2-full-browser-first-failure/`）和正确上下文补验（`output/refactor-plan-2026-10-31/p2-legacy-fixture-corrected.log`）分开保留。可复现runner已把普通全套与dummy enabled SDK子验收隔离，不再用全局dummy污染旧免费夹具。
+- 人工视觉：Playwright独立本地浏览器，只读检查公开Pricing/结算桌面与手机，Blog负向区域。截图在output/playwright/refactor-p2-*；已逐张查看，无横向溢出/遮挡产品控件；底部黑色浮层是仅开发环境的Astro toolbar。截图显示关闭收款的本地Sandbox预览，不能当正式套餐或生产状态证据。本地HTTP（`output/refactor-plan-2026-10-31/p2-local-http.json`）确认/pricing 200/no-store/无noindex/canonical，/app/credits 200/private no-store/noindex，/pricing/unknown真实404。
 - 预览从D启动，`http://127.0.0.1:4386`，版本574ad43＋P1/P2工作包。曾碰到尚在退出的4379测试服务，第一次启动仅报告复用旧服务；待测试结束并核查停止后才在4386启动，两个日志分别保留。浏览器已关闭，预览保留。
 - 门禁状态：本地代码/场景passed（含首失败后的定向补验）；Git/PR=local-only未提交；生产App/Site部署、真实OAuth/付款/退款为pending后续授权验收；本阶段未改R2/CORS/Provider/域名，相关真实功能smoke not applicable，不声称生产完成。回退依靠P1/P2独立快照；不重建订单或清空恢复存储。
 - 下一步P3：公共图片/比较控制器、CMS可选After与旧记录兼容、样式所有权、小型登录/媒体/画布基础。初步只读盘点134个营销图片位置/72个素材/0个真实独立双图，24处旧示意蒙层；像素审阅索引与3张缩略图表已保存，尚未改素材或把P3.5标为全部完成。
@@ -159,12 +161,12 @@ PR98重构已于2026-11-01发布，代码为`028a8d2`，原始生产验收见文
 - ImageDisplay与唯一新控制器覆盖0/1/2图、双源成功且比例一致才比较、单侧失败静态降级、双侧失败提示、键盘0/50/100、捕获拖动、触控、取消和切例50%复位。无临时水印API。固定frame明确fit=cover，两侧裁切一致；默认保留原图比例。两图比例一致不能证明同构图，运营必须核对。
 - CMS/schema：图片1＋可选图片2，空After可清除；新记录不注入合成水印默认值。首页/工具新单双图消费者已接入，旧comparison/illustration逐组兼容到P5，旧字段不再出现在新表单；merge=true保留旧记录。CMS未获得能力/费率/Provider配置权。[规范](./IMAGE_DISPLAY.md)。
 - 共享auth-completion保留Window同源、BroadcastChannel、权威getSession、并发去重、重试和清理；旧编辑器仍只恢复明确同意的价格，Workspace仍仅准备/报价后等待点击。官方signIn初始化形状未改。坐标/二值mask小函数保留物体clamp与alpha>10、精修非clamp与alpha>0、全opaque输出；画笔/套索/历史政策不合并。已有媒体识别和IndexedDB草稿继续共享，未新增另一套。
-- 素材全清单：已发布内容＋源码literal共237引用、166独立素材，7张contact sheet逐张审阅；0真实独立双图，52项烘焙比较线/控件待P5替换，1项原缺失资源待替换，其余静态。包含Blog、头像、share和placeholder，草稿/运行时用户媒体不在范围；源码literal可能保守包含未激活项。[正式素材清单](./CONTENT_MEDIA_MIGRATION.json)、[原始盘点](../../output/refactor-plan-2026-10-31/p3-all-public-images.json)。未把烘焙控件当已移除。
-- 红绿：原始4类缺口[p3-red](../../output/refactor-plan-2026-10-31/p3-red.log)，CMS和新记录默认值分别有红绿；基础定向81项通过、最终模型/生命周期51项通过，清空After补验45项通过。浏览器fixture配置前几次先暴露Astro7入口/root/后台锁差异，保留原日志，正确fixture后才记行为红测。触控发现native range与自定义指针冲突，改为控件层捕获；未放宽75%断言。[组件最终](../../output/refactor-plan-2026-10-31/p3-cover-components-final.log)2项通过，并接入npm verify/CI。
-- 唯一高风险门禁等价验证：依赖与锁未变复用P1 audit；site validation通过。全量首轮6失败皆为旧测试仍找原样式/监听位置；更新真实所有者及共同生命周期断言后，146文件/1136测试通过、9外部集成skip，覆盖率lines91.64%、branches82.81%、functions87.09%。Lint、Astro零error（6既有deprecated hints）、combined build、458 responsive衍生和45页markup通过。[首失败](../../output/refactor-plan-2026-10-31/p3-release-verify.log)、[补验](../../output/refactor-plan-2026-10-31/p3-release-verify-resume.log)、[分项](../../output/refactor-plan-2026-10-31/p3-gate-results.json)。
+- 素材全清单：已发布内容＋源码literal共237引用、166独立素材，7张contact sheet逐张审阅；0真实独立双图，52项烘焙比较线/控件待P5替换，1项原缺失资源待替换，其余静态。包含Blog、头像、share和placeholder，草稿/运行时用户媒体不在范围；源码literal可能保守包含未激活项。[正式素材清单](./CONTENT_MEDIA_MIGRATION.json)、原始盘点（`output/refactor-plan-2026-10-31/p3-all-public-images.json`）。未把烘焙控件当已移除。
+- 红绿：原始4类缺口p3-red（`output/refactor-plan-2026-10-31/p3-red.log`），CMS和新记录默认值分别有红绿；基础定向81项通过、最终模型/生命周期51项通过，清空After补验45项通过。浏览器fixture配置前几次先暴露Astro7入口/root/后台锁差异，保留原日志，正确fixture后才记行为红测。触控发现native range与自定义指针冲突，改为控件层捕获；未放宽75%断言。组件最终（`output/refactor-plan-2026-10-31/p3-cover-components-final.log`）2项通过，并接入npm verify/CI。
+- 唯一高风险门禁等价验证：依赖与锁未变复用P1 audit；site validation通过。全量首轮6失败皆为旧测试仍找原样式/监听位置；更新真实所有者及共同生命周期断言后，146文件/1136测试通过、9外部集成skip，覆盖率lines91.64%、branches82.81%、functions87.09%。Lint、Astro零error（6既有deprecated hints）、combined build、458 responsive衍生和45页markup通过。首失败（`output/refactor-plan-2026-10-31/p3-release-verify.log`）、补验（`output/refactor-plan-2026-10-31/p3-release-verify-resume.log`）、分项（`output/refactor-plan-2026-10-31/p3-gate-results.json`）。
 - 页面浏览器112 passed/1 dummy skip，dummy enabled SDK专项1 passed，合计113唯一用例均通过。图片fixture2项另通过，不替代真实处理。手工视觉又发现nested image未填满卡片/工具首屏的灰带，补桌面/手机几何红测后最小修正fit，2项绿；保留首失败trace、灰带截图及修正后截图。最终Site实际产物再构建通过，无支付私有模块；复用已过的后端/账户/支付检查，不为最后这一显示参数重跑全量。
-- 视觉：首页（含新单图卡）、工具、App、Blog负向区域均检查桌面/手机；修正后卡片/首屏无新增灰带和溢出。旧图片自身的比较控件/裁切内容继续明确列P5，不宣称全站图片完成。[本地HTTP](../../output/refactor-plan-2026-10-31/p3-local-http.json)关键公开路径200、Pricing no-store可索引、App noindex、未知Pricing404；App原始HTML无H1/静态壳的缺口留P4。mock预览capabilities503显示可理解的重试提示，非真实业务通过证据。
-- 工作包：40个P3核心增量[manifest](../../output/refactor-plan-2026-10-31/p3-implementation/manifest.json)＋10个收尾增量[manifest](../../output/refactor-plan-2026-10-31/p3-completion/manifest.json)，累计分类87路径，预检/diff通过。首次后台预览启动30秒超时，排查无端口冲突后前台预览从D启动成功；截图后已关闭浏览器和自有服务，给P4测试让出端口。未提交/推送/PR/部署，真实OAuth/付款/Provider与生产smoke未执行。
+- 视觉：首页（含新单图卡）、工具、App、Blog负向区域均检查桌面/手机；修正后卡片/首屏无新增灰带和溢出。旧图片自身的比较控件/裁切内容继续明确列P5，不宣称全站图片完成。本地HTTP（`output/refactor-plan-2026-10-31/p3-local-http.json`）关键公开路径200、Pricing no-store可索引、App noindex、未知Pricing404；App原始HTML无H1/静态壳的缺口留P4。mock预览capabilities503显示可理解的重试提示，非真实业务通过证据。
+- 工作包：40个P3核心增量manifest（`output/refactor-plan-2026-10-31/p3-implementation/manifest.json`）＋10个收尾增量manifest（`output/refactor-plan-2026-10-31/p3-completion/manifest.json`），累计分类87路径，预检/diff通过。首次后台预览启动30秒超时，排查无端口冲突后前台预览从D启动成功；截图后已关闭浏览器和自有服务，给P4测试让出端口。未提交/推送/PR/部署，真实OAuth/付款/Provider与生产smoke未执行。
 - 下一步P4：按已梳理的状态表抽AppShell及操作模块，背景/物体先复用旧API适配；保留六种能力和原恢复/金融语义，再做统一入口，后端协议另在P6迁移。
 
 ### P4 — 本地完成（2026-10-31）；真实操作门禁pending
@@ -172,11 +174,11 @@ PR98重构已于2026-11-01发布，代码为`028a8d2`，原始生产验收见文
 - AppWorkspaceLayout/AppShell拥有共同静态壳、账户呈现、操作选择与分块失败恢复；/app返回200而非重定向，image/video旧深链共用同壳。Standard、PRO、精修、视频保留耐久协调；背景/物体用旧API适配，本阶段没有改后端计费或Provider协议。[状态合同](./APP_WORKSPACE.md)。
 - 入口、文件跨操作交接、PRO持久、旧视频任务类型优先、账户切换隔离、模块恢复、首次登录已接受价格与恰好一次提交均有红绿。首次登录isPending曾卸载编辑器造成文件丢失，修正为保留初次登录状态；补上当前草稿owner认领。原首失败保留，不把模拟登录当真实OAuth验收。
 - 六类操作级浏览器覆盖包括PNG透明/颜色与真实下载、物体二值mask/原图切换、Standard/PRO实际JPEG、精修版本/重画、视频固定区域/同步MP4及下载；既有三类余额、旧报价、UNKNOWN无付费重试、408恢复、过期报价与坏文件替换规则保持。
-- 完整门禁：首次覆盖率运行1项ESLint路径检查5秒超时，其余1143项通过；该项未改代码单独通过，因首轮未产出覆盖率报告，用2 workers补跑，147文件/1144 passed、9外部集成skip。覆盖率lines91.52%、branches82.60%、functions86.78%、statements84.85%。Lint、361文件Astro零error（6既有hints）、Site40页/App实际产物通过。锁和依赖未变复用P1 audit，P4未改营销图片模板复用P3栅格检查。[首次](../../output/refactor-plan-2026-10-31/p4-release-verify.log)、[覆盖率补验](../../output/refactor-plan-2026-10-31/p4-coverage-bounded-retry.log)、[分段](../../output/refactor-plan-2026-10-31/p4-gate-results.json)。
-- 全套浏览器122 passed/1 failed/1 opt-in skip；唯一失败为重画坐标落在Astro开发浮层，trace确认坐标704,707被遮挡。每次绘画滚动画布并重取box后，原两份mask必须不同及只提交第二报价断言通过；未放宽费用或mask断言。dummy enabled-SDK专项1 passed，合计124唯一用例通过；图片fixture另2 passed。[全套](../../output/refactor-plan-2026-10-31/p4-release-verify-resume.log)、[首失败](../../output/refactor-plan-2026-10-31/p4-refinement-first-failure/)、[重画补验](../../output/refactor-plan-2026-10-31/p4-refinement-redraw-targeted-retry.log)、[最终专项](../../output/refactor-plan-2026-10-31/p4-release-verify-final-segments.log)。
-- 人工视觉覆盖图片/视频空态、背景准备/结果/透明与白色选中、物体画笔、Blog负向区的桌面/手机，均无横向溢出。发现颜色控件三条样式未迁入App，先补浏览器红测，再补原样式及旧登录G标记样式；绿测确认padding/控件高度、白色aria-pressed、透明/白色PNG下载。首失败trace在[p4-palette-style-first-failure](../../output/refactor-plan-2026-10-31/p4-palette-style-first-failure/)，[绿](../../output/refactor-plan-2026-10-31/p4-palette-style-green.log)。最后CSS增量仅补App产物构建与相关浏览器/视觉，复用已过后端/支付/全覆盖率。[最终App](../../output/refactor-plan-2026-10-31/p4-app-artifact-final-ui.log)。截图output/playwright/refactor-p4-*，调色板是完全拦截的本地假结果，只证明UI布局，不证明AI抠图。
-- [本地HTTP](../../output/refactor-plan-2026-10-31/p4-local-http.json)确认App兼容入口200/noindex/静态说明，Pricing200/no-store可索引，结算private/no-store/noindex，Blog200，未知Pricing404。原始HTML的H1 token计数含Astro惰性fallback template；实际DOM一个main H1由浏览器验收，不混为双标题。
-- [P4增量工作包](../../output/refactor-plan-2026-10-31/p4-implementation/manifest.json)独立保存，最终预检无未分类路径，diff无空白错误。手工预览最初与构建重叠尚未监听，未当功能失败；停止自有服务后在4386重开成功。最后截图隐藏开发浮层且快进CSS过渡，仅影响本地截屏。已关闭浏览器及自有预览。
+- 完整门禁：首次覆盖率运行1项ESLint路径检查5秒超时，其余1143项通过；该项未改代码单独通过，因首轮未产出覆盖率报告，用2 workers补跑，147文件/1144 passed、9外部集成skip。覆盖率lines91.52%、branches82.60%、functions86.78%、statements84.85%。Lint、361文件Astro零error（6既有hints）、Site40页/App实际产物通过。锁和依赖未变复用P1 audit，P4未改营销图片模板复用P3栅格检查。首次（`output/refactor-plan-2026-10-31/p4-release-verify.log`）、覆盖率补验（`output/refactor-plan-2026-10-31/p4-coverage-bounded-retry.log`）、分段（`output/refactor-plan-2026-10-31/p4-gate-results.json`）。
+- 全套浏览器122 passed/1 failed/1 opt-in skip；唯一失败为重画坐标落在Astro开发浮层，trace确认坐标704,707被遮挡。每次绘画滚动画布并重取box后，原两份mask必须不同及只提交第二报价断言通过；未放宽费用或mask断言。dummy enabled-SDK专项1 passed，合计124唯一用例通过；图片fixture另2 passed。全套（`output/refactor-plan-2026-10-31/p4-release-verify-resume.log`）、首失败（`output/refactor-plan-2026-10-31/p4-refinement-first-failure/`）、重画补验（`output/refactor-plan-2026-10-31/p4-refinement-redraw-targeted-retry.log`）、最终专项（`output/refactor-plan-2026-10-31/p4-release-verify-final-segments.log`）。
+- 人工视觉覆盖图片/视频空态、背景准备/结果/透明与白色选中、物体画笔、Blog负向区的桌面/手机，均无横向溢出。发现颜色控件三条样式未迁入App，先补浏览器红测，再补原样式及旧登录G标记样式；绿测确认padding/控件高度、白色aria-pressed、透明/白色PNG下载。首失败trace在p4-palette-style-first-failure（`output/refactor-plan-2026-10-31/p4-palette-style-first-failure/`），绿（`output/refactor-plan-2026-10-31/p4-palette-style-green.log`）。最后CSS增量仅补App产物构建与相关浏览器/视觉，复用已过后端/支付/全覆盖率。最终App（`output/refactor-plan-2026-10-31/p4-app-artifact-final-ui.log`）。截图output/playwright/refactor-p4-*，调色板是完全拦截的本地假结果，只证明UI布局，不证明AI抠图。
+- 本地HTTP（`output/refactor-plan-2026-10-31/p4-local-http.json`）确认App兼容入口200/noindex/静态说明，Pricing200/no-store可索引，结算private/no-store/noindex，Blog200，未知Pricing404。原始HTML的H1 token计数含Astro惰性fallback template；实际DOM一个main H1由浏览器验收，不混为双标题。
+- P4增量工作包（`output/refactor-plan-2026-10-31/p4-implementation/manifest.json`）独立保存，最终预检无未分类路径，diff无空白错误。手工预览最初与构建重叠尚未监听，未当功能失败；停止自有服务后在4386重开成功。最后截图隐藏开发浮层且快进CSS过渡，仅影响本地截屏。已关闭浏览器及自有预览。
 - Git/PR=local-only未提交；没有推送/部署、云配置、真实OAuth/付款/Provider调用。真实处理/认证功能验收仍pending，不能把P4称生产迁移完成；相关服务端/金融协议留P6。P1.6外部保护仍pending。
 
 ### P5 — 本地完成（2026-10-31）；未部署/真实操作pending
@@ -195,7 +197,7 @@ PR98重构已于2026-11-01发布，代码为`028a8d2`，原始生产验收见文
 - P5收尾：全套页面126 passed/3 failed/1 opt-in skip，首失败trace保存在p5-browser-first-failure。两项仍找旧站点Account menu，同步为App实际Sign out，取消consent后真实任务数仍要求0；缺失图片已按P5迁移修复，改为先确认真实素材加载，再主动拦截原图/衍生资源并要求占位图加载成功。修正专项2通过；背景专项补验在进入编辑器前发生5秒冷加载超时（截图只有Opening workspace），未更改断言，待资源恢复后同项1通过（28.6s），两轮trace分别留存。
 - P5最终：129个普通唯一用例＋dummy enabled SDK 1＝130唯一页面用例通过；图片组件2另通过。覆盖率1149 passed/9外部集成skip；Lint、365文件类型检查0error/6既有hints、Site/App实际产物、42 HTML响应式栅格与公开Pricing/私有模块边界均通过。最后仅测试selector/网络故障夹具调整补定向Lint，不重跑已过的产品全覆盖率/构建。分段结果p5-gate-results.json保留首次结果和补验组合，不能读取为首轮全绿。
 - P5视觉：已逐张查看首页主入口/功能图/单图案例/受众正文CTA/Footer、背景与Gemini代表模板、App图片/背景空态和Terms负向区的桌面/手机；无横向溢出，主入口可用。截图output/playwright/refactor-p5-*。33个本地HTTP路径通过，非生产验收。预检首轮漏分类tool-landing.css移动顺序样式，按已审阅范围补显式登记，最终无issues；diff空白检查通过。
-- P5独立工作包见[p5-implementation](../../output/refactor-plan-2026-10-31/p5-implementation/manifest.json)，保留所有原图片，当前D盘分支HEAD仍574ad43＋本地改动。Git/PR=local-only未提交；Site/App/Worker生产部署、真实OAuth/Provider、认证功能smoke pending后续授权验收，域名/DNS/CORS未变。P1.6外部保护仍pending。下一步P6.A先做事务client免费权益原语、同次余额读取和恢复候选去重，再按真实Web/Worker消费者收敛资源与Provider facet。
+- P5独立工作包见p5-implementation（`output/refactor-plan-2026-10-31/p5-implementation/manifest.json`），保留所有原图片，当前D盘分支HEAD仍574ad43＋本地改动。Git/PR=local-only未提交；Site/App/Worker生产部署、真实OAuth/Provider、认证功能smoke pending后续授权验收，域名/DNS/CORS未变。P1.6外部保护仍pending。下一步P6.A先做事务client免费权益原语、同次余额读取和恢复候选去重，再按真实Web/Worker消费者收敛资源与Provider facet。
 
 ### P6.A — 本地依赖检查点完成；P6完整门禁待B收尾
 
@@ -239,7 +241,7 @@ PR98重构已于2026-11-01发布，代码为`028a8d2`，原始生产验收见文
 
 文档、决策背景/ADR、历史发布/验收、可执行模板和唯一索引已同步，原MVP原文逐字节归档。原output草稿现在只保留本台账入口；34份变更中的现行Markdown链接检查无意外缺失，最终工作包生成后还会检查其证据链接。未提交、推送、创建PR、合并、部署或修改云设置，未执行真实收费操作。外部保护、真实认证/Provider验收、旧API/资源窗口与其他聊天的归档继续按上表保留pending，不能将43项一概勾成生产完成。
 
-最终本地视觉/HTTP记录见[检查记录](../../output/refactor-plan-2026-10-31/p7-final-visual-http.json)，阶段分类和工作区状态见[预检](../../output/refactor-plan-2026-10-31/p7-preflight-final.json)。
+最终本地视觉/HTTP记录见检查记录（`output/refactor-plan-2026-10-31/p7-final-visual-http.json`），阶段分类和工作区状态见预检（`output/refactor-plan-2026-10-31/p7-preflight-final.json`）。
 
 ### 内容越界回退与上线差距梳理（2026-11-01）
 
@@ -249,21 +251,21 @@ PR98重构已于2026-11-01发布，代码为`028a8d2`，原始生产验收见文
 
 构建产物本地HTTP/HTML检查28个公开URL、236处图片src/alt匹配，原缺图保留占位fallback；原图烘焙控件保留为静态像素，无代码合成滑柄。首页/Gemini/条款1440与390宽六份截图已查看，无横向溢出。此处是静态公开产物检查，静态服务器不提供auth/capabilities API（404），未据此声称身份或处理链通过；观察到的非GET请求为既有GA页面浏览遥测，无业务创建/上传/收费请求。原public资产相对基线无重命名、字节改动或删除。
 
-本轮证据：[摘要](../../output/seo-content-rollback-2026-11-01/summary.json)、[最终HTML/视觉](../../output/seo-content-rollback-2026-11-01/browser-check.json)、[前置审计](../../output/seo-content-rollback-2026-11-01/audit.json)、[独立回退工作包](../../output/seo-content-rollback-2026-11-01/manifest.json)。AGENTS、PR影响模板及独立内容守卫已落地；运营52个烘焙候选/1个缺图仍pending。未提交、推送、PR、合并、部署或修改云设置，未执行真实Provider/支付。
+本轮证据：摘要（`output/seo-content-rollback-2026-11-01/summary.json`）、最终HTML/视觉（`output/seo-content-rollback-2026-11-01/browser-check.json`）、前置审计（`output/seo-content-rollback-2026-11-01/audit.json`）、独立回退工作包（`output/seo-content-rollback-2026-11-01/manifest.json`）。AGENTS、PR影响模板及独立内容守卫已落地；运营52个烘焙候选/1个缺图仍pending。未提交、推送、PR、合并、部署或修改云设置，未执行真实Provider/支付。
 
 ### main发布候选收尾（2026-11-01，进行中）
 
-已核实主任务用户原话“目标是上线，去安排吧”。基线及远端main仍为574ad43，沿用D盘专用重构分支；回退前211项及新阶段原件保存在[发布准备包](../../output/refactor-release-2026-11-01/before.json)，P0、P1–P7与SEO回退证据不覆盖。
+已核实主任务用户原话“目标是上线，去安排吧”。基线及远端main仍为574ad43，沿用D盘专用重构分支；回退前211项及新阶段原件保存在发布准备包（`output/refactor-release-2026-11-01/before.json`），P0、P1–P7与SEO回退证据不覆盖。
 
 - 过期敏感字段擦除已有合同、只读计划/显式digest、关联组/执行终态/财务/到期缓冲/租约/条件写及部分中断续行测试。Worker新增retention模式，不自动调度；实际私有R2dry-run与安全apply待候选和部署门禁。
 - 修复独立Blog Markdown未选择Site的分类回归；新增稳定Required target artifacts汇总门禁，selected artifact失败/取消不能放行。main保护已应用并回读200：strict required verify及所选产物汇总、enforce admins、PR、会话结清、禁止强推/删除；单维护者审批数0，不能绕过CI。CMS草稿PR所需仓库权限已应用204并回读，默认workflow权限仍read，代码不自动批准审查。
 - CMS模板改为内容分支和Draft PR，不直写main；正常编辑、内容授权、独立基线同步审阅与CI流程已有文档和测试。原内容fixture未改。当前GitHub为单维护者可执行流程，不要求作者批准自己的PR；必需PR/CI不豁免。
-- 新owner使用6个真实Sandbox PG连接验证首次权益/账本恰好一次；完整10项真实PG并发通过，当前套件schema已移除。[完整结果](../../output/refactor-release-2026-11-01/postgres-full.log)。首轮外层240秒未等完整套件完成，保留日志；之后只读检查再按足够时限复核，未把首轮当通过。
+- 新owner使用6个真实Sandbox PG连接验证首次权益/账本恰好一次；完整10项真实PG并发通过，当前套件schema已移除。完整结果（`output/refactor-release-2026-11-01/postgres-full.log`）。首轮外层240秒未等完整套件完成，保留日志；之后只读检查再按足够时限复核，未把首轮当通过。
 - 本地release:verify首轮：1243项单元通过、10外部skip，覆盖率statements84.65/branches82.68/functions86.55/lines91.30，Lint、类型/Build及响应图检查通过。E2E首轮128通过、1skip、5失败；其中一条旧替图断言改为保留原缺图fallback，并继续验证真实图片网络失败；其余等待超时保留trace。一次降低并发的5项定向补验通过，图片组件4项通过；未重复已覆盖的后台与构建。新增预算工具定向测试32项通过，后续CI仍对固定候选完整验证。
-- 原验收账本在既有工作树的本机忽略目录，原image10/video4共14条保留。用户先说“图片验收给我10credits”，再明确“按10处理Credits核算”；原账本追加本轮最多5次图片调用和累计10个processingCredits双重上限，总调用上限image15/video5，视频不新增。当前新窗口尚未调用、未扣费，未增发账户权益。[授权证明](../../output/refactor-release-2026-11-01/budget-authorization.json)。
+- 原验收账本在既有工作树的本机忽略目录，原image10/video4共14条保留。用户先说“图片验收给我10credits”，再明确“按10处理Credits核算”；原账本追加本轮最多5次图片调用和累计10个processingCredits双重上限，总调用上限image15/video5，视频不新增。当前新窗口尚未调用、未扣费，未增发账户权益。授权证明（`output/refactor-release-2026-11-01/budget-authorization.json`）。
 - 已核对现有App生产574ad43、Worker image digest与同项目身份；正式PAYPAL_ENABLED=false保持。原Worker未绑定Replicate，已在同项目准备原Provider密钥的独立Secret版本1，仅授予既有Worker SA读取此Secret；待镜像、CI通过后将绑定与真实模式一起更新。Worker当前镜像与环境尚未切换。Vercel连接工具404由已验证本机CLI回读补证，未误判项目不存在。旧Worker在新背景/物体任务已准入后不可作为直接回退目标，应保留兼容新合同的Worker。
 - 原测试会话已失效（只读get-session返回匿名）；不伪造登录或账户额度。新版部署后的真实OAuth及余额核对需要原测试账号重新登录，再执行既定预算内的单次功能验收。
-- 冻结前额外复核擦除来源：缺失精修parent、跨归属媒体key或仍有效的显式job窗口必须整组保护，已有独立红绿。当前源代码全量1247项通过、10外部skip；覆盖率statements84.66/branches82.73/functions86.57/lines91.32，完整Lint及Build/46份响应图HTML通过，类型0error/0warning/6既有hints。首轮ESLint边界测试5秒冷启动超时已保留，一次限制单元并发后通过；不把超时计作功能断言通过。UI未变，沿用133个唯一E2E及4个组件绿测。[最终代码门禁](../../output/refactor-release-2026-11-01/final-code-gates.json)。
+- 冻结前额外复核擦除来源：缺失精修parent、跨归属媒体key或仍有效的显式job窗口必须整组保护，已有独立红绿。当前源代码全量1247项通过、10外部skip；覆盖率statements84.66/branches82.73/functions86.57/lines91.32，完整Lint及Build/46份响应图HTML通过，类型0error/0warning/6既有hints。首轮ESLint边界测试5秒冷启动超时已保留，一次限制单元并发后通过；不把超时计作功能断言通过。UI未变，沿用133个唯一E2E及4个组件绿测。最终代码门禁（`output/refactor-release-2026-11-01/final-code-gates.json`）。
 
 仓库PR/CI、Linux实际产物、三目标部署、真实OAuth、逐操作Provider/产物/余额及生产smoke仍待结清。图片原值、原费用、金融与UNKNOWN恢复、旧API和历史资源继续保护；无关其他聊天目录不构成产品发布阻塞。
 

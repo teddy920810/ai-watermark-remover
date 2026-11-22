@@ -77,10 +77,10 @@ Site `dpl_6WsvMdh2iqN3DAggtf9LZsFxryoo` 与 App `dpl_FY1iJaTekx1683kEt5C5aTT5TFM
 
 证据为 `network-final-smoke.json`、`download-final-receipt.json`、`production-final-image.jpg`、`production-final-video-mobile.jpg` 及图片/视频付费报价截图，均在忽略目录 `output/gemini-free/release/`。当前生产视觉验收通过；根目录 design-qa.md 发布章节的 blocked 是首发前历史截面，由本节的正式验收记录取代，不覆盖首轮证据。PR138 的动态相关文章列表随独立内容发布刷新，不回滚其他 owner 的内容；本功能不改原工具页视觉、SEO JSON、FAQ、素材或 alt。
 
-## 本轮本地检查记录
+## 首发前本地检查记录
 
 - 单元：160文件、1411通过、15个既有可选测试跳过；覆盖率语句81.84%、分支79.91%、函数84.83%、行89.52%，未降低阈值。
 - 最终Lint/类型/组合构建/响应式图片：通过；类型检查0 errors、0 warnings、15个既有提示，68份HTML验证通过。
 - 整站浏览器首轮207通过/4失败/1可选跳过；两条旧Gemini付费入口断言已更新，另两条公共页面场景保持原时限串行复核通过。最终增量15/15（11项Gemini+4项复核），图片展示组件4/4。
 - 新场景还覆盖普通会话处理中到期后保留结果、失败后按资格主动交接、30fps本地准入/未命中不伪造结果及320px无溢出。视觉第二轮通过，见根目录design-qa.md本轮章节。
-- 首失败与复核日志位于忽略目录output/gemini-free/；完整门禁分步补齐，不将首轮失败描述为一次全绿。真实身份、样本、跨平台和生产门禁继续保持未验收状态。
+- 首失败与复核日志位于忽略目录 `output/gemini-free/`。上述结果属于首发前本地阶段，后续真实样本和生产验收见本页对应的版本记录。

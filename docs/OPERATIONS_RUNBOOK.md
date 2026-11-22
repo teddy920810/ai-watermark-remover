@@ -3,24 +3,27 @@
 ## 生产资源
 
 - 正式域名：`https://www.watermarkgemini.com`
-- 备用 Vercel 域名：`https://ai-watermark-remover-peach.vercel.app`
 - GitHub：`teddy920810/ai-watermark-remover`
 - Cloudflare R2 Bucket：`watermark`
 - Google Analytics：`G-52ZWCGEZ7R`
 
 ## Vercel 必要配置
 
-Production 环境至少配置 `SITE_URL=https://www.watermarkgemini.com`、所有 `R2_*` 变量、`GOOGLE_CLIENT_ID`、`GOOGLE_CLIENT_SECRET`、`BETTER_AUTH_SECRET` 和 `BETTER_AUTH_URL=https://www.watermarkgemini.com`。启用真实图片处理时还必须仅在服务端配置 `WATERMARK_PROVIDER=dewatermark` 与 `DEWATERMARK_API_KEY`；不要给变量添加 `PUBLIC_` 前缀。Preview/Development 如需上传、登录或真实处理，也应单独配置对应变量。密钥或 Provider 变更后需要重新部署才能生效。
+Site 和 App 是独立的 Vercel 目标。两者都以 `SITE_URL=https://www.watermarkgemini.com` 为规范站点地址；App 通过 `APP_SITE_ORIGIN` 将公开页面代理到 Site。App 的服务端环境负责 `BETTER_AUTH_URL`、`BETTER_AUTH_SECRET`、Google OAuth、数据库和私有 R2，Site 无需这些密钥。预览与开发环境按各自的目标和连接配置。发布项目、代理边界与构建命令见[独立部署说明](../apps/DEPLOYMENT_TARGETS.md)。
 
-Google Cloud OAuth Web Client 必须包含正式回调 `https://www.watermarkgemini.com/api/auth/callback/google`。根域名 `https://watermarkgemini.com` 应使用 308 重定向到 `www`。OAuth 修改部署后必须使用真实测试用户完成一次登录、确认回调成功、会话建立、退出登录和处理任务；仅检查按钮或接口 200 不代表集成完成。
+真实图片去水印走耐久处理链，由 `PROCESSING_ENABLED=true`、`PROCESSING_PROVIDER=dewatermark` 和服务端 `DEWATERMARK_API_KEY` 启用。按[处理配置](product/PROCESSING_CONFIGURATION.md)设置 App 调度和独立 Worker；背景、物体、视频各有自己的 Provider 配置。正式 PayPal 收款的启动校验另外读取 `WATERMARK_PROVIDER=dewatermark`，见[PayPal 发布手册](PAYPAL_LIVE_RELEASE.md)。密钥不要使用 `PUBLIC_` 前缀，变更后重新部署受影响目标。
+
+Google Cloud OAuth Web Client 必须包含正式回调 `https://www.watermarkgemini.com/api/auth/callback/google`。OAuth 变更后，用真实测试用户核对回调、会话建立和退出。涉及媒体处理时按[验证矩阵](TESTING_GUIDE.md#动态验证矩阵)另选操作和授权预算。
 
 Git 页面应保持仓库连接到 `main`；域名页面以 `www.watermarkgemini.com` 为正式站点，根域名以 308 重定向到 `www`。正常情况下 Vercel 自动管理 HTTPS 证书。代码、CI、部署绑定与线上验收分开结清，Ready不代表已通过真实功能验收。
 
 ## AdSense 网站连接
 
-公共页面的 `src/layouts/SiteLayout.astro` 在 `<head>` 原样加载用户提供的异步 AdSense 脚本，发布商为 `ca-pub-5361898162179630`；不把该脚本加入私有 App 工作区或 OAuth 弹窗，也不新增广告位或修改后台自动广告设置。脚本属性和放置位置遵循 [Google 官方接入合同](https://support.google.com/adsense/answer/9274516)。更换发布商须先核对账号与站点归属，再更新脚本和专项测试。
+公共页面的 `src/layouts/SiteLayout.astro` 在 `<head>` 加载用户提供的异步 AdSense 脚本和 `google-adsense-account` 验证标签。站点根路径 `/ads.txt` 由 Site 从 `public/ads.txt` 发布，使用后台提供的授权记录。脚本、标签和授权记录使用同一个发布商 ID `5361898162179630`。私有 App 工作区和 OAuth 弹窗沿用独立布局。更换发布商时，先核对账号与站点归属，再同步三处记录和专项测试。[Google 官方接入说明](https://support.google.com/adsense/answer/7584263)
 
-发布后核对正式域名的首页、工具落地页和 Blog HTML 中只有一个正确脚本，并在真实浏览器确认 Google 脚本请求及执行。随后在对应 AdSense 账号完成网站连接验证和审核；加载成功不代表网站已获批、广告已有展示或收款验证通过。实际展示广告前，由内容负责人审核广告相关隐私披露，并完成适用地区的同意管理配置。本次不修改既有法律正文；`ads.txt` 以后台提供的实际记录为准，未获得记录时不编造。
+发布后核对首页、工具落地页和 Blog 的 `<head>` 各有一个正确的脚本和验证标签，并在真实浏览器确认脚本请求及执行。从根域名和 `www` 分别用 HTTP 和 HTTPS 请求 `/ads.txt`，确认最终返回 `200`、`text/plain` 和后台授权记录。[Google ads.txt 抓取说明](https://support.google.com/adsense/answer/7679060)
+
+在对应 AdSense 账号确认网站审核状态和 `ads.txt` 是否已授权。实际展示广告前，由内容负责人审核广告相关隐私披露，并完成适用地区的同意管理配置。
 
 ## Cloudflare R2
 
@@ -34,7 +37,7 @@ Git 页面应保持仓库连接到 `main`；域名页面以 `www.watermarkgemini
 
 确认预期提交已进入 `main`，受影响目标的 Production 部署为 **Ready** 且绑定预期 SHA。检查内容、页面和真实功能的范围统一按[验证矩阵](TESTING_GUIDE.md#动态验证矩阵)与[抽查标准](TESTING_GUIDE.md#抽查标准)执行，本页不另设全站检查清单。
 
-环境变量或域名变更运行公开只读 smoke；R2、CORS、鉴权、Provider 或处理流程变更运行对应操作的认证验收。命令、单位、预算及失败恢复要求见[运维验收](TESTING_GUIDE.md#运维人员)。GA 改动核对真实 `page_view`/Realtime 信号，普通内容或样式发布不重复验证 GA、登录或收费处理。
+命令、单位、预算及失败恢复要求见[运维验收](TESTING_GUIDE.md#运维人员)。GA 改动核对真实 `page_view`/Realtime 信号，普通内容或样式发布不重复验证 GA、登录或收费处理。
 
 ## 常见故障
 

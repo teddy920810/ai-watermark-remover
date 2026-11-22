@@ -4,12 +4,12 @@ const route = '/nano-banana-watermark-remover';
 const hero = '[data-landing-preview]:visible';
 const features = '.landing-features-section .feature-media';
 
-async function expectFullFrame(display: Locator, ratio: number) {
+async function expectAlignedComparison(display: Locator, sourceRatio: number) {
   await display.scrollIntoViewIfNeeded();
   await expect(display).toHaveAttribute('data-ready', 'true');
   await expect(display.getByRole('slider')).toHaveValue('50');
   const frame = (await display.locator('.image-display-controls').boundingBox())!;
-  expect(Math.abs(frame.width / frame.height - ratio)).toBeLessThan(0.015);
+  expect(Math.abs(frame.width / frame.height - sourceRatio)).toBeLessThan(0.015);
   for (const image of await display.locator('img').all()) {
     const box = (await image.boundingBox())!;
     expect(Math.abs(box.width - frame.width)).toBeLessThan(1);
@@ -28,15 +28,15 @@ for (const width of [1491, 390]) {
     for (let index = 0; index < 3; index++) {
       if (index) await samples.nth(index).click();
       const frame = page.locator(`${hero} .landing-sample-image`);
-      await expectFullFrame(frame.locator('[data-image-display]'), 538 / 436);
+      await expectAlignedComparison(frame.locator('[data-image-display]'), 538 / 436);
       const box = (await frame.boundingBox())!;
-      expect(box.width / box.height).toBeCloseTo(538 / 436, 2);
+      expect(box.width / box.height).toBeCloseTo(640 / 347, 2);
     }
 
     const cards = page.locator(features);
     await expect(cards).toHaveCount(4);
     for (const card of await cards.all()) {
-      await expectFullFrame(card.locator('[data-image-display]'), 640 / 347);
+      await expectAlignedComparison(card.locator('[data-image-display]'), 640 / 347);
     }
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
   });

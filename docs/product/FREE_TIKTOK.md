@@ -20,7 +20,7 @@
 
 hero 与页尾入口提供链接输入框和 `Save Video`。用户明确提交后通过 URL fragment 将链接传入既有工作区，不写查询参数、文件草稿或持久存储；工作区读取后先清除片段，再复用原解析请求自动发起一次。刷新、回退或手动打开空工作区不自动重复；失败保留链接，由用户主动重试。主区域与页尾复用同一表单，输入框在上、Save Video 在下且宽度对齐，沿用现有品牌与响应式样式；不变更后端、上游请求、额度或 SEO 内容。该交互已通过本地真实单样本验证，2026-11-14 用户授权提交发布；正式状态须以合并版本、Site/App 部署和上线后真实验收为准。
 
-工作区标题为 `TikTok Watermark Remover for Saved Videos`，提交按钮为 `Save Video`；移除 `New video`，尾部 X 按钮可键盘操作，并清理旧预览、错误和仍在进行的请求。
+工作区可见标题为 `TikTok Video Downloader`，浏览器标签页保留 `TikTok Watermark Remover for Saved Videos`。提交按钮为 `Save Video`。输入框尾部的清除按钮可键盘操作，并清理旧预览、错误和仍在进行的请求。
 
 单元测试覆盖 URL 约束、纯数据解包、上游失败/超限、接口环境/来源与错误脱敏；操作级浏览器测试覆盖输入、结果、真实 MP4 夹具下载、复位、失败重试与窄屏。API/Provider/依赖改动按唯一测试矩阵运行 `release:verify`。真实授权单样本本地验收与 mock 回归分别记录，定时/CI 不调用真实 Provider。
 
@@ -29,6 +29,6 @@ hero 与页尾入口提供链接输入框和 `Save Video`。用户明确提交�
 参考协议：<https://tikmate.io/>、<https://tikmate.io/pages/terms-of-service.php>；MIT 参考仓库许可不替代上游服务接入许可。Acorn 仅解析语法：<https://github.com/acornjs/acorn/tree/master/acorn#interface>。
 
 
-## 统一工作台（本地迭代）
+## 统一工作台
 
-入口仍为 `/app/free/tiktok`，使用与图片、视频、Gemini 相同的 `WorkspaceShell` 一级导航和账户区，标题为 `TikTok Video Downloader`。登录是可选入口，解析、预览和下载继续允许访客使用。原解析 API、准入限制、Referrer-Policy 与 CSP 不变；头部使用本地图标，不增加外部头像域名。部署状态和生产验收与本地实现分开记录。
+入口 `/app/free/tiktok` 使用与图片、视频、Gemini 相同的 `WorkspaceShell` 一级导航和账户区。登录是可选入口，解析、预览和下载允许访客使用。准入限制、Referrer-Policy 和 CSP 由解析 API 与路由继续执行；头部使用本地图标。
