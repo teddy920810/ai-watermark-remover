@@ -94,7 +94,7 @@ const faqSchema = visibleFaqItems.length > 0 ? {
       <div class="hero-workbench">
         {samples.length > 0 && <div class="hero-preview" aria-label="Example previews">
           {samples.map((sample, index) => <div data-landing-preview hidden={index !== 0}>
-            <div class="landing-sample-image"><ImageDisplay fit="cover" image={sample.image} afterImage={sample.afterImage} afterImageAlt={sample.afterImageAlt} alt={sample.imageAlt} eager={index === 0} /></div>
+            <div class="landing-sample-image"><ImageDisplay fit="contain" image={sample.image} afterImage={sample.afterImage} afterImageAlt={sample.afterImageAlt} alt={sample.imageAlt} eager={index === 0} /></div>
           </div>)}
           <div class="hero-samples" aria-label="Choose an example preview">{samples.map((sample, index) => <button class="hero-sample" type="button" data-landing-sample aria-pressed={index === 0} aria-label={`Preview ${sample.label}`}><ResponsiveImage src={sample.image} alt="" sizes="72px" /></button>)}</div>
         </div>}

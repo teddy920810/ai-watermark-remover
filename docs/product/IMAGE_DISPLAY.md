@@ -12,7 +12,7 @@ Status: current implementation contract. P5 content replacements were revoked by
 - Comparisons support native range keyboard navigation, pointer capture and touch. The keyboard focus outline appears during keyboard use. `image-display:reset` restores the example to the center and starts its deferred pair immediately.
 - Each loaded pair demonstrates independently when at least 35% is in view, sweeping toward both sides before settling at 50%. Leaving the viewport allows it to demonstrate again on a later visit. Hover, touch, or keyboard use stops that visit's demo at the current position. Reduced motion keeps the slider static and interactive. No CMS schema migration is required.
 
-Natural aspect ratio is the default. Fixed-size cards and steps pass `fit="cover"` to fill the frame for a single image. Pairs inside fixed frames are centered and scaled to show the complete image. With source dimensions available, both layers and the controls share the rendered image bounds. Landing-page Hero pairs use a height-limited frame. Landing-page Features use the same responsive 640:347 frame across tools, with `fit="contain"` to show the complete image for singles and pairs.
+Natural aspect ratio is the default. Fixed-size cards and steps pass `fit="cover"` to fill the frame for a single image. Pairs inside fixed frames are centered and scaled to show the complete image. With source dimensions available, both layers and the controls share the rendered image bounds. On tool landing pages, Hero uses a responsive 538:436 frame and Features uses a responsive 640:347 frame. Both use `fit="contain"` to show the complete image for singles and pairs at every viewport size.
 
 Pages CMS exposes Image 1 and optional Image 2. It does not expose slider implementations, upload endpoints, illustrative watermark text or overlay presets. New records do not acquire synthetic watermark defaults. Public templates use ImageDisplay for both single images and pairs. Stored legacy fields are retained for content compatibility; the renderer never synthesizes an overlay from them. A configured primary image takes priority over an illustrative legacy comparison image; a real legacy pair with an explicit Before source remains compatible. Each rendered image alt preserves its supplied value verbatim; optional `afterImageAlt` supplies a separate After description and otherwise falls back to `imageAlt`. The renderer adds no suffix.
 
@@ -36,11 +36,11 @@ Use these canvas sizes for new or replacement tool landing-page images. The brow
 
 | Slot | Source canvas | Aspect ratio | Display frame |
 | --- | --- | --- | --- |
-| Hero comparison | 1280 × 800 px | 8:5 | Responsive 8:5 on desktop and 35:24 on phones |
-| Features | 1280 × 694 px | 640:347 | Responsive 640:347 at every viewport size |
-| How it works | 768 × 480 px | 8:5 | Step illustration. Keep important details in the center for the responsive frame. |
+| Hero | 538 × 436 px | 538:436 | Same responsive frame ratio on desktop and phones |
+| Features | 640 × 347 px | 640:347 | Same responsive frame ratio on desktop and phones |
+| How it works | 384 × 240 px | 8:5 | Step illustration. Keep important details in the center for the responsive frame. |
 | Related tool card, when supplying a new card image | 640 × 480 px | 4:3 | The landing page normally reuses an existing tool card or Hero image. |
-| Social share image | 1200 × 630 px | 40:21 | Social link preview |
+| Social share image | 600 × 315 px | 40:21 | Social link preview |
 
 - Export Before and After at the same canvas size. Keep the framing, subject position, and scale aligned on both images.
 - Leave about 5% clear around the edges for rounded corners. Keep the watermark or edit away from the top corners occupied by the Before and After labels.

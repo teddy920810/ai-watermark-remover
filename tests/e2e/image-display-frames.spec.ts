@@ -20,7 +20,7 @@ for (const width of [1440, 390]) test(`shared static images fill their existing 
   }
 });
 
-for (const [width, frameRatio] of [[1440, 8 / 5], [390, 35 / 24]]) test(`tool Hero preserves the comparison image and aligns its controls at ${width}px`, async ({ page }) => {
+for (const width of [1440, 390]) test(`tool Hero preserves the comparison image and aligns its controls at ${width}px`, async ({ page }) => {
   await page.setViewportSize({ width, height: 1000 });
   await page.route('**/api/auth/get-session', route => route.fulfill({ json: null }));
   await page.route('**/api/v1/capabilities', route => route.fulfill({ json: { operations: [] } }));
@@ -38,7 +38,7 @@ for (const [width, frameRatio] of [[1440, 8 / 5], [390, 35 / 24]]) test(`tool He
       sourceRatio: image.naturalWidth / image.naturalHeight,
     })),
   }));
-  expect(bounds.frame.width / bounds.frame.height).toBeCloseTo(frameRatio, 2);
+  expect(bounds.frame.width / bounds.frame.height).toBeCloseTo(538 / 436, 2);
   expect(bounds.controls.height).toBeLessThan(bounds.frame.height);
   expect(bounds.images).toHaveLength(2);
   for (const { box, fit, sourceRatio } of bounds.images) {

@@ -29,7 +29,8 @@ for (const width of [1491, 390]) {
       if (index) await samples.nth(index).click();
       const frame = page.locator(`${hero} .landing-sample-image`);
       await expectFullFrame(frame.locator('[data-image-display]'), 538 / 436);
-      expect((await frame.boundingBox())!.height).toBeCloseTo(width === 390 ? 240 : 400, 0);
+      const box = (await frame.boundingBox())!;
+      expect(box.width / box.height).toBeCloseTo(538 / 436, 2);
     }
 
     const cards = page.locator(features);

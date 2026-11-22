@@ -156,7 +156,7 @@
   height: auto;
   min-height: 0;
   overflow: hidden;
-  aspect-ratio: 1704 / 923;
+  aspect-ratio: 538 / 436;
   border-radius: 18px;
   background: #e5edf7;
   isolation: isolate;
@@ -171,7 +171,6 @@
   object-fit: cover;
 }
 .tool-landing .landing-sample-image > .responsive-picture > img { width: 100%; height: 100%; object-fit: cover; }
-.tool-landing .landing-sample-image:has(> [data-pair="true"]) { aspect-ratio: 8 / 5; }
 .tool-landing .gemini-mark {
   position: absolute;
   bottom: 32px;
@@ -443,7 +442,6 @@
   .tool-landing .hero-points { width: calc(100% - 40px); max-width: none; gap: 7px 12px; }
   .tool-landing .hero-points li { font-size: 11px; }
   .tool-landing .hero-workbench { width: calc(100% - 40px); }
-  .tool-landing .landing-sample-image:has(> [data-pair="true"]) { aspect-ratio: 35 / 24; }
   .tool-landing .hero-sample { width: 58px; height: 58px; }
   .tool-landing .hero-tool .launcher-drop { min-height: 280px; height: 280px; padding: 25px 18px 18px; }
   .tool-landing .hero-tool .launcher-drop .button { width: auto; min-width: min(180px, 100%); min-height: 60px; padding: 16px 22px; border-radius: 14px; font-size: 15px; }
