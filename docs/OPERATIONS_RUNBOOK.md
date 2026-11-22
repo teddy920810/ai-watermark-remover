@@ -19,9 +19,11 @@ Git 页面应保持仓库连接到 `main`；域名页面以 `www.watermarkgemini
 
 ## AdSense 网站连接
 
-公共页面的 `src/layouts/SiteLayout.astro` 在 `<head>` 原样加载用户提供的异步 AdSense 脚本，发布商为 `ca-pub-5361898162179630`；不把该脚本加入私有 App 工作区或 OAuth 弹窗，也不新增广告位或修改后台自动广告设置。脚本属性和放置位置遵循 [Google 官方接入合同](https://support.google.com/adsense/answer/9274516)。更换发布商须先核对账号与站点归属，再更新脚本和专项测试。
+公共页面的 `src/layouts/SiteLayout.astro` 在 `<head>` 加载用户提供的异步 AdSense 脚本和 `google-adsense-account` 验证标签。站点根路径 `/ads.txt` 由 Site 从 `public/ads.txt` 发布，使用后台提供的授权记录。脚本、标签和授权记录使用同一个发布商 ID `5361898162179630`。私有 App 工作区和 OAuth 弹窗沿用独立布局。更换发布商时，先核对账号与站点归属，再同步三处记录和专项测试。[Google 官方接入说明](https://support.google.com/adsense/answer/7584263)
 
-发布后核对正式域名的首页、工具落地页和 Blog HTML 中只有一个正确脚本，并在真实浏览器确认 Google 脚本请求及执行。随后在对应 AdSense 账号完成网站连接验证和审核；加载成功不代表网站已获批、广告已有展示或收款验证通过。实际展示广告前，由内容负责人审核广告相关隐私披露，并完成适用地区的同意管理配置。本次不修改既有法律正文；`ads.txt` 以后台提供的实际记录为准，未获得记录时不编造。
+发布后核对首页、工具落地页和 Blog 的 `<head>` 各有一个正确的脚本和验证标签，并在真实浏览器确认脚本请求及执行。从根域名和 `www` 分别用 HTTP 和 HTTPS 请求 `/ads.txt`，确认最终返回 `200`、`text/plain` 和后台授权记录。[Google ads.txt 抓取说明](https://support.google.com/adsense/answer/7679060)
+
+在对应 AdSense 账号确认网站审核状态和 `ads.txt` 是否已授权。实际展示广告前，由内容负责人审核广告相关隐私披露，并完成适用地区的同意管理配置。
 
 ## Cloudflare R2
 
